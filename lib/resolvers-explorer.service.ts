@@ -16,7 +16,6 @@ export interface ResolverMetadata {
   name: string;
   type: string;
   methodName: string;
-  // tslint:disable-next-line:ban-types
   callback?: Function;
 }
 
@@ -28,7 +27,7 @@ export class ResolversExplorerService {
     private readonly externalContextCreator: ExternalContextCreator,
   ) {}
 
-  public explore() {
+  explore() {
     const modules = [...this.modulesContainer.values()].map(
       module => module.components,
     );
@@ -38,7 +37,7 @@ export class ResolversExplorerService {
     return this.groupMetadata(resolvers);
   }
 
-  public flatMap(
+  flatMap(
     modules: Map<any, any>[],
     callback: (instance: any) => ResolverMetadata[],
   ) {
@@ -58,6 +57,12 @@ export class ResolversExplorerService {
       name => this.extractMetadata(instance, prototype, name, predicate),
     );
     return resolvers.filter(resolver => !!resolver).map(resolver => {
+      if (resolver.type === 'Subscription') {
+        return {
+          ...resolver,
+          callback: instance[resolver.methodName](),
+        };
+      }
       const resolverCallback = this.externalContextCreator.create(
         instance,
         prototype[resolver.methodName],
@@ -70,7 +75,7 @@ export class ResolversExplorerService {
     });
   }
 
-  public exploreDelegates() {
+  exploreDelegates() {
     const modules = [...this.modulesContainer.values()].map(
       module => module.components,
     );
@@ -123,7 +128,7 @@ export class ResolversExplorerService {
     };
   }
 
-  public groupMetadata(resolvers: ResolverMetadata[]) {
+  groupMetadata(resolvers: ResolverMetadata[]) {
     const groupByType = groupBy(resolvers, metadata => metadata.type);
     return mapValues(groupByType, resolversArr =>
       resolversArr.reduce((prev, curr) => {
@@ -135,7 +140,7 @@ export class ResolversExplorerService {
     );
   }
 
-  public curryDelegates(delegates): (mergeInfo: MergeInfo) => any {
+  curryDelegates(delegates): (mergeInfo: MergeInfo) => any {
     return mergeInfo =>
       mapValues(delegates, parent =>
         mapValues(parent, (propertyFn, key) => propertyFn()(mergeInfo)),

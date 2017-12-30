@@ -34,7 +34,7 @@ $ npm i --save @nestjs/graphql apollo-server-express graphql-tools graphql
 
 ## Quick Start
 
-[Overview & Tutorial - COMING SOON!](https://docs.nestjs.com/graphql)
+[Overview & Tutorial](https://docs.nestjs.com/graphql/quick-start)
 
 ## People
 

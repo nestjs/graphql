@@ -11,6 +11,9 @@
             "import-sources-order": "any",
             "named-imports-order": "any"
         }],
+        "arrow-parens": false,
+        "member-access": false,
+        "ban-types": false,
         "no-console": [false],
         "interface-name": [true, "never-prefix"],
         "eofline": false,
