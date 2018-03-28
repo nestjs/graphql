@@ -18,11 +18,14 @@ export class GraphQLFactory {
   ) {}
 
   createSchema(
-    schemaDefintion: IExecutableSchemaDefinition = { typeDefs: {} },
+    schemaDefintion: IExecutableSchemaDefinition = { typeDefs: [] },
   ) {
     return makeExecutableSchema({
       ...schemaDefintion,
-      resolvers: this.resolversExplorerService.explore(),
+      resolvers: {
+        ...this.resolversExplorerService.explore(),
+        ...(schemaDefintion.resolvers || {}),
+      },
     });
   }
 
