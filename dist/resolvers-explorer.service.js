@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var __decorate =
   (this && this.__decorate) ||
   function(decorators, target, key, desc) {
@@ -10,7 +10,7 @@ var __decorate =
             ? (desc = Object.getOwnPropertyDescriptor(target, key))
             : desc,
       d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+    if (typeof Reflect === 'object' && typeof Reflect.decorate === 'function')
       r = Reflect.decorate(decorators, target, key, desc);
     else
       for (var i = decorators.length - 1; i >= 0; i--)
@@ -21,17 +21,17 @@ var __decorate =
 var __metadata =
   (this && this.__metadata) ||
   function(k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function")
+    if (typeof Reflect === 'object' && typeof Reflect.metadata === 'function')
       return Reflect.metadata(k, v);
   };
-Object.defineProperty(exports, "__esModule", { value: true });
-const common_1 = require("@nestjs/common");
-const metadata_scanner_1 = require("@nestjs/core/metadata-scanner");
-const external_context_creator_1 = require("@nestjs/core/helpers/external-context-creator");
-const modules_container_1 = require("@nestjs/core/injector/modules-container");
-const shared_utils_1 = require("@nestjs/common/utils/shared.utils");
-const lodash_1 = require("lodash");
-const graphql_constants_1 = require("./graphql.constants");
+Object.defineProperty(exports, '__esModule', { value: true });
+const common_1 = require('@nestjs/common');
+const metadata_scanner_1 = require('@nestjs/core/metadata-scanner');
+const external_context_creator_1 = require('@nestjs/core/helpers/external-context-creator');
+const modules_container_1 = require('@nestjs/core/injector/modules-container');
+const shared_utils_1 = require('@nestjs/common/utils/shared.utils');
+const lodash_1 = require('lodash');
+const graphql_constants_1 = require('./graphql.constants');
 let ResolversExplorerService = class ResolversExplorerService {
   constructor(modulesContainer, metadataScanner, externalContextCreator) {
     this.modulesContainer = modulesContainer;
@@ -40,18 +40,18 @@ let ResolversExplorerService = class ResolversExplorerService {
   }
   explore() {
     const modules = [...this.modulesContainer.values()].map(
-      module => module.components
+      module => module.components,
     );
     const resolvers = this.flatMap(modules, instance =>
-      this.filterResolvers(instance)
+      this.filterResolvers(instance),
     );
     return this.groupMetadata(resolvers);
   }
   flatMap(modules, callback) {
     return lodash_1.flattenDeep(
       modules.map(module =>
-        [...module.values()].map(({ instance }) => callback(instance))
-      )
+        [...module.values()].map(({ instance }) => callback(instance)),
+      ),
     );
   }
   filterResolvers(instance) {
@@ -61,28 +61,28 @@ let ResolversExplorerService = class ResolversExplorerService {
     const resolvers = this.metadataScanner.scanFromPrototype(
       instance,
       prototype,
-      name => this.extractMetadata(instance, prototype, name, predicate)
+      name => this.extractMetadata(instance, prototype, name, predicate),
     );
     return resolvers.filter(resolver => !!resolver).map(resolver => {
-      if (resolver.type === "Subscription") {
+      if (resolver.type === 'Subscription') {
         return Object.assign({}, resolver, {
-          callback: instance[resolver.methodName]()
+          callback: instance[resolver.methodName](),
         });
       }
       const resolverCallback = this.externalContextCreator.create(
         instance,
         prototype[resolver.methodName],
-        resolver.methodName
+        resolver.methodName,
       );
       return Object.assign({}, resolver, { callback: resolverCallback });
     });
   }
   exploreDelegates() {
     const modules = [...this.modulesContainer.values()].map(
-      module => module.components
+      module => module.components,
     );
     const delegates = this.flatMap(modules, instance =>
-      this.filterDelegates(instance)
+      this.filterDelegates(instance),
     );
     return this.curryDelegates(this.groupMetadata(delegates));
   }
@@ -92,7 +92,7 @@ let ResolversExplorerService = class ResolversExplorerService {
     const resolvers = this.metadataScanner.scanFromPrototype(
       instance,
       prototype,
-      name => this.extractMetadata(instance, prototype, name, predicate)
+      name => this.extractMetadata(instance, prototype, name, predicate),
     );
     return resolvers.filter(resolver => !!resolver).map(resolver => {
       const callback = instance[resolver.methodName].bind(instance);
@@ -104,19 +104,19 @@ let ResolversExplorerService = class ResolversExplorerService {
     const resolverType =
       Reflect.getMetadata(
         graphql_constants_1.RESOLVER_TYPE_METADATA,
-        callback
+        callback,
       ) ||
       Reflect.getMetadata(
         graphql_constants_1.RESOLVER_TYPE_METADATA,
-        instance.constructor
+        instance.constructor,
       );
     const resolverName = Reflect.getMetadata(
       graphql_constants_1.RESOLVER_NAME_METADATA,
-      callback
+      callback,
     );
     const isDelegated = !!Reflect.getMetadata(
       graphql_constants_1.RESOLVER_DELEGATE_METADATA,
-      callback
+      callback,
     );
     if (filterPredicate(resolverType, isDelegated)) {
       return null;
@@ -124,7 +124,7 @@ let ResolversExplorerService = class ResolversExplorerService {
     return {
       name: resolverName || methodName,
       type: resolverType,
-      methodName
+      methodName,
     };
   }
   groupMetadata(resolvers) {
@@ -132,25 +132,27 @@ let ResolversExplorerService = class ResolversExplorerService {
     return lodash_1.mapValues(groupByType, resolversArr =>
       resolversArr.reduce((prev, curr) => {
         return Object.assign({}, prev, { [curr.name]: curr.callback });
-      }, {})
+      }, {}),
     );
   }
   curryDelegates(delegates) {
     return mergeInfo =>
       lodash_1.mapValues(delegates, parent =>
-        lodash_1.mapValues(parent, (propertyFn, key) => propertyFn()(mergeInfo))
+        lodash_1.mapValues(parent, (propertyFn, key) =>
+          propertyFn()(mergeInfo),
+        ),
       );
   }
 };
 ResolversExplorerService = __decorate(
   [
     common_1.Injectable(),
-    __metadata("design:paramtypes", [
+    __metadata('design:paramtypes', [
       modules_container_1.ModulesContainer,
       metadata_scanner_1.MetadataScanner,
-      external_context_creator_1.ExternalContextCreator
-    ])
+      external_context_creator_1.ExternalContextCreator,
+    ]),
   ],
-  ResolversExplorerService
+  ResolversExplorerService,
 );
 exports.ResolversExplorerService = ResolversExplorerService;

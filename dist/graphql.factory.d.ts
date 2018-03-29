@@ -1,8 +1,8 @@
-import { ResolversExplorerService } from "./resolvers-explorer.service";
+import { ResolversExplorerService } from './resolvers-explorer.service';
 import {
   IExecutableSchemaDefinition,
-  MergeInfo
-} from "graphql-tools/dist/Interfaces";
+  MergeInfo,
+} from 'graphql-tools/dist/Interfaces';
 export declare class GraphQLFactory {
   private readonly resolversExplorerService;
   constructor(resolversExplorerService: ResolversExplorerService);
