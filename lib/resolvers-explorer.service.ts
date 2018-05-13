@@ -1,9 +1,8 @@
-import { Component } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { Injectable } from '@nestjs/common/interfaces';
 import { flattenDeep, mapValues, groupBy } from 'lodash';
 import {
   RESOLVER_TYPE_METADATA,
@@ -19,7 +18,7 @@ export interface ResolverMetadata {
   callback?: Function;
 }
 
-@Component()
+@Injectable()
 export class ResolversExplorerService {
   constructor(
     private readonly modulesContainer: ModulesContainer,
@@ -48,9 +47,10 @@ export class ResolversExplorerService {
     );
   }
 
-  filterResolvers(instance: Injectable): ResolverMetadata[] {
+  filterResolvers(instance: Object): ResolverMetadata[] {
     const prototype = Object.getPrototypeOf(instance);
-    const predicate = (resolverType, isDelegated) => isUndefined(resolverType) || isDelegated;
+    const predicate = (resolverType, isDelegated) =>
+      isUndefined(resolverType) || isDelegated;
     const resolvers = this.metadataScanner.scanFromPrototype(
       instance,
       prototype,
@@ -85,7 +85,7 @@ export class ResolversExplorerService {
     return this.curryDelegates(this.groupMetadata(delegates));
   }
 
-  filterDelegates(instance: Injectable): ResolverMetadata[] {
+  filterDelegates(instance: Object): ResolverMetadata[] {
     const prototype = Object.getPrototypeOf(instance);
     const predicate = (resolverType, isDelegated) => !isDelegated;
     const resolvers = this.metadataScanner.scanFromPrototype(

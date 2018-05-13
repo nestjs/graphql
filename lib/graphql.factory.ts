@@ -1,6 +1,6 @@
 import * as glob from 'glob';
 import * as fs from 'fs';
-import { Component, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { makeExecutableSchema } from 'graphql-tools';
 import { mergeTypes } from 'merge-graphql-schemas';
 import { groupBy, mapValues } from 'lodash';
@@ -11,7 +11,7 @@ import {
   MergeInfo,
 } from 'graphql-tools/dist/Interfaces';
 
-@Component()
+@Injectable()
 export class GraphQLFactory {
   constructor(
     private readonly resolversExplorerService: ResolversExplorerService,
@@ -34,9 +34,7 @@ export class GraphQLFactory {
   }
 
   mergeTypesByPaths(...pathsToTypes: string[]): string {
-    return mergeTypes(
-      ...pathsToTypes.map(pattern => this.loadFiles(pattern)),
-    );
+    return mergeTypes(...pathsToTypes.map(pattern => this.loadFiles(pattern)));
   }
 
   private loadFiles(pattern: string): any[] {
