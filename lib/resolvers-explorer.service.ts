@@ -32,7 +32,7 @@ export class ResolversExplorerService {
     );
     const resolvers = this.flatMap(modules, instance =>
       this.filterResolvers(instance),
-    );
+    ).filter(r => r);
     return this.groupMetadata(resolvers);
   }
 
@@ -42,7 +42,7 @@ export class ResolversExplorerService {
   ) {
     return flattenDeep(
       modules.map(module =>
-        [...module.values()].map(({ instance }) => callback(instance)),
+        [...module.values()].map(({ instance }) => instance && callback(instance)),
       ),
     );
   }
