@@ -1,36 +1,40 @@
-import * as glob from 'glob';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import { Injectable, Inject } from '@nestjs/common';
+import * as glob from 'glob';
 import { makeExecutableSchema } from 'graphql-tools';
-import { mergeTypes } from 'merge-graphql-schemas';
-import { groupBy, mapValues } from 'lodash';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { ResolversExplorerService } from './resolvers-explorer.service';
 import {
   IExecutableSchemaDefinition,
   MergeInfo,
 } from 'graphql-tools/dist/Interfaces';
+import { mergeTypes } from 'merge-graphql-schemas';
+import { DelegatesExplorerService } from './services/delegates-explorer.service';
+import { ResolversExplorerService } from './services/resolvers-explorer.service';
+import { ScalarsExplorerService } from './services/scalars-explorer.service';
+import { extend } from './utils/extend.util';
 
 @Injectable()
 export class GraphQLFactory {
   constructor(
     private readonly resolversExplorerService: ResolversExplorerService,
+    private readonly delegatesExplorerService: DelegatesExplorerService,
+    private readonly scalarsExplorerService: ScalarsExplorerService,
   ) {}
 
   createSchema(
     schemaDefintion: IExecutableSchemaDefinition = { typeDefs: [] },
   ) {
+    const resolvers = extend(
+      this.scalarsExplorerService.explore(),
+      this.resolversExplorerService.explore(),
+    );
     return makeExecutableSchema({
       ...schemaDefintion,
-      resolvers: {
-        ...this.resolversExplorerService.explore(),
-        ...(schemaDefintion.resolvers || {}),
-      },
+      resolvers: extend(resolvers, schemaDefintion.resolvers),
     });
   }
 
   createDelegates(): (mergeInfo: MergeInfo) => any {
-    return this.resolversExplorerService.exploreDelegates();
+    return this.delegatesExplorerService.explore();
   }
 
   mergeTypesByPaths(...pathsToTypes: string[]): string {
