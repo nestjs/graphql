@@ -1,11 +1,12 @@
 import { ReflectMetadata } from '@nestjs/common';
+import { Resolvers } from '../enums/resolvers.enum';
 import {
-  RESOLVER_TYPE_METADATA,
+  RESOLVER_DELEGATE_METADATA,
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
-  RESOLVER_DELEGATE_METADATA,
+  RESOLVER_TYPE_METADATA,
+  SCALAR_NAME_METADATA,
 } from '../graphql.constants';
-import { Resolvers } from '../enums/resolvers.enum';
 
 export function createResolverDecorator(
   resolver?: Resolvers | string,
@@ -20,7 +21,9 @@ export function createResolverDecorator(
   };
 }
 
-export function createPropertyDecorator(propertyName?: string): MethodDecorator {
+export function createPropertyDecorator(
+  propertyName?: string,
+): MethodDecorator {
   return (target, key?, descriptor?) => {
     ReflectMetadata(RESOLVER_NAME_METADATA, propertyName)(
       target,
@@ -35,7 +38,9 @@ export function createPropertyDecorator(propertyName?: string): MethodDecorator 
   };
 }
 
-export function createDelegateDecorator(propertyName?: string): MethodDecorator {
+export function createDelegateDecorator(
+  propertyName?: string,
+): MethodDecorator {
   return (target, key?, descriptor?) => {
     ReflectMetadata(RESOLVER_NAME_METADATA, propertyName)(
       target,
@@ -47,6 +52,12 @@ export function createDelegateDecorator(propertyName?: string): MethodDecorator 
       key,
       descriptor,
     );
+  };
+}
+
+export function Scalar(name: string): ClassDecorator {
+  return (target, key?, descriptor?) => {
+    ReflectMetadata(SCALAR_NAME_METADATA, name)(target, key, descriptor);
   };
 }
 

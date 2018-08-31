@@ -31,7 +31,7 @@ This is a [GraphQL (Apollo)](https://www.apollographql.com/) module for [Nest](h
 ## Installation
 
 ```bash
-$ npm i --save @nestjs/graphql graphql-tools graphql
+$ npm i --save @nestjs/graphql apollo-server-express graphql
 ```
 
 ## Quick Start

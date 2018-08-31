@@ -1,36 +1,42 @@
-import * as glob from 'glob';
+import { Injectable } from '@nestjs/common';
+import { gql, makeExecutableSchema } from 'apollo-server-express';
 import * as fs from 'fs';
-import { Injectable, Inject } from '@nestjs/common';
-import { makeExecutableSchema } from 'graphql-tools';
+import * as glob from 'glob';
+import { MergeInfo } from 'graphql-tools/dist/Interfaces';
 import { mergeTypes } from 'merge-graphql-schemas';
-import { groupBy, mapValues } from 'lodash';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { ResolversExplorerService } from './resolvers-explorer.service';
-import {
-  IExecutableSchemaDefinition,
-  MergeInfo,
-} from 'graphql-tools/dist/Interfaces';
+import { GqlModuleOptions } from './interfaces/gql-module-options.interface';
+import { DelegatesExplorerService } from './services/delegates-explorer.service';
+import { ResolversExplorerService } from './services/resolvers-explorer.service';
+import { ScalarsExplorerService } from './services/scalars-explorer.service';
+import { extend } from './utils/extend.util';
 
 @Injectable()
 export class GraphQLFactory {
   constructor(
     private readonly resolversExplorerService: ResolversExplorerService,
+    private readonly delegatesExplorerService: DelegatesExplorerService,
+    private readonly scalarsExplorerService: ScalarsExplorerService,
   ) {}
 
-  createSchema(
-    schemaDefintion: IExecutableSchemaDefinition = { typeDefs: [] },
-  ) {
-    return makeExecutableSchema({
-      ...schemaDefintion,
-      resolvers: {
-        ...this.resolversExplorerService.explore(),
-        ...(schemaDefintion.resolvers || {}),
-      },
-    });
+  mergeOptions(options: GqlModuleOptions = { typeDefs: [] }): GqlModuleOptions {
+    const resolvers = extend(
+      this.scalarsExplorerService.explore(),
+      this.resolversExplorerService.explore(),
+    );
+    return {
+      ...options,
+      typeDefs: undefined,
+      schema: makeExecutableSchema({
+        resolvers: extend(resolvers, options.resolvers),
+        typeDefs: gql`
+          ${options.typeDefs}
+        `,
+      }),
+    };
   }
 
   createDelegates(): (mergeInfo: MergeInfo) => any {
-    return this.resolversExplorerService.exploreDelegates();
+    return this.delegatesExplorerService.explore();
   }
 
   mergeTypesByPaths(...pathsToTypes: string[]): string {
