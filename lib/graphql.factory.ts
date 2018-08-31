@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { gql, makeExecutableSchema } from 'apollo-server-express';
 import * as fs from 'fs';
 import * as glob from 'glob';
-import { makeExecutableSchema } from 'graphql-tools';
-import {
-  IExecutableSchemaDefinition,
-  MergeInfo,
-} from 'graphql-tools/dist/Interfaces';
+import { MergeInfo } from 'graphql-tools/dist/Interfaces';
 import { mergeTypes } from 'merge-graphql-schemas';
+import { GqlModuleOptions } from './interfaces/gql-module-options.interface';
 import { DelegatesExplorerService } from './services/delegates-explorer.service';
 import { ResolversExplorerService } from './services/resolvers-explorer.service';
 import { ScalarsExplorerService } from './services/scalars-explorer.service';
@@ -20,17 +18,21 @@ export class GraphQLFactory {
     private readonly scalarsExplorerService: ScalarsExplorerService,
   ) {}
 
-  createSchema(
-    schemaDefintion: IExecutableSchemaDefinition = { typeDefs: [] },
-  ) {
+  mergeOptions(options: GqlModuleOptions = { typeDefs: [] }): GqlModuleOptions {
     const resolvers = extend(
       this.scalarsExplorerService.explore(),
       this.resolversExplorerService.explore(),
     );
-    return makeExecutableSchema({
-      ...schemaDefintion,
-      resolvers: extend(resolvers, schemaDefintion.resolvers),
-    });
+    return {
+      ...options,
+      typeDefs: undefined,
+      schema: makeExecutableSchema({
+        resolvers: extend(resolvers, options.resolvers),
+        typeDefs: gql`
+          ${options.typeDefs}
+        `,
+      }),
+    };
   }
 
   createDelegates(): (mergeInfo: MergeInfo) => any {

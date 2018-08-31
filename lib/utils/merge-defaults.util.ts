@@ -1,25 +1,16 @@
-import { GraphQLModuleOptions } from '../graphql.module';
-import { extend } from './extend.util';
+import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 
-const defaultOptions: GraphQLModuleOptions = {
+const defaultOptions: GqlModuleOptions = {
   path: '/graphql',
-  rootValueResolver: req => req,
   typePaths: ['**/*.graphql'],
-  contextResolver: req => undefined,
-  graphiQl: {
-    endpointURL: '/graphql',
-    path: '/graphiql',
-  },
 };
 
 export function mergeDefaults(
-  options: GraphQLModuleOptions,
-  defaults: GraphQLModuleOptions = defaultOptions,
-): GraphQLModuleOptions {
-  const graphiQl = extend(options.graphiQl, defaults.graphiQl);
+  options: GqlModuleOptions,
+  defaults: GqlModuleOptions = defaultOptions,
+): GqlModuleOptions {
   return {
     ...defaults,
     ...options,
-    graphiQl,
   };
 }

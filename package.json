@@ -1,7 +1,8 @@
 {
   "name": "@nestjs/graphql",
-  "version": "3.0.0",
-  "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
+  "version": "5.0.0",
+  "description":
+    "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "scripts": {
@@ -11,35 +12,32 @@
     "publish:npm": "npm publish --access public"
   },
   "devDependencies": {
-    "@nestjs/common": "^5.0.0",
-    "@nestjs/core": "^5.0.0",
-    "@types/node": "^7.0.41",
-    "apollo-server-express": "^1.3.6",
-    "graphql": "^0.11.7",
+    "@nestjs/common": "^5.1.0",
+    "@nestjs/core": "^5.1.0",
+    "@types/node": "^10.7.1",
+    "apollo-server-express": "^2.0.4",
+    "graphql": "^0.13.2",
     "husky": "^0.14.3",
     "lint-staged": "^7.0.0",
     "prettier": "^1.11.1",
     "reflect-metadata": "^0.1.12",
-    "ts-node": "^3.3.0",
-    "typescript": "^2.8.0"
+    "ts-node": "^7.0.1",
+    "typescript": "^3.0.1"
   },
   "dependencies": {
     "glob": "^7.1.2",
-    "graphql-tools": "^2.11.0",
+    "graphql-tools": "^3.1.1",
     "lodash": "^4.17.4",
     "merge-graphql-schemas": "^1.3.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^5.0.0",
     "@nestjs/core": "^5.0.0",
-    "apollo-server-express": "^1.3.6",
-    "graphql": "^0.11.7",
+    "apollo-server-express": "^2.0.4",
+    "graphql": "^0.13.2",
     "reflect-metadata": "^0.1.12"
   },
   "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.ts": ["prettier --write", "git add"]
   }
 }

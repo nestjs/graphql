@@ -3,13 +3,16 @@ import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { SUBSCRIPTION_TYPE } from '../graphql.constants';
+import { GqlParamsFactory } from '../factories/params.factory';
+import { PARAM_ARGS_METADATA, SUBSCRIPTION_TYPE } from '../graphql.constants';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
+  private readonly gqlParamsFactory = new GqlParamsFactory();
+
   constructor(
     private readonly modulesContainer: ModulesContainer,
     private readonly metadataScanner: MetadataScanner,
@@ -29,6 +32,9 @@ export class ResolversExplorerService extends BaseExplorerService {
   }
 
   filterResolvers(instance: Object): ResolverMetadata[] {
+    if (!instance) {
+      return undefined;
+    }
     const prototype = Object.getPrototypeOf(instance);
     const predicate = (resolverType, isDelegated) =>
       isUndefined(resolverType) || isDelegated;
@@ -48,6 +54,8 @@ export class ResolversExplorerService extends BaseExplorerService {
         instance,
         prototype[resolver.methodName],
         resolver.methodName,
+        PARAM_ARGS_METADATA,
+        this.gqlParamsFactory,
       );
       return {
         ...resolver,

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
@@ -13,7 +12,6 @@ export class DelegatesExplorerService extends BaseExplorerService {
   constructor(
     private readonly modulesContainer: ModulesContainer,
     private readonly metadataScanner: MetadataScanner,
-    private readonly externalContextCreator: ExternalContextCreator,
   ) {
     super();
   }
@@ -29,6 +27,9 @@ export class DelegatesExplorerService extends BaseExplorerService {
   }
 
   filterDelegates(instance: Object): ResolverMetadata[] {
+    if (!instance) {
+      return undefined;
+    }
     const prototype = Object.getPrototypeOf(instance);
     const predicate = (resolverType, isDelegated) => !isDelegated;
     const resolvers = this.metadataScanner.scanFromPrototype(

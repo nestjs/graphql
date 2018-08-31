@@ -1,17 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { SCALAR_NAME_METADATA } from '../graphql.constants';
 import { BaseExplorerService } from './base-explorer.service';
 
 @Injectable()
 export class ScalarsExplorerService extends BaseExplorerService {
-  constructor(
-    private readonly modulesContainer: ModulesContainer,
-    private readonly metadataScanner: MetadataScanner,
-    private readonly externalContextCreator: ExternalContextCreator,
-  ) {
+  constructor(private readonly modulesContainer: ModulesContainer) {
     super();
   }
 
@@ -23,16 +17,17 @@ export class ScalarsExplorerService extends BaseExplorerService {
   }
 
   filterScalar(instance: Object) {
+    if (!instance) {
+      return undefined;
+    }
     const scalarName = Reflect.getMetadata(
       SCALAR_NAME_METADATA,
       instance.constructor,
     );
-
-    if (!scalarName) {
-      return undefined;
-    }
-    return {
-      [scalarName]: instance,
-    };
+    return scalarName
+      ? {
+          [scalarName]: instance,
+        }
+      : undefined;
   }
 }
