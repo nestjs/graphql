@@ -3,6 +3,7 @@ import { gql, makeExecutableSchema } from 'apollo-server-express';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
+import { flatten } from 'lodash';
 import { mergeTypes } from 'merge-graphql-schemas';
 import { GqlModuleOptions } from './interfaces/gql-module-options.interface';
 import { DelegatesExplorerService } from './services/delegates-explorer.service';
@@ -40,7 +41,9 @@ export class GraphQLFactory {
   }
 
   mergeTypesByPaths(...pathsToTypes: string[]): string {
-    return mergeTypes(...pathsToTypes.map(pattern => this.loadFiles(pattern)));
+    return mergeTypes(
+      flatten(pathsToTypes.map(pattern => this.loadFiles(pattern))),
+    );
   }
 
   private loadFiles(pattern: string): any[] {

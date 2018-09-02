@@ -30,11 +30,7 @@ export function createPropertyDecorator(
       key,
       descriptor,
     );
-    ReflectMetadata(RESOLVER_PROPERTY_METADATA, propertyName)(
-      target,
-      key,
-      descriptor,
-    );
+    ReflectMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
   };
 }
 

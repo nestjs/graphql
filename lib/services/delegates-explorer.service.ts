@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
 import { mapValues } from 'lodash';
+import { GRAPHQL_MODULE_OPTIONS } from '../graphql.constants';
+import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
@@ -12,13 +14,16 @@ export class DelegatesExplorerService extends BaseExplorerService {
   constructor(
     private readonly modulesContainer: ModulesContainer,
     private readonly metadataScanner: MetadataScanner,
+    @Inject(GRAPHQL_MODULE_OPTIONS)
+    private readonly gqlOptions: GqlModuleOptions,
   ) {
     super();
   }
 
   explore() {
-    const modules = [...this.modulesContainer.values()].map(
-      module => module.components,
+    const modules = this.getModules(
+      this.modulesContainer,
+      this.gqlOptions.include || [],
     );
     const delegates = this.flatMap(modules, instance =>
       this.filterDelegates(instance),

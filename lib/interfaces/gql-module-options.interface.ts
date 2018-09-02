@@ -8,6 +8,7 @@ export interface GqlModuleOptions
       Pick<ServerRegistration, 'onHealthCheck' | 'disableHealthCheck' | 'path'>
     > {
   typePaths?: string[];
+  include?: Function[];
   installSubscriptionHandlers?: boolean;
 }
 
