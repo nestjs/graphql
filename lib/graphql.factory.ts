@@ -24,22 +24,41 @@ export class GraphQLFactory {
       this.scalarsExplorerService.explore(),
       this.resolversExplorerService.explore(),
     );
-    const schema = makeExecutableSchema({
-      resolvers: extend(resolvers, options.resolvers),
-      typeDefs: gql`
-        ${options.typeDefs}
-      `,
-    })
     
+    let schema
+    
+    try {
+      schema = makeExecutableSchema({
+        resolvers: extend(resolvers, options.resolvers),
+        typeDefs: gql`
+          ${options.typeDefs}
+        `,
+      });
+      
+      // if we had an original schema, then merge both through the use of schema stitching
+      // you could also opt to do it yourself though
+      if (options.schema) {
+        schema = mergeSchemas({
+          schemas: [
+            options.schema,
+            schema
+          ]
+          // XXX: Type resolution not yet implemented, please use mergeSchemas yourself
+        });
+      }
+    } catch (err) {
+      // if the original schema is still there, use it as a fallback
+      if (options.schema) {
+        schema = options.schema
+      } else {
+        throw err; // otherwise re-throw it
+      }
+    }
+   
     return {
       ...options,
       typeDefs: undefined,
-      schema: options.schema ? mergeSchemas({
-        schemas: [
-          options.schema,
-          schema
-        ],
-      }) : schema
+      schema
     };
   }
 
