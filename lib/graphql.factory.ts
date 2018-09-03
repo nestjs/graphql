@@ -25,7 +25,7 @@ export class GraphQLFactory {
       this.resolversExplorerService.explore(),
     );
     
-    let schema
+    let schema;
     
     try {
       schema = makeExecutableSchema({
@@ -49,7 +49,7 @@ export class GraphQLFactory {
     } catch (err) {
       // if the original schema is still there, use it as a fallback
       if (options.schema) {
-        schema = options.schema
+        schema = options.schema;
       } else {
         throw err; // otherwise re-throw it
       }
