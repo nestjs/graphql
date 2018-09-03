@@ -8,7 +8,7 @@ import {
 import { HTTP_SERVER_REF } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
-import { APOLLO_SERVER_REF, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
+import { GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
   GqlModuleAsyncOptions,
@@ -32,13 +32,12 @@ import { mergeDefaults } from './utils/merge-defaults.util';
   exports: [GraphQLFactory, ResolversExplorerService],
 })
 export class GraphQLModule implements OnModuleInit {
+  protected apolloServer: ApolloServer;
   constructor(
-    @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
     @Inject(HTTP_SERVER_REF) private httpServer: HttpServer,
-    @Inject(APOLLO_SERVER_REF) private readonly apolloServer: ApolloServer,
-  ) {
-    this.init();
-  }
+    @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
+    private readonly graphQLFactory: GraphQLFactory,
+  ) {}
 
   static forRoot(options: GqlModuleOptions = {}): DynamicModule {
     options = mergeDefaults(options);
@@ -49,22 +48,7 @@ export class GraphQLModule implements OnModuleInit {
           provide: GRAPHQL_MODULE_OPTIONS,
           useValue: options,
         },
-        {
-          provide: APOLLO_SERVER_REF,
-          useFactory: (graphQLFactory: GraphQLFactory) => {
-            const typeDefs = graphQLFactory.mergeTypesByPaths(
-              ...(options.typePaths || []),
-            );
-            const config = graphQLFactory.mergeOptions({
-              ...options,
-              typeDefs: extend(typeDefs, options.typeDefs),
-            });
-            return new ApolloServer(config);
-          },
-          inject: [GraphQLFactory],
-        },
       ],
-      exports: [APOLLO_SERVER_REF],
     };
   }
 
@@ -72,27 +56,7 @@ export class GraphQLModule implements OnModuleInit {
     return {
       module: GraphQLModule,
       imports: options.imports,
-      providers: [
-        ...this.createAsyncProviders(options),
-        {
-          provide: APOLLO_SERVER_REF,
-          useFactory: async (
-            configuration: GqlModuleOptions,
-            graphQLFactory: GraphQLFactory,
-          ) => {
-            const typeDefs = graphQLFactory.mergeTypesByPaths(
-              ...(configuration.typePaths || []),
-            );
-            const config = graphQLFactory.mergeOptions({
-              ...configuration,
-              typeDefs: extend(typeDefs, configuration.typeDefs),
-            });
-            return new ApolloServer(config);
-          },
-          inject: [GRAPHQL_MODULE_OPTIONS, GraphQLFactory],
-        },
-      ],
-      exports: [APOLLO_SERVER_REF],
+      providers: [...this.createAsyncProviders(options)],
     };
   }
 
@@ -129,19 +93,26 @@ export class GraphQLModule implements OnModuleInit {
     };
   }
 
-  init() {
+  onModuleInit() {
     const { path, disableHealthCheck, onHealthCheck } = this.options;
     const app = this.httpServer.getInstance();
 
+    const typeDefs = this.graphQLFactory.mergeTypesByPaths(
+      ...(this.options.typePaths || []),
+    );
+    const apolloOptions = this.graphQLFactory.mergeOptions({
+      ...this.options,
+      typeDefs: extend(typeDefs, this.options.typeDefs),
+    });
+
+    this.apolloServer = new ApolloServer(apolloOptions as any);
     this.apolloServer.applyMiddleware({
       app,
       path,
       disableHealthCheck,
       onHealthCheck,
     });
-  }
 
-  onModuleInit() {
     if (this.options.installSubscriptionHandlers) {
       this.apolloServer.installSubscriptionHandlers(
         this.httpServer.getHttpServer(),

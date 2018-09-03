@@ -2,11 +2,13 @@ import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { Config, ServerRegistration } from 'apollo-server-express';
 
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export interface GqlModuleOptions
-  extends Config,
+  extends Omit<Config, 'typeDefs'>,
     Partial<
       Pick<ServerRegistration, 'onHealthCheck' | 'disableHealthCheck' | 'path'>
     > {
+  typeDefs?: string | string[];
   typePaths?: string[];
   include?: Function[];
   installSubscriptionHandlers?: boolean;

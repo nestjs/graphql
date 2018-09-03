@@ -6,6 +6,4 @@ export const SCALAR_NAME_METADATA = 'graphql:scalar';
 export const PARAM_ARGS_METADATA = '__routeArguments__';
 
 export const GRAPHQL_MODULE_OPTIONS = 'GqlModuleOptions';
-export const APOLLO_SERVER_REF = 'ApolloServer';
-
 export const SUBSCRIPTION_TYPE = 'Subscription';
