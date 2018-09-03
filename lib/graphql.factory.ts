@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { gql, makeExecutableSchema } from 'apollo-server-express';
+import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
@@ -19,20 +19,31 @@ export class GraphQLFactory {
     private readonly scalarsExplorerService: ScalarsExplorerService,
   ) {}
 
-  mergeOptions(options: GqlModuleOptions = { typeDefs: [] }): GqlModuleOptions {
+  async mergeOptions(
+    options: GqlModuleOptions = { typeDefs: [] },
+  ): Promise<GqlModuleOptions> {
     const resolvers = extend(
       this.scalarsExplorerService.explore(),
       this.resolversExplorerService.explore(),
     );
+
+    const execuableSchema = makeExecutableSchema({
+      resolvers: extend(resolvers, options.resolvers),
+      typeDefs: gql`
+        ${options.typeDefs}
+      `,
+    });
+    const schema = options.schema
+      ? mergeSchemas({
+          schemas: [options.schema, execuableSchema],
+        })
+      : execuableSchema;
     return {
       ...options,
       typeDefs: undefined,
-      schema: makeExecutableSchema({
-        resolvers: extend(resolvers, options.resolvers),
-        typeDefs: gql`
-          ${options.typeDefs}
-        `,
-      }),
+      schema: options.transformSchema
+        ? await options.transformSchema(schema)
+        : schema,
     };
   }
 

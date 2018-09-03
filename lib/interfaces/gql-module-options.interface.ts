@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { Config, ServerRegistration } from 'apollo-server-express';
+import { GraphQLSchema } from 'graphql';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export interface GqlModuleOptions
@@ -12,6 +13,9 @@ export interface GqlModuleOptions
   typePaths?: string[];
   include?: Function[];
   installSubscriptionHandlers?: boolean;
+  transformSchema?: (
+    schema: GraphQLSchema,
+  ) => GraphQLSchema | Promise<GraphQLSchema>;
 }
 
 export interface GqlOptionsFactory {
