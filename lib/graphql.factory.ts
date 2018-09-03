@@ -19,46 +19,31 @@ export class GraphQLFactory {
     private readonly scalarsExplorerService: ScalarsExplorerService,
   ) {}
 
-  mergeOptions(options: GqlModuleOptions = { typeDefs: [] }): GqlModuleOptions {
+  async mergeOptions(
+    options: GqlModuleOptions = { typeDefs: [] },
+  ): Promise<GqlModuleOptions> {
     const resolvers = extend(
       this.scalarsExplorerService.explore(),
       this.resolversExplorerService.explore(),
     );
-    
-    let schema;
-    
-    try {
-      schema = makeExecutableSchema({
-        resolvers: extend(resolvers, options.resolvers),
-        typeDefs: gql`
-          ${options.typeDefs}
-        `,
-      });
-      
-      // if we had an original schema, then merge both through the use of schema stitching
-      // you could also opt to do it yourself though
-      if (options.schema) {
-        schema = mergeSchemas({
-          schemas: [
-            options.schema,
-            schema
-          ]
-          // XXX: Type resolution not yet implemented, please use mergeSchemas yourself
-        });
-      }
-    } catch (err) {
-      // if the original schema is still there, use it as a fallback
-      if (options.schema) {
-        schema = options.schema;
-      } else {
-        throw err; // otherwise re-throw it
-      }
-    }
-   
+
+    const execuableSchema = makeExecutableSchema({
+      resolvers: extend(resolvers, options.resolvers),
+      typeDefs: gql`
+        ${options.typeDefs}
+      `,
+    });
+    const schema = options.schema
+      ? mergeSchemas({
+          schemas: [options.schema, execuableSchema],
+        })
+      : execuableSchema;
     return {
       ...options,
       typeDefs: undefined,
-      schema
+      schema: options.transformSchema
+        ? await options.transformSchema(schema)
+        : schema,
     };
   }
 

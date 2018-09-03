@@ -93,14 +93,14 @@ export class GraphQLModule implements OnModuleInit {
     };
   }
 
-  onModuleInit() {
+  async onModuleInit() {
     const { path, disableHealthCheck, onHealthCheck } = this.options;
     const app = this.httpServer.getInstance();
 
     const typeDefs = this.graphQLFactory.mergeTypesByPaths(
       ...(this.options.typePaths || []),
     );
-    const apolloOptions = this.graphQLFactory.mergeOptions({
+    const apolloOptions = await this.graphQLFactory.mergeOptions({
       ...this.options,
       typeDefs: extend(typeDefs, this.options.typeDefs),
     });
