@@ -3,8 +3,9 @@ import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
 import * as fs from 'fs';
 import * as glob from 'glob';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
-import { flatten } from 'lodash';
+import { flatten, isEmpty } from 'lodash';
 import { mergeTypes } from 'merge-graphql-schemas';
+import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GqlModuleOptions } from './interfaces/gql-module-options.interface';
 import { DelegatesExplorerService } from './services/delegates-explorer.service';
 import { ResolversExplorerService } from './services/resolvers-explorer.service';
@@ -17,6 +18,7 @@ export class GraphQLFactory {
     private readonly resolversExplorerService: ResolversExplorerService,
     private readonly delegatesExplorerService: DelegatesExplorerService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
+    private readonly graphqlAstExplorer: GraphQLAstExplorer,
   ) {}
 
   async mergeOptions(
@@ -27,7 +29,16 @@ export class GraphQLFactory {
       this.resolversExplorerService.explore(),
     );
 
-    const execuableSchema = makeExecutableSchema({
+    if (isEmpty(options.typeDefs)) {
+      return {
+        ...options,
+        typeDefs: undefined,
+        schema: options.transformSchema
+          ? await options.transformSchema(options.schema)
+          : options.schema,
+      };
+    }
+    const executableSchema = makeExecutableSchema({
       resolvers: extend(resolvers, options.resolvers),
       typeDefs: gql`
         ${options.typeDefs}
@@ -35,9 +46,10 @@ export class GraphQLFactory {
     });
     const schema = options.schema
       ? mergeSchemas({
-          schemas: [options.schema, execuableSchema],
+          schemas: [options.schema, executableSchema],
         })
-      : execuableSchema;
+      : executableSchema;
+
     return {
       ...options,
       typeDefs: undefined,
@@ -54,7 +66,21 @@ export class GraphQLFactory {
   mergeTypesByPaths(...pathsToTypes: string[]): string {
     return mergeTypes(
       flatten(pathsToTypes.map(pattern => this.loadFiles(pattern))),
+      { all: true },
     );
+  }
+
+  async generateDefinitions(typeDefs: string | string[], outputPath: string) {
+    if (isEmpty(typeDefs)) {
+      return;
+    }
+    const tsFile = this.graphqlAstExplorer.explore(
+      gql`
+        ${typeDefs}
+      `,
+      outputPath,
+    );
+    await tsFile.save();
   }
 
   private loadFiles(pattern: string): any[] {

@@ -8,6 +8,8 @@ import {
 import { HTTP_SERVER_REF } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
+import { isEmpty } from 'lodash';
+import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
@@ -28,6 +30,7 @@ import { mergeDefaults } from './utils/merge-defaults.util';
     ResolversExplorerService,
     DelegatesExplorerService,
     ScalarsExplorerService,
+    GraphQLAstExplorer,
   ],
   exports: [GraphQLFactory, ResolversExplorerService],
 })
@@ -97,14 +100,24 @@ export class GraphQLModule implements OnModuleInit {
     const { path, disableHealthCheck, onHealthCheck } = this.options;
     const app = this.httpServer.getInstance();
 
-    const typeDefs = this.graphQLFactory.mergeTypesByPaths(
-      ...(this.options.typePaths || []),
-    );
+    const typePathsExists =
+      this.options.typePaths && !isEmpty(this.options.typePaths);
+    const typeDefs = typePathsExists
+      ? this.graphQLFactory.mergeTypesByPaths(...(this.options.typePaths || []))
+      : [];
+
+    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
     const apolloOptions = await this.graphQLFactory.mergeOptions({
       ...this.options,
-      typeDefs: extend(typeDefs, this.options.typeDefs),
+      typeDefs: mergedTypeDefs,
     });
 
+    if (this.options.definitionsOutput) {
+      await this.graphQLFactory.generateDefinitions(
+        mergedTypeDefs,
+        this.options.definitionsOutput,
+      );
+    }
     this.apolloServer = new ApolloServer(apolloOptions as any);
     this.apolloServer.applyMiddleware({
       app,

@@ -16,6 +16,7 @@ export interface GqlModuleOptions
   transformSchema?: (
     schema: GraphQLSchema,
   ) => GraphQLSchema | Promise<GraphQLSchema>;
+  definitionsOutput?: string;
 }
 
 export interface GqlOptionsFactory {
