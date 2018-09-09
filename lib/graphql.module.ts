@@ -1,15 +1,16 @@
 import { Inject, Module } from '@nestjs/common';
 import {
   DynamicModule,
-  HttpServer,
   OnModuleInit,
   Provider,
 } from '@nestjs/common/interfaces';
-import { HTTP_SERVER_REF } from '@nestjs/core';
+import { ApplicationReferenceHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
+import { printSchema } from 'graphql';
 import { isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
+import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
@@ -31,15 +32,17 @@ import { mergeDefaults } from './utils/merge-defaults.util';
     DelegatesExplorerService,
     ScalarsExplorerService,
     GraphQLAstExplorer,
+    GraphQLTypesLoader,
   ],
-  exports: [GraphQLFactory, ResolversExplorerService],
+  exports: [GraphQLTypesLoader, GraphQLAstExplorer],
 })
 export class GraphQLModule implements OnModuleInit {
   protected apolloServer: ApolloServer;
   constructor(
-    @Inject(HTTP_SERVER_REF) private httpServer: HttpServer,
+    private readonly appRefHost: ApplicationReferenceHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
     private readonly graphQLFactory: GraphQLFactory,
+    private readonly graphqlTypesLoader: GraphQLTypesLoader,
   ) {}
 
   static forRoot(options: GqlModuleOptions = {}): DynamicModule {
@@ -97,13 +100,22 @@ export class GraphQLModule implements OnModuleInit {
   }
 
   async onModuleInit() {
+    if (!this.appRefHost) {
+      return;
+    }
+    const httpServer = this.appRefHost.applicationRef;
+    if (!httpServer) {
+      return;
+    }
     const { path, disableHealthCheck, onHealthCheck } = this.options;
-    const app = this.httpServer.getInstance();
+    const app = httpServer.getInstance();
 
     const typePathsExists =
       this.options.typePaths && !isEmpty(this.options.typePaths);
     const typeDefs = typePathsExists
-      ? this.graphQLFactory.mergeTypesByPaths(...(this.options.typePaths || []))
+      ? this.graphqlTypesLoader.mergeTypesByPaths(
+          ...(this.options.typePaths || []),
+        )
       : [];
 
     const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
@@ -112,10 +124,10 @@ export class GraphQLModule implements OnModuleInit {
       typeDefs: mergedTypeDefs,
     });
 
-    if (this.options.definitionsOutput) {
+    if (this.options.definitions && this.options.definitions.path) {
       await this.graphQLFactory.generateDefinitions(
-        mergedTypeDefs,
-        this.options.definitionsOutput,
+        printSchema(apolloOptions.schema),
+        this.options,
       );
     }
     this.apolloServer = new ApolloServer(apolloOptions as any);
@@ -127,9 +139,7 @@ export class GraphQLModule implements OnModuleInit {
     });
 
     if (this.options.installSubscriptionHandlers) {
-      this.apolloServer.installSubscriptionHandlers(
-        this.httpServer.getHttpServer(),
-      );
+      this.apolloServer.installSubscriptionHandlers(httpServer.getHttpServer());
     }
   }
 }

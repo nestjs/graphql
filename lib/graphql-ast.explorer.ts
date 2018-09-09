@@ -14,40 +14,57 @@ import {
   TypeSystemDefinitionNode,
   UnionTypeDefinitionNode,
 } from 'graphql';
-import { get, isEmpty, map, upperFirst } from 'lodash';
+import { get, isEmpty, map, sortBy, upperFirst } from 'lodash';
 import TypeScriptAst, {
+  ClassDeclaration,
+  ClassDeclarationStructure,
   InterfaceDeclaration,
+  InterfaceDeclarationStructure,
   ParameterDeclarationStructure,
   SourceFile,
 } from 'ts-simple-ast';
 
 @Injectable()
 export class GraphQLAstExplorer {
-  explore(documentNode: DocumentNode, outputPath: string): SourceFile {
+  explore(
+    documentNode: DocumentNode,
+    outputPath: string,
+    mode: 'class' | 'interface',
+  ): SourceFile {
     if (!documentNode) {
       return;
     }
-    const { definitions } = documentNode;
-
     const tsAstHelper = new TypeScriptAst();
     const tsFile = tsAstHelper.createSourceFile(outputPath, '', {
       overwrite: true,
     });
 
+    let { definitions } = documentNode;
+    definitions = sortBy(definitions, 'kind');
+
     definitions.forEach(item =>
-      this.lookupDefinition(item as TypeSystemDefinitionNode, tsFile),
+      this.lookupDefinition(item as TypeSystemDefinitionNode, tsFile, mode),
     );
     return tsFile;
   }
 
-  lookupDefinition(item: TypeSystemDefinitionNode, tsFile: SourceFile) {
+  lookupDefinition(
+    item: TypeSystemDefinitionNode,
+    tsFile: SourceFile,
+    mode: 'class' | 'interface',
+  ) {
     switch (item.kind) {
       case 'SchemaDefinition':
-        return this.lookupRootSchemaDefinition(item.operationTypes, tsFile);
+        return this.lookupRootSchemaDefinition(
+          item.operationTypes,
+          tsFile,
+          mode,
+        );
       case 'ObjectTypeDefinition':
       case 'InputObjectTypeDefinition':
+        return this.addObjectTypeDefinition(item, tsFile, mode);
       case 'InterfaceTypeDefinition':
-        return this.addObjectTypeDefinition(item, tsFile);
+        return this.addObjectTypeDefinition(item, tsFile, 'interface');
       case 'ScalarTypeDefinition':
         return this.addScalarDefinition(item, tsFile);
       case 'EnumTypeDefinition':
@@ -60,9 +77,10 @@ export class GraphQLAstExplorer {
   lookupRootSchemaDefinition(
     operationTypes: OperationTypeDefinitionNode[],
     tsFile: SourceFile,
+    mode: 'class' | 'interface',
   ) {
-    const rootInterface = tsFile.addInterface({
-      name: 'GqlSchema',
+    const rootInterface = this.addClassOrInterface(tsFile, mode, {
+      name: 'ISchema',
       isExported: true,
     });
     operationTypes.forEach(item => {
@@ -72,11 +90,11 @@ export class GraphQLAstExplorer {
       const tempOperationName = item.operation;
       const typeName = get(item, 'type.name.value');
       const interfaceName = typeName || tempOperationName;
-      const interfaceRef = tsFile.addInterface({
-        name: upperFirst(interfaceName),
+      const interfaceRef = this.addClassOrInterface(tsFile, mode, {
+        name: this.addSymbolIfRoot(upperFirst(interfaceName)),
         isExported: true,
       });
-      rootInterface.addProperty({
+      (rootInterface as InterfaceDeclaration).addProperty({
         name: interfaceName,
         type: interfaceRef.getName(),
       });
@@ -89,64 +107,72 @@ export class GraphQLAstExplorer {
       | InputObjectTypeDefinitionNode
       | InterfaceTypeDefinitionNode,
     tsFile: SourceFile,
+    mode: 'class' | 'interface',
   ) {
     const parentName = get(item, 'name.value');
     if (!parentName) {
       return;
     }
-    let parentRef = tsFile.getInterface(parentName);
+    let parentRef = this.getClassOrInterface(
+      tsFile,
+      mode,
+      this.addSymbolIfRoot(parentName),
+    );
     if (!parentRef) {
-      parentRef = tsFile.addInterface({
-        name: upperFirst(parentName),
+      parentRef = this.addClassOrInterface(tsFile, mode, {
+        name: this.addSymbolIfRoot(upperFirst(parentName)),
         isExported: true,
       });
     }
     const interfaces = get(item, 'interfaces');
     if (interfaces) {
-      this.addExtendInterfaces(interfaces, parentRef);
+      if (mode === 'class') {
+        this.addImplementsInterfaces(interfaces, parentRef as ClassDeclaration);
+      } else {
+        this.addExtendInterfaces(interfaces, parentRef as InterfaceDeclaration);
+      }
     }
     ((item.fields || []) as any).forEach(element => {
-      this.lookupFieldDefiniton(element, tsFile, parentRef);
+      this.lookupFieldDefiniton(element, parentRef);
     });
   }
 
   lookupFieldDefiniton(
     item: FieldDefinitionNode | InputValueDefinitionNode,
-    tsFile: SourceFile,
-    parentRef: InterfaceDeclaration,
+    parentRef: InterfaceDeclaration | ClassDeclaration,
   ) {
     switch (item.kind) {
       case 'FieldDefinition':
       case 'InputValueDefinition':
-        return this.lookupField(item, tsFile, parentRef);
+        return this.lookupField(item, parentRef);
     }
   }
 
   lookupField(
     item: FieldDefinitionNode | InputValueDefinitionNode,
-    tsFile: SourceFile,
-    parentRef: InterfaceDeclaration,
+    parentRef: InterfaceDeclaration | ClassDeclaration,
   ) {
     const propertyName = get(item, 'name.value');
     if (!propertyName) {
       return;
     }
     const isFunction =
-      (item as FieldDefinitionNode).arguments &&
-      !isEmpty((item as FieldDefinitionNode).arguments);
+      ((item as FieldDefinitionNode).arguments &&
+        !isEmpty((item as FieldDefinitionNode).arguments)) ||
+      this.isRoot(parentRef.getName());
 
     const { name: type, required } = this.getFieldTypeDefinition(item.type);
     if (!isFunction) {
-      parentRef.addProperty({
+      (parentRef as InterfaceDeclaration).addProperty({
         name: propertyName,
         type,
         hasQuestionToken: !required,
       });
       return;
     }
-    parentRef.addMethod({
+    (parentRef as InterfaceDeclaration).addMethod({
       name: propertyName,
-      returnType: type,
+      returnType: `${type} | Promise<${type}>`,
       parameters: this.getFunctionParameters(
         (item as FieldDefinitionNode).arguments,
       ),
@@ -217,6 +243,9 @@ export class GraphQLAstExplorer {
   getFunctionParameters(
     inputs: InputValueDefinitionNode[],
   ): ParameterDeclarationStructure[] {
+    if (!inputs) {
+      return [];
+    }
     return inputs.map(element => {
       const { name, required } = this.getFieldTypeDefinition(element.type);
       return {
@@ -240,16 +269,31 @@ export class GraphQLAstExplorer {
   }
 
   addExtendInterfaces(
-    intefaces: NamedTypeNode[],
+    interfaces: NamedTypeNode[],
     parentRef: InterfaceDeclaration,
   ) {
-    if (!intefaces) {
+    if (!interfaces) {
       return;
     }
-    intefaces.forEach(element => {
+    interfaces.forEach(element => {
       const interfaceName = get(element, 'name.value');
       if (interfaceName) {
         parentRef.addExtends(interfaceName);
+      }
+    });
+  }
+
+  addImplementsInterfaces(
+    interfaces: NamedTypeNode[],
+    parentRef: ClassDeclaration,
+  ) {
+    if (!interfaces) {
+      return;
+    }
+    interfaces.forEach(element => {
+      const interfaceName = get(element, 'name.value');
+      if (interfaceName) {
+        parentRef.addImplements(interfaceName);
       }
     });
   }
@@ -281,5 +325,32 @@ export class GraphQLAstExplorer {
       type: types.join(' | '),
       isExported: true,
     });
+  }
+
+  addSymbolIfRoot(name: string): string {
+    const root = ['Query', 'Mutation', 'Subscription'];
+    return root.indexOf(name) >= 0 ? `I${name}` : name;
+  }
+
+  isRoot(name: string): boolean {
+    return ['IQuery', 'IMutation', 'ISubscription'].indexOf(name) >= 0;
+  }
+
+  addClassOrInterface(
+    tsFile: SourceFile,
+    mode: 'class' | 'interface',
+    options: InterfaceDeclarationStructure | ClassDeclarationStructure,
+  ): InterfaceDeclaration | ClassDeclaration {
+    return mode === 'class'
+      ? tsFile.addClass(options as ClassDeclarationStructure)
+      : tsFile.addInterface(options as InterfaceDeclarationStructure);
+  }
+
+  getClassOrInterface(
+    tsFile: SourceFile,
+    mode: 'class' | 'interface',
+    name: string,
+  ): InterfaceDeclaration | ClassDeclaration {
+    return mode === 'class' ? tsFile.getClass(name) : tsFile.getInterface(name);
   }
 }

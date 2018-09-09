@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
+import { GraphQLScalarType } from 'graphql';
 import { GqlModuleOptions } from '..';
 import {
   GRAPHQL_MODULE_OPTIONS,
@@ -29,13 +30,15 @@ export class ScalarsExplorerService extends BaseExplorerService {
     if (!instance) {
       return undefined;
     }
-    const scalarName = Reflect.getMetadata(
+    const customScalarName = Reflect.getMetadata(
       SCALAR_NAME_METADATA,
       instance.constructor,
     );
-    return scalarName
+    return customScalarName
       ? {
-          [scalarName]: instance,
+          [customScalarName]: new GraphQLScalarType(
+            Object.assign<any, any>(instance, { name: customScalarName }),
+          ),
         }
       : undefined;
   }

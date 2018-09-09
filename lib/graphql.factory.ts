@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
-import * as fs from 'fs';
-import * as glob from 'glob';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
-import { flatten, isEmpty } from 'lodash';
-import { mergeTypes } from 'merge-graphql-schemas';
+import { isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GqlModuleOptions } from './interfaces/gql-module-options.interface';
 import { DelegatesExplorerService } from './services/delegates-explorer.service';
@@ -43,6 +40,7 @@ export class GraphQLFactory {
       typeDefs: gql`
         ${options.typeDefs}
       `,
+      resolverValidationOptions: options.resolverValidationOptions,
     });
     const schema = options.schema
       ? mergeSchemas({
@@ -63,28 +61,20 @@ export class GraphQLFactory {
     return this.delegatesExplorerService.explore();
   }
 
-  mergeTypesByPaths(...pathsToTypes: string[]): string {
-    return mergeTypes(
-      flatten(pathsToTypes.map(pattern => this.loadFiles(pattern))),
-      { all: true },
-    );
-  }
-
-  async generateDefinitions(typeDefs: string | string[], outputPath: string) {
-    if (isEmpty(typeDefs)) {
+  async generateDefinitions(
+    typeDefs: string | string[],
+    options: GqlModuleOptions,
+  ) {
+    if (isEmpty(typeDefs) || !options.definitions) {
       return;
     }
     const tsFile = this.graphqlAstExplorer.explore(
       gql`
         ${typeDefs}
       `,
-      outputPath,
+      options.definitions.path,
+      options.definitions.outputAs,
     );
     await tsFile.save();
-  }
-
-  private loadFiles(pattern: string): any[] {
-    const paths = glob.sync(pattern);
-    return paths.map(path => fs.readFileSync(path, 'utf8'));
   }
 }

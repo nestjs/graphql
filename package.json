@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "5.1.2",
+  "version": "5.2.0",
   "description":
     "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
@@ -12,11 +12,11 @@
     "publish:npm": "npm publish --access public"
   },
   "devDependencies": {
-    "@nestjs/common": "^5.3.2",
-    "@nestjs/core": "^5.3.2",
+    "@nestjs/common": "^5.3.6",
+    "@nestjs/core": "^5.3.6",
     "@types/node": "^10.7.1",
     "apollo-server-express": "^2.0.4",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.0.0",
     "prettier": "^1.11.1",
@@ -32,10 +32,10 @@
     "ts-simple-ast": "^14.4.2"
   },
   "peerDependencies": {
-    "@nestjs/common": "^5.3.2",
-    "@nestjs/core": "^5.3.2",
+    "@nestjs/common": "^5.3.6",
+    "@nestjs/core": "^5.3.6",
     "apollo-server-express": "^2.0.4",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.0",
     "reflect-metadata": "^0.1.12"
   },
   "lint-staged": {

@@ -8,6 +8,8 @@ export {
   Scalar,
   Subscription,
 } from './decorators/resolvers.decorators';
+export * from './graphql-ast.explorer';
+export * from './graphql-types.loader';
 export * from './graphql.factory';
 export * from './graphql.module';
 export {
