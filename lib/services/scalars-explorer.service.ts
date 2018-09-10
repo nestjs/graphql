@@ -26,19 +26,26 @@ export class ScalarsExplorerService extends BaseExplorerService {
     return this.flatMap<any>(modules, instance => this.filterScalar(instance));
   }
 
-  filterScalar(instance: Object) {
+  filterScalar<T extends any = any>(instance: T) {
     if (!instance) {
       return undefined;
     }
-    const customScalarName = Reflect.getMetadata(
+    const name = Reflect.getMetadata(
       SCALAR_NAME_METADATA,
       instance.constructor,
     );
-    return customScalarName
+    const bindContext = (fn: Function | undefined) =>
+      fn ? fn.bind(instance) : undefined;
+
+    return name
       ? {
-          [customScalarName]: new GraphQLScalarType(
-            Object.assign<any, any>(instance, { name: customScalarName }),
-          ),
+          [name]: new GraphQLScalarType({
+            name,
+            description: instance['description'],
+            parseValue: bindContext(instance.parseValue),
+            serialize: bindContext(instance.serialize),
+            parseLiteral: bindContext(instance.parseLiteral),
+          }),
         }
       : undefined;
   }
