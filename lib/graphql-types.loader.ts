@@ -7,8 +7,11 @@ import { mergeTypes } from 'merge-graphql-schemas';
 @Injectable()
 export class GraphQLTypesLoader {
   mergeTypesByPaths(...pathsToTypes: string[]): string {
+    /** Temporary workaround: https://github.com/okgrow/merge-graphql-schemas/issues/155 */
     return mergeTypes(
-      flatten(pathsToTypes.map(pattern => this.loadFiles(pattern))),
+      flatten(pathsToTypes.map(pattern => this.loadFiles(pattern))).concat(
+        `type Query { __temp: Boolean }`,
+      ),
       { all: true },
     );
   }
