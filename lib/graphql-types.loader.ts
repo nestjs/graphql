@@ -10,7 +10,7 @@ export class GraphQLTypesLoader {
     /** Temporary workaround: https://github.com/okgrow/merge-graphql-schemas/issues/155 */
     return mergeTypes(
       flatten(pathsToTypes.map(pattern => this.loadFiles(pattern))).concat(
-        `type Query { __temp: Boolean }`,
+        `type Query { temp__: Boolean }`,
       ),
       { all: true },
     );

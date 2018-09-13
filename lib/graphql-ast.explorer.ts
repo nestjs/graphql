@@ -26,6 +26,8 @@ import TypeScriptAst, {
 
 @Injectable()
 export class GraphQLAstExplorer {
+  private readonly root = ['Query', 'Mutation', 'Subscription'];
+
   explore(
     documentNode: DocumentNode,
     outputPath: string,
@@ -119,9 +121,11 @@ export class GraphQLAstExplorer {
       this.addSymbolIfRoot(parentName),
     );
     if (!parentRef) {
+      const isRoot = this.root.indexOf(parentName) >= 0;
       parentRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(parentName)),
         isExported: true,
+        isAbstract: isRoot && mode === 'class',
       });
     }
     const interfaces = get(item, 'interfaces');
@@ -133,24 +137,26 @@ export class GraphQLAstExplorer {
       }
     }
     ((item.fields || []) as any).forEach(element => {
-      this.lookupFieldDefiniton(element, parentRef);
+      this.lookupFieldDefiniton(element, parentRef, mode);
     });
   }
 
   lookupFieldDefiniton(
     item: FieldDefinitionNode | InputValueDefinitionNode,
     parentRef: InterfaceDeclaration | ClassDeclaration,
+    mode: 'class' | 'interface',
   ) {
     switch (item.kind) {
       case 'FieldDefinition':
       case 'InputValueDefinition':
-        return this.lookupField(item, parentRef);
+        return this.lookupField(item, parentRef, mode);
     }
   }
 
   lookupField(
     item: FieldDefinitionNode | InputValueDefinitionNode,
     parentRef: InterfaceDeclaration | ClassDeclaration,
+    mode: 'class' | 'interface',
   ) {
     const propertyName = get(item, 'name.value');
     if (!propertyName) {
@@ -170,7 +176,8 @@ export class GraphQLAstExplorer {
       });
       return;
     }
-    (parentRef as InterfaceDeclaration).addMethod({
+    (parentRef as ClassDeclaration).addMethod({
+      isAbstract: mode === 'class',
       name: propertyName,
       returnType: `${type} | Promise<${type}>`,
       parameters: this.getFunctionParameters(
@@ -328,8 +335,7 @@ export class GraphQLAstExplorer {
   }
 
   addSymbolIfRoot(name: string): string {
-    const root = ['Query', 'Mutation', 'Subscription'];
-    return root.indexOf(name) >= 0 ? `I${name}` : name;
+    return this.root.indexOf(name) >= 0 ? `I${name}` : name;
   }
 
   isRoot(name: string): boolean {
