@@ -6,4 +6,5 @@ export const SCALAR_NAME_METADATA = 'graphql:scalar';
 export const PARAM_ARGS_METADATA = '__routeArguments__';
 
 export const GRAPHQL_MODULE_OPTIONS = 'GqlModuleOptions';
+export const GRAPHQL_MODULE_ID = 'GqlModuleId';
 export const SUBSCRIPTION_TYPE = 'Subscription';

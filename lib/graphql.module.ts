@@ -11,7 +11,7 @@ import { printSchema } from 'graphql';
 import { isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
-import { GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
+import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
   GqlModuleAsyncOptions,
@@ -22,6 +22,7 @@ import { DelegatesExplorerService } from './services/delegates-explorer.service'
 import { ResolversExplorerService } from './services/resolvers-explorer.service';
 import { ScalarsExplorerService } from './services/scalars-explorer.service';
 import { extend } from './utils/extend.util';
+import { generateString } from './utils/generate-token.util';
 import { mergeDefaults } from './utils/merge-defaults.util';
 
 @Module({
@@ -62,7 +63,13 @@ export class GraphQLModule implements OnModuleInit {
     return {
       module: GraphQLModule,
       imports: options.imports,
-      providers: [...this.createAsyncProviders(options)],
+      providers: [
+        ...this.createAsyncProviders(options),
+        {
+          provide: GRAPHQL_MODULE_ID,
+          useValue: generateString(),
+        },
+      ],
     };
   }
 
