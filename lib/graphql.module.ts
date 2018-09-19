@@ -114,7 +114,13 @@ export class GraphQLModule implements OnModuleInit {
     if (!httpServer) {
       return;
     }
-    const { path, disableHealthCheck, onHealthCheck } = this.options;
+    const {
+      path,
+      disableHealthCheck,
+      onHealthCheck,
+      cors,
+      bodyParserConfig,
+    } = this.options;
     const app = httpServer.getInstance();
 
     const typePathsExists =
@@ -143,6 +149,8 @@ export class GraphQLModule implements OnModuleInit {
       path,
       disableHealthCheck,
       onHealthCheck,
+      cors,
+      bodyParserConfig,
     });
 
     if (this.options.installSubscriptionHandlers) {

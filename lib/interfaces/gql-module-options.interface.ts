@@ -11,7 +11,14 @@ export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export interface GqlModuleOptions
   extends Omit<Config, 'typeDefs'>,
     Partial<
-      Pick<ServerRegistration, 'onHealthCheck' | 'disableHealthCheck' | 'path'>
+      Pick<
+        ServerRegistration,
+        | 'onHealthCheck'
+        | 'disableHealthCheck'
+        | 'path'
+        | 'cors'
+        | 'bodyParserConfig'
+      >
     > {
   typeDefs?: string | string[];
   typePaths?: string[];
