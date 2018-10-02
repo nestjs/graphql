@@ -1,3 +1,4 @@
+import { existsSync, lstatSync, readFileSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
@@ -75,6 +76,12 @@ export class GraphQLFactory {
       options.definitions.path,
       options.definitions.outputAs,
     );
-    await tsFile.save();
+    if (
+      !existsSync(options.definitions.path) ||
+      !lstatSync(options.definitions.path).isFile() ||
+      readFileSync(options.definitions.path, 'utf8') !== tsFile.getText()
+    ) {
+      await tsFile.save();
+    }
   }
 }
