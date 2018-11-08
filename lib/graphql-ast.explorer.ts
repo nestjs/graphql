@@ -47,6 +47,9 @@ export class GraphQLAstExplorer {
     definitions.forEach(item =>
       this.lookupDefinition(item as TypeSystemDefinitionNode, tsFile, mode),
     );
+
+    tsFile.insertText(0, "/* tslint:disable */\n");
+
     return tsFile;
   }
 
