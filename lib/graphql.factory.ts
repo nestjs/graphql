@@ -37,6 +37,8 @@ export class GraphQLFactory {
     }
     const executableSchema = makeExecutableSchema({
       resolvers: extend(resolvers, options.resolvers),
+      directiveResolvers: options.directiveResolvers,
+      schemaDirectives: options.schemaDirectives,
       typeDefs: gql`
         ${options.typeDefs}
       `,
