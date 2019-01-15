@@ -1,6 +1,6 @@
-import { existsSync, lstatSync, readFileSync } from 'fs';
 import { Injectable } from '@nestjs/common';
 import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
+import { existsSync, lstatSync, readFileSync } from 'fs';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
 import { isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
@@ -39,7 +39,7 @@ export class GraphQLFactory {
     const executableSchema = makeExecutableSchema({
       resolvers: extend(resolvers, options.resolvers),
       directiveResolvers: options.directiveResolvers,
-      schemaDirectives: options.schemaDirectives,
+      schemaDirectives: options.schemaDirectives as any,
       typeDefs: gql`
         ${options.typeDefs}
       `,
