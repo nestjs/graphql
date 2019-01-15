@@ -23,6 +23,7 @@ import TypeScriptAst, {
   ParameterDeclarationStructure,
   SourceFile,
 } from 'ts-simple-ast';
+import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 
 @Injectable()
 export class GraphQLAstExplorer {
@@ -48,7 +49,7 @@ export class GraphQLAstExplorer {
       this.lookupDefinition(item as TypeSystemDefinitionNode, tsFile, mode),
     );
 
-    tsFile.insertText(0, '/* tslint:disable */\n');
+    tsFile.insertText(0, DEFINITIONS_FILE_HEADER);
     return tsFile;
   }
 

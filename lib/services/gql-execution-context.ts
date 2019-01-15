@@ -1,5 +1,5 @@
 import { ArgumentsHost, ExecutionContext } from '@nestjs/common';
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context.host';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 
 export interface GqlArgumentsHost extends ArgumentsHost {
   getRoot<T = any>(): T;

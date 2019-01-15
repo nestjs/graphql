@@ -18,3 +18,4 @@ export {
   GqlOptionsFactory,
 } from './interfaces/gql-module-options.interface';
 export * from './services/gql-execution-context';
+export * from './tokens';

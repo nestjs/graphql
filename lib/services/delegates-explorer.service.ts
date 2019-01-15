@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { MergeInfo } from 'graphql-tools/dist/Interfaces';
@@ -31,7 +32,8 @@ export class DelegatesExplorerService extends BaseExplorerService {
     return this.curryDelegates(this.groupMetadata(delegates));
   }
 
-  filterDelegates(instance: Object): ResolverMetadata[] {
+  filterDelegates(wrapper: InstanceWrapper): ResolverMetadata[] {
+    const { instance } = wrapper;
     if (!instance) {
       return undefined;
     }
