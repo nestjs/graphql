@@ -184,7 +184,21 @@ export class GraphQLAstExplorer {
       returnType: `${type} | Promise<${type}>`,
       parameters: this.getFunctionParameters(
         (item as FieldDefinitionNode).arguments,
-      ),
+      ).sort((a, b) => {
+        if (a.hasQuestionToken && b.hasQuestionToken || !(a.hasQuestionToken || b.hasQuestionToken)) {
+          if (a.name < b.name) {
+            return -1;
+          } else if (a.name > b.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        } else if (a.hasQuestionToken) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }),
     });
   }
 
