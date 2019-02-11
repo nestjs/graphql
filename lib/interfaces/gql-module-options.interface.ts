@@ -6,7 +6,7 @@ import {
   ServerRegistration,
 } from 'apollo-server-express';
 import { GraphQLSchema } from 'graphql';
-import { IDirectiveResolvers, SchemaDirectiveVisitor } from 'graphql-tools';
+import { IDirectiveResolvers } from 'graphql-tools';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export interface GqlModuleOptions
@@ -27,7 +27,6 @@ export interface GqlModuleOptions
   installSubscriptionHandlers?: boolean;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: IDirectiveResolvers<any, any>;
-  schemaDirectives?: Record<string, typeof SchemaDirectiveVisitor>;
   transformSchema?: (
     schema: GraphQLSchema,
   ) => GraphQLSchema | Promise<GraphQLSchema>;
