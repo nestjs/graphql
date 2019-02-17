@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import { GraphQLSchema } from 'graphql';
-import { MergeInfo } from 'graphql-tools/dist/Interfaces';
 import { isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
@@ -86,7 +85,7 @@ export class GraphQLFactory {
     };
   }
 
-  createDelegates(): (mergeInfo: MergeInfo) => any {
+  createDelegates(): (mergeInfo: any) => any {
     return this.delegatesExplorerService.explore();
   }
 

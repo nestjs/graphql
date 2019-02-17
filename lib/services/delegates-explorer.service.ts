@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { MergeInfo } from 'graphql-tools/dist/Interfaces';
 import { mapValues } from 'lodash';
 import { GRAPHQL_MODULE_OPTIONS } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
@@ -44,16 +43,18 @@ export class DelegatesExplorerService extends BaseExplorerService {
       prototype,
       name => extractMetadata(instance, prototype, name, predicate),
     );
-    return resolvers.filter(resolver => !!resolver).map(resolver => {
-      const callback = instance[resolver.methodName].bind(instance);
-      return {
-        ...resolver,
-        callback,
-      };
-    });
+    return resolvers
+      .filter(resolver => !!resolver)
+      .map(resolver => {
+        const callback = instance[resolver.methodName].bind(instance);
+        return {
+          ...resolver,
+          callback,
+        };
+      });
   }
 
-  curryDelegates(delegates): (mergeInfo: MergeInfo) => any {
+  curryDelegates(delegates): (mergeInfo: any) => any {
     return mergeInfo =>
       mapValues(delegates, parent =>
         mapValues(parent, (propertyFn, key) => propertyFn()(mergeInfo)),

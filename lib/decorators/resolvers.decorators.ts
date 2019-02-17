@@ -1,4 +1,4 @@
-import { ReflectMetadata, Type } from '@nestjs/common';
+import { SetMetadata, Type } from '@nestjs/common';
 import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
@@ -24,22 +24,21 @@ const {
   Query: TypeGqlQuery,
   Resolver: TypeGqlResolver,
   Subscription: TypeGqlSubscription,
-} =
-  optional('type-graphql') || ({} as any);
+} = optional('type-graphql') || ({} as any);
 
 export function addResolverMetadata(
   resolver: Resolvers | string | undefined,
   name: string | undefined,
   target?: Object | Function,
-  key?: string,
+  key?: string | symbol,
   descriptor?: string,
 ) {
-  ReflectMetadata(RESOLVER_TYPE_METADATA, resolver || name)(
+  SetMetadata(RESOLVER_TYPE_METADATA, resolver || name)(
     target,
     key,
     descriptor,
   );
-  ReflectMetadata(RESOLVER_NAME_METADATA, name)(target, key, descriptor);
+  SetMetadata(RESOLVER_NAME_METADATA, name)(target, key, descriptor);
 }
 
 export function createPropertyDecorator(
@@ -47,13 +46,13 @@ export function createPropertyDecorator(
   typeFunc?: ReturnTypeFunc,
   options?: AdvancedOptions,
 ): MethodDecorator {
-  return (target: Function | Object, key?: string, descriptor?: any) => {
-    ReflectMetadata(RESOLVER_NAME_METADATA, propertyName)(
-      target,
-      key,
-      descriptor,
-    );
-    ReflectMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
+  return (
+    target: Function | Object,
+    key?: string | symbol,
+    descriptor?: any,
+  ) => {
+    SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
+    SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
     FieldResolver && FieldResolver(typeFunc, options)(target, key, descriptor);
   };
 }
@@ -63,13 +62,13 @@ export function createDelegateDecorator(
   typeFunc?: ReturnTypeFunc,
   options?: AdvancedOptions,
 ): MethodDecorator {
-  return (target: Function | Object, key?: string, descriptor?: any) => {
-    ReflectMetadata(RESOLVER_NAME_METADATA, propertyName)(
-      target,
-      key,
-      descriptor,
-    );
-    ReflectMetadata(RESOLVER_DELEGATE_METADATA, propertyName)(
+  return (
+    target: Function | Object,
+    key?: string | symbol,
+    descriptor?: any,
+  ) => {
+    SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
+    SetMetadata(RESOLVER_DELEGATE_METADATA, propertyName)(
       target,
       key,
       descriptor,
@@ -85,8 +84,8 @@ export function Scalar(
   typeFunc?: ReturnTypeFunc,
 ): ClassDecorator {
   return (target, key?, descriptor?) => {
-    ReflectMetadata(SCALAR_NAME_METADATA, name)(target, key, descriptor);
-    ReflectMetadata(SCALAR_TYPE_METADATA, typeFunc)(target, key, descriptor);
+    SetMetadata(SCALAR_NAME_METADATA, name)(target, key, descriptor);
+    SetMetadata(SCALAR_TYPE_METADATA, typeFunc)(target, key, descriptor);
   };
 }
 
@@ -100,13 +99,17 @@ export function Query(
   nameOrType?: string | ReturnTypeFunc,
   options?: AdvancedOptions,
 ): MethodDecorator {
-  return (target: Object | Function, key?: string, descriptor?: any) => {
+  return (
+    target: Object | Function,
+    key?: string | symbol,
+    descriptor?: any,
+  ) => {
     const name = isString(nameOrType)
       ? nameOrType
       : (options && options.name) || undefined;
 
     addResolverMetadata(Resolvers.QUERY, name, target, key, descriptor);
-    if (!isString(nameOrType)) {
+    if (nameOrType && !isString(nameOrType)) {
       TypeGqlQuery &&
         TypeGqlQuery(nameOrType, options)(target as Function, key, descriptor);
     }
@@ -123,13 +126,17 @@ export function Mutation(
   nameOrType?: string | ReturnTypeFunc,
   options?: AdvancedOptions,
 ): MethodDecorator {
-  return (target: Object | Function, key?: string, descriptor?: any) => {
+  return (
+    target: Object | Function,
+    key?: string | symbol,
+    descriptor?: any,
+  ) => {
     const name = isString(nameOrType)
       ? nameOrType
       : (options && options.name) || undefined;
 
     addResolverMetadata(Resolvers.MUTATION, name, target, key, descriptor);
-    if (!isString(nameOrType)) {
+    if (nameOrType && !isString(nameOrType)) {
       TypeGqlMutation &&
         TypeGqlMutation(nameOrType, options)(
           target as Function,
@@ -173,19 +180,23 @@ export function Subscription(
   nameOrType?: string | ReturnTypeFunc,
   options: AdvancedOptions & SubscriptionOptions = {},
 ): MethodDecorator {
-  return (target: Object | Function, key?: string, descriptor?: any) => {
+  return (
+    target: Object | Function,
+    key?: string | symbol,
+    descriptor?: any,
+  ) => {
     const name = isString(nameOrType)
       ? nameOrType
       : (options && options.name) || undefined;
 
     addResolverMetadata(Resolvers.SUBSCRIPTION, name, target, key, descriptor);
-    ReflectMetadata(SUBSCRIPTION_OPTIONS_METADATA, options)(
+    SetMetadata(SUBSCRIPTION_OPTIONS_METADATA, options)(
       target,
       key,
       descriptor,
     );
 
-    if (!isString(nameOrType)) {
+    if (nameOrType && !isString(nameOrType)) {
       const topics = ['undefined']; // NOTE: Added to omit options validation
       TypeGqlSubscription &&
         TypeGqlSubscription(nameOrType, { topics, ...options })(
@@ -208,7 +219,11 @@ export function Resolver(
   nameOrType?: string | ClassTypeResolver | Type<any>,
   options?: ResolverClassOptions,
 ) {
-  return (target: Object | Function, key?: string, descriptor?: any) => {
+  return (
+    target: Object | Function,
+    key?: string | symbol,
+    descriptor?: any,
+  ) => {
     const name = getClassName(nameOrType);
 
     addResolverMetadata(undefined, name, target, key, descriptor);
@@ -225,7 +240,9 @@ const getClassName = (nameOrType: string | Function | Type<any>) => {
   }
   return isConstructor(nameOrType)
     ? nameOrType.name
-    : isFunction(nameOrType) ? (nameOrType as Function)().name : undefined;
+    : isFunction(nameOrType)
+    ? (nameOrType as Function)().name
+    : undefined;
 };
 
 function isConstructor(obj: any) {

@@ -30,16 +30,16 @@ export class GraphQLSchemaBuilder {
      * Ref: https://19majkel94.github.io/type-graphql/docs/faq.html#i-got-error-like-cannot-use-graphqlschema-object-object-from-another-module-or-realm-how-to-fix-that
      */
     return await new Promise<string>((resolve, reject) =>
-      readFile(
-        emitSchemaFile,
-        'utf8',
-        (err, data) => (err ? reject(err) : resolve(data)),
+      readFile(emitSchemaFile, 'utf8', (err, data) =>
+        err ? reject(err) : resolve(data),
       ),
     );
   }
 
   private loadBuildSchemaFactory(): (...args: any[]) => GraphQLSchema {
-    const { buildSchema } = loadPackage('type-graphql', 'SchemaBuilder');
+    const { buildSchema } = loadPackage('type-graphql', 'SchemaBuilder', () =>
+      require('type-graphql'),
+    );
     return buildSchema;
   }
 }
