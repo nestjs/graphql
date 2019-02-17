@@ -35,7 +35,7 @@ export interface GqlModuleOptions
     path?: string;
     outputAs?: 'class' | 'interface';
   };
-  autoSchemaFile?: string;
+  autoSchemaFile?: string | boolean;
   buildSchemaOptions?: BuildSchemaOptions;
 }
 

@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { readFile } from 'fs';
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from './external/type-graphql.types';
 import { ScalarsExplorerService } from './services/scalars-explorer.service';
@@ -14,26 +13,17 @@ export class GraphQLSchemaBuilder {
   ) {}
 
   async build(
-    emitSchemaFile: string,
+    emitSchemaFile: string | boolean,
     options: BuildSchemaOptions = {},
-  ): Promise<string> {
+  ): Promise<any> {
     const buildSchema = this.loadBuildSchemaFactory();
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
-    await buildSchema({
+    return await buildSchema({
       ...options,
       emitSchemaFile,
       scalarsMap,
-      resolvers: ['**/*.undefined.undefined.js'], // NOTE: Added to omit options validation
+      resolvers: ['---.js'], // NOTE: Added to omit options validation
     });
-    /**
-     * Workaround
-     * Ref: https://19majkel94.github.io/type-graphql/docs/faq.html#i-got-error-like-cannot-use-graphqlschema-object-object-from-another-module-or-realm-how-to-fix-that
-     */
-    return await new Promise<string>((resolve, reject) =>
-      readFile(emitSchemaFile, 'utf8', (err, data) =>
-        err ? reject(err) : resolve(data),
-      ),
-    );
   }
 
   private loadBuildSchemaFactory(): (...args: any[]) => GraphQLSchema {
