@@ -22,7 +22,7 @@ import TypeScriptAst, {
   InterfaceDeclarationStructure,
   ParameterDeclarationStructure,
   SourceFile,
-} from 'ts-simple-ast';
+} from 'ts-morph';
 
 @Injectable()
 export class GraphQLAstExplorer {
@@ -123,11 +123,10 @@ export class GraphQLAstExplorer {
       this.addSymbolIfRoot(parentName),
     );
     if (!parentRef) {
-      const isRoot = this.root.indexOf(parentName) >= 0;
       parentRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(parentName)),
         isExported: true,
-        isAbstract: isRoot && mode === 'class',
+        isAbstract: mode === 'class',
       });
     }
     const interfaces = get(item, 'interfaces');

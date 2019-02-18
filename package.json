@@ -1,8 +1,7 @@
 {
   "name": "@nestjs/graphql",
-  "version": "5.5.2",
-  "description":
-    "Nest - modern, fast, powerful node.js web framework (@graphql)",
+  "version": "5.5.3",
+  "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "scripts": {
@@ -29,8 +28,8 @@
     "graphql-tools": "^4.0.3",
     "lodash": "^4.17.11",
     "merge-graphql-schemas": "^1.5.8",
-    "uuid": "3.3.2",
-    "ts-simple-ast": "^21.0.0"
+    "ts-morph": "^1.1.0",
+    "uuid": "3.3.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^5.3.6",
@@ -40,6 +39,9 @@
     "reflect-metadata": "^0.1.12"
   },
   "lint-staged": {
-    "*.ts": ["prettier --write", "git add"]
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
