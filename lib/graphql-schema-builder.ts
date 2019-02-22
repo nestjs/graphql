@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from './external/type-graphql.types';
@@ -6,8 +6,6 @@ import { ScalarsExplorerService } from './services/scalars-explorer.service';
 
 @Injectable()
 export class GraphQLSchemaBuilder {
-  private readonly logger = new Logger(GraphQLSchemaBuilder.name);
-
   constructor(
     private readonly scalarsExplorerService: ScalarsExplorerService,
   ) {}
