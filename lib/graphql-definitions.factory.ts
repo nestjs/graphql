@@ -14,22 +14,29 @@ export class GraphQLDefinitionsFactory {
     path: string;
     outputAs?: 'class' | 'interface';
     watch?: boolean;
+    debug?: boolean;
   }) {
+    const isDebugEnabled = !(options && options.debug === false);
     const typePathsExists = options.typePaths && !isEmpty(options.typePaths);
     if (!typePathsExists) {
       throw new Error(`"typePaths" property cannot be empty.`);
     }
     if (options.watch) {
-      console.log('GraphQL factory is watching your files...');
+      this.printMessage(
+        'GraphQL factory is watching your files...',
+        isDebugEnabled,
+      );
       const watcher = chokidar.watch(options.typePaths);
       watcher.on('change', async file => {
-        console.log(
+        this.printMessage(
           `[${new Date().toLocaleTimeString()}] "${file}" has been changed.`,
+          isDebugEnabled,
         );
         await this.exploreAndEmit(
           options.typePaths,
           options.path,
           options.outputAs,
+          isDebugEnabled,
         );
       });
     }
@@ -37,6 +44,7 @@ export class GraphQLDefinitionsFactory {
       options.typePaths,
       options.path,
       options.outputAs,
+      isDebugEnabled,
     );
   }
 
@@ -44,6 +52,7 @@ export class GraphQLDefinitionsFactory {
     typePaths: string[],
     path: string,
     outputAs: 'class' | 'interface',
+    isDebugEnabled: boolean,
   ) {
     const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(
       typePaths || [],
@@ -64,8 +73,13 @@ export class GraphQLDefinitionsFactory {
       outputAs,
     );
     await tsFile.save();
-    console.log(
+    this.printMessage(
       `[${new Date().toLocaleTimeString()}] The definitions have been updated.`,
+      isDebugEnabled,
     );
+  }
+
+  private printMessage(text: string, isEnabled: boolean) {
+    isEnabled && console.log(text);
   }
 }
