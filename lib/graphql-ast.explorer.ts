@@ -80,7 +80,7 @@ export class GraphQLAstExplorer {
   }
 
   lookupRootSchemaDefinition(
-    operationTypes: OperationTypeDefinitionNode[],
+    operationTypes: ReadonlyArray<OperationTypeDefinitionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
   ) {
@@ -250,7 +250,7 @@ export class GraphQLAstExplorer {
   }
 
   getFunctionParameters(
-    inputs: InputValueDefinitionNode[],
+    inputs: ReadonlyArray<InputValueDefinitionNode>,
   ): ParameterDeclarationStructure[] {
     if (!inputs) {
       return [];

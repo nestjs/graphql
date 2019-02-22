@@ -45,18 +45,20 @@ export class GraphQLDefinitionsFactory {
     path: string,
     outputAs: 'class' | 'interface',
   ) {
-    const typeDefs = this.gqlTypesLoader.mergeTypesByPaths(
-      ...(typePaths || []),
+    const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(
+      typePaths || [],
     );
+    if (!typeDefs) {
+      throw new Error(`"typeDefs" property cannot be null.`);
+    }
     let schema = makeExecutableSchema({
       typeDefs,
       resolverValidationOptions: { allowResolversNotInSchema: true },
     });
-    schema = printSchema(schema);
 
     const tsFile = this.gqlAstExplorer.explore(
       gql`
-        ${schema}
+        ${printSchema(schema)}
       `,
       path,
       outputAs,
