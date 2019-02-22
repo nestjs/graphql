@@ -125,13 +125,9 @@ export class GraphQLModule implements OnModuleInit {
     } = this.options;
     const app = httpAdapter.getInstance();
 
-    const typePathsExists =
-      this.options.typePaths && !isEmpty(this.options.typePaths);
-    const typeDefs = typePathsExists
-      ? this.graphqlTypesLoader.mergeTypesByPaths(
-          ...(this.options.typePaths || []),
-        )
-      : [];
+    const typeDefs = await this.graphqlTypesLoader.mergeTypesByPaths(
+      this.options.typePaths,
+    );
 
     const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
     const apolloOptions = await this.graphqlFactory.mergeOptions({
