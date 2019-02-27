@@ -163,13 +163,9 @@ export class GraphQLAstExplorer {
     if (!propertyName) {
       return;
     }
-    const isFunction =
-      ((item as FieldDefinitionNode).arguments &&
-        !isEmpty((item as FieldDefinitionNode).arguments)) ||
-      this.isRoot(parentRef.getName());
 
     const { name: type, required } = this.getFieldTypeDefinition(item.type);
-    if (!isFunction) {
+    if (!this.isRoot(parentRef.getName())) {
       (parentRef as InterfaceDeclaration).addProperty({
         name: propertyName,
         type,
