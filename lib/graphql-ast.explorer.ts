@@ -154,6 +154,13 @@ export class GraphQLAstExplorer {
         return this.lookupField(item, parentRef, mode);
     }
   }
+  
+  private sortGraphqlArguments(first: any, second:any): number {
+    if (first.hasQuestionToken && second.hasQuestionToken || !(first.hasQuestionToken || second.hasQuestionToken)) {
+      return first.name === second.name : 0 ? first.name > second.name ? 1 : -1;
+    }
+    return first.hasQuestionToken ? 1 : -1;
+  }
 
   lookupField(
     item: FieldDefinitionNode | InputValueDefinitionNode,
@@ -184,21 +191,7 @@ export class GraphQLAstExplorer {
       returnType: `${type} | Promise<${type}>`,
       parameters: this.getFunctionParameters(
         (item as FieldDefinitionNode).arguments,
-      ).sort((a, b) => {
-        if (a.hasQuestionToken && b.hasQuestionToken || !(a.hasQuestionToken || b.hasQuestionToken)) {
-          if (a.name < b.name) {
-            return -1;
-          } else if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
-        } else if (a.hasQuestionToken) {
-          return 1;
-        } else {
-          return -1;
-        }
-      }),
+      ).sort(this.sortGraphqlArguments),
     });
   }
 
