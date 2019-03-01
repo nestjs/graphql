@@ -14,7 +14,7 @@ import {
   TypeSystemDefinitionNode,
   UnionTypeDefinitionNode,
 } from 'graphql';
-import { get, isEmpty, map, sortBy, upperFirst } from 'lodash';
+import { get, map, sortBy, upperFirst } from 'lodash';
 import TypeScriptAst, {
   ClassDeclaration,
   ClassDeclarationStructure,
@@ -45,7 +45,11 @@ export class GraphQLAstExplorer {
     definitions = sortBy(definitions, 'kind');
 
     definitions.forEach(item =>
-      this.lookupDefinition(item as TypeSystemDefinitionNode, tsFile, mode),
+      this.lookupDefinition(
+        item as Readonly<TypeSystemDefinitionNode>,
+        tsFile,
+        mode,
+      ),
     );
 
     tsFile.insertText(0, '/* tslint:disable */\n');
@@ -53,7 +57,7 @@ export class GraphQLAstExplorer {
   }
 
   lookupDefinition(
-    item: TypeSystemDefinitionNode,
+    item: Readonly<TypeSystemDefinitionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
   ) {
@@ -79,7 +83,7 @@ export class GraphQLAstExplorer {
   }
 
   lookupRootSchemaDefinition(
-    operationTypes: OperationTypeDefinitionNode[],
+    operationTypes: ReadonlyArray<OperationTypeDefinitionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
   ) {
@@ -245,7 +249,7 @@ export class GraphQLAstExplorer {
   }
 
   getFunctionParameters(
-    inputs: InputValueDefinitionNode[],
+    inputs: ReadonlyArray<InputValueDefinitionNode>,
   ): ParameterDeclarationStructure[] {
     if (!inputs) {
       return [];
