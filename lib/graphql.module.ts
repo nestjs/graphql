@@ -8,7 +8,6 @@ import { ApplicationReferenceHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
 import { printSchema } from 'graphql';
-import { isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
@@ -123,9 +122,10 @@ export class GraphQLModule implements OnModuleInit {
     } = this.options;
     const app = httpServer.getInstance();
 
-    const typeDefs = await this.graphqlTypesLoader.mergeTypesByPaths(
-      this.options.typePaths,
-    );
+    const typeDefs =
+      (await this.graphqlTypesLoader.mergeTypesByPaths(
+        this.options.typePaths,
+      )) || [];
 
     const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
     const apolloOptions = await this.graphQLFactory.mergeOptions({
