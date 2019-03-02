@@ -81,7 +81,7 @@ export class GraphQLFactory {
     if (
       !existsSync(options.definitions.path) ||
       !lstatSync(options.definitions.path).isFile() ||
-      readFileSync(options.definitions.path, 'utf8') !== tsFile.getText()
+      readFileSync(options.definitions.path, 'utf8') !== tsFile.getFullText()
     ) {
       await tsFile.save();
     }
