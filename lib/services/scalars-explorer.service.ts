@@ -3,12 +3,12 @@ import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { GraphQLScalarType } from 'graphql';
-import { GqlModuleOptions } from '..';
 import {
   GRAPHQL_MODULE_OPTIONS,
   SCALAR_NAME_METADATA,
   SCALAR_TYPE_METADATA,
 } from '../graphql.constants';
+import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 import { BaseExplorerService } from './base-explorer.service';
 
 @Injectable()

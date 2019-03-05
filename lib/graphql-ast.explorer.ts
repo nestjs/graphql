@@ -14,7 +14,7 @@ import {
   TypeSystemDefinitionNode,
   UnionTypeDefinitionNode,
 } from 'graphql';
-import { get, isEmpty, map, sortBy, upperFirst } from 'lodash';
+import { get, map, sortBy, upperFirst } from 'lodash';
 import TypeScriptAst, {
   ClassDeclaration,
   ClassDeclarationStructure,
@@ -46,7 +46,11 @@ export class GraphQLAstExplorer {
     definitions = sortBy(definitions, 'kind');
 
     definitions.forEach(item =>
-      this.lookupDefinition(item as TypeSystemDefinitionNode, tsFile, mode),
+      this.lookupDefinition(
+        item as Readonly<TypeSystemDefinitionNode>,
+        tsFile,
+        mode,
+      ),
     );
 
     tsFile.insertText(0, DEFINITIONS_FILE_HEADER);
@@ -54,7 +58,7 @@ export class GraphQLAstExplorer {
   }
 
   lookupDefinition(
-    item: TypeSystemDefinitionNode,
+    item: Readonly<TypeSystemDefinitionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
   ) {
@@ -124,10 +128,11 @@ export class GraphQLAstExplorer {
       this.addSymbolIfRoot(parentName),
     );
     if (!parentRef) {
+      const isRoot = this.root.indexOf(parentName) >= 0;
       parentRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(parentName)),
         isExported: true,
-        isAbstract: mode === 'class',
+        isAbstract: isRoot && mode === 'class',
       });
     }
     const interfaces = get(item, 'interfaces');
@@ -164,13 +169,9 @@ export class GraphQLAstExplorer {
     if (!propertyName) {
       return;
     }
-    const isFunction =
-      ((item as FieldDefinitionNode).arguments &&
-        !isEmpty((item as FieldDefinitionNode).arguments)) ||
-      this.isRoot(parentRef.getName());
 
     const { name: type, required } = this.getFieldTypeDefinition(item.type);
-    if (!isFunction) {
+    if (!this.isRoot(parentRef.getName())) {
       (parentRef as InterfaceDeclaration).addProperty({
         name: propertyName,
         type,
