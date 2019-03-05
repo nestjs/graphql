@@ -127,10 +127,11 @@ export class GraphQLAstExplorer {
       this.addSymbolIfRoot(parentName),
     );
     if (!parentRef) {
+      const isRoot = this.root.indexOf(parentName) >= 0;
       parentRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(parentName)),
         isExported: true,
-        isAbstract: mode === 'class',
+        isAbstract: isRoot && mode === 'class',
       });
     }
     const interfaces = get(item, 'interfaces');
