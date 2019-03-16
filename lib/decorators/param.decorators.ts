@@ -109,11 +109,9 @@ export function Args(
   }
   return (target, key, index) => {
     addPipesMetadata(GqlParamtype.ARGS, property, pipes, target, key, index);
-    if (property) {
-      isString(property)
-        ? TypeGqlArg && TypeGqlArg(property, typeFn)(target, key, index)
-        : TypeGqlArgs && TypeGqlArgs(typeFn)(target, key, index);
-    }
+    property && isString(property)
+      ? TypeGqlArg && TypeGqlArg(property, typeFn)(target, key, index)
+      : TypeGqlArgs && TypeGqlArgs(typeFn)(target, key, index);
   };
 }
 
