@@ -8,8 +8,8 @@ import {
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 
 export function extractMetadata(
-  instance,
-  prototype,
+  instance: Object,
+  prototype: any,
   methodName: string,
   filterPredicate: (
     resolverType: string,

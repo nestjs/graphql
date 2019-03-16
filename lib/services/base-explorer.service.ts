@@ -1,29 +1,40 @@
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Module } from '@nestjs/core/injector/module';
 import { flattenDeep, groupBy, identity, isEmpty, mapValues } from 'lodash';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 
 export class BaseExplorerService {
-  getModules(modulesContainer: Map<any, any>, include: Function[]) {
-    const mapToProviders = (list: any[]) =>
-      list.map(module => module.components);
+  getModules(
+    modulesContainer: Map<string, Module>,
+    include: Function[],
+  ): Module[] {
     if (!include || isEmpty(include)) {
-      return mapToProviders([...modulesContainer.values()]);
+      return [...modulesContainer.values()];
     }
-    return mapToProviders(
-      [...modulesContainer.values()].filter(({ metatype }) =>
-        include.some(item => item === metatype),
-      ),
+    const whitelisted = this.includeWhitelisted(modulesContainer, include);
+    return whitelisted;
+  }
+
+  includeWhitelisted(
+    modulesContainer: Map<string, Module>,
+    include: Function[],
+  ): Module[] {
+    return [...modulesContainer.values()].filter(({ metatype }) =>
+      include.some(item => item === metatype),
     );
   }
 
   flatMap<T = ResolverMetadata[]>(
-    modules: Map<any, any>[],
-    callback: (instance: any) => T,
-  ) {
-    return flattenDeep(
+    modules: Module[],
+    callback: (instance: InstanceWrapper, moduleRef: Module) => T,
+  ): T {
+    const invokeMap = () =>
       modules.map(module =>
-        [...module.values()].map(({ instance }) => callback(instance)),
-      ),
-    ).filter(identity);
+        [...module.providers.values()].map(wrapper =>
+          callback(wrapper, module),
+        ),
+      );
+    return flattenDeep(invokeMap()).filter(identity);
   }
 
   groupMetadata(resolvers: ResolverMetadata[]) {

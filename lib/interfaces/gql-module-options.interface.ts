@@ -6,7 +6,7 @@ import {
   ServerRegistration,
 } from 'apollo-server-express';
 import { GraphQLSchema } from 'graphql';
-import { IDirectiveResolvers } from 'graphql-tools';
+import { BuildSchemaOptions } from '../external/type-graphql.types';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export interface GqlModuleOptions
@@ -26,7 +26,8 @@ export interface GqlModuleOptions
   include?: Function[];
   installSubscriptionHandlers?: boolean;
   resolverValidationOptions?: IResolverValidationOptions;
-  directiveResolvers?: IDirectiveResolvers<any, any>;
+  directiveResolvers?: any;
+  schemaDirectives?: Record<string, any>;
   transformSchema?: (
     schema: GraphQLSchema,
   ) => GraphQLSchema | Promise<GraphQLSchema>;
@@ -34,6 +35,8 @@ export interface GqlModuleOptions
     path?: string;
     outputAs?: 'class' | 'interface';
   };
+  autoSchemaFile?: string | boolean;
+  buildSchemaOptions?: BuildSchemaOptions;
 }
 
 export interface GqlOptionsFactory {

@@ -1,8 +1,12 @@
 import { PipeTransform, Type } from '@nestjs/common';
-import { isNil, isString } from '@nestjs/common/utils/shared.utils';
+import { isNil, isObject, isString } from '@nestjs/common/utils/shared.utils';
+import * as optional from 'optional';
 import 'reflect-metadata';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { PARAM_ARGS_METADATA } from '../graphql.constants';
+
+const { Arg: TypeGqlArg, Args: TypeGqlArgs } =
+  optional('type-graphql') || ({} as any);
 
 export type ParamData = object | string | number;
 export interface ParamsMetadata {
@@ -40,10 +44,14 @@ const createParamDecorator = (paramtype: GqlParamtype) => {
   };
 };
 
-const createPipesParamDecorator = (paramtype: GqlParamtype) => (
-  data?,
-  ...pipes: (Type<PipeTransform> | PipeTransform)[]
-): ParameterDecorator => (target, key, index) => {
+const addPipesMetadata = (
+  paramtype: GqlParamtype,
+  data: any,
+  pipes: (Type<PipeTransform> | PipeTransform)[],
+  target: Object,
+  key: string | symbol,
+  index: number,
+) => {
   const args =
     Reflect.getMetadata(PARAM_ARGS_METADATA, target.constructor, key) || {};
   const hasParamData = isNil(data) || isString(data);
@@ -58,6 +66,13 @@ const createPipesParamDecorator = (paramtype: GqlParamtype) => (
   );
 };
 
+const createPipesParamDecorator = (paramtype: GqlParamtype) => (
+  data?,
+  ...pipes: (Type<PipeTransform> | PipeTransform)[]
+): ParameterDecorator => (target, key, index) => {
+  addPipesMetadata(paramtype, data, pipes, target, key, index);
+};
+
 export const Root: () => ParameterDecorator = createParamDecorator(
   GqlParamtype.ROOT,
 );
@@ -65,6 +80,10 @@ export const Parent: () => ParameterDecorator = createParamDecorator(
   GqlParamtype.ROOT,
 );
 
+export interface ArgsOptions {
+  name?: string;
+  type: () => Type<any>;
+}
 export function Args();
 export function Args(...pipes: (Type<PipeTransform> | PipeTransform)[]);
 export function Args(
@@ -72,10 +91,28 @@ export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 );
 export function Args(
-  property?: string | (Type<PipeTransform> | PipeTransform),
+  options: ArgsOptions,
+  ...pipes: (Type<PipeTransform> | PipeTransform)[]
+);
+export function Args(
+  propertyOrOptions?:
+    | string
+    | (Type<PipeTransform> | PipeTransform)
+    | ArgsOptions,
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ) {
-  return createPipesParamDecorator(GqlParamtype.ARGS)(property, ...pipes);
+  let typeFn = undefined;
+  let property = propertyOrOptions;
+  if (propertyOrOptions && isObject(propertyOrOptions)) {
+    property = (propertyOrOptions as Record<string, any>).name;
+    typeFn = (propertyOrOptions as Record<string, any>).type;
+  }
+  return (target, key, index) => {
+    addPipesMetadata(GqlParamtype.ARGS, property, pipes, target, key, index);
+    property && isString(property)
+      ? TypeGqlArg && TypeGqlArg(property, typeFn)(target, key, index)
+      : TypeGqlArgs && TypeGqlArgs(typeFn)(target, key, index);
+  };
 }
 
 export function Context();

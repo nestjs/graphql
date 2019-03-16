@@ -4,11 +4,12 @@ import {
   OnModuleInit,
   Provider,
 } from '@nestjs/common/interfaces';
-import { ApplicationReferenceHost } from '@nestjs/core';
+import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
 import { printSchema } from 'graphql';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
+import { GraphQLSchemaBuilder } from './graphql-schema-builder';
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
@@ -33,15 +34,16 @@ import { mergeDefaults } from './utils/merge-defaults.util';
     ScalarsExplorerService,
     GraphQLAstExplorer,
     GraphQLTypesLoader,
+    GraphQLSchemaBuilder,
   ],
   exports: [GraphQLTypesLoader, GraphQLAstExplorer],
 })
 export class GraphQLModule implements OnModuleInit {
   protected apolloServer: ApolloServer;
   constructor(
-    private readonly appRefHost: ApplicationReferenceHost,
+    private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
-    private readonly graphQLFactory: GraphQLFactory,
+    private readonly graphqlFactory: GraphQLFactory,
     private readonly graphqlTypesLoader: GraphQLTypesLoader,
   ) {}
 
@@ -106,11 +108,11 @@ export class GraphQLModule implements OnModuleInit {
   }
 
   async onModuleInit() {
-    if (!this.appRefHost) {
+    if (!this.httpAdapterHost) {
       return;
     }
-    const httpServer = this.appRefHost.applicationRef;
-    if (!httpServer) {
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+    if (!httpAdapter) {
       return;
     }
     const {
@@ -120,7 +122,7 @@ export class GraphQLModule implements OnModuleInit {
       cors,
       bodyParserConfig,
     } = this.options;
-    const app = httpServer.getInstance();
+    const app = httpAdapter.getInstance();
 
     const typeDefs =
       (await this.graphqlTypesLoader.mergeTypesByPaths(
@@ -128,13 +130,13 @@ export class GraphQLModule implements OnModuleInit {
       )) || [];
 
     const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
-    const apolloOptions = await this.graphQLFactory.mergeOptions({
+    const apolloOptions = await this.graphqlFactory.mergeOptions({
       ...this.options,
       typeDefs: mergedTypeDefs,
     });
 
     if (this.options.definitions && this.options.definitions.path) {
-      await this.graphQLFactory.generateDefinitions(
+      await this.graphqlFactory.generateDefinitions(
         printSchema(apolloOptions.schema),
         this.options,
       );
@@ -150,7 +152,9 @@ export class GraphQLModule implements OnModuleInit {
     });
 
     if (this.options.installSubscriptionHandlers) {
-      this.apolloServer.installSubscriptionHandlers(httpServer.getHttpServer());
+      this.apolloServer.installSubscriptionHandlers(
+        httpAdapter.getHttpServer(),
+      );
     }
   }
 }
