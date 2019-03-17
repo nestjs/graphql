@@ -14,8 +14,8 @@
     "publish:next": "npm publish --access public --tag next"
   },
   "devDependencies": {
-    "@nestjs/common": "6.0.0-rc.1",
-    "@nestjs/core": "6.0.0-rc.1",
+    "@nestjs/common": "6.0.0",
+    "@nestjs/core": "6.0.0",
     "@types/graphql": "14.0.7",
     "@types/node": "10.12.18",
     "apollo-server-express": "2.3.1",
