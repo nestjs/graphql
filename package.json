@@ -32,7 +32,7 @@
     "optional": "0.1.4",
     "@types/graphql": "14.0.7",
     "fast-glob": "2.2.6",
-    "graphql-tools": "4.0.3",
+    "graphql-tools": "4.0.4",
     "lodash": "4.17.11",
     "merge-graphql-schemas": "1.5.8",
     "ts-morph": "1.1.0",
