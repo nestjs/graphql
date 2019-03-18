@@ -3,6 +3,7 @@ import { isNil, isObject, isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
 import 'reflect-metadata';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
+import { BasicOptions } from '../external/type-graphql.types';
 import { PARAM_ARGS_METADATA } from '../graphql.constants';
 
 const { Arg: TypeGqlArg, Args: TypeGqlArgs } =
@@ -80,7 +81,7 @@ export const Parent: () => ParameterDecorator = createParamDecorator(
   GqlParamtype.ROOT,
 );
 
-export interface ArgsOptions {
+export interface ArgsOptions extends BasicOptions {
   name?: string;
   type: () => Type<any>;
 }
@@ -102,15 +103,24 @@ export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ) {
   let typeFn = undefined;
+  let argOptions = {} as BasicOptions;
   let property = propertyOrOptions;
+
   if (propertyOrOptions && isObject(propertyOrOptions)) {
     property = (propertyOrOptions as Record<string, any>).name;
     typeFn = (propertyOrOptions as Record<string, any>).type;
+    argOptions = {
+      description: (propertyOrOptions as BasicOptions).description,
+      nullable: (propertyOrOptions as BasicOptions).nullable,
+      defaultValue: (propertyOrOptions as BasicOptions).defaultValue,
+    };
   }
+
   return (target, key, index) => {
     addPipesMetadata(GqlParamtype.ARGS, property, pipes, target, key, index);
     property && isString(property)
-      ? TypeGqlArg && TypeGqlArg(property, typeFn)(target, key, index)
+      ? TypeGqlArg &&
+        TypeGqlArg(property, typeFn, argOptions)(target, key, index)
       : TypeGqlArgs && TypeGqlArgs(typeFn)(target, key, index);
   };
 }

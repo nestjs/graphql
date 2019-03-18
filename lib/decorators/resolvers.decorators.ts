@@ -224,7 +224,7 @@ export function Resolver(
     key?: string | symbol,
     descriptor?: any,
   ) => {
-    const name = getClassName(nameOrType);
+    const name = nameOrType && getClassName(nameOrType);
 
     addResolverMetadata(undefined, name, target, key, descriptor);
     if (!isString(nameOrType)) {
