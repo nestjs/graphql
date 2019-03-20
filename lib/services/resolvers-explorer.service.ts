@@ -82,32 +82,34 @@ export class ResolversExplorerService extends BaseExplorerService {
     );
 
     const isRequestScoped = !wrapper.isDependencyTreeStatic();
-    return resolvers.filter(resolver => !!resolver).map(resolver => {
-      const createContext = () =>
-        this.createContextCallback(
-          instance,
-          prototype,
-          wrapper,
-          moduleRef,
-          resolver,
-          isRequestScoped,
-        );
-      if (resolver.type === SUBSCRIPTION_TYPE) {
-        const subscriptionOptions = Reflect.getMetadata(
-          SUBSCRIPTION_OPTIONS_METADATA,
-          instance[resolver.methodName],
-        );
-        return this.createSubscriptionMetadata(
-          createContext(),
-          subscriptionOptions,
-          resolver,
-        );
-      }
-      return {
-        ...resolver,
-        callback: createContext(),
-      };
-    });
+    return resolvers
+      .filter(resolver => !!resolver)
+      .map(resolver => {
+        const createContext = () =>
+          this.createContextCallback(
+            instance,
+            prototype,
+            wrapper,
+            moduleRef,
+            resolver,
+            isRequestScoped,
+          );
+        if (resolver.type === SUBSCRIPTION_TYPE) {
+          const subscriptionOptions = Reflect.getMetadata(
+            SUBSCRIPTION_OPTIONS_METADATA,
+            instance[resolver.methodName],
+          );
+          return this.createSubscriptionMetadata(
+            () => instance[resolver.methodName](),
+            subscriptionOptions,
+            resolver,
+          );
+        }
+        return {
+          ...resolver,
+          callback: createContext(),
+        };
+      });
   }
 
   createContextCallback<T extends Object>(
