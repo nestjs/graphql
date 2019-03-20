@@ -13,7 +13,7 @@ import { Module } from '@nestjs/core/injector/module';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { withFilter } from 'apollo-server-express';
-import { head } from 'lodash';
+import { head, identity } from 'lodash';
 import { GqlModuleOptions } from '..';
 import { SubscriptionOptions } from '../decorators/resolvers.decorators';
 import { Resolvers } from '../enums/resolvers.enum';
@@ -82,32 +82,35 @@ export class ResolversExplorerService extends BaseExplorerService {
     );
 
     const isRequestScoped = !wrapper.isDependencyTreeStatic();
-    return resolvers.filter(resolver => !!resolver).map(resolver => {
-      const createContext = () =>
-        this.createContextCallback(
-          instance,
-          prototype,
-          wrapper,
-          moduleRef,
-          resolver,
-          isRequestScoped,
-        );
-      if (resolver.type === SUBSCRIPTION_TYPE) {
-        const subscriptionOptions = Reflect.getMetadata(
-          SUBSCRIPTION_OPTIONS_METADATA,
-          instance[resolver.methodName],
-        );
-        return this.createSubscriptionMetadata(
-          createContext(),
-          subscriptionOptions,
-          resolver,
-        );
-      }
-      return {
-        ...resolver,
-        callback: createContext(),
-      };
-    });
+    return resolvers
+      .filter(resolver => !!resolver)
+      .map(resolver => {
+        const createContext = (transform?: Function) =>
+          this.createContextCallback(
+            instance,
+            prototype,
+            wrapper,
+            moduleRef,
+            resolver,
+            isRequestScoped,
+            transform,
+          );
+        if (resolver.type === SUBSCRIPTION_TYPE) {
+          const subscriptionOptions = Reflect.getMetadata(
+            SUBSCRIPTION_OPTIONS_METADATA,
+            instance[resolver.methodName],
+          );
+          return this.createSubscriptionMetadata(
+            createContext,
+            subscriptionOptions,
+            resolver,
+          );
+        }
+        return {
+          ...resolver,
+          callback: createContext(),
+        };
+      });
   }
 
   createContextCallback<T extends Object>(
@@ -117,6 +120,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     moduleRef: Module,
     resolver: ResolverMetadata,
     isRequestScoped: boolean,
+    transform: Function = identity,
   ) {
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
@@ -132,7 +136,7 @@ export class ResolversExplorerService extends BaseExplorerService {
         );
         const callback = this.externalContextCreator.create(
           contextInstance,
-          contextInstance[resolver.methodName],
+          transform(contextInstance[resolver.methodName]),
           resolver.methodName,
           PARAM_ARGS_METADATA,
           this.gqlParamsFactory,
@@ -154,7 +158,7 @@ export class ResolversExplorerService extends BaseExplorerService {
   }
 
   createSubscriptionMetadata(
-    subscribe: Function,
+    createSubscribeContext: Function,
     subscriptionOptions: SubscriptionOptions,
     resolverMetadata: ResolverMetadata,
   ) {
@@ -166,7 +170,10 @@ export class ResolversExplorerService extends BaseExplorerService {
         ...resolverMetadata,
         callback: {
           ...baseCallbackMetadata,
-          subscribe: withFilter(subscribe as any, subscriptionOptions.filter),
+          subscribe: createSubscribeContext(
+            (subscription: Function) => (...args: any[]) =>
+              withFilter(subscription(), subscriptionOptions.filter),
+          ),
         },
       };
     }
@@ -174,7 +181,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       ...resolverMetadata,
       callback: {
         ...baseCallbackMetadata,
-        subscribe,
+        subscribe: createSubscribeContext(),
       },
     };
   }
