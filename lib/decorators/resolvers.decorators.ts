@@ -148,9 +148,10 @@ export function Mutation(
 }
 
 export interface SubscriptionOptions {
-  filter?: <TPayload = any, TVariables = any>(
+  filter?: <TPayload = any, TVariables = any, TContext = any>(
     payload: TPayload,
     variables: TVariables,
+    context: TContext,
   ) => boolean;
   resolve?: <
     TPayload = any,
