@@ -1,13 +1,4 @@
-export * from './decorators/param.decorators';
-export {
-  DelegateProperty,
-  Mutation,
-  Query,
-  ResolveProperty,
-  Resolver,
-  Scalar,
-  Subscription,
-} from './decorators/resolvers.decorators';
+export * from './decorators';
 export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
 export * from './graphql-types.loader';

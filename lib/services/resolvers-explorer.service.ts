@@ -14,8 +14,7 @@ import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { withFilter } from 'apollo-server-express';
 import { head, identity } from 'lodash';
-import { GqlModuleOptions } from '..';
-import { SubscriptionOptions } from '../decorators/resolvers.decorators';
+import { GqlModuleOptions, SubscriptionOptions } from '..';
 import { Resolvers } from '../enums/resolvers.enum';
 import { GqlParamsFactory } from '../factories/params.factory';
 import {
