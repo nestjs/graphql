@@ -7,6 +7,7 @@ import {
   ReturnTypeFunc,
 } from '../external/type-graphql.types';
 import {
+  FIELD_TYPENAME,
   RESOLVER_DELEGATE_METADATA,
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
@@ -42,7 +43,11 @@ export function createPropertyDecorator(
   ) => {
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
     SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
-    FieldResolver && FieldResolver(typeFunc, options)(target, key, descriptor);
+
+    const isField = propertyName !== FIELD_TYPENAME && key !== FIELD_TYPENAME;
+    if (FieldResolver && isField) {
+      FieldResolver(typeFunc, options)(target, key, descriptor);
+    }
   };
 }
 

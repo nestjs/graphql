@@ -15,7 +15,9 @@ import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { withFilter } from 'apollo-server-express';
 import { head, identity } from 'lodash';
 import { GqlModuleOptions, SubscriptionOptions } from '..';
+import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { Resolvers } from '../enums/resolvers.enum';
+import { FieldParamsFactory } from '../factories/field-params.factory';
 import { GqlParamsFactory } from '../factories/params.factory';
 import {
   GRAPHQL_MODULE_OPTIONS,
@@ -30,6 +32,7 @@ import { BaseExplorerService } from './base-explorer.service';
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
   private readonly gqlParamsFactory = new GqlParamsFactory();
+  private readonly fieldParamsFactory = new FieldParamsFactory();
   private readonly injector = new Injector();
 
   constructor(
@@ -121,10 +124,25 @@ export class ResolversExplorerService extends BaseExplorerService {
     isRequestScoped: boolean,
     transform: Function = identity,
   ) {
+    const paramsFactory = this.isFieldResolver(resolver)
+      ? this.fieldParamsFactory
+      : this.gqlParamsFactory;
+
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
-        const contextId = createContextId();
-        const gqlContext = args[2];
+        const gqlContext = paramsFactory.exchangeKeyForValue(
+          GqlParamtype.CONTEXT,
+          undefined,
+          args,
+        );
+        const gqlInfo = paramsFactory.exchangeKeyForValue(
+          GqlParamtype.INFO,
+          undefined,
+          args,
+        );
+        const contextId =
+          gqlInfo && gqlInfo.contextId ? gqlInfo.contextId : createContextId();
+        gqlInfo && (gqlInfo.contextId = contextId);
 
         this.registerContextProvider(gqlContext, contextId);
         const contextInstance = await this.injector.loadPerContext(
@@ -138,7 +156,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           transform(contextInstance[resolver.methodName]),
           resolver.methodName,
           PARAM_ARGS_METADATA,
-          this.gqlParamsFactory,
+          paramsFactory,
           contextId,
           wrapper.id,
         );
@@ -151,7 +169,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       prototype[resolver.methodName],
       resolver.methodName,
       PARAM_ARGS_METADATA,
-      this.gqlParamsFactory,
+      paramsFactory,
     );
     return resolverCallback;
   }
@@ -202,5 +220,13 @@ export class ResolversExplorerService extends BaseExplorerService {
       instance: request,
       isResolved: true,
     });
+  }
+
+  private isFieldResolver(metadata: ResolverMetadata): boolean {
+    return ![
+      Resolvers.MUTATION,
+      Resolvers.QUERY,
+      Resolvers.SUBSCRIPTION,
+    ].includes(metadata.type as Resolvers);
   }
 }
