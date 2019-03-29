@@ -25,7 +25,7 @@
     "prettier": "1.16.4",
     "reflect-metadata": "0.1.13",
     "ts-node": "8.0.3",
-    "type-graphql": "0.17.0",
+    "type-graphql": "0.17.1",
     "typescript": "3.3.4000"
   },
   "dependencies": {
