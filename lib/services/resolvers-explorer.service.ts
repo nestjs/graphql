@@ -17,7 +17,6 @@ import { head, identity } from 'lodash';
 import { GqlModuleOptions, SubscriptionOptions } from '..';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { Resolvers } from '../enums/resolvers.enum';
-import { FieldParamsFactory } from '../factories/field-params.factory';
 import { GqlParamsFactory } from '../factories/params.factory';
 import {
   GRAPHQL_MODULE_OPTIONS,
@@ -32,7 +31,6 @@ import { BaseExplorerService } from './base-explorer.service';
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
   private readonly gqlParamsFactory = new GqlParamsFactory();
-  private readonly fieldParamsFactory = new FieldParamsFactory();
   private readonly injector = new Injector();
 
   constructor(
@@ -124,10 +122,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     isRequestScoped: boolean,
     transform: Function = identity,
   ) {
-    const paramsFactory = this.isFieldResolver(resolver)
-      ? this.fieldParamsFactory
-      : this.gqlParamsFactory;
-
+    const paramsFactory = this.gqlParamsFactory;
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
         const gqlContext = paramsFactory.exchangeKeyForValue(
@@ -220,13 +215,5 @@ export class ResolversExplorerService extends BaseExplorerService {
       instance: request,
       isResolved: true,
     });
-  }
-
-  private isFieldResolver(metadata: ResolverMetadata): boolean {
-    return ![
-      Resolvers.MUTATION,
-      Resolvers.QUERY,
-      Resolvers.SUBSCRIPTION,
-    ].includes(metadata.type as Resolvers);
   }
 }
