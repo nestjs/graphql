@@ -1,6 +1,7 @@
 import { isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
+import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
   AdvancedOptions,
   ReturnTypeFunc,
@@ -31,10 +32,12 @@ export function Mutation(
     addResolverMetadata(Resolvers.MUTATION, name, target, key, descriptor);
     if (nameOrType && !isString(nameOrType)) {
       TypeGqlMutation &&
-        TypeGqlMutation(nameOrType, options)(
-          target as Function,
-          key,
-          descriptor,
+        lazyMetadataStorage.store(() =>
+          TypeGqlMutation(nameOrType, options)(
+            target as Function,
+            key,
+            descriptor,
+          ),
         );
     }
   };

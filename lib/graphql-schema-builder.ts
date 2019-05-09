@@ -3,6 +3,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from './external/type-graphql.types';
 import { ScalarsExplorerService } from './services/scalars-explorer.service';
+import { lazyMetadataStorage } from './storages/lazy-metadata.storage';
 
 @Injectable()
 export class GraphQLSchemaBuilder {
@@ -14,6 +15,8 @@ export class GraphQLSchemaBuilder {
     emitSchemaFile: string | boolean,
     options: BuildSchemaOptions = {},
   ): Promise<any> {
+    lazyMetadataStorage.load();
+
     const buildSchema = this.loadBuildSchemaFactory();
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     return await buildSchema({

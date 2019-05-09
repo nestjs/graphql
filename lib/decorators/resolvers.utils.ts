@@ -13,6 +13,7 @@ import {
   RESOLVER_PROPERTY_METADATA,
   RESOLVER_TYPE_METADATA,
 } from '../graphql.constants';
+import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 
 const { FieldResolver } = optional('type-graphql') || ({} as any);
 
@@ -46,7 +47,9 @@ export function createPropertyDecorator(
 
     const isField = propertyName !== FIELD_TYPENAME && key !== FIELD_TYPENAME;
     if (FieldResolver && isField) {
-      FieldResolver(typeFunc, options)(target, key, descriptor);
+      lazyMetadataStorage.store(() =>
+        FieldResolver(typeFunc, options)(target, key, descriptor),
+      );
     }
   };
 }

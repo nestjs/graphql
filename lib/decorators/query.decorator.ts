@@ -1,6 +1,7 @@
 import { isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
+import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
   AdvancedOptions,
   ReturnTypeFunc,
@@ -31,7 +32,13 @@ export function Query(
     addResolverMetadata(Resolvers.QUERY, name, target, key, descriptor);
     if (nameOrType && !isString(nameOrType)) {
       TypeGqlQuery &&
-        TypeGqlQuery(nameOrType, options)(target as Function, key, descriptor);
+        lazyMetadataStorage.store(() =>
+          TypeGqlQuery(nameOrType, options)(
+            target as Function,
+            key,
+            descriptor,
+          ),
+        );
     }
   };
 }

@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
+import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
   ClassTypeResolver,
   ResolverClassOptions,
@@ -30,7 +31,9 @@ export function Resolver(
     addResolverMetadata(undefined, name, target, key, descriptor);
     if (!isString(nameOrType)) {
       TypeGqlResolver &&
-        TypeGqlResolver(nameOrType, options)(target as Function);
+        lazyMetadataStorage.store(() =>
+          TypeGqlResolver(nameOrType, options)(target as Function),
+        );
     }
   };
 }

@@ -3,6 +3,7 @@ import { isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
 import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants';
+import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
   AdvancedOptions,
   ReturnTypeFunc,
@@ -65,10 +66,12 @@ export function Subscription(
     if (nameOrType && !isString(nameOrType)) {
       const topics = ['undefined']; // NOTE: Added to omit options validation
       TypeGqlSubscription &&
-        TypeGqlSubscription(nameOrType, { topics, ...options })(
-          target as Function,
-          key,
-          descriptor,
+        lazyMetadataStorage.store(() =>
+          TypeGqlSubscription(nameOrType, { topics, ...options })(
+            target as Function,
+            key,
+            descriptor,
+          ),
         );
     }
   };
