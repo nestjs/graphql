@@ -12,7 +12,6 @@ import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module';
 import { Module } from '@nestjs/core/injector/module';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { withFilter } from 'apollo-server-express';
 import { head, identity } from 'lodash';
 import { GqlModuleOptions, SubscriptionOptions } from '..';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
@@ -25,6 +24,7 @@ import {
   SUBSCRIPTION_TYPE,
 } from '../graphql.constants';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
+import { createAsyncIterator } from '../utils/async-iterator.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 
@@ -182,10 +182,11 @@ export class ResolversExplorerService extends BaseExplorerService {
         ...resolverMetadata,
         callback: {
           ...baseCallbackMetadata,
-          subscribe: createSubscribeContext(
-            (subscription: Function) => (...args: any[]) =>
-              withFilter(subscription(), subscriptionOptions.filter),
-          ),
+          subscribe: (...args: unknown[]) =>
+            createAsyncIterator(
+              createSubscribeContext()(...args),
+              subscriptionOptions.filter,
+            ),
         },
       };
     }
