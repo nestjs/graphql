@@ -17,8 +17,8 @@
   "devDependencies": {
     "@nestjs/common": "6.2.0",
     "@nestjs/core": "6.2.0",
-    "@nestjs/platform-express": "6.1.1",
-    "@nestjs/testing": "6.1.1",
+    "@nestjs/platform-express": "6.2.0",
+    "@nestjs/testing": "6.2.0",
     "@types/graphql": "14.2.0",
     "@types/jest": "24.0.12",
     "@types/node": "12.0.0",
