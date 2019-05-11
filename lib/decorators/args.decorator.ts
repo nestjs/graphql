@@ -35,7 +35,11 @@ export function Args(
   let argOptions = {} as BasicOptions;
   let property = propertyOrOptions;
 
-  if (propertyOrOptions && isObject(propertyOrOptions)) {
+  if (
+    propertyOrOptions &&
+    isObject(propertyOrOptions) &&
+    !(propertyOrOptions as PipeTransform).transform
+  ) {
     property = (propertyOrOptions as Record<string, any>).name;
     typeFn = (propertyOrOptions as Record<string, any>).type;
     argOptions = {

@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "6.0.5",
+  "version": "6.2.0-next.1",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -12,11 +12,11 @@
     "publish:npm": "npm publish --access public",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
-    "test:integration": "jest --config ./integration/jest-e2e.json"
+    "test:integration": "jest --config ./tests/jest-e2e.json"
   },
   "devDependencies": {
-    "@nestjs/common": "6.1.1",
-    "@nestjs/core": "^6.1.1",
+    "@nestjs/common": "^6.2.0",
+    "@nestjs/core": "^6.2.0",
     "@nestjs/platform-express": "^6.1.1",
     "@nestjs/testing": "^6.1.1",
     "@types/graphql": "14.2.0",
@@ -33,7 +33,6 @@
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
     "ts-node": "8.1.0",
-    "type-graphql": "0.17.0",
     "typescript": "3.4.5"
   },
   "dependencies": {
@@ -48,12 +47,12 @@
     "uuid": "3.3.2"
   },
   "peerDependencies": {
-    "@nestjs/core": "^6.0.0",
+    "@nestjs/core": "^6.2.0",
     "graphql": "^14.1.1",
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
-    "type-graphql": "^0.17.0"
+    "type-graphql": "^0.17.3"
   },
   "lint-staged": {
     "*.ts": [

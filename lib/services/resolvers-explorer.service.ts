@@ -123,6 +123,20 @@ export class ResolversExplorerService extends BaseExplorerService {
     transform: Function = identity,
   ) {
     const paramsFactory = this.gqlParamsFactory;
+    const isPropertyResolver = ![
+      Resolvers.MUTATION,
+      Resolvers.QUERY,
+      Resolvers.SUBSCRIPTION,
+    ].some(type => type === resolver.type);
+
+    const contextOptions = isPropertyResolver
+      ? {
+          guards: false,
+          filters: false,
+          interceptors: false,
+        }
+      : undefined;
+
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
         const gqlContext = paramsFactory.exchangeKeyForValue(
@@ -154,6 +168,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           paramsFactory,
           contextId,
           wrapper.id,
+          contextOptions,
         );
         return callback(...args);
       };
@@ -165,6 +180,9 @@ export class ResolversExplorerService extends BaseExplorerService {
       resolver.methodName,
       PARAM_ARGS_METADATA,
       paramsFactory,
+      undefined,
+      undefined,
+      contextOptions,
     );
     return resolverCallback;
   }
@@ -197,6 +215,15 @@ export class ResolversExplorerService extends BaseExplorerService {
         subscribe: createSubscribeContext(),
       },
     };
+  }
+
+  getAllCtors(): Function[] {
+    const modules = this.getModules(
+      this.modulesContainer,
+      this.gqlOptions.include || [],
+    );
+    const resolvers = this.flatMap(modules, instance => instance.metatype);
+    return resolvers;
   }
 
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {

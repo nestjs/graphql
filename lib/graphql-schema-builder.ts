@@ -12,8 +12,9 @@ export class GraphQLSchemaBuilder {
   ) {}
 
   async build(
-    emitSchemaFile: string | boolean,
+    autoSchemaFile: string | boolean,
     options: BuildSchemaOptions = {},
+    resolvers: Function[],
   ): Promise<any> {
     lazyMetadataStorage.load();
 
@@ -21,9 +22,10 @@ export class GraphQLSchemaBuilder {
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     return await buildSchema({
       ...options,
-      emitSchemaFile,
+      emitSchemaFile: autoSchemaFile !== true ? autoSchemaFile : false,
       scalarsMap,
-      resolvers: ['---.js'], // NOTE: Added to omit options validation
+      validate: false,
+      resolvers,
     });
   }
 

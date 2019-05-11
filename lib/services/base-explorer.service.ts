@@ -24,10 +24,10 @@ export class BaseExplorerService {
     );
   }
 
-  flatMap<T = ResolverMetadata[]>(
+  flatMap<T = ResolverMetadata>(
     modules: Module[],
-    callback: (instance: InstanceWrapper, moduleRef: Module) => T,
-  ): T {
+    callback: (instance: InstanceWrapper, moduleRef: Module) => T | T[],
+  ): T[] {
     const invokeMap = () =>
       modules.map(module =>
         [...module.providers.values()].map(wrapper =>

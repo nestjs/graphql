@@ -1,5 +1,9 @@
 import { $$asyncIterator } from 'iterall';
 
+type AsyncIterator<T> = {
+  next(value?: any): Promise<IteratorResult<T>>;
+};
+
 export const createAsyncIterator = async <T = any>(
   lazyFactory: Promise<AsyncIterator<T>>,
   filterFn: Function,
