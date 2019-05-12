@@ -15,6 +15,7 @@ import { DelegatesExplorerService } from './services/delegates-explorer.service'
 import { ResolversExplorerService } from './services/resolvers-explorer.service';
 import { ScalarsExplorerService } from './services/scalars-explorer.service';
 import { extend } from './utils/extend.util';
+import { removeTempField } from './utils/remove-temp.util';
 
 @Injectable()
 export class GraphQLFactory {
@@ -95,6 +96,7 @@ export class GraphQLFactory {
         })
       : executableSchema;
 
+    removeTempField(schema);
     return {
       ...options,
       typeDefs: undefined,

@@ -4,6 +4,7 @@ import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
+import { removeTempField } from './utils/remove-temp.util';
 
 export class GraphQLDefinitionsFactory {
   private readonly gqlAstExplorer = new GraphQLAstExplorer();
@@ -64,7 +65,7 @@ export class GraphQLDefinitionsFactory {
       typeDefs,
       resolverValidationOptions: { allowResolversNotInSchema: true },
     });
-
+    schema = removeTempField(schema);
     const tsFile = this.gqlAstExplorer.explore(
       gql`
         ${printSchema(schema)}
