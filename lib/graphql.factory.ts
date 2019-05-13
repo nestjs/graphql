@@ -123,6 +123,11 @@ export class GraphQLFactory {
         if (schemaFields[resolverName]) {
           schemaFields[resolverName].resolve =
             executableSchemaFields[resolverName].resolve;
+
+          if (schemaFields[resolverName].subscribe) {
+            schemaFields[resolverName].subscribe =
+              executableSchemaFields[resolverName].subscribe;
+          }
         } else {
           schemaFields[resolverName] = executableSchemaFields[resolverName];
         }
