@@ -200,10 +200,14 @@ export class ResolversExplorerService extends BaseExplorerService {
         ...resolverMetadata,
         callback: {
           ...baseCallbackMetadata,
-          subscribe: (...args: unknown[]) =>
-            createAsyncIterator(
-              createSubscribeContext()(...args),
-              subscriptionOptions.filter,
+          subscribe: <TPayload, TVariables, TContext, TInfo>(
+            ...args: [TPayload, TVariables, TContext, TInfo]
+          ) =>
+            createAsyncIterator(createSubscribeContext()(...args), payload =>
+              (subscriptionOptions.filter as Function)(
+                payload,
+                ...args.slice(1),
+              ),
             ),
         },
       };
