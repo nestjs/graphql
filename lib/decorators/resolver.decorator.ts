@@ -1,6 +1,5 @@
 import { Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
-import * as optional from 'optional';
 import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
   ClassTypeResolver,
@@ -8,7 +7,10 @@ import {
 } from './../external/type-graphql.types';
 import { addResolverMetadata, getClassName } from './resolvers.utils';
 
-const { Resolver: TypeGqlResolver } = optional('type-graphql') || ({} as any);
+let TypeGqlResolver;
+try {
+  TypeGqlResolver = require('type-graphql').Resolver;
+} catch (e) {}
 
 export function Resolver();
 export function Resolver(name: string);

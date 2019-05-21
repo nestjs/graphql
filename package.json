@@ -36,9 +36,8 @@
     "typescript": "3.4.5"
   },
   "dependencies": {
-    "chokidar": "3.0.0",
-    "optional": "0.1.4",
     "@types/graphql": "14.2.0",
+    "chokidar": "3.0.0",
     "fast-glob": "2.2.6",
     "graphql-tools": "4.0.4",
     "lodash": "4.17.11",
