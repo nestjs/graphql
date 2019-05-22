@@ -39,7 +39,7 @@
     "chokidar": "3.0.0",
     "optional": "0.1.4",
     "@types/graphql": "14.2.0",
-    "fast-glob": "2.2.6",
+    "fast-glob": "2.2.7",
     "graphql-tools": "4.0.4",
     "lodash": "4.17.11",
     "merge-graphql-schemas": "1.5.8",
