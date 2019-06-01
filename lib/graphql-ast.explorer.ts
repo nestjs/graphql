@@ -200,9 +200,7 @@ export class GraphQLAstExplorer {
 
     const isArray = type.kind === 'ListType';
     if (isArray) {
-      const { required, type: nestedType } = this.getNestedType(
-        get(type, 'type'),
-      );
+      const { type: nestedType } = this.getNestedType(get(type, 'type'));
       type = nestedType;
 
       const typeName = get(type, 'name.value');

@@ -1,0 +1,7 @@
+type Cat {
+  id: Int!
+}
+
+type Mutation {
+  createCat(name: String): Cat
+}
