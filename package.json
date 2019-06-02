@@ -36,7 +36,7 @@
     "typescript": "3.5.1"
   },
   "dependencies": {
-    "chokidar": "3.0.0",
+    "chokidar": "3.0.1",
     "optional": "0.1.4",
     "@types/graphql": "14.2.0",
     "fast-glob": "2.2.7",
