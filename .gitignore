@@ -15,6 +15,7 @@ npm-debug.log
 /coverage
 /.nyc_output
 test-schema.graphql
+*.test-definitions.ts
 
 # dist
 /dist
