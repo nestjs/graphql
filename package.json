@@ -7,6 +7,7 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc -p tsconfig.json",
+    "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
     "precommit": "lint-staged",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
@@ -56,7 +57,7 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier --write",
+      "prettier --ignore-path ./.prettierignore --write",
       "git add"
     ]
   }
