@@ -28,6 +28,8 @@ import { createAsyncIterator } from '../utils/async-iterator.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 
+const gqlContextIdSymbol = Symbol('GQL_CONTEXT_ID');
+
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
   private readonly gqlParamsFactory = new GqlParamsFactory();
@@ -144,14 +146,18 @@ export class ResolversExplorerService extends BaseExplorerService {
           undefined,
           args,
         );
-        const gqlInfo = paramsFactory.exchangeKeyForValue(
-          GqlParamtype.INFO,
-          undefined,
-          args,
-        );
-        const contextId =
-          gqlInfo && gqlInfo.contextId ? gqlInfo.contextId : createContextId();
-        gqlInfo && (gqlInfo.contextId = contextId);
+        let contextId: ContextId;
+        if (gqlContext && gqlContext[gqlContextIdSymbol]) {
+          contextId = gqlContext[gqlContextIdSymbol];
+        } else {
+          contextId = createContextId();
+          Object.defineProperty(gqlContext, gqlContextIdSymbol, {
+            value: contextId,
+            enumerable: false,
+            configurable: false,
+            writable: false,
+          });
+        }
 
         this.registerContextProvider(gqlContext, contextId);
         const contextInstance = await this.injector.loadPerContext(
