@@ -14,23 +14,8 @@ const { Subscription: TypeGqlSubscription } =
   optional('type-graphql') || ({} as any);
 
 export interface SubscriptionOptions {
-  filter?: <TPayload = any, TVariables = any, TContext = any>(
-    payload: TPayload,
-    variables: TVariables,
-    context: TContext,
-  ) => boolean;
-  resolve?: <
-    TPayload = any,
-    TArgs = any,
-    TContext = any,
-    TInfo = any,
-    TReturnValue = any
-  >(
-    payload: TPayload,
-    args: TArgs,
-    context: TContext,
-    info: TInfo,
-  ) => TReturnValue;
+  filter?: (payload: any, variables: any, context: any) => boolean;
+  resolve?: (payload: any, args: any, context: any, info: any) => any;
 }
 
 export function Subscription(): MethodDecorator;
