@@ -1,14 +1,20 @@
 import { Type } from '@nestjs/common';
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
 import * as optional from 'optional';
 import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
   ClassTypeResolver,
   ResolverClassOptions,
 } from './../external/type-graphql.types';
-import { addResolverMetadata, getClassName } from './resolvers.utils';
+import {
+  addResolverMetadata,
+  getClassName,
+  getClassOrUndefined,
+} from './resolvers.utils';
 
 const { Resolver: TypeGqlResolver } = optional('type-graphql') || ({} as any);
+const { getMetadataStorage } =
+  optional('type-graphql/dist/metadata/getMetadataStorage') || ({} as any);
 
 export function Resolver();
 export function Resolver(name: string);
@@ -26,8 +32,16 @@ export function Resolver(
     key?: string | symbol,
     descriptor?: any,
   ) => {
-    const name = nameOrType && getClassName(nameOrType);
+    let name = nameOrType && getClassName(nameOrType);
 
+    // @ObjectType()
+    if (getMetadataStorage && isFunction(nameOrType)) {
+      const ctor = getClassOrUndefined(nameOrType as Function);
+      const objectMetadata = getMetadataStorage().objectTypes.find(
+        type => type.target === ctor,
+      );
+      objectMetadata && (name = objectMetadata.name);
+    }
     addResolverMetadata(undefined, name, target, key, descriptor);
     if (!isString(nameOrType)) {
       TypeGqlResolver &&

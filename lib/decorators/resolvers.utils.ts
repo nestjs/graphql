@@ -103,10 +103,15 @@ export const getClassName = (nameOrType: string | Function | Type<any>) => {
   if (isString(nameOrType)) {
     return nameOrType;
   }
-  return isConstructor(nameOrType)
-    ? nameOrType.name
-    : isFunction(nameOrType)
-    ? (nameOrType as Function)().name
+  const classOrUndefined = getClassOrUndefined(nameOrType);
+  return classOrUndefined && classOrUndefined.name;
+};
+
+export const getClassOrUndefined = (typeOrFunc: Function | Type<any>) => {
+  return isConstructor(typeOrFunc)
+    ? typeOrFunc
+    : isFunction(typeOrFunc)
+    ? (typeOrFunc as Function)()
     : undefined;
 };
 
