@@ -19,13 +19,17 @@ import {
   GqlModuleOptions,
   GqlOptionsFactory,
 } from './interfaces/gql-module-options.interface';
-import { DelegatesExplorerService } from './services/delegates-explorer.service';
-import { ResolversExplorerService } from './services/resolvers-explorer.service';
-import { ScalarsExplorerService } from './services/scalars-explorer.service';
-import { extend } from './utils/extend.util';
-import { generateString } from './utils/generate-token.util';
-import { mergeDefaults } from './utils/merge-defaults.util';
-import { normalizeRoutePath } from './utils/normalize-route-path.util';
+import {
+  DelegatesExplorerService,
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from './services';
+import {
+  extend,
+  generateString,
+  mergeDefaults,
+  normalizeRoutePath,
+} from './utils';
 
 @Module({
   providers: [

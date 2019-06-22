@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from './external/type-graphql.types';
-import { ScalarsExplorerService } from './services/scalars-explorer.service';
+import { ScalarsExplorerService } from './services';
 import { lazyMetadataStorage } from './storages/lazy-metadata.storage';
 
 @Injectable()

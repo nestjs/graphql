@@ -5,7 +5,7 @@ import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
-import { removeTempField } from './utils/remove-temp.util';
+import { removeTempField } from './utils';
 
 export class GraphQLDefinitionsFactory {
   private readonly gqlAstExplorer = new GraphQLAstExplorer();

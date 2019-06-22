@@ -11,12 +11,9 @@ import {
 import { forEach, isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
-import { GqlModuleOptions } from './interfaces/gql-module-options.interface';
-import { DelegatesExplorerService } from './services/delegates-explorer.service';
-import { ResolversExplorerService } from './services/resolvers-explorer.service';
-import { ScalarsExplorerService } from './services/scalars-explorer.service';
-import { extend } from './utils/extend.util';
-import { removeTempField } from './utils/remove-temp.util';
+import { GqlModuleOptions } from './interfaces';
+import { ScalarsExplorerService, DelegatesExplorerService, ResolversExplorerService } from './services';
+import { extend, removeTempField } from './utils';
 
 @Injectable()
 export class GraphQLFactory {
