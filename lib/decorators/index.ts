@@ -10,3 +10,4 @@ export * from './resolver.decorator';
 export * from './root.decorator';
 export * from './scalar.decorator';
 export * from './subscription.decorator';
+export * from './resolve-reference.decorator';
