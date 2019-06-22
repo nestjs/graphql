@@ -20,7 +20,7 @@ export class GraphQLTypesLoader {
     return mergeTypes(flatTypes, { all: true }) as any;
   }
 
-  private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
+  async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
     paths = util.isArray(paths)
       ? paths.map(path => normalize(path))
       : normalize(paths);
