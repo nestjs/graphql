@@ -17,13 +17,9 @@ import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
-} from './interfaces/gql-module-options.interface';
-import { DelegatesExplorerService } from './services/delegates-explorer.service';
-import { ResolversExplorerService } from './services/resolvers-explorer.service';
-import { ScalarsExplorerService } from './services/scalars-explorer.service';
-import { extend } from './utils/extend.util';
-import { generateString } from './utils/generate-token.util';
-import { mergeDefaults } from './utils/merge-defaults.util';
+} from './interfaces';
+import { DelegatesExplorerService, ResolversExplorerService, ScalarsExplorerService } from './services';
+import { generateString, mergeDefaults, extend } from './utils';
 
 @Module({
   providers: [
