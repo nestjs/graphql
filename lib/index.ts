@@ -8,3 +8,4 @@ export * from './interfaces';
 export * from './services/gql-arguments-host';
 export * from './services/gql-execution-context';
 export * from './tokens';
+export * from './graphql-gateway.module';
