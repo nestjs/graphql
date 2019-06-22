@@ -70,10 +70,12 @@ export class ResolversExplorerService extends BaseExplorerService {
     const predicate = (
       resolverType: string,
       isDelegated: boolean,
+      isReferenceResolver: boolean,
       isPropertyResolver: boolean,
     ) =>
       isUndefined(resolverType) ||
       isDelegated ||
+      !isReferenceResolver ||
       (!isPropertyResolver &&
         ![Resolvers.MUTATION, Resolvers.QUERY, Resolvers.SUBSCRIPTION].some(
           type => type === resolverType,
