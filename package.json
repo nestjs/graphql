@@ -47,7 +47,9 @@
     "lodash": "4.17.15",
     "merge-graphql-schemas": "1.7.6",
     "normalize-path": "3.0.0",
+    "optional": "0.1.4",
     "ts-morph": "5.0.0",
+    "tslib": "^1.10.0",
     "uuid": "3.4.0"
   },
   "peerDependencies": {
@@ -56,6 +58,8 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
+    "@apollo/federation": "^0.6.4",
+    "@apollo/gateway": "^0.6.7",
     "type-graphql": "^0.17.3"
   },
   "lint-staged": {
