@@ -75,8 +75,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     ) =>
       isUndefined(resolverType) ||
       isDelegated ||
-      !isReferenceResolver ||
-      (!isPropertyResolver &&
+      (!isReferenceResolver && !isPropertyResolver &&
         ![Resolvers.MUTATION, Resolvers.QUERY, Resolvers.SUBSCRIPTION].some(
           type => type === resolverType,
         ));
