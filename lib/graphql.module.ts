@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common/interfaces';
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { ApolloServer } from 'apollo-server-express';
 import { printSchema } from 'graphql';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
@@ -24,6 +23,7 @@ import { ScalarsExplorerService } from './services/scalars-explorer.service';
 import { extend } from './utils/extend.util';
 import { generateString } from './utils/generate-token.util';
 import { mergeDefaults } from './utils/merge-defaults.util';
+import { ApolloServerBase } from 'apollo-server-core';
 
 @Module({
   providers: [
@@ -39,7 +39,7 @@ import { mergeDefaults } from './utils/merge-defaults.util';
   exports: [GraphQLTypesLoader, GraphQLAstExplorer],
 })
 export class GraphQLModule implements OnModuleInit {
-  protected apolloServer: ApolloServer;
+  protected apolloServer: ApolloServerBase;
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
@@ -47,7 +47,9 @@ export class GraphQLModule implements OnModuleInit {
     private readonly graphqlTypesLoader: GraphQLTypesLoader,
   ) {}
 
-  static forRoot(options: GqlModuleOptions = {}): DynamicModule {
+  static forRoot(
+    options: GqlModuleOptions = { type: 'express' },
+  ): DynamicModule {
     options = mergeDefaults(options);
     return {
       module: GraphQLModule,
@@ -141,15 +143,33 @@ export class GraphQLModule implements OnModuleInit {
         this.options,
       );
     }
-    this.apolloServer = new ApolloServer(apolloOptions as any);
-    this.apolloServer.applyMiddleware({
-      app,
-      path,
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    });
+
+    if (this.options.type === 'express') {
+      const { ApolloServer } = await import('apollo-server-express');
+
+      const apolloServer = new ApolloServer(apolloOptions as any);
+
+      apolloServer.applyMiddleware({
+        app,
+        path,
+        disableHealthCheck,
+        onHealthCheck,
+        cors,
+        bodyParserConfig,
+      });
+
+      this.apolloServer = apolloServer;
+    } else if (this.options.type === 'fastify') {
+      const { ApolloServer } = await import('apollo-server-fastify');
+
+      const apolloServer = new ApolloServer(apolloOptions as any);
+
+      app.register(apolloServer.createHandler());
+
+      this.apolloServer = apolloServer;
+    } else {
+      throw new Error(`no support for ${this.options.type}`);
+    }
 
     if (this.options.installSubscriptionHandlers) {
       this.apolloServer.installSubscriptionHandlers(

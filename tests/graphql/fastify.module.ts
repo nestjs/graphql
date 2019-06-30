@@ -6,12 +6,10 @@ import { CatsModule } from './cats/cats.module';
 @Module({
   imports: [
     CatsModule,
-    GraphQLModule.forRootAsync({
-      useFactory: async () => ({
-        type: 'express',
-        typePaths: [join(__dirname, '**', '*.graphql')],
-      }),
+    GraphQLModule.forRoot({
+      type: 'fastify',
+      typePaths: [join(__dirname, '**', '*.graphql')],
     }),
   ],
 })
-export class AsyncApplicationModule {}
+export class FastifyApplicationModule {}

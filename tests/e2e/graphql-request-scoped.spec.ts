@@ -14,6 +14,7 @@ describe('GraphQL request scoped', () => {
       imports: [
         CatsModule.enableRequestScope(),
         GraphQLModule.forRoot({
+          type: 'express',
           typePaths: [join(__dirname, '..', 'graphql', '**', '*.graphql')],
         }),
       ],

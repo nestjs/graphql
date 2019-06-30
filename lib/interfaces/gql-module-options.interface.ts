@@ -1,19 +1,26 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import {
-  Config,
-  IResolverValidationOptions,
-  ServerRegistration,
+  Config as ConfigExpress,
+  IResolverValidationOptions as IResolverValidationOptionsExpress,
+  ServerRegistration as ServerRegistrationExpress,
 } from 'apollo-server-express';
+
+import {
+  Config as ConfigFastify,
+  IResolverValidationOptions as IResolverValidationOptionsFastify,
+  ServerRegistration as ServerRegistrationFastify,
+} from 'apollo-server-express';
+
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from '../external/type-graphql.types';
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 export interface GqlModuleOptions
-  extends Omit<Config, 'typeDefs'>,
+  extends Omit<ConfigExpress | ConfigFastify, 'typeDefs'>,
     Partial<
       Pick<
-        ServerRegistration,
+        ServerRegistrationExpress | ServerRegistrationFastify,
         | 'onHealthCheck'
         | 'disableHealthCheck'
         | 'path'
@@ -21,11 +28,14 @@ export interface GqlModuleOptions
         | 'bodyParserConfig'
       >
     > {
+  type: string;
   typeDefs?: string | string[];
   typePaths?: string[];
   include?: Function[];
   installSubscriptionHandlers?: boolean;
-  resolverValidationOptions?: IResolverValidationOptions;
+  resolverValidationOptions?:
+    | IResolverValidationOptionsExpress
+    | IResolverValidationOptionsFastify;
   directiveResolvers?: any;
   schemaDirectives?: Record<string, any>;
   transformSchema?: (

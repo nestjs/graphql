@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
+import { gql } from 'apollo-server-core';
+import { makeExecutableSchema, mergeSchemas } from 'graphql-tools';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import {
   GraphQLObjectType,
@@ -28,7 +29,7 @@ export class GraphQLFactory {
   ) {}
 
   async mergeOptions(
-    options: GqlModuleOptions = { typeDefs: [] },
+    options: GqlModuleOptions = { type: 'express', typeDefs: [] },
   ): Promise<GqlModuleOptions> {
     const resolvers = this.resolversExplorerService.explore();
     const typesResolvers = extend(
