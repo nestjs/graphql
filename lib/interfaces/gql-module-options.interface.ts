@@ -37,6 +37,12 @@ export interface GqlModuleOptions
   };
   autoSchemaFile?: string | boolean;
   buildSchemaOptions?: BuildSchemaOptions;
+  /**
+   * Prepends the global prefix to the url
+   *
+   * @see [faq/global-prefix](Global Prefix)
+   */
+  useGlobalPrefix?: boolean;
 }
 
 export interface GqlOptionsFactory {
