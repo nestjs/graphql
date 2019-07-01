@@ -30,8 +30,14 @@
 
 ## Installation
 
+### express
 ```bash
 $ npm i --save @nestjs/graphql apollo-server-express graphql
+```
+
+### fastify
+```bash
+$ npm i --save @nestjs/graphql apollo-server-fastify graphql
 ```
 
 ## Quick Start
