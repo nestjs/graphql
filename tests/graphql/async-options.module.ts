@@ -8,7 +8,6 @@ import { CatsModule } from './cats/cats.module';
     CatsModule,
     GraphQLModule.forRootAsync({
       useFactory: async () => ({
-        type: 'express',
         typePaths: [join(__dirname, '**', '*.graphql')],
       }),
     }),

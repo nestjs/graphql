@@ -29,7 +29,7 @@ export class GraphQLFactory {
   ) {}
 
   async mergeOptions(
-    options: GqlModuleOptions = { type: 'express', typeDefs: [] },
+    options: GqlModuleOptions = { typeDefs: [] },
   ): Promise<GqlModuleOptions> {
     const resolvers = this.resolversExplorerService.explore();
     const typesResolvers = extend(

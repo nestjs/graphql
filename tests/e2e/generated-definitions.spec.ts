@@ -34,7 +34,6 @@ describe('Generated Definitions', () => {
 
     const outputFile = generatedDefinitions('simple-type.test-definitions.ts');
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },
@@ -55,7 +54,6 @@ describe('Generated Definitions', () => {
       'interface-property.test-definitions.ts',
     );
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },
@@ -79,7 +77,6 @@ describe('Generated Definitions', () => {
       'array-property.test-definitions.ts',
     );
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },
@@ -98,7 +95,6 @@ describe('Generated Definitions', () => {
 
     const outputFile = generatedDefinitions('query.test-definitions.ts');
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },
@@ -117,7 +113,6 @@ describe('Generated Definitions', () => {
 
     const outputFile = generatedDefinitions('mutation.test-definitions.ts');
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },
@@ -136,7 +131,6 @@ describe('Generated Definitions', () => {
 
     const outputFile = generatedDefinitions('enum.test-definitions.ts');
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },
@@ -157,7 +151,6 @@ describe('Generated Definitions', () => {
       'custom-scalar.test-definitions.ts',
     );
     await graphqlFactory.generateDefinitions(typeDefs, {
-      type: 'express',
       definitions: {
         path: outputFile,
       },

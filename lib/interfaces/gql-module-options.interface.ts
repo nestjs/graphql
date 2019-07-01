@@ -28,7 +28,6 @@ export interface GqlModuleOptions
         | 'bodyParserConfig'
       >
     > {
-  type: string;
   typeDefs?: string | string[];
   typePaths?: string[];
   include?: Function[];

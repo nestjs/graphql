@@ -1,7 +1,6 @@
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 
 const defaultOptions: GqlModuleOptions = {
-  type: 'express',
   path: '/graphql',
 };
 

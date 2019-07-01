@@ -47,9 +47,7 @@ export class GraphQLModule implements OnModuleInit {
     private readonly graphqlTypesLoader: GraphQLTypesLoader,
   ) {}
 
-  static forRoot(
-    options: GqlModuleOptions = { type: 'express' },
-  ): DynamicModule {
+  static forRoot(options: GqlModuleOptions = {}): DynamicModule {
     options = mergeDefaults(options);
     return {
       module: GraphQLModule,
@@ -144,7 +142,7 @@ export class GraphQLModule implements OnModuleInit {
       );
     }
 
-    if (this.options.type === 'express') {
+    if (this.isExpress()) {
       const { ApolloServer } = await import('apollo-server-express');
 
       const apolloServer = new ApolloServer(apolloOptions as any);
@@ -159,7 +157,7 @@ export class GraphQLModule implements OnModuleInit {
       });
 
       this.apolloServer = apolloServer;
-    } else if (this.options.type === 'fastify') {
+    } else if (this.isFastify()) {
       const { ApolloServer } = await import('apollo-server-fastify');
 
       const apolloServer = new ApolloServer(apolloOptions as any);
@@ -168,7 +166,7 @@ export class GraphQLModule implements OnModuleInit {
 
       this.apolloServer = apolloServer;
     } else {
-      throw new Error(`no support for ${this.options.type}`);
+      throw new Error(`no support for current HttpAdapter`);
     }
 
     if (this.options.installSubscriptionHandlers) {
@@ -176,5 +174,27 @@ export class GraphQLModule implements OnModuleInit {
         httpAdapter.getHttpServer(),
       );
     }
+  }
+
+  private async isExpress(): Promise<Boolean> {
+    try {
+      const { ExpressAdapter } = await import('@nestjs/platform-express');
+
+      return this.httpAdapterHost instanceof ExpressAdapter;
+    } catch (e) {
+      return false;
+    }
+    return false;
+  }
+
+  private async isFastify(): Promise<Boolean> {
+    try {
+      const { FastifyAdapter } = await import('@nestjs/platform-fastify');
+
+      return this.httpAdapterHost instanceof FastifyAdapter;
+    } catch (e) {
+      return false;
+    }
+    return false;
   }
 }

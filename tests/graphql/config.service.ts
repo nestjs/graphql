@@ -6,7 +6,6 @@ import { GqlModuleOptions, GqlOptionsFactory } from '../../lib';
 export class ConfigService implements GqlOptionsFactory {
   createGqlOptions(): GqlModuleOptions {
     return {
-      type: 'express',
       typePaths: [join(__dirname, '**', '*.graphql')],
     };
   }

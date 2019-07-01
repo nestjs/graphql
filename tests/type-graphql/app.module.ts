@@ -8,7 +8,6 @@ import { RecipesModule } from './recipes/recipes.module';
     RecipesModule,
     DirectionsModule,
     GraphQLModule.forRoot({
-      type: 'express',
       debug: false,
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
