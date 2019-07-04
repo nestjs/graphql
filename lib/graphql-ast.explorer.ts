@@ -15,7 +15,7 @@ import {
   UnionTypeDefinitionNode,
 } from 'graphql';
 import { get, map, sortBy, upperFirst } from 'lodash';
-import TypeScriptAst, {
+import {
   ClassDeclaration,
   ClassDeclarationStructure,
   InterfaceDeclaration,
@@ -29,15 +29,16 @@ import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 export class GraphQLAstExplorer {
   private readonly root = ['Query', 'Mutation', 'Subscription'];
 
-  explore(
+  async explore(
     documentNode: DocumentNode,
     outputPath: string,
     mode: 'class' | 'interface',
-  ): SourceFile {
+  ): Promise<SourceFile> {
     if (!documentNode) {
       return;
     }
-    const tsAstHelper = new TypeScriptAst();
+    const tsMorphLib = await import('ts-morph');
+    const tsAstHelper = new tsMorphLib.default();
     const tsFile = tsAstHelper.createSourceFile(outputPath, '', {
       overwrite: true,
     });
