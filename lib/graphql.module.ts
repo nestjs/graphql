@@ -24,6 +24,7 @@ import { extend } from './utils/extend.util';
 import { generateString } from './utils/generate-token.util';
 import { mergeDefaults } from './utils/merge-defaults.util';
 import { ApolloServerBase } from 'apollo-server-core';
+import { loadPackage } from '@nestjs/common/utils/load-package.util';
 
 @Module({
   providers: [
@@ -143,7 +144,10 @@ export class GraphQLModule implements OnModuleInit {
     }
 
     if (this.isExpress()) {
-      const { ApolloServer } = await import('apollo-server-express');
+      const { ApolloServer } = loadPackage(
+        'apollo-server-express',
+        '@nestjs/graphql',
+      );
 
       const apolloServer = new ApolloServer(apolloOptions as any);
 
@@ -158,7 +162,10 @@ export class GraphQLModule implements OnModuleInit {
 
       this.apolloServer = apolloServer;
     } else if (this.isFastify()) {
-      const { ApolloServer } = await import('apollo-server-fastify');
+      const { ApolloServer } = loadPackage(
+        'apollo-server-fastify',
+        '@nestjs/graphql',
+      );
 
       const apolloServer = new ApolloServer(apolloOptions as any);
 
