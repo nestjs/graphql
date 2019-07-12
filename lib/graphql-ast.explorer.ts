@@ -21,7 +21,6 @@ import {
   InterfaceDeclaration,
   InterfaceDeclarationStructure,
   ParameterDeclarationStructure,
-  Project,
   SourceFile,
   StructureKind,
 } from 'ts-morph';
@@ -31,15 +30,16 @@ import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 export class GraphQLAstExplorer {
   private readonly root = ['Query', 'Mutation', 'Subscription'];
 
-  explore(
+  async explore(
     documentNode: DocumentNode,
     outputPath: string,
     mode: 'class' | 'interface',
-  ): SourceFile {
+  ): Promise<SourceFile> {
     if (!documentNode) {
       return;
     }
-    const tsAstHelper = new Project();
+    const tsMorphLib = await import('ts-morph');
+    const tsAstHelper = new tsMorphLib.Project();
     const tsFile = tsAstHelper.createSourceFile(outputPath, '', {
       overwrite: true,
     });
