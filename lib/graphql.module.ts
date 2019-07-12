@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   Provider,
 } from '@nestjs/common/interfaces';
-import { HttpAdapterHost } from '@nestjs/core';
+import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
 import { printSchema } from 'graphql';
@@ -45,6 +45,7 @@ export class GraphQLModule implements OnModuleInit {
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
     private readonly graphqlFactory: GraphQLFactory,
     private readonly graphqlTypesLoader: GraphQLTypesLoader,
+    private readonly applicationConfig: ApplicationConfig,
   ) {}
 
   static forRoot(options: GqlModuleOptions = {}): DynamicModule {
@@ -115,8 +116,13 @@ export class GraphQLModule implements OnModuleInit {
     if (!httpAdapter) {
       return;
     }
+    const prefix = this.applicationConfig.getGlobalPrefix();
+    const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
+    const path = useGlobalPrefix
+      ? prefix + this.options.path
+      : this.options.path;
+
     const {
-      path,
       disableHealthCheck,
       onHealthCheck,
       cors,
