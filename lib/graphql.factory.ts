@@ -171,7 +171,7 @@ export class GraphQLFactory {
     if (isEmpty(typeDefs) || !options.definitions) {
       return;
     }
-    const tsFile = this.graphqlAstExplorer.explore(
+    const tsFile = await this.graphqlAstExplorer.explore(
       gql`
         ${typeDefs}
       `,

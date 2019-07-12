@@ -22,10 +22,10 @@ export class GraphQLTypesLoader {
   }
 
   private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
-    const filePaths = await glob.async(paths, {
+    const filePaths = await glob(paths, {
       ignore: ['node_modules'],
     });
-    const fileContentsPromises = filePaths.map(filePath => {
+    const fileContentsPromises = filePaths.sort().map(filePath => {
       return readFile(filePath.toString(), 'utf8');
     });
 

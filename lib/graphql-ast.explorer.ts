@@ -15,13 +15,14 @@ import {
   UnionTypeDefinitionNode,
 } from 'graphql';
 import { get, map, sortBy, upperFirst } from 'lodash';
-import TypeScriptAst, {
+import {
   ClassDeclaration,
   ClassDeclarationStructure,
   InterfaceDeclaration,
   InterfaceDeclarationStructure,
   ParameterDeclarationStructure,
   SourceFile,
+  StructureKind,
 } from 'ts-morph';
 import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 
@@ -29,15 +30,16 @@ import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 export class GraphQLAstExplorer {
   private readonly root = ['Query', 'Mutation', 'Subscription'];
 
-  explore(
+  async explore(
     documentNode: DocumentNode,
     outputPath: string,
     mode: 'class' | 'interface',
-  ): SourceFile {
+  ): Promise<SourceFile> {
     if (!documentNode) {
       return;
     }
-    const tsAstHelper = new TypeScriptAst();
+    const tsMorphLib = await import('ts-morph');
+    const tsAstHelper = new tsMorphLib.Project();
     const tsFile = tsAstHelper.createSourceFile(outputPath, '', {
       overwrite: true,
     });
@@ -88,9 +90,12 @@ export class GraphQLAstExplorer {
     tsFile: SourceFile,
     mode: 'class' | 'interface',
   ) {
+    const structureKind =
+      mode === 'class' ? StructureKind.Class : StructureKind.Interface;
     const rootInterface = this.addClassOrInterface(tsFile, mode, {
       name: 'ISchema',
       isExported: true,
+      kind: structureKind,
     });
     operationTypes.forEach(item => {
       if (!item) {
@@ -102,6 +107,7 @@ export class GraphQLAstExplorer {
       const interfaceRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(interfaceName)),
         isExported: true,
+        kind: structureKind,
       });
       (rootInterface as InterfaceDeclaration).addProperty({
         name: interfaceName,
@@ -128,11 +134,14 @@ export class GraphQLAstExplorer {
       this.addSymbolIfRoot(parentName),
     );
     if (!parentRef) {
+      const structureKind =
+        mode === 'class' ? StructureKind.Class : StructureKind.Interface;
       const isRoot = this.root.indexOf(parentName) >= 0;
       parentRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(parentName)),
         isExported: true,
         isAbstract: isRoot && mode === 'class',
+        kind: structureKind,
       });
     }
     const interfaces = get(item, 'interfaces');
@@ -260,6 +269,7 @@ export class GraphQLAstExplorer {
         name: get(element, 'name.value'),
         type: name,
         hasQuestionToken: !required,
+        kind: StructureKind.Parameter,
       };
     });
   }

@@ -2,6 +2,8 @@ import { $$asyncIterator } from 'iterall';
 
 type AsyncIterator<T> = {
   next(value?: any): Promise<IteratorResult<T>>;
+  return(): any;
+  throw(error: any): any;
 };
 
 export const createAsyncIterator = async <T = any>(
@@ -22,6 +24,12 @@ export const createAsyncIterator = async <T = any>(
   return {
     next() {
       return getNextValue();
+    },
+    return() {
+      return asyncIterator.return();
+    },
+    throw(error: any) {
+      return asyncIterator.throw(error);
     },
     [$$asyncIterator]() {
       return this;
