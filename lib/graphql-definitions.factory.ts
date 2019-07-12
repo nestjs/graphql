@@ -66,7 +66,7 @@ export class GraphQLDefinitionsFactory {
       resolverValidationOptions: { allowResolversNotInSchema: true },
     });
     schema = removeTempField(schema);
-    const tsFile = this.gqlAstExplorer.explore(
+    const tsFile = await this.gqlAstExplorer.explore(
       gql`
         ${printSchema(schema)}
       `,
