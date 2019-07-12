@@ -4,7 +4,7 @@ import {
   OnModuleInit,
   Provider,
 } from '@nestjs/common/interfaces';
-import { HttpAdapterHost, ApplicationConfig } from '@nestjs/core';
+import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServer } from 'apollo-server-express';
 import { printSchema } from 'graphql';
@@ -117,8 +117,8 @@ export class GraphQLModule implements OnModuleInit {
       return;
     }
     const prefix = this.applicationConfig.getGlobalPrefix();
-    const shouldUseGlobalPrefix = prefix && this.options.useGlobalPrefix;
-    const path = shouldUseGlobalPrefix
+    const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
+    const path = useGlobalPrefix
       ? prefix + this.options.path
       : this.options.path;
 
