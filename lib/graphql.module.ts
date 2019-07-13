@@ -149,7 +149,7 @@ export class GraphQLModule implements OnModuleInit {
       );
     }
 
-    if (this.isExpress()) {
+    if (httpAdapter.constructor.name === 'ExpressAdapter') {
       const { ApolloServer } = loadPackage(
         'apollo-server-express',
         '@nestjs/graphql',
@@ -167,7 +167,7 @@ export class GraphQLModule implements OnModuleInit {
       });
 
       this.apolloServer = apolloServer;
-    } else if (this.isFastify()) {
+    } else if (httpAdapter.constructor.name === 'FastifyAdapter') {
       const { ApolloServer } = loadPackage(
         'apollo-server-fastify',
         '@nestjs/graphql',
@@ -179,7 +179,9 @@ export class GraphQLModule implements OnModuleInit {
 
       this.apolloServer = apolloServer;
     } else {
-      throw new Error(`no support for current HttpAdapter`);
+      throw new Error(
+        `no support for current HttpAdapter: ${httpAdapter.constructor.name}`,
+      );
     }
 
     if (this.options.installSubscriptionHandlers) {
@@ -187,27 +189,5 @@ export class GraphQLModule implements OnModuleInit {
         httpAdapter.getHttpServer(),
       );
     }
-  }
-
-  private async isExpress(): Promise<Boolean> {
-    try {
-      const { ExpressAdapter } = await import('@nestjs/platform-express');
-
-      return this.httpAdapterHost instanceof ExpressAdapter;
-    } catch (e) {
-      return false;
-    }
-    return false;
-  }
-
-  private async isFastify(): Promise<Boolean> {
-    try {
-      const { FastifyAdapter } = await import('@nestjs/platform-fastify');
-
-      return this.httpAdapterHost instanceof FastifyAdapter;
-    } catch (e) {
-      return false;
-    }
-    return false;
   }
 }

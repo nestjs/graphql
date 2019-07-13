@@ -16,7 +16,6 @@
     "test:integration": "jest --config ./tests/jest-e2e.json"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@nestjs/common": "6.5.2",
     "@nestjs/core": "6.5.2",
     "@nestjs/platform-express": "6.5.2",

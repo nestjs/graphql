@@ -10,7 +10,7 @@ import {
   Config as ConfigFastify,
   IResolverValidationOptions as IResolverValidationOptionsFastify,
   ServerRegistration as ServerRegistrationFastify,
-} from 'apollo-server-express';
+} from 'apollo-server-fastify';
 
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from '../external/type-graphql.types';
