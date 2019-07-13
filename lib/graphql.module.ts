@@ -123,7 +123,12 @@ export class GraphQLModule implements OnModuleInit {
       ? prefix + this.options.path
       : this.options.path;
 
-    const { disableHealthCheck, onHealthCheck, cors } = this.options;
+    const {
+      disableHealthCheck,
+      onHealthCheck,
+      cors,
+      bodyParserConfig,
+    } = this.options;
     const app = httpAdapter.getInstance();
 
     const typeDefs =
@@ -158,6 +163,7 @@ export class GraphQLModule implements OnModuleInit {
         disableHealthCheck,
         onHealthCheck,
         cors,
+        bodyParserConfig,
       });
 
       this.apolloServer = apolloServer;
