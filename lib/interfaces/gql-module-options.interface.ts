@@ -22,6 +22,7 @@ export interface IResolverValidationOptions {
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
+export type Enhancer = 'guards' | 'interceptors' | 'filters';
 export interface GqlModuleOptions
   extends Omit<Config, 'typeDefs'>,
     Partial<
@@ -56,6 +57,10 @@ export interface GqlModuleOptions
    * @see [faq/global-prefix](Global Prefix)
    */
   useGlobalPrefix?: boolean;
+  /**
+   * Enable/disable enhancers for @ResolveProperty()
+   */
+  fieldResolverEnhancers?: Enhancer[];
 }
 
 export interface GqlOptionsFactory {
