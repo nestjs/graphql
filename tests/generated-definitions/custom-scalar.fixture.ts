@@ -5,4 +5,4 @@
  */
 
 /* tslint:disable */
-export type Date = any;
+export type CustomDate = any;
