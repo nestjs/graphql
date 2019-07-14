@@ -15,8 +15,17 @@ try {
 } catch (e) {}
 
 export interface SubscriptionOptions {
-  filter?: (payload: any, variables: any, context: any) => boolean;
-  resolve?: (payload: any, args: any, context: any, info: any) => any;
+  filter?: (
+    payload: any,
+    variables: any,
+    context: any,
+  ) => boolean | Promise<boolean>;
+  resolve?: (
+    payload: any,
+    args: any,
+    context: any,
+    info: any,
+  ) => any | Promise<any>;
 }
 
 export function Subscription(): MethodDecorator;
