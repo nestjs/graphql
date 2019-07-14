@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { gql, makeExecutableSchema, mergeSchemas } from 'apollo-server-express';
+import { gql } from 'apollo-server-core';
+import { makeExecutableSchema, mergeSchemas } from 'graphql-tools';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import {
   GraphQLObjectType,
