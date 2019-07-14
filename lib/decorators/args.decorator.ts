@@ -1,14 +1,17 @@
 import { PipeTransform, Type } from '@nestjs/common';
 import { isObject, isString } from '@nestjs/common/utils/shared.utils';
-import * as optional from 'optional';
 import 'reflect-metadata';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { BasicOptions } from '../external/type-graphql.types';
 import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import { addPipesMetadata } from './param.utils';
 
-const { Arg: TypeGqlArg, Args: TypeGqlArgs } =
-  optional('type-graphql') || ({} as any);
+let TypeGqlArg, TypeGqlArgs;
+try {
+  const TypeGql = require('type-graphql');
+  TypeGqlArg = TypeGql.Arg;
+  TypeGqlArgs = TypeGql.Args;
+} catch (e) {}
 
 export interface ArgsOptions extends BasicOptions {
   name?: string;

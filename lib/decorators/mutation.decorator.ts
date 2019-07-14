@@ -1,5 +1,4 @@
 import { isString } from '@nestjs/common/utils/shared.utils';
-import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
 import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import {
@@ -8,7 +7,10 @@ import {
 } from './../external/type-graphql.types';
 import { addResolverMetadata } from './resolvers.utils';
 
-const { Mutation: TypeGqlMutation } = optional('type-graphql') || ({} as any);
+let TypeGqlMutation: Function;
+try {
+  TypeGqlMutation = require('type-graphql').Mutation;
+} catch (e) {}
 
 export function Mutation(): MethodDecorator;
 export function Mutation(name: string): MethodDecorator;

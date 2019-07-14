@@ -1,6 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
-import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
 import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants';
 import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
@@ -10,8 +9,10 @@ import {
 } from './../external/type-graphql.types';
 import { addResolverMetadata } from './resolvers.utils';
 
-const { Subscription: TypeGqlSubscription } =
-  optional('type-graphql') || ({} as any);
+let TypeGqlSubscription: Function;
+try {
+  TypeGqlSubscription = require('type-graphql').Subscription;
+} catch (e) {}
 
 export interface SubscriptionOptions {
   filter?: (payload: any, variables: any, context: any) => boolean;
