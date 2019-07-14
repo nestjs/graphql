@@ -20,13 +20,20 @@ export class GraphQLSchemaBuilder {
 
     const buildSchema = this.loadBuildSchemaFactory();
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
-    return await buildSchema({
-      ...options,
-      emitSchemaFile: autoSchemaFile !== true ? autoSchemaFile : false,
-      scalarsMap,
-      validate: false,
-      resolvers,
-    });
+    try {
+      return await buildSchema({
+        ...options,
+        emitSchemaFile: autoSchemaFile !== true ? autoSchemaFile : false,
+        scalarsMap,
+        validate: false,
+        resolvers,
+      });
+    } catch (err) {
+      if (err && err.details) {
+        console.error(err.details);
+      }
+      throw err;
+    }
   }
 
   private loadBuildSchemaFactory(): (...args: any[]) => GraphQLSchema {

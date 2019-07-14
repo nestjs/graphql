@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -46,7 +46,7 @@
     "lodash": "4.17.14",
     "merge-graphql-schemas": "1.5.8",
     "optional": "0.1.4",
-    "ts-morph": "3.1.0",
+    "ts-morph": "3.1.1",
     "uuid": "3.3.2"
   },
   "peerDependencies": {
