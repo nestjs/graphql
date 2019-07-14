@@ -4,7 +4,6 @@ import {
   isObject,
   isString,
 } from '@nestjs/common/utils/shared.utils';
-import * as optional from 'optional';
 import { Resolvers } from '../enums/resolvers.enum';
 import {
   AdvancedOptions,
@@ -18,7 +17,10 @@ import {
 } from '../graphql.constants';
 import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
 
-const { FieldResolver } = optional('type-graphql') || ({} as any);
+let FieldResolver: Function;
+try {
+  FieldResolver = require('type-graphql').FieldResolver;
+} catch (e) {}
 
 export function addResolverMetadata(
   resolver: Resolvers | string | undefined,
