@@ -276,7 +276,7 @@ export class GraphQLAstExplorer {
 
   addScalarDefinition(item: ScalarTypeDefinitionNode, tsFile: SourceFile) {
     const name = get(item, 'name.value');
-    if (!name) {
+    if (!name || name === 'Date') {
       return;
     }
     tsFile.addTypeAlias({
