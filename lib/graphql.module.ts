@@ -160,6 +160,7 @@ export class GraphQLModule implements OnModuleInit {
     const { ApolloServer } = loadPackage(
       'apollo-server-express',
       'GraphQLModule',
+      () => require('apollo-server-express'),
     );
     const prefix = this.applicationConfig.getGlobalPrefix();
     const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
@@ -194,6 +195,7 @@ export class GraphQLModule implements OnModuleInit {
     const { ApolloServer } = loadPackage(
       'apollo-server-fastify',
       'GraphQLModule',
+      () => require('apollo-server-fastify'),
     );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
