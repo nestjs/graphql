@@ -23,6 +23,7 @@
     "@types/graphql": "14.2.2",
     "@types/jest": "24.0.15",
     "@types/node": "12.6.8",
+    "@types/normalize-path": "3.0.0",
     "apollo-server-express": "2.7.0",
     "apollo-server-fastify": "2.7.0",
     "class-transformer": "0.2.3",
@@ -44,7 +45,7 @@
     "graphql-tools": "4.0.5",
     "lodash": "4.17.14",
     "merge-graphql-schemas": "1.5.8",
-    "optional": "0.1.4",
+    "normalize-path": "3.0.0",
     "ts-morph": "3.1.2",
     "uuid": "3.3.2"
   },

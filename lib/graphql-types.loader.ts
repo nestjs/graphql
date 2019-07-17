@@ -3,6 +3,7 @@ import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
 import { mergeTypes } from 'merge-graphql-schemas';
+import * as normalize from 'normalize-path';
 import * as util from 'util';
 
 const readFile = util.promisify(fs.readFile);
@@ -22,6 +23,10 @@ export class GraphQLTypesLoader {
   }
 
   private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
+    paths = util.isArray(paths)
+      ? paths.map(path => normalize(path))
+      : normalize(paths);
+
     const filePaths = await glob(paths, {
       ignore: ['node_modules'],
     });
