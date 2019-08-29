@@ -165,7 +165,7 @@ export class GraphQLModule implements OnModuleInit {
     const prefix = this.applicationConfig.getGlobalPrefix();
     const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
     const path = useGlobalPrefix
-      ? prefix + this.options.path
+      ? prefix.replace(/^\/?(.*?)\/?$/, '/$1') + this.options.path
       : this.options.path;
 
     const {
