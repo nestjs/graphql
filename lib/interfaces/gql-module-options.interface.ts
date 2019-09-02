@@ -1,8 +1,8 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
+import { Config } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { BuildSchemaOptions } from '../external/type-graphql.types';
-import { Config } from 'apollo-server-core';
 
 export interface ServerRegistration {
   path?: string;

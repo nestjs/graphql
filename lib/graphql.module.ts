@@ -163,13 +163,7 @@ export class GraphQLModule implements OnModuleInit {
       'GraphQLModule',
       () => require('apollo-server-express'),
     );
-    const prefix = this.applicationConfig.getGlobalPrefix();
-    const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
-    const gqlOptionsPath = normalizeRoutePath(this.options.path);
-    const path = useGlobalPrefix
-      ? normalizeRoutePath(prefix) + gqlOptionsPath
-      : gqlOptionsPath;
-
+    const path = this.getNormalizedPath(apolloOptions);
     const {
       disableHealthCheck,
       onHealthCheck,
@@ -202,6 +196,7 @@ export class GraphQLModule implements OnModuleInit {
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
+    const path = this.getNormalizedPath(apolloOptions);
 
     const apolloServer = new ApolloServer(apolloOptions as any);
     const {
@@ -216,9 +211,19 @@ export class GraphQLModule implements OnModuleInit {
         onHealthCheck,
         cors,
         bodyParserConfig,
+        path,
       }),
     );
 
     this.apolloServer = apolloServer;
+  }
+
+  private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
+    const prefix = this.applicationConfig.getGlobalPrefix();
+    const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
+    const gqlOptionsPath = normalizeRoutePath(apolloOptions.path);
+    return useGlobalPrefix
+      ? normalizeRoutePath(prefix) + gqlOptionsPath
+      : gqlOptionsPath;
   }
 }
