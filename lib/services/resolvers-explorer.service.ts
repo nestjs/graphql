@@ -106,6 +106,7 @@ export class ResolversExplorerService extends BaseExplorerService {
             createContext,
             subscriptionOptions,
             resolver,
+            instance,
           );
         }
         return {
@@ -198,9 +199,14 @@ export class ResolversExplorerService extends BaseExplorerService {
     createSubscribeContext: Function,
     subscriptionOptions: SubscriptionOptions,
     resolverMetadata: ResolverMetadata,
+    instanceRef: Object,
   ) {
+    const resolveFunc =
+      subscriptionOptions &&
+      subscriptionOptions.resolve &&
+      subscriptionOptions.resolve.bind(instanceRef);
     const baseCallbackMetadata = {
-      resolve: subscriptionOptions && subscriptionOptions.resolve,
+      resolve: resolveFunc,
     };
     if (subscriptionOptions && subscriptionOptions.filter) {
       return {
@@ -211,7 +217,8 @@ export class ResolversExplorerService extends BaseExplorerService {
             ...args: [TPayload, TVariables, TContext, TInfo]
           ) =>
             createAsyncIterator(createSubscribeContext()(...args), payload =>
-              (subscriptionOptions.filter as Function)(
+              (subscriptionOptions.filter as Function).call(
+                instanceRef,
                 payload,
                 ...args.slice(1),
               ),
