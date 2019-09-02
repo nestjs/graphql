@@ -12,6 +12,10 @@ export const createAsyncIterator = async <T = any>(
 ): Promise<AsyncIterator<T>> => {
   const asyncIterator = await lazyFactory;
   const getNextValue = async () => {
+    if (!asyncIterator || typeof asyncIterator.next !== 'function') {
+      return Promise.reject(asyncIterator);
+    }
+
     const payload = await asyncIterator.next();
     if (payload.done === true) {
       return payload;
@@ -26,7 +30,15 @@ export const createAsyncIterator = async <T = any>(
       return getNextValue();
     },
     return() {
-      return asyncIterator.return();
+      const isAsyncIterator =
+        asyncIterator && typeof asyncIterator.return === 'function';
+
+      return isAsyncIterator
+        ? asyncIterator.return()
+        : Promise.resolve({
+            done: true,
+            value: asyncIterator,
+          });
     },
     throw(error: any) {
       return asyncIterator.throw(error);
