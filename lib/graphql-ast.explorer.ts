@@ -45,7 +45,7 @@ export class GraphQLAstExplorer {
     });
 
     let { definitions } = documentNode;
-    definitions = sortBy(definitions, 'kind');
+    definitions = sortBy(definitions, ['kind', 'name']);
 
     definitions.forEach(item =>
       this.lookupDefinition(
