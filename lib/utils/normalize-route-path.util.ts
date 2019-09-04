@@ -9,7 +9,9 @@ function stripEndingSlash(text: string) {
   if (!text) {
     return text;
   }
-  return text[text.length - 1] === '/' ? text.slice(0, text.length - 1) : text;
+  return text[text.length - 1] === '/' && text.length > 1
+    ? text.slice(0, text.length - 1)
+    : text;
 }
 
 export function normalizeRoutePath(path: string) {
