@@ -34,7 +34,7 @@
     "prettier": "1.18.2",
     "reflect-metadata": "0.1.13",
     "supertest": "4.0.2",
-    "ts-jest": "24.0.2",
+    "ts-jest": "24.1.0",
     "ts-node": "8.3.0",
     "typescript": "3.6.3"
   },
