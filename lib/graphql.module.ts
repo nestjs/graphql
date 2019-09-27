@@ -99,7 +99,7 @@ export class GraphQLModule implements OnModuleInit {
       return {
         provide: GRAPHQL_MODULE_OPTIONS,
         useFactory: async (...args: any[]) =>
-          mergeDefaults(await options.useFactory(args)),
+          mergeDefaults(await options.useFactory(...args)),
         inject: options.inject || [],
       };
     }
