@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { GlobalPrefixAsyncOptionsClassModule } from '../graphql/global-prefix-async-options-class.module';
+import { GlobalPrefixAsyncOptionsModule } from '../graphql/global-prefix-async-options.module';
 import { GlobalPrefixModule } from '../graphql/global-prefix.module';
 
 describe('GraphQL (global prefix)', () => {
@@ -101,6 +104,90 @@ describe('GraphQL (global prefix)', () => {
       }).compile();
 
       app = module.createNestApplication();
+      app.setGlobalPrefix('/api/v1/');
+      await app.init();
+    });
+
+    it('should return query result', () => {
+      return request(app.getHttpServer())
+        .post('/api/v1/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `
+          {
+            getCats {
+              id,
+              color,
+              weight
+            }
+          }`,
+        })
+        .expect(200, {
+          data: {
+            getCats: [
+              {
+                id: 1,
+                color: 'black',
+                weight: 5,
+              },
+            ],
+          },
+        });
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
+  describe('Global prefix (async configuration)', () => {
+    beforeEach(async () => {
+      app = await NestFactory.create(GlobalPrefixAsyncOptionsModule, {
+        logger: false,
+      });
+      app.setGlobalPrefix('/api/v1/');
+      await app.init();
+    });
+
+    it('should return query result', () => {
+      return request(app.getHttpServer())
+        .post('/api/v1/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `
+          {
+            getCats {
+              id,
+              color,
+              weight
+            }
+          }`,
+        })
+        .expect(200, {
+          data: {
+            getCats: [
+              {
+                id: 1,
+                color: 'black',
+                weight: 5,
+              },
+            ],
+          },
+        });
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
+  describe('Global prefix (async class)', () => {
+    beforeEach(async () => {
+      app = await NestFactory.create(GlobalPrefixAsyncOptionsClassModule, {
+        logger: false,
+      });
       app.setGlobalPrefix('/api/v1/');
       await app.init();
     });
