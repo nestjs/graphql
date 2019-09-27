@@ -2,9 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { GlobalPrefixAsyncOptionsClassModule } from '../graphql/global-prefix-async-options-class.module';
+import { GlobalPrefixAsyncOptionsModule } from '../graphql/global-prefix-async-options.module';
 import { GlobalPrefixModule } from '../graphql/global-prefix.module';
-import { GlobalPrefixAsyncOptionsApplicationModule } from '../graphql/global-prefix-async-options.module';
-import { GlobalPrefixAsyncOptionsClassApplicationModule } from '../graphql/global-prefix-async-options-class.module';
 
 describe('GraphQL (global prefix)', () => {
   let app: INestApplication;
@@ -143,10 +143,9 @@ describe('GraphQL (global prefix)', () => {
 
   describe('Global prefix (async configuration)', () => {
     beforeEach(async () => {
-      app = await NestFactory.create(
-        GlobalPrefixAsyncOptionsApplicationModule,
-        { logger: false },
-      );
+      app = await NestFactory.create(GlobalPrefixAsyncOptionsModule, {
+        logger: false,
+      });
       app.setGlobalPrefix('/api/v1/');
       await app.init();
     });
@@ -186,10 +185,9 @@ describe('GraphQL (global prefix)', () => {
 
   describe('Global prefix (async class)', () => {
     beforeEach(async () => {
-      app = await NestFactory.create(
-        GlobalPrefixAsyncOptionsClassApplicationModule,
-        { logger: false },
-      );
+      app = await NestFactory.create(GlobalPrefixAsyncOptionsClassModule, {
+        logger: false,
+      });
       app.setGlobalPrefix('/api/v1/');
       await app.init();
     });

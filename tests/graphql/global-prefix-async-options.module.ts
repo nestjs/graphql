@@ -14,4 +14,4 @@ import { CatsModule } from './cats/cats.module';
     }),
   ],
 })
-export class GlobalPrefixAsyncOptionsApplicationModule {}
+export class GlobalPrefixAsyncOptionsModule {}

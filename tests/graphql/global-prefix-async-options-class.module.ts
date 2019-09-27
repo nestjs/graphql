@@ -20,4 +20,4 @@ class ConfigService implements GqlOptionsFactory {
     }),
   ],
 })
-export class GlobalPrefixAsyncOptionsClassApplicationModule {}
+export class GlobalPrefixAsyncOptionsClassModule {}
