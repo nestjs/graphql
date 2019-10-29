@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
 
-describe('GraphQL', () => {
+describe('GraphQL Federation', () => {
   let app: INestApplication;
 
   describe('UsersService', () => {
