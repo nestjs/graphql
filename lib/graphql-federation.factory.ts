@@ -3,7 +3,11 @@ import { gql } from 'apollo-server-core';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 
 import { extend } from './utils';
-import { ScalarsExplorerService, DelegatesExplorerService, ResolversExplorerService } from './services';
+import {
+  ScalarsExplorerService,
+  DelegatesExplorerService,
+  ResolversExplorerService,
+} from './services';
 import { GqlModuleOptions } from './interfaces';
 
 @Injectable()
@@ -29,9 +33,11 @@ export class GraphQLFederationFactory {
 
     const schema = buildFederatedSchema([
       {
-        typeDefs: gql`${options.typeDefs}`,
+        typeDefs: gql`
+          ${options.typeDefs}
+        `,
         resolvers,
-      }
+      },
     ]);
 
     return {

@@ -5,7 +5,11 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { HttpAdapterHost } from '@nestjs/core';
 
 import { GraphQLFederationFactory } from './graphql-federation.factory';
-import { ScalarsExplorerService, DelegatesExplorerService, ResolversExplorerService } from './services';
+import {
+  ScalarsExplorerService,
+  DelegatesExplorerService,
+  ResolversExplorerService,
+} from './services';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
@@ -69,9 +73,7 @@ export class GraphQLFederationModule implements OnModuleInit {
     };
   }
 
-  private static createAsyncProviders(
-    options: GqlModuleAsyncOptions,
-  ): Provider[] {
+  private static createAsyncProviders(options: GqlModuleAsyncOptions): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -85,9 +87,7 @@ export class GraphQLFederationModule implements OnModuleInit {
     ];
   }
 
-  private static createAsyncOptionsProvider(
-    options: GqlModuleAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: GqlModuleAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: GRAPHQL_MODULE_OPTIONS,
@@ -104,10 +104,11 @@ export class GraphQLFederationModule implements OnModuleInit {
   }
 
   async onModuleInit() {
-    if (!this.httpAdapterHost) return;
-    const { httpAdapter } = this.httpAdapterHost;
+    const { httpAdapter } = this.httpAdapterHost || {};
 
-    if (!httpAdapter) return;
+    if (!httpAdapter) {
+      return;
+    }
 
     const { printSchema } = loadPackage('@apollo/federation', 'ApolloFederation');
 

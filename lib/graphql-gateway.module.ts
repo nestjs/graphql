@@ -12,7 +12,8 @@ export class GraphQLGatewayModule implements OnModuleInit {
   constructor(
     @Optional()
     private readonly httpAdapterHost: HttpAdapterHost,
-    @Optional() @Inject(GRAPHQL_GATEWAY_BUILD_SERVICE)
+    @Optional()
+    @Inject(GRAPHQL_GATEWAY_BUILD_SERVICE)
     private readonly buildService: GatewayBuildService,
     @Inject(GRAPHQL_GATEWAY_MODULE_OPTIONS)
     private readonly options: GatewayModuleOptions,
@@ -31,10 +32,11 @@ export class GraphQLGatewayModule implements OnModuleInit {
   }
 
   async onModuleInit() {
-    if (!this.httpAdapterHost) return;
-    const { httpAdapter } = this.httpAdapterHost;
+    const { httpAdapter } = this.httpAdapterHost || {};
 
-    if (!httpAdapter) return;
+    if (!httpAdapter) {
+      return;
+    }
 
     const { ApolloGateway } = loadPackage('@apollo/gateway', 'ApolloGateway');
     const app = httpAdapter.getInstance();

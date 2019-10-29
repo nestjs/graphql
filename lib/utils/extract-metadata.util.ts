@@ -25,30 +25,18 @@ export function extractMetadata(
     Reflect.getMetadata(RESOLVER_TYPE_METADATA, callback) ||
     Reflect.getMetadata(RESOLVER_TYPE_METADATA, instance.constructor);
 
-  const isPropertyResolver = !!Reflect.getMetadata(
-    RESOLVER_PROPERTY_METADATA,
-    callback,
-  );
+  const isPropertyResolver = !!Reflect.getMetadata(RESOLVER_PROPERTY_METADATA, callback);
 
   const resolverName = Reflect.getMetadata(RESOLVER_NAME_METADATA, callback);
-  const isDelegated = !!Reflect.getMetadata(
-    RESOLVER_DELEGATE_METADATA,
-    callback,
-  );
+  const isDelegated = !!Reflect.getMetadata(RESOLVER_DELEGATE_METADATA, callback);
 
-  const isReferenceResolver = !!Reflect.getMetadata(
-    RESOLVER_REFERENCE_METADATA,
-    callback,
-  );
-
+  const isReferenceResolver = !!Reflect.getMetadata(RESOLVER_REFERENCE_METADATA, callback);
 
   if (filterPredicate(resolverType, isDelegated, isReferenceResolver, isPropertyResolver)) {
     return null;
   }
 
-  const name = isReferenceResolver
-    ? RESOLVER_REFERENCE_KEY
-    : resolverName || methodName;
+  const name = isReferenceResolver ? RESOLVER_REFERENCE_KEY : resolverName || methodName;
 
   return {
     type: resolverType,
