@@ -1,15 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { ApplicationModule } from '../graphql/app.module';
+import { AppModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 
-describe('GraphQL with fastify', () => {
+describe('GraphQL federation with fastify', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [ApplicationModule],
+      imports: [AppModule],
     }).compile();
 
     app = module.createNestApplication(new FastifyAdapter());
@@ -28,20 +28,20 @@ describe('GraphQL with fastify', () => {
         variables: {},
         query: `
         {
-          getCats {
+          getPosts {
             id,
-            color,
-            weight
+            title,
+            body,
           }
         }`,
       })
       .expect(200, {
         data: {
-          getCats: [
+          getPosts: [
             {
-              id: 1,
-              color: 'black',
-              weight: 5,
+              id: '1',
+              title: 'Hello world',
+              body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             },
           ],
         },

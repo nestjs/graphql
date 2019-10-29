@@ -1,11 +1,10 @@
 import { DynamicModule, Inject, Module, OnModuleInit, Optional, Provider } from '@nestjs/common';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServerBase, Config as ApolloServerConfig } from 'apollo-server-core';
 import { HttpAdapterHost } from '@nestjs/core';
 import {
   GRAPHQL_GATEWAY_BUILD_SERVICE,
   GRAPHQL_GATEWAY_MODULE_OPTIONS,
   GRAPHQL_MODULE_ID,
-  GRAPHQL_MODULE_OPTIONS,
 } from './graphql.constants';
 import {
   GatewayBuildService,
@@ -18,7 +17,7 @@ import { generateString } from './utils';
 
 @Module({})
 export class GraphQLGatewayModule implements OnModuleInit {
-  private apolloServer: ApolloServer;
+  private apolloServer: ApolloServerBase;
 
   constructor(
     @Optional()
@@ -94,20 +93,8 @@ export class GraphQLGatewayModule implements OnModuleInit {
     }
 
     const { ApolloGateway } = loadPackage('@apollo/gateway', 'ApolloGateway');
-    const app = httpAdapter.getInstance();
-
     const {
-      options: {
-        __exposeQueryPlanExperimental,
-        debug,
-        serviceList,
-        path,
-        disableHealthCheck,
-        onHealthCheck,
-        cors,
-        bodyParserConfig,
-        installSubscriptionHandlers,
-      },
+      options: { __exposeQueryPlanExperimental, debug, serviceList, installSubscriptionHandlers },
       buildService,
     } = this;
 
@@ -119,20 +106,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     });
 
     const { schema, executor } = await gateway.load();
-
-    this.apolloServer = new ApolloServer({
-      executor,
-      schema,
-    });
-
-    this.apolloServer.applyMiddleware({
-      app,
-      path,
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    });
+    this.registerGqlServer({ schema, executor });
 
     if (installSubscriptionHandlers) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
@@ -141,5 +115,60 @@ export class GraphQLGatewayModule implements OnModuleInit {
         httpAdapter.getHttpServer(),
       );*/
     }
+  }
+
+  private registerGqlServer(apolloOptions: ApolloServerConfig) {
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+    const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
+
+    if (adapterName === 'ExpressAdapter') {
+      this.registerExpress(apolloOptions);
+    } else if (adapterName === 'FastifyAdapter') {
+      this.registerFastify(apolloOptions);
+    } else {
+      throw new Error(`No support for current HttpAdapter: ${adapterName}`);
+    }
+  }
+
+  private registerExpress(apolloOptions: ApolloServerConfig) {
+    const { ApolloServer } = loadPackage('apollo-server-express', 'GraphQLModule', () =>
+      require('apollo-server-express'),
+    );
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } = this.options;
+    const app = this.httpAdapterHost.httpAdapter.getInstance();
+
+    const apolloServer = new ApolloServer(apolloOptions);
+    apolloServer.applyMiddleware({
+      app,
+      path,
+      disableHealthCheck,
+      onHealthCheck,
+      cors,
+      bodyParserConfig,
+    });
+    this.apolloServer = apolloServer;
+  }
+
+  private registerFastify(apolloOptions: ApolloServerConfig) {
+    const { ApolloServer } = loadPackage('apollo-server-fastify', 'GraphQLModule', () =>
+      require('apollo-server-fastify'),
+    );
+
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+    const app = httpAdapter.getInstance();
+
+    const apolloServer = new ApolloServer(apolloOptions as any);
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } = this.options;
+    app.register(
+      apolloServer.createHandler({
+        disableHealthCheck,
+        onHealthCheck,
+        cors,
+        bodyParserConfig,
+        path,
+      }),
+    );
+
+    this.apolloServer = apolloServer;
   }
 }
