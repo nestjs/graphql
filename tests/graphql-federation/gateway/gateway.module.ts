@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { GraphQLGatewayModule } from '../../../lib/graphql-gateway.module';
-import { join } from 'path';
 
 @Module({
   imports: [

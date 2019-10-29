@@ -3,9 +3,9 @@ import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
-import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
+import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-async.module';
 
-describe('GraphQL Gateway', () => {
+describe('GraphQL Gateway async', () => {
   let postsApp: INestApplication;
   let usersApp: INestApplication;
   let gatewayApp: INestApplication;
@@ -65,42 +65,6 @@ describe('GraphQL Gateway', () => {
               },
             },
           ],
-        },
-      });
-  });
-
-  it(`should run reverse lookup across boundaries`, () => {
-    return request(gatewayApp.getHttpServer())
-      .post('/graphql')
-      .send({
-        operationName: null,
-        variables: {},
-        query: `
-        {
-          getUser(id: "5") {
-            id,
-            name,
-            posts {
-              id,
-              title,
-              body,
-            }
-          }
-        }`,
-      })
-      .expect(200, {
-        data: {
-          getUser: {
-            id: '5',
-            name: 'GraphQL',
-            posts: [
-              {
-                id: '1',
-                title: 'Hello world',
-                body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-              },
-            ],
-          },
         },
       });
   });

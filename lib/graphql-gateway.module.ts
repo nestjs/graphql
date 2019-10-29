@@ -1,9 +1,20 @@
-import { DynamicModule, Inject, Module, OnModuleInit, Optional } from '@nestjs/common';
+import { DynamicModule, Inject, Module, OnModuleInit, Optional, Provider } from '@nestjs/common';
 import { ApolloServer } from 'apollo-server-express';
 import { HttpAdapterHost } from '@nestjs/core';
-import { GRAPHQL_GATEWAY_BUILD_SERVICE, GRAPHQL_GATEWAY_MODULE_OPTIONS } from './graphql.constants';
-import { GatewayBuildService, GatewayModuleOptions } from './interfaces';
+import {
+  GRAPHQL_GATEWAY_BUILD_SERVICE,
+  GRAPHQL_GATEWAY_MODULE_OPTIONS,
+  GRAPHQL_MODULE_ID,
+  GRAPHQL_MODULE_OPTIONS,
+} from './graphql.constants';
+import {
+  GatewayBuildService,
+  GatewayModuleOptions,
+  GatewayOptionsFactory,
+  GatewayModuleAsyncOptions,
+} from './interfaces';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { generateString } from './utils';
 
 @Module({})
 export class GraphQLGatewayModule implements OnModuleInit {
@@ -28,6 +39,50 @@ export class GraphQLGatewayModule implements OnModuleInit {
           useValue: options,
         },
       ],
+    };
+  }
+
+  static forRootAsync(options: GatewayModuleAsyncOptions): DynamicModule {
+    return {
+      module: GraphQLGatewayModule,
+      imports: options.imports,
+      providers: [
+        ...this.createAsyncProviders(options),
+        {
+          provide: GRAPHQL_MODULE_ID,
+          useValue: generateString(),
+        },
+      ],
+    };
+  }
+
+  private static createAsyncProviders(options: GatewayModuleAsyncOptions): Provider[] {
+    if (options.useExisting || options.useFactory) {
+      return [this.createAsyncOptionsProvider(options)];
+    }
+
+    return [
+      this.createAsyncOptionsProvider(options),
+      {
+        provide: options.useClass,
+        useClass: options.useClass,
+      },
+    ];
+  }
+
+  private static createAsyncOptionsProvider(options: GatewayModuleAsyncOptions): Provider {
+    if (options.useFactory) {
+      return {
+        provide: GRAPHQL_GATEWAY_MODULE_OPTIONS,
+        useFactory: options.useFactory,
+        inject: options.inject || [],
+      };
+    }
+
+    return {
+      provide: GRAPHQL_GATEWAY_MODULE_OPTIONS,
+      useFactory: (optionsFactory: GatewayOptionsFactory) => optionsFactory.createGatewayOptions(),
+      inject: [options.useExisting || options.useClass],
     };
   }
 
