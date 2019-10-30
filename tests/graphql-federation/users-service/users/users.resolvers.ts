@@ -1,14 +1,5 @@
-import {
-  Args,
-  Mutation,
-  Query,
-  Resolver,
-  ResolveReference,
-  Parent,
-  ResolveProperty,
-} from '../../../../lib';
+import { Args, Query, Resolver, ResolveReference } from '../../../../lib';
 import { UsersService } from './users.service';
-import { User } from './users.interfaces';
 
 @Resolver('User')
 export class UsersResolvers {
@@ -20,7 +11,7 @@ export class UsersResolvers {
   }
 
   @ResolveReference()
-  resolveReference(reference: any) {
+  resolveReference(reference: { __typename: string; id: string }) {
     return this.usersService.findById(reference.id);
   }
 }

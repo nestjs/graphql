@@ -1,12 +1,4 @@
-import {
-  Args,
-  Mutation,
-  Query,
-  Resolver,
-  ResolveReference,
-  Parent,
-  ResolveProperty,
-} from '../../../../lib';
+import { Query, Resolver, Parent, ResolveProperty } from '../../../../lib';
 import { PostsService } from './posts.service';
 import { Post } from './posts.interfaces';
 

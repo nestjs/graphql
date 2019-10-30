@@ -8,7 +8,6 @@ import { RemoteGraphQLDataSource } from '@apollo/gateway';
     {
       provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
       useValue: ({ name, url }) => {
-        console.log('BuildService: %s', name);
         return new RemoteGraphQLDataSource({ url });
       },
     },
