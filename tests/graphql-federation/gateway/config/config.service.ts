@@ -5,10 +5,12 @@ import { GatewayModuleOptions, GatewayOptionsFactory } from '../../../../lib';
 export class ConfigService implements GatewayOptionsFactory {
   public createGatewayOptions(): Partial<GatewayModuleOptions> {
     return {
-      serviceList: [
-        { name: 'users', url: 'http://localhost:3001/graphql' },
-        { name: 'posts', url: 'http://localhost:3002/graphql' },
-      ],
+      gateway: {
+        serviceList: [
+          { name: 'users', url: 'http://localhost:3001/graphql' },
+          { name: 'posts', url: 'http://localhost:3002/graphql' },
+        ],
+      },
     };
   }
 }

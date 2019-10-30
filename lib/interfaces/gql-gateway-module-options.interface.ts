@@ -1,23 +1,20 @@
 import { Type } from '@nestjs/common';
-import { Omit, GqlModuleOptions } from './gql-module-options.interface';
+import { GqlModuleOptions } from './gql-module-options.interface';
 import { GatewayConfig, ServiceEndpointDefinition } from '@apollo/gateway';
 import { GraphQLDataSource } from '@apollo/gateway/src/datasources/types';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { HeaderInit } from 'node-fetch';
 
-export interface GatewayModuleOptions
-  extends Pick<
-      GqlModuleOptions,
-      | 'path'
-      | 'disableHealthCheck'
-      | 'onHealthCheck'
-      | 'cors'
-      | 'bodyParserConfig'
-      | 'installSubscriptionHandlers'
-    >,
-    Omit<GatewayConfig, 'buildService' | 'serviceList' | 'introspectionHeaders'> {
-  serviceList: ServiceEndpointDefinition[];
-  introspectionHeaders?: HeaderInit;
+export interface GatewayModuleOptions {
+  gateway?: GatewayConfig;
+  server?: Pick<
+    GqlModuleOptions,
+    | 'path'
+    | 'disableHealthCheck'
+    | 'onHealthCheck'
+    | 'cors'
+    | 'bodyParserConfig'
+    | 'installSubscriptionHandlers'
+  >;
 }
 
 export interface GatewayOptionsFactory {

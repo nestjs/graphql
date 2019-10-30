@@ -21,10 +21,12 @@ class BuildServiceModule {}
   imports: [
     GraphQLGatewayModule.forRootAsync({
       useFactory: async () => ({
-        serviceList: [
-          { name: 'users', url: 'http://localhost:3001/graphql' },
-          { name: 'posts', url: 'http://localhost:3002/graphql' },
-        ],
+        gateway: {
+          serviceList: [
+            { name: 'users', url: 'http://localhost:3001/graphql' },
+            { name: 'posts', url: 'http://localhost:3002/graphql' },
+          ],
+        },
       }),
       imports: [BuildServiceModule],
       inject: [GRAPHQL_GATEWAY_BUILD_SERVICE],

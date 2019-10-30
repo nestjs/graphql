@@ -94,21 +94,19 @@ export class GraphQLGatewayModule implements OnModuleInit {
 
     const { ApolloGateway } = loadPackage('@apollo/gateway', 'ApolloGateway');
     const {
-      options: { __exposeQueryPlanExperimental, debug, serviceList, installSubscriptionHandlers },
+      options: { server: serverOpts = {}, gateway: gatewayOpts = {} },
       buildService,
     } = this;
 
     const gateway = new ApolloGateway({
-      __exposeQueryPlanExperimental,
-      debug,
-      serviceList,
+      ...gatewayOpts,
       buildService,
     });
 
     const { schema, executor } = await gateway.load();
     this.registerGqlServer({ schema, executor });
 
-    if (installSubscriptionHandlers) {
+    if (serverOpts.installSubscriptionHandlers) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
       throw new Error('No support for subscriptions yet when using Apollo Federation');
       /*this.apolloServer.installSubscriptionHandlers(
@@ -134,7 +132,8 @@ export class GraphQLGatewayModule implements OnModuleInit {
     const { ApolloServer } = loadPackage('apollo-server-express', 'GraphQLModule', () =>
       require('apollo-server-express'),
     );
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
+      this.options.server || {};
     const app = this.httpAdapterHost.httpAdapter.getInstance();
 
     const apolloServer = new ApolloServer(apolloOptions);
@@ -158,7 +157,8 @@ export class GraphQLGatewayModule implements OnModuleInit {
     const app = httpAdapter.getInstance();
 
     const apolloServer = new ApolloServer(apolloOptions as any);
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
+      this.options.server || {};
     app.register(
       apolloServer.createHandler({
         disableHealthCheck,
