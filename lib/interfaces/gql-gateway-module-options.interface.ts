@@ -22,7 +22,7 @@ export interface GatewayOptionsFactory {
 export interface GatewayModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   useExisting?: Type<GatewayOptionsFactory>;
   useClass?: Type<GatewayOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<GqlModuleOptions> | GqlModuleOptions;
+  useFactory?: (...args: any[]) => Promise<GatewayModuleOptions> | GatewayModuleOptions;
   inject?: any[];
 }
 
