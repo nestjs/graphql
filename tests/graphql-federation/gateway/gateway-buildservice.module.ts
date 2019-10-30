@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GraphQLGatewayModule } from '../../../lib/graphql-gateway.module';
-import { GRAPHQL_GATEWAY_BUILD_SERVICE } from '../../../lib/graphql.constants';
+import { GRAPHQL_GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from '../../../lib';
 import { RemoteGraphQLDataSource } from '@apollo/gateway';
 
 @Module({
