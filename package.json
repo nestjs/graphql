@@ -23,6 +23,7 @@
     "@types/graphql": "14.2.3",
     "@types/jest": "24.9.0",
     "@types/node": "12.12.21",
+    "@types/node-fetch": "^2.5.2",
     "@types/normalize-path": "3.0.0",
     "apollo-server-express": "2.9.16",
     "apollo-server-fastify": "2.9.16",
@@ -58,8 +59,8 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
-    "@apollo/federation": "^0.6.4",
-    "@apollo/gateway": "^0.6.7",
+    "@apollo/federation": "^0.10.1",
+    "@apollo/gateway": "^0.10.8",
     "type-graphql": "^0.17.3"
   },
   "lint-staged": {
