@@ -1,5 +1,5 @@
 import { DynamicModule, Inject, Module, OnModuleInit, Optional, Provider } from '@nestjs/common';
-import { ApolloServerBase, Config as ApolloServerConfig } from 'apollo-server-core';
+import { ApolloServerBase } from 'apollo-server-core';
 import { HttpAdapterHost } from '@nestjs/core';
 import {
   GRAPHQL_GATEWAY_BUILD_SERVICE,
@@ -11,6 +11,7 @@ import {
   GatewayModuleOptions,
   GatewayOptionsFactory,
   GatewayModuleAsyncOptions,
+  GqlModuleOptions,
 } from './interfaces';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { generateString } from './utils';
@@ -104,7 +105,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     });
 
     const { schema, executor } = await gateway.load();
-    this.registerGqlServer({ schema, executor });
+    this.registerGqlServer({ ...serverOpts, schema, executor });
 
     if (serverOpts.installSubscriptionHandlers) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
@@ -115,7 +116,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     }
   }
 
-  private registerGqlServer(apolloOptions: ApolloServerConfig) {
+  private registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
 
@@ -128,12 +129,11 @@ export class GraphQLGatewayModule implements OnModuleInit {
     }
   }
 
-  private registerExpress(apolloOptions: ApolloServerConfig) {
+  private registerExpress(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage('apollo-server-express', 'GraphQLModule', () =>
       require('apollo-server-express'),
     );
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
-      this.options.server || {};
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } = apolloOptions;
     const app = this.httpAdapterHost.httpAdapter.getInstance();
 
     const apolloServer = new ApolloServer(apolloOptions);
@@ -148,7 +148,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     this.apolloServer = apolloServer;
   }
 
-  private registerFastify(apolloOptions: ApolloServerConfig) {
+  private registerFastify(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage('apollo-server-fastify', 'GraphQLModule', () =>
       require('apollo-server-fastify'),
     );
@@ -156,9 +156,8 @@ export class GraphQLGatewayModule implements OnModuleInit {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
 
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
-      this.options.server || {};
+    const apolloServer = new ApolloServer(apolloOptions);
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } = apolloOptions;
     app.register(
       apolloServer.createHandler({
         disableHealthCheck,
