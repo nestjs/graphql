@@ -104,8 +104,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
       buildService,
     });
 
-    const { schema, executor } = await gateway.load();
-    this.registerGqlServer({ ...serverOpts, schema, executor });
+    this.registerGqlServer({ ...serverOpts, gateway, subscriptions: false });
 
     if (serverOpts.installSubscriptionHandlers) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
