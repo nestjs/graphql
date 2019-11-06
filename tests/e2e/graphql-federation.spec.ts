@@ -113,6 +113,34 @@ describe('GraphQL Federation', () => {
           },
         });
     });
+
+    it(`should handle scalars`, () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          operationName: null,
+          variables: {},
+          query: `
+        mutation {
+          publishPost(id: "1", publishDate: 500) {
+            id,
+            title,
+            body,
+            publishDate
+          }
+        }`,
+        })
+        .expect(200, {
+          data: {
+            publishPost: {
+              id: '1',
+              title: 'Hello world',
+              body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              publishDate: 500,
+            },
+          },
+        });
+    });
   });
 
   afterEach(async () => {

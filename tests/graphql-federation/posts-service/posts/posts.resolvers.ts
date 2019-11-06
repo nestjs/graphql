@@ -1,4 +1,4 @@
-import { Query, Resolver, Parent, ResolveProperty } from '../../../../lib';
+import { Query, Resolver, Parent, ResolveProperty, Mutation, Args } from '../../../../lib';
 import { PostsService } from './posts.service';
 import { Post } from './posts.interfaces';
 
@@ -9,6 +9,11 @@ export class PostsResolvers {
   @Query('getPosts')
   getPosts() {
     return this.postsService.findAll();
+  }
+
+  @Mutation()
+  publishPost(@Args('id') id, @Args('publishDate') publishDate: Date) {
+    return this.postsService.publish(id, publishDate);
   }
 
   @ResolveProperty('user')

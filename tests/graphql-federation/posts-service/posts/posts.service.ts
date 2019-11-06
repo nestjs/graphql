@@ -9,6 +9,7 @@ export class PostsService {
       title: 'Hello world',
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       userId: '5',
+      publishDate: new Date(0),
     },
   ];
 
@@ -22,5 +23,11 @@ export class PostsService {
 
   findByUserId(id: string) {
     return Promise.resolve(this.posts.filter(p => p.userId === id));
+  }
+
+  async publish(id: string, publishDate: Date) {
+    const post = await this.findById(id);
+    post.publishDate = publishDate;
+    return post;
   }
 }

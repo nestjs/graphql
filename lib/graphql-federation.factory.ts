@@ -27,8 +27,8 @@ export class GraphQLFederationFactory {
 
     const resolvers = this.extendResolvers([
       this.resolversExplorerService.explore(),
-      this.scalarsExplorerService.explore(),
       this.delegatesExplorerService.explore(),
+      ...this.scalarsExplorerService.explore(),
     ]);
 
     const schema = buildFederatedSchema([

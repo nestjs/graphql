@@ -112,10 +112,9 @@ export class GraphQLFederationModule implements OnModuleInit {
     const { printSchema } = loadPackage('@apollo/federation', 'ApolloFederation');
 
     const { typePaths } = this.options;
-
     const typeDefs = await this.graphqlTypesLoader.getTypesFromPaths(typePaths);
-
     const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
+
     const apolloOptions = await this.graphqlFederationFactory.mergeOptions({
       ...this.options,
       typeDefs: mergedTypeDefs,
