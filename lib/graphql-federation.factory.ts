@@ -25,10 +25,14 @@ export class GraphQLFederationFactory {
   async mergeOptions(options: GqlModuleOptions = {}): Promise<GqlModuleOptions> {
     const { buildFederatedSchema } = loadPackage('@apollo/federation', 'ApolloFederation');
 
+    const externalResolvers = Array.isArray(options.resolvers)
+      ? options.resolvers
+      : [options.resolvers];
     const resolvers = this.extendResolvers([
       this.resolversExplorerService.explore(),
       this.delegatesExplorerService.explore(),
       ...this.scalarsExplorerService.explore(),
+      ...externalResolvers,
     ]);
 
     const schema = buildFederatedSchema([
