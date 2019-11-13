@@ -6,14 +6,22 @@ import { ModuleMetadata } from '@nestjs/common/interfaces';
 
 export interface GatewayModuleOptions {
   gateway?: GatewayConfig;
-  server?: Pick<
+  server?: Omit<
     GqlModuleOptions,
-    | 'path'
-    | 'disableHealthCheck'
-    | 'onHealthCheck'
-    | 'cors'
-    | 'bodyParserConfig'
-    | 'installSubscriptionHandlers'
+    | 'typeDefs'
+    | 'typePaths'
+    | 'include'
+    | 'resolvers'
+    | 'resolverValidationOptions'
+    | 'directiveResolvers'
+    | 'autoSchemaFile'
+    | 'transformSchema'
+    | 'definitions'
+    | 'schema'
+    | 'subscriptions'
+    | 'schemaDirectives'
+    | 'buildSchemaOptions'
+    | 'fieldResolverEnhancers'
   >;
 }
 
