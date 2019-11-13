@@ -71,7 +71,7 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
   ) {
-    const typeDefs = await this.gqlTypesLoader.getTypesFromPaths(typePaths);
+    const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
 
     const { buildFederatedSchema } = loadPackage('@apollo/federation', 'ApolloFederation');
     const { printSchema } = loadPackage('@apollo/federation', 'ApolloFederation');

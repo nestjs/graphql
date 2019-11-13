@@ -15,7 +15,7 @@ import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GqlModuleAsyncOptions, GqlModuleOptions, GqlOptionsFactory } from './interfaces';
-import { generateString, extend, mergeDefaults, normalizeRoutePath } from './utils';
+import { generateString, mergeDefaults, normalizeRoutePath } from './utils';
 import { GraphQLFactory } from './graphql.factory';
 
 @Module({
@@ -112,12 +112,11 @@ export class GraphQLFederationModule implements OnModuleInit {
     const { printSchema } = loadPackage('@apollo/federation', 'ApolloFederation');
 
     const { typePaths } = this.options;
-    const typeDefs = await this.graphqlTypesLoader.getTypesFromPaths(typePaths);
-    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
+    const typeDefs = await this.graphqlTypesLoader.mergeTypesByPaths(typePaths);
 
     const apolloOptions = await this.graphqlFederationFactory.mergeOptions({
       ...this.options,
-      typeDefs: mergedTypeDefs,
+      typeDefs,
     });
 
     if (this.options.definitions && this.options.definitions.path) {
