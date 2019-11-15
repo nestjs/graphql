@@ -15,11 +15,11 @@
     "test:integration": "jest --config ./tests/jest-e2e.json"
   },
   "devDependencies": {
-    "@nestjs/common": "6.9.0",
-    "@nestjs/core": "6.9.0",
-    "@nestjs/platform-express": "6.9.0",
-    "@nestjs/platform-fastify": "6.9.0",
-    "@nestjs/testing": "6.9.0",
+    "@nestjs/common": "6.10.1",
+    "@nestjs/core": "6.10.1",
+    "@nestjs/platform-express": "6.10.1",
+    "@nestjs/platform-fastify": "6.10.1",
+    "@nestjs/testing": "6.10.1",
     "@types/graphql": "14.2.3",
     "@types/jest": "24.0.23",
     "@types/node": "12.12.7",
