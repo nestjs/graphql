@@ -35,7 +35,7 @@
     "reflect-metadata": "0.1.13",
     "supertest": "4.0.2",
     "ts-jest": "24.2.0",
-    "ts-node": "8.5.0",
+    "ts-node": "8.5.2",
     "typescript": "3.7.2"
   },
   "dependencies": {
