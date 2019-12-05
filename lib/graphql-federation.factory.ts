@@ -33,7 +33,7 @@ export class GraphQLFederationFactory {
       // Enable support when Directive support in type-graphql goes stable
       throw new Error('Code-first not supported yet');
       schema = await this.generateSchema(options);
-    } else if (!isEmpty(options.typeDefs)) {
+    } else if (isEmpty(options.typeDefs)) {
       schema = options.schema;
     } else {
       schema = this.buildSchemaFromTypeDefs(options);
