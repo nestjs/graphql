@@ -32,23 +32,23 @@ export class GqlExecutionContext extends ExecutionContextHost
 
   switchToRpc() {
     return Object.assign(this, {
-      getData: () => undefined,
-      getContext: () => undefined,
+      getData: (): undefined => undefined,
+      getContext: (): undefined => undefined,
     });
   }
 
   switchToHttp() {
     return Object.assign(this, {
-      getRequest: () => undefined,
-      getResponse: () => undefined,
-      getNext: () => undefined,
+      getRequest: (): undefined => undefined,
+      getResponse: (): undefined => undefined,
+      getNext: (): undefined => undefined,
     });
   }
 
   switchToWs() {
     return Object.assign(this, {
-      getClient: () => undefined,
-      getData: () => undefined,
+      getClient: (): undefined => undefined,
+      getData: (): undefined => undefined,
     });
   }
 }
