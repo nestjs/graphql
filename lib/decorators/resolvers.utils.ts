@@ -57,7 +57,9 @@ export function createPropertyDecorator(
     descriptor?: any,
   ) => {
     let [propertyName, typeFunc, options] = isFunction(propertyNameOrFunc)
-      ? [undefined, propertyNameOrFunc, typeFuncOrOptions]
+      ? typeFuncOrOptions && typeFuncOrOptions.name
+        ? [typeFuncOrOptions.name, propertyNameOrFunc, typeFuncOrOptions]
+        : [undefined, propertyNameOrFunc, typeFuncOrOptions]
       : [propertyNameOrFunc, typeFuncOrOptions, advancedOptions];
 
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);

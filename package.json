@@ -15,8 +15,8 @@
     "test:integration": "jest --config ./tests/jest-e2e.json"
   },
   "devDependencies": {
-    "@nestjs/common": "6.7.2",
-    "@nestjs/core": "6.7.2",
+    "@nestjs/common": "6.10.1",
+    "@nestjs/core": "6.10.1",
     "@nestjs/platform-express": "6.7.2",
     "@nestjs/platform-fastify": "6.7.2",
     "@nestjs/testing": "6.7.2",
@@ -50,7 +50,7 @@
     "uuid": "3.3.3"
   },
   "peerDependencies": {
-    "@nestjs/core": "^6.4.0",
+    "@nestjs/core": "^6.10.0",
     "graphql": "^14.1.1",
     "reflect-metadata": "^0.1.12"
   },
