@@ -1,6 +1,5 @@
 import { ArgumentsHost } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
-import { mergeArgumentsHost } from '../utils/merge-arguments-host.util';
 
 export interface GraphQLArgumentsHost extends ArgumentsHost {
   getRoot<T = any>(): T;
@@ -9,8 +8,28 @@ export interface GraphQLArgumentsHost extends ArgumentsHost {
   getContext<T = any>(): T;
 }
 
-export class GqlArgumentsHost extends ExecutionContextHost {
-  static create(host: ArgumentsHost): GraphQLArgumentsHost {
-    return mergeArgumentsHost<GraphQLArgumentsHost>(host);
+export class GqlArgumentsHost extends ExecutionContextHost
+  implements GraphQLArgumentsHost {
+  static create(context: ArgumentsHost): GqlArgumentsHost {
+    const type = context.getType();
+    const gqlContext = new GqlArgumentsHost(context.getArgs());
+    gqlContext.setType(type);
+    return gqlContext;
+  }
+
+  getRoot<T = any>(): T {
+    return this.getArgByIndex(0);
+  }
+
+  getArgs<T = any>(): T {
+    return this.getArgByIndex(1);
+  }
+
+  getContext<T = any>(): T {
+    return this.getArgByIndex(2);
+  }
+
+  getInfo<T = any>(): T {
+    return this.getArgByIndex(3);
   }
 }
