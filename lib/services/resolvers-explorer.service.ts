@@ -3,6 +3,7 @@ import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { REQUEST } from '@nestjs/core';
 import { createContextId } from '@nestjs/core/helpers/context-id-factory';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
+import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface';
 import { Injector } from '@nestjs/core/injector/injector';
 import {
   ContextId,
@@ -27,6 +28,7 @@ import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
+import { GqlContextType } from './gql-execution-context';
 
 const gqlContextIdSymbol = Symbol('GQL_CONTEXT_ID');
 
@@ -182,7 +184,10 @@ export class ResolversExplorerService extends BaseExplorerService {
       };
       return resolverCallback;
     }
-    const resolverCallback = this.externalContextCreator.create(
+    const resolverCallback = this.externalContextCreator.create<
+      Record<number, ParamMetadata>,
+      GqlContextType
+    >(
       instance,
       prototype[resolver.methodName],
       resolver.methodName,
@@ -191,6 +196,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       undefined,
       undefined,
       contextOptions,
+      'graphql',
     );
     return resolverCallback;
   }
