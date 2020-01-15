@@ -21,7 +21,7 @@
     "@nestjs/platform-fastify": "6.10.14",
     "@nestjs/testing": "6.10.14",
     "@types/graphql": "14.2.3",
-    "@types/jest": "24.0.25",
+    "@types/jest": "24.9.0",
     "@types/node": "12.12.21",
     "@types/normalize-path": "3.0.0",
     "apollo-server-express": "2.9.16",
