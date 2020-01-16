@@ -5,7 +5,7 @@
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "scripts": {
-    "prebuild": "rm -rf dist",
+    "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.json",
     "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
     "prepublish:npm": "npm run build",
@@ -47,6 +47,7 @@
     "lodash": "4.17.15",
     "merge-graphql-schemas": "1.7.6",
     "normalize-path": "3.0.0",
+    "rimraf": "^3.0.0",
     "ts-morph": "5.0.0",
     "uuid": "3.3.3"
   },
