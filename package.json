@@ -28,7 +28,7 @@
     "apollo-server-fastify": "2.10.0",
     "class-transformer": "0.2.3",
     "graphql": "14.6.0",
-    "husky": "4.2.2",
+    "husky": "4.2.3",
     "jest": "25.1.0",
     "lint-staged": "10.0.7",
     "prettier": "1.19.1",
