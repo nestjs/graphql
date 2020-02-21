@@ -20,7 +20,7 @@
 
 ## Description
 
-GraphQL (TypeScript-based) module for [Nest](https://github.com/nestjs/nest).
+GraphQL (TypeScript ⭐ based) module for [Nest](https://github.com/nestjs/nest).
 
 ## Installation
 
