@@ -18,4 +18,5 @@ export const DEFINITIONS_FILE_HEADER = `
  * -------------------------------------------------------
  */
 
-/* tslint:disable */\n`;
+/* tslint:disable */
+/* eslint-disable */\n`;
