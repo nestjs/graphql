@@ -5,6 +5,7 @@
  */
 
 /* tslint:disable */
+/* eslint-disable */
 export enum Foobar {
     Foo = "Foo",
     Bar = "Bar",

@@ -5,6 +5,7 @@
  */
 
 /* tslint:disable */
+/* eslint-disable */
 export interface Cat {
     id: number;
     name: string;

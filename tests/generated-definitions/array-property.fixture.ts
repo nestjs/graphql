@@ -5,6 +5,7 @@
  */
 
 /* tslint:disable */
+/* eslint-disable */
 export interface Foo {
     a: string[];
     b?: string[];

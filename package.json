@@ -5,7 +5,7 @@
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "scripts": {
-    "prebuild": "rm -rf dist",
+    "prebuild": "rimraf dist",
     "build": "tsc -p tsconfig.json",
     "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
     "prepublish:npm": "npm run build",
@@ -36,17 +36,18 @@
     "supertest": "4.0.2",
     "ts-jest": "25.2.1",
     "ts-node": "8.6.2",
-    "typescript": "3.7.5"
+    "typescript": "3.8.2"
   },
   "dependencies": {
     "@types/graphql": "14.2.3",
     "chokidar": "3.3.1",
-    "fast-glob": "3.1.1",
-    "graphql-tools": "4.0.6",
+    "fast-glob": "3.2.1",
+    "graphql-tools": "4.0.7",
     "iterall": "1.2.2",
     "lodash": "4.17.15",
     "merge-graphql-schemas": "1.7.6",
     "normalize-path": "3.0.0",
+    "rimraf": "3.0.0",
     "ts-morph": "5.0.0",
     "uuid": "3.4.0"
   },

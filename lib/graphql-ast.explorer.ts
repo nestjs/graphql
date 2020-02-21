@@ -23,6 +23,7 @@ import {
   ParameterDeclarationStructure,
   SourceFile,
   StructureKind,
+  NewLineKind,
 } from 'ts-morph';
 import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 
@@ -39,7 +40,14 @@ export class GraphQLAstExplorer {
       return;
     }
     const tsMorphLib = await import('ts-morph');
-    const tsAstHelper = new tsMorphLib.Project();
+    const tsAstHelper = new tsMorphLib.Project({
+      manipulationSettings: {
+        newLineKind:
+          process.platform === 'win32'
+            ? NewLineKind.CarriageReturnLineFeed
+            : NewLineKind.LineFeed,
+      },
+    });
     const tsFile = tsAstHelper.createSourceFile(outputPath, '', {
       overwrite: true,
     });
