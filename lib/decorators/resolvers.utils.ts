@@ -27,7 +27,7 @@ export function addResolverMetadata(
   name: string | undefined,
   target?: Object | Function,
   key?: string | symbol,
-  descriptor?: string,
+  descriptor?: any,
 ) {
   SetMetadata(RESOLVER_TYPE_METADATA, resolver || name)(
     target,
