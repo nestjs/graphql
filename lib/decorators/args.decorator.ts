@@ -8,6 +8,7 @@ import { addPipesMetadata } from './param.utils';
 
 let TypeGqlArg, TypeGqlArgs;
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const TypeGql = require('type-graphql');
   TypeGqlArg = TypeGql.Arg;
   TypeGqlArgs = TypeGql.Args;

@@ -31,7 +31,7 @@ export function Resolver(
   options?: ResolverClassOptions,
 ) {
   return (
-    target: Object | Function,
+    target: Record<string, any> | Function,
     key?: string | symbol,
     descriptor?: any,
   ) => {

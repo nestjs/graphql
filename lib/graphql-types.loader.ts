@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { flatten } from 'lodash';
 import { mergeTypes } from 'merge-graphql-schemas';
 import * as util from 'util';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const normalize = require('normalize-path');
 
 const readFile = util.promisify(fs.readFile);

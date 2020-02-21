@@ -57,6 +57,7 @@ export class DelegatesExplorerService extends BaseExplorerService {
   curryDelegates(delegates): (mergeInfo: any) => any {
     return mergeInfo =>
       mapValues(delegates, parent =>
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         mapValues(parent, (propertyFn, key) => propertyFn()(mergeInfo)),
       );
   }

@@ -25,7 +25,7 @@ try {
 export function addResolverMetadata(
   resolver: Resolvers | string | undefined,
   name: string | undefined,
-  target?: Object | Function,
+  target?: Record<string, any> | Function,
   key?: string | symbol,
   descriptor?: any,
 ) {
@@ -52,10 +52,11 @@ export function createPropertyDecorator(
   advancedOptions?: AdvancedOptions,
 ): MethodDecorator {
   return (
-    target: Function | Object,
+    target: Function | Record<string, any>,
     key?: string | symbol,
     descriptor?: any,
   ) => {
+    // eslint-disable-next-line prefer-const
     let [propertyName, typeFunc, options] = isFunction(propertyNameOrFunc)
       ? typeFuncOrOptions && typeFuncOrOptions.name
         ? [typeFuncOrOptions.name, propertyNameOrFunc, typeFuncOrOptions]
@@ -89,7 +90,7 @@ export function createDelegateDecorator(
   options?: AdvancedOptions,
 ): MethodDecorator {
   return (
-    target: Function | Object,
+    target: Function | Record<string, any>,
     key?: string | symbol,
     descriptor?: any,
   ) => {

@@ -23,7 +23,7 @@ export function Mutation(
   options?: AdvancedOptions,
 ): MethodDecorator {
   return (
-    target: Object | Function,
+    target: Record<string, any> | Function,
     key?: string | symbol,
     descriptor?: any,
   ) => {

@@ -118,7 +118,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       });
   }
 
-  createContextCallback<T extends Object>(
+  createContextCallback<T extends Record<string, any>>(
     instance: T,
     prototype: any,
     wrapper: InstanceWrapper,
@@ -205,7 +205,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     createSubscribeContext: Function,
     subscriptionOptions: SubscriptionOptions,
     resolverMetadata: ResolverMetadata,
-    instanceRef: Object,
+    instanceRef: Record<string, any>,
   ) {
     const resolveFunc =
       subscriptionOptions &&
@@ -253,9 +253,11 @@ export class ResolversExplorerService extends BaseExplorerService {
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
     const coreModuleArray = [...this.modulesContainer.entries()]
       .filter(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ([key, { metatype }]) =>
           metatype && metatype.name === InternalCoreModule.name,
       )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(([key, value]) => value);
 
     const coreModuleRef = head(coreModuleArray);

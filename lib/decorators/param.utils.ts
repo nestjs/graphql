@@ -44,7 +44,7 @@ export const addPipesMetadata = (
   paramtype: GqlParamtype,
   data: any,
   pipes: (Type<PipeTransform> | PipeTransform)[],
-  target: Object,
+  target: Record<string, any>,
   key: string | symbol,
   index: number,
 ) => {
