@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as util from 'util';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { GraphQLFactory } from '../../lib';
+import { GraphQLFactory, GraphQLDefinitionsFactory } from '../../lib';
 import { ApplicationModule } from '../type-graphql/app.module';
 
 const readFile = util.promisify(fs.readFile);
@@ -158,6 +158,21 @@ describe('Generated Definitions', () => {
 
     expect(
       await readFile(generatedDefinitions('custom-scalar.fixture.ts'), 'utf8'),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
+  it('should generate for a federated graph', async () => {
+    const outputFile = generatedDefinitions('federation.test-definitions.ts');
+    const factory = new GraphQLDefinitionsFactory();
+    await factory.generate({
+      typePaths: [generatedDefinitions('federation.graphql')],
+      path: outputFile,
+      outputAs: 'class',
+      federation: true,
+    });
+
+    expect(
+      await readFile(generatedDefinitions('federation.fixture.ts'), 'utf8'),
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 

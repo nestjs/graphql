@@ -1,0 +1,22 @@
+scalar Date
+
+type Post @key(fields: "id") {
+  id: ID!
+  title: String!
+  body: String!
+  user: User
+  publishDate: Date
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  posts: [Post]
+}
+
+extend type Query {
+  getPosts: [Post]
+}
+
+extend type Mutation {
+  publishPost(id: ID!, publishDate: Date!): Post
+}

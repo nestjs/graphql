@@ -6,6 +6,7 @@ export * from './mutation.decorator';
 export * from './parent.decorator';
 export * from './query.decorator';
 export * from './resolve-property.decorator';
+export * from './resolve-reference.decorator';
 export * from './resolver.decorator';
 export * from './root.decorator';
 export * from './scalar.decorator';

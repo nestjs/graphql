@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { GraphQLScalarType } from 'graphql';
+import { GraphQLDirective, GraphQLScalarType } from 'graphql';
 
 /**
  * Some external types have to be included in order to provide types safety
@@ -41,9 +41,13 @@ export type BasicOptions = DecoratorTypeOptions & DescriptionOptions;
 export type AdvancedOptions = BasicOptions &
   DepreciationOptions &
   SchemaNameOptions;
+
 export interface BuildSchemaOptions {
   dateScalarMode?: DateScalarMode;
   scalarsMap?: ScalarsTypeMap[];
+  /** Any types that are not directly referenced or returned by resolvers */
+  orphanedTypes?: Function[];
+  directives?: GraphQLDirective[];
 }
 export type DateScalarMode = 'isoDate' | 'timestamp';
 export interface ScalarsTypeMap {
