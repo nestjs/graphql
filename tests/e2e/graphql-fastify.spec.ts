@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { ApplicationModule } from '../graphql/app.module';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 
-describe('GraphQL', () => {
+describe('GraphQL with fastify', () => {
   let app: INestApplication;
 
   beforeEach(async () => {

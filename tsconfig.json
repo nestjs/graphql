@@ -3,6 +3,7 @@
     "module": "commonjs",
     "declaration": true,
     "noImplicitAny": false,
+    "importHelpers": true,
     "removeComments": true,
     "noLib": false,
     "emitDecoratorMetadata": true,
