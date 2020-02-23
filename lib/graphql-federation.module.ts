@@ -6,28 +6,27 @@ import {
   Optional,
   Provider,
 } from '@nestjs/common';
-import { ApolloServerBase } from 'apollo-server-core';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { HttpAdapterHost, ApplicationConfig } from '@nestjs/core';
-
-import { GraphQLFederationFactory } from './graphql-federation.factory';
-import {
-  ScalarsExplorerService,
-  DelegatesExplorerService,
-  ResolversExplorerService,
-} from './services';
+import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
+import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
-import { GraphQLTypesLoader } from './graphql-types.loader';
+import { GraphQLFederationFactory } from './graphql-federation.factory';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
+import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
+import { GraphQLFactory } from './graphql.factory';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
 } from './interfaces';
+import {
+  DelegatesExplorerService,
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from './services';
 import { generateString, mergeDefaults, normalizeRoutePath } from './utils';
-import { GraphQLFactory } from './graphql.factory';
 
 @Module({
   providers: [
@@ -124,10 +123,10 @@ export class GraphQLFederationModule implements OnModuleInit {
     if (!this.httpAdapterHost || !this.httpAdapterHost.httpAdapter) {
       return;
     }
-
     const { printSchema } = loadPackage(
       '@apollo/federation',
       'ApolloFederation',
+      () => require('@apollo/federation'),
     );
 
     const { typePaths } = this.options;
@@ -160,14 +159,14 @@ export class GraphQLFederationModule implements OnModuleInit {
 
   private registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
-    const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
+    const platformName = httpAdapter.getType();
 
-    if (adapterName === 'ExpressAdapter') {
+    if (platformName === 'express') {
       this.registerExpress(apolloOptions);
-    } else if (adapterName === 'FastifyAdapter') {
+    } else if (platformName === 'fastify') {
       this.registerFastify(apolloOptions);
     } else {
-      throw new Error(`No support for current HttpAdapter: ${adapterName}`);
+      throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
   }
 

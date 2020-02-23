@@ -1,12 +1,12 @@
-import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { gql } from 'apollo-server-core';
-import { makeExecutableSchema } from 'graphql-tools';
 import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
+import { makeExecutableSchema } from 'graphql-tools';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
-import { removeTempField, extend } from './utils';
+import { removeTempField } from './utils';
 
 export class GraphQLDefinitionsFactory {
   private readonly gqlAstExplorer = new GraphQLAstExplorer();
@@ -86,13 +86,11 @@ export class GraphQLDefinitionsFactory {
   ) {
     const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
 
-    const { buildFederatedSchema } = loadPackage(
-      '@apollo/federation',
-      'ApolloFederation',
-    );
-    const { printSchema } = loadPackage(
-      '@apollo/federation',
-      'ApolloFederation',
+    const {
+      buildFederatedSchema,
+      printSchema,
+    } = loadPackage('@apollo/federation', 'ApolloFederation', () =>
+      require('@apollo/federation'),
     );
 
     const schema = buildFederatedSchema([

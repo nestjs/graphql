@@ -151,14 +151,14 @@ export class GraphQLModule implements OnModuleInit {
 
   private registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
-    const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
+    const platformName = httpAdapter.getType();
 
-    if (adapterName === 'ExpressAdapter') {
+    if (platformName === 'express') {
       this.registerExpress(apolloOptions);
-    } else if (adapterName === 'FastifyAdapter') {
+    } else if (platformName === 'fastify') {
       this.registerFastify(apolloOptions);
     } else {
-      throw new Error(`No support for current HttpAdapter: ${adapterName}`);
+      throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
   }
 

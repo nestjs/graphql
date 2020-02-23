@@ -1,9 +1,9 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import * as util from 'util';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { GraphQLFactory, GraphQLDefinitionsFactory } from '../../lib';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as util from 'util';
+import { GraphQLDefinitionsFactory, GraphQLFactory } from '../../lib';
 import { ApplicationModule } from '../type-graphql/app.module';
 
 const readFile = util.promisify(fs.readFile);

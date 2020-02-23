@@ -69,14 +69,17 @@ export class GraphQLSchemaBuilder {
   }
 
   private loadBuildSchemaFactory(): (...args: any[]) => GraphQLSchema {
-    const { buildSchema } = loadPackage('type-graphql', 'SchemaBuilder');
+    const { buildSchema } = loadPackage('type-graphql', 'SchemaBuilder', () =>
+      require('type-graphql'),
+    );
     return buildSchema;
   }
 
   private loadFederationDirectives() {
-    const { federationDirectives } = loadPackage(
-      '@apollo/federation/dist/directives',
-      'SchemaBuilder',
+    const {
+      federationDirectives,
+    } = loadPackage('@apollo/federation/dist/directives', 'SchemaBuilder', () =>
+      require('@apollo/federation/dist/directives'),
     );
     return federationDirectives;
   }

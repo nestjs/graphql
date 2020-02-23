@@ -6,8 +6,9 @@ import {
   Optional,
   Provider,
 } from '@nestjs/common';
-import { ApolloServerBase } from 'apollo-server-core';
+import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { HttpAdapterHost } from '@nestjs/core';
+import { ApolloServerBase } from 'apollo-server-core';
 import {
   GRAPHQL_GATEWAY_BUILD_SERVICE,
   GRAPHQL_GATEWAY_MODULE_OPTIONS,
@@ -15,12 +16,11 @@ import {
 } from './graphql.constants';
 import {
   GatewayBuildService,
+  GatewayModuleAsyncOptions,
   GatewayModuleOptions,
   GatewayOptionsFactory,
-  GatewayModuleAsyncOptions,
   GqlModuleOptions,
 } from './interfaces';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { generateString } from './utils';
 
 @Module({})
@@ -100,12 +100,15 @@ export class GraphQLGatewayModule implements OnModuleInit {
 
   async onModuleInit() {
     const { httpAdapter } = this.httpAdapterHost || {};
-
     if (!httpAdapter) {
       return;
     }
 
-    const { ApolloGateway } = loadPackage('@apollo/gateway', 'ApolloGateway');
+    const { ApolloGateway } = loadPackage(
+      '@apollo/gateway',
+      'ApolloGateway',
+      () => require('@apollo/gateway'),
+    );
     const {
       options: { server: serverOpts = {}, gateway: gatewayOpts = {} },
       buildService,

@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 import {
   RESOLVER_DELEGATE_METADATA,
   RESOLVER_NAME_METADATA,
@@ -8,6 +7,7 @@ import {
   RESOLVER_REFERENCE_METADATA,
   RESOLVER_TYPE_METADATA,
 } from '../graphql.constants';
+import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 
 export function extractMetadata(
   instance: Record<string, any>,
@@ -35,7 +35,6 @@ export function extractMetadata(
     RESOLVER_DELEGATE_METADATA,
     callback,
   );
-
   const isReferenceResolver = !!Reflect.getMetadata(
     RESOLVER_REFERENCE_METADATA,
     callback,
@@ -55,7 +54,6 @@ export function extractMetadata(
   const name = isReferenceResolver
     ? RESOLVER_REFERENCE_KEY
     : resolverName || methodName;
-
   return {
     type: resolverType,
     methodName,
