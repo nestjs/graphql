@@ -1,11 +1,11 @@
 export * from './decorators';
 export * from './graphql-ast.explorer';
-export { GRAPHQL_GATEWAY_BUILD_SERVICE } from './graphql.constants';
 export * from './graphql-definitions.factory';
-export * from './graphql-types.loader';
-export * from './graphql.factory';
 export * from './graphql-federation.module';
 export * from './graphql-gateway.module';
+export * from './graphql-types.loader';
+export { GATEWAY_BUILD_SERVICE } from './graphql.constants';
+export * from './graphql.factory';
 export * from './graphql.module';
 export * from './interfaces';
 export * from './services/gql-arguments-host';

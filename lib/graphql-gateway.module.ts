@@ -10,7 +10,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ApolloServerBase } from 'apollo-server-core';
 import {
-  GRAPHQL_GATEWAY_BUILD_SERVICE,
+  GATEWAY_BUILD_SERVICE,
   GRAPHQL_GATEWAY_MODULE_OPTIONS,
   GRAPHQL_MODULE_ID,
 } from './graphql.constants';
@@ -31,7 +31,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     @Optional()
     private readonly httpAdapterHost: HttpAdapterHost,
     @Optional()
-    @Inject(GRAPHQL_GATEWAY_BUILD_SERVICE)
+    @Inject(GATEWAY_BUILD_SERVICE)
     private readonly buildService: GatewayBuildService,
     @Inject(GRAPHQL_GATEWAY_MODULE_OPTIONS)
     private readonly options: GatewayModuleOptions,

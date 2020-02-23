@@ -1,11 +1,11 @@
+import { RemoteGraphQLDataSource } from '@apollo/gateway';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { GATEWAY_BUILD_SERVICE } from '../../lib/graphql.constants';
+import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-buildservice.module';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
-import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-buildservice.module';
-import { RemoteGraphQLDataSource } from '@apollo/gateway';
-import { GRAPHQL_GATEWAY_BUILD_SERVICE } from '../../lib/graphql.constants';
 
 describe('GraphQL Gateway buildservice', () => {
   let postsApp: INestApplication;
@@ -32,7 +32,7 @@ describe('GraphQL Gateway buildservice', () => {
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
     })
-      .overrideProvider(GRAPHQL_GATEWAY_BUILD_SERVICE)
+      .overrideProvider(GATEWAY_BUILD_SERVICE)
       .useValue(({ url }) => {
         return new RemoteGraphQLDataSource({
           url,

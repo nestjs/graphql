@@ -1,20 +1,17 @@
-import { Module } from '@nestjs/common';
-import {
-  GRAPHQL_GATEWAY_BUILD_SERVICE,
-  GraphQLGatewayModule,
-} from '../../../lib';
 import { RemoteGraphQLDataSource } from '@apollo/gateway';
+import { Module } from '@nestjs/common';
+import { GATEWAY_BUILD_SERVICE, GraphQLGatewayModule } from '../../../lib';
 
 @Module({
   providers: [
     {
-      provide: GRAPHQL_GATEWAY_BUILD_SERVICE,
+      provide: GATEWAY_BUILD_SERVICE,
       useValue: ({ name, url }) => {
         return new RemoteGraphQLDataSource({ url });
       },
     },
   ],
-  exports: [GRAPHQL_GATEWAY_BUILD_SERVICE],
+  exports: [GATEWAY_BUILD_SERVICE],
 })
 class BuildServiceModule {}
 
@@ -30,7 +27,7 @@ class BuildServiceModule {}
         },
       }),
       imports: [BuildServiceModule],
-      inject: [GRAPHQL_GATEWAY_BUILD_SERVICE],
+      inject: [GATEWAY_BUILD_SERVICE],
     }),
   ],
 })

@@ -9,7 +9,7 @@ export const PARAM_ARGS_METADATA = '__routeArguments__';
 export const SUBSCRIPTION_OPTIONS_METADATA = 'graphql:subscription_options;';
 
 export const GRAPHQL_GATEWAY_MODULE_OPTIONS = 'graphql:gateway_module_options';
-export const GRAPHQL_GATEWAY_BUILD_SERVICE = 'graphql:gateway_build_service';
+export const GATEWAY_BUILD_SERVICE = 'graphql:gateway_build_service';
 
 export const FIELD_TYPENAME = '__resolveType';
 export const GRAPHQL_MODULE_OPTIONS = 'GqlModuleOptions';
