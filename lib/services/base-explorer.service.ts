@@ -19,7 +19,8 @@ export class BaseExplorerService {
     modulesContainer: Map<string, Module>,
     include: Function[],
   ): Module[] {
-    return [...modulesContainer.values()].filter(({ metatype }) =>
+    const modules = [...modulesContainer.values()];
+    return modules.filter(({ metatype }) =>
       include.some(item => item === metatype),
     );
   }
@@ -28,24 +29,31 @@ export class BaseExplorerService {
     modules: Module[],
     callback: (instance: InstanceWrapper, moduleRef: Module) => T | T[],
   ): T[] {
-    const invokeMap = () =>
-      modules.map(module =>
-        [...module.providers.values()].map(wrapper =>
-          callback(wrapper, module),
-        ),
-      );
+    const invokeMap = () => {
+      return modules.map(moduleRef => {
+        const providers = [...moduleRef.providers.values()];
+        return providers.map(wrapper => callback(wrapper, moduleRef));
+      });
+    };
     return flattenDeep(invokeMap()).filter(identity);
   }
 
   groupMetadata(resolvers: ResolverMetadata[]) {
-    const groupByType = groupBy(resolvers, metadata => metadata.type);
-    return mapValues(groupByType, resolversArr =>
-      resolversArr.reduce((prev, curr) => {
-        return {
-          ...prev,
-          [curr.name]: curr.callback,
-        };
-      }, {}),
+    const groupByType = groupBy(
+      resolvers,
+      (metadata: ResolverMetadata) => metadata.type,
     );
+    const groupedMetadata = mapValues(
+      groupByType,
+      (resolversArr: ResolverMetadata[]) =>
+        resolversArr.reduce(
+          (prev, curr) => ({
+            ...prev,
+            [curr.name]: curr.callback,
+          }),
+          {},
+        ),
+    );
+    return groupedMetadata;
   }
 }
