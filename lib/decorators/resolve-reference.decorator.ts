@@ -1,6 +1,9 @@
-import { RESOLVER_REFERENCE_METADATA } from '../graphql.constants';
 import { SetMetadata } from '@nestjs/common';
+import { RESOLVER_REFERENCE_METADATA } from '../federation/federation.constants';
 
+/**
+ * Property reference resolver (method) Decorator.
+ */
 export function ResolveReference(): MethodDecorator {
   return (
     target: Function | Object,

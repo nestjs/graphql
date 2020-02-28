@@ -19,11 +19,8 @@ import {
   GqlModuleOptions,
   GqlOptionsFactory,
 } from './interfaces/gql-module-options.interface';
-import {
-  DelegatesExplorerService,
-  ResolversExplorerService,
-  ScalarsExplorerService,
-} from './services';
+import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
+import { ResolversExplorerService, ScalarsExplorerService } from './services';
 import {
   extend,
   generateString,
@@ -32,11 +29,11 @@ import {
 } from './utils';
 
 @Module({
+  imports: [GraphQLSchemaBuilderModule],
   providers: [
     GraphQLFactory,
     MetadataScanner,
     ResolversExplorerService,
-    DelegatesExplorerService,
     ScalarsExplorerService,
     GraphQLAstExplorer,
     GraphQLTypesLoader,

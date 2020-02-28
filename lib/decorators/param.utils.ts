@@ -5,27 +5,30 @@ import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { PARAM_ARGS_METADATA } from '../graphql.constants';
 
 export type ParamData = object | string | number;
-export interface ParamsMetadata {
-  [prop: number]: {
+export type ParamsMetadata = Record<
+  number,
+  {
     index: number;
     data?: ParamData;
-  };
-}
+  }
+>;
 
-const assignMetadata = (
+function assignMetadata(
   args: ParamsMetadata,
   paramtype: GqlParamtype,
   index: number,
   data?: ParamData,
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
-) => ({
-  ...args,
-  [`${paramtype}:${index}`]: {
-    index,
-    data,
-    pipes,
-  },
-});
+) {
+  return {
+    ...args,
+    [`${paramtype}:${index}`]: {
+      index,
+      data,
+      pipes,
+    },
+  };
+}
 
 export const createGqlParamDecorator = (paramtype: GqlParamtype) => {
   return (data?: ParamData): ParameterDecorator => (target, key, index) => {
@@ -63,7 +66,7 @@ export const addPipesMetadata = (
 };
 
 export const createGqlPipesParamDecorator = (paramtype: GqlParamtype) => (
-  data?,
+  data?: any,
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ): ParameterDecorator => (target, key, index) => {
   addPipesMetadata(paramtype, data, pipes, target, key, index);

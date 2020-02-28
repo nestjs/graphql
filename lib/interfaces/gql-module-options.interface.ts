@@ -2,7 +2,7 @@ import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { Config } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
-import { BuildSchemaOptions } from '../external/type-graphql.types';
+import { BuildSchemaOptions } from './build-schema-options.interface';
 
 export interface ServerRegistration {
   path?: string;
@@ -58,7 +58,7 @@ export interface GqlModuleOptions
    */
   useGlobalPrefix?: boolean;
   /**
-   * Enable/disable enhancers for @ResolveProperty()
+   * Enable/disable enhancers for @ResolveField()
    */
   fieldResolverEnhancers?: Enhancer[];
 }

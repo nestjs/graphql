@@ -1,56 +1,92 @@
 import { Type } from '@nestjs/common';
 import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
-import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
-import {
-  ClassTypeResolver,
-  ResolverClassOptions,
-} from './../external/type-graphql.types';
+import 'reflect-metadata';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import {
   addResolverMetadata,
   getClassName,
   getClassOrUndefined,
 } from './resolvers.utils';
 
-let TypeGqlResolver: Function;
-let getMetadataStorage: Function;
-try {
-  TypeGqlResolver = require('type-graphql').Resolver;
-  getMetadataStorage = require('type-graphql/dist/metadata/getMetadataStorage')
-    .getMetadataStorage;
-} catch (e) {}
+export type ResolverTypeFn = (of?: void) => Type<any>;
 
-export function Resolver();
-export function Resolver(name: string);
-export function Resolver(classType: Type<any>, options?: ResolverClassOptions);
+/**
+ * Interface defining options that can be passed to `@Resolve()` decorator
+ */
+export interface ResolverOptions {
+  /**
+   * If `true`, type will not be registered in the schema.
+   */
+  isAbstract?: boolean;
+}
+
+/**
+ * Object resolver decorator.
+ */
+export function Resolver(): MethodDecorator & ClassDecorator;
+/**
+ * Object resolver decorator.
+ */
+export function Resolver(name: string): MethodDecorator & ClassDecorator;
+/**
+ * Object resolver decorator.
+ */
 export function Resolver(
-  typeFunc: ClassTypeResolver,
-  options?: ResolverClassOptions,
-);
+  classType: Type<any>,
+  options?: ResolverOptions,
+): MethodDecorator & ClassDecorator;
+/**
+ * Object resolver decorator.
+ */
 export function Resolver(
-  nameOrType?: string | ClassTypeResolver | Type<any>,
-  options?: ResolverClassOptions,
-) {
+  typeFunc: ResolverTypeFn,
+  options?: ResolverOptions,
+): MethodDecorator & ClassDecorator;
+/**
+ * Object resolver decorator.
+ */
+export function Resolver(
+  nameOrType?: string | ResolverTypeFn | Type<any>,
+  options?: ResolverOptions,
+): MethodDecorator & ClassDecorator {
   return (
-    target: Record<string, any> | Function,
+    target: Object | Function,
     key?: string | symbol,
     descriptor?: any,
   ) => {
     let name = nameOrType && getClassName(nameOrType);
 
-    // @ObjectType()
-    if (getMetadataStorage && isFunction(nameOrType)) {
+    if (isFunction(nameOrType)) {
+      // extract name from @ObjectType()
       const ctor = getClassOrUndefined(nameOrType as Function);
-      const objectMetadata = getMetadataStorage().objectTypes.find(
+      const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
+      const objectMetadata = objectTypesMetadata.find(
         type => type.target === ctor,
       );
       objectMetadata && (name = objectMetadata.name);
     }
     addResolverMetadata(undefined, name, target, key, descriptor);
+
     if (!isString(nameOrType)) {
-      TypeGqlResolver &&
-        lazyMetadataStorage.store(() =>
-          TypeGqlResolver(nameOrType, options)(target as Function),
-        );
+      LazyMetadataStorage.store(() => {
+        const getObjectType = nameOrType
+          ? nameOrType.prototype
+            ? () => nameOrType as Type<unknown>
+            : (nameOrType as ResolverTypeFn)
+          : () => {
+              throw new Error(
+                `No provided object type in '@Resolver' decorator for class '${
+                  (target as Function).name
+                }!'`,
+              );
+            };
+        TypeMetadataStorage.addResolverMetadata({
+          target: target as Function,
+          typeFn: getObjectType,
+          isAbstract: (options && options.isAbstract) || false,
+        });
+      });
     }
   };
 }

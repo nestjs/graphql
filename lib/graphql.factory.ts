@@ -12,18 +12,13 @@ import { forEach, isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema-builder';
 import { GqlModuleOptions } from './interfaces';
-import {
-  DelegatesExplorerService,
-  ResolversExplorerService,
-  ScalarsExplorerService,
-} from './services';
+import { ResolversExplorerService, ScalarsExplorerService } from './services';
 import { extend, removeTempField } from './utils';
 
 @Injectable()
 export class GraphQLFactory {
   constructor(
     private readonly resolversExplorerService: ResolversExplorerService,
-    private readonly delegatesExplorerService: DelegatesExplorerService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly graphqlAstExplorer: GraphQLAstExplorer,
     private readonly gqlSchemaBuilder: GraphQLSchemaBuilder,
@@ -158,10 +153,6 @@ export class GraphQLFactory {
       });
 
     return schemaConfig;
-  }
-
-  createDelegates(): (mergeInfo: any) => any {
-    return this.delegatesExplorerService.explore();
   }
 
   async generateDefinitions(
