@@ -60,7 +60,7 @@
     "merge-graphql-schemas": "1.7.6",
     "normalize-path": "3.0.0",
     "tslib": "1.10.0",
-    "uuid": "3.4.0"
+    "uuid": "7.0.1"
   },
   "peerDependencies": {
     "@nestjs/core": "^6.10.0",
