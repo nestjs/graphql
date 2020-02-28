@@ -59,7 +59,7 @@
     "lodash": "4.17.15",
     "merge-graphql-schemas": "1.7.6",
     "normalize-path": "3.0.0",
-    "tslib": "1.10.0",
+    "tslib": "1.11.1",
     "uuid": "7.0.1"
   },
   "peerDependencies": {
