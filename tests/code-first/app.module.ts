@@ -10,7 +10,7 @@ import { RecipesModule } from './recipes/recipes.module';
     GraphQLModule.forRoot({
       debug: false,
       installSubscriptionHandlers: true,
-      autoSchemaFile: 'tests/dir/schema.gql',
+      autoSchemaFile: true,
     }),
   ],
 })
