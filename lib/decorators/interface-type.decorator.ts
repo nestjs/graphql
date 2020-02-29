@@ -7,6 +7,7 @@
 
 import { isString } from '@nestjs/common/utils/shared.utils';
 import { ResolveTypeFn } from '../interfaces';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -55,6 +56,8 @@ export function InterfaceType(
       target,
       ...options,
     };
-    TypeMetadataStorage.addInterfaceMetadata(metadata);
+    LazyMetadataStorage.store(() =>
+      TypeMetadataStorage.addInterfaceMetadata(metadata),
+    );
   };
 }

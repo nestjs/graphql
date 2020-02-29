@@ -7,6 +7,7 @@
 
 import { Type } from '@nestjs/common';
 import { ResolveTypeFn } from '../interfaces/resolve-type-fn.interface';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -46,12 +47,14 @@ export function createUnionType<T extends Type<unknown>[] = any[]>(
   const { name, description, types, resolveType } = options;
   const id = Symbol(name);
 
-  TypeMetadataStorage.addUnionMetadata({
-    id,
-    name,
-    description,
-    typesFn: types,
-    resolveType,
-  });
+  LazyMetadataStorage.store(() =>
+    TypeMetadataStorage.addUnionMetadata({
+      id,
+      name,
+      description,
+      typesFn: types,
+      resolveType,
+    }),
+  );
   return id as any;
 }

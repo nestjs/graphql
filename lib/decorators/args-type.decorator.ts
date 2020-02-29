@@ -1,3 +1,4 @@
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -9,6 +10,8 @@ export function ArgsType(): ClassDecorator {
       name: target.name,
       target,
     };
-    TypeMetadataStorage.addArgsMetadata(metadata);
+    LazyMetadataStorage.store(() =>
+      TypeMetadataStorage.addArgsMetadata(metadata),
+    );
   };
 }

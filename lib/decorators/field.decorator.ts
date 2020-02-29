@@ -8,6 +8,7 @@
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 
@@ -62,10 +63,29 @@ export function Field(
     propertyKey?: string,
     descriptor?: TypedPropertyDescriptor<any>,
   ) => {
-    const [typeFunc, options = {}] = isFunction(typeOrOptions)
-      ? [typeOrOptions, fieldOptions]
-      : [undefined, typeOrOptions as any];
+    addFieldMetadata(
+      typeOrOptions,
+      fieldOptions,
+      prototype,
+      propertyKey,
+      descriptor,
+    );
+  };
+}
 
+export function addFieldMetadata(
+  typeOrOptions: ReturnTypeFunc | FieldOptions,
+  fieldOptions: FieldOptions,
+  prototype: Object,
+  propertyKey?: string,
+  descriptor?: TypedPropertyDescriptor<any>,
+  loadEagerly?: boolean,
+) {
+  const [typeFunc, options = {}] = isFunction(typeOrOptions)
+    ? [typeOrOptions, fieldOptions]
+    : [undefined, typeOrOptions as any];
+
+  const applyMetadataFn = () => {
     const isResolver = !!descriptor;
     const isResolverMethod = !!(descriptor && descriptor.value);
 
@@ -96,4 +116,9 @@ export function Field(
       });
     }
   };
+  if (loadEagerly) {
+    applyMetadataFn();
+  } else {
+    LazyMetadataStorage.store(applyMetadataFn);
+  }
 }

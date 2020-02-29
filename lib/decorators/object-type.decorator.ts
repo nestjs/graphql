@@ -6,6 +6,7 @@
  */
 
 import { isString } from '@nestjs/common/utils/shared.utils';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -57,12 +58,14 @@ export function ObjectType(
     : undefined;
 
   return target => {
-    TypeMetadataStorage.addObjectTypeMetadata({
-      name: name || target.name,
-      target,
-      description: options.description,
-      interfaces,
-      isAbstract: options.isAbstract,
-    });
+    LazyMetadataStorage.store(() =>
+      TypeMetadataStorage.addObjectTypeMetadata({
+        name: name || target.name,
+        target,
+        description: options.description,
+        interfaces,
+        isAbstract: options.isAbstract,
+      }),
+    );
   };
 }

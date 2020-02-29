@@ -6,6 +6,7 @@
  */
 
 import { isString } from '@nestjs/common/utils/shared.utils';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -55,6 +56,8 @@ export function InputType(
       description: options.description,
       isAbstract: options.isAbstract,
     };
-    TypeMetadataStorage.addInputTypeMetadata(metadata);
+    LazyMetadataStorage.store(() =>
+      TypeMetadataStorage.addInputTypeMetadata(metadata),
+    );
   };
 }

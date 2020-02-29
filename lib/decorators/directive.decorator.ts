@@ -1,5 +1,6 @@
 import { parse } from 'graphql';
 import { DirectiveParsingError } from '../schema-builder/errors/directive-parsing.error';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -11,18 +12,20 @@ export function Directive(
   return (target: Function | Object, key?: string | symbol) => {
     validateDirective(sdl);
 
-    if (key) {
-      TypeMetadataStorage.addDirectivePropertyMetadata({
-        target: target.constructor,
-        fieldName: key as string,
-        sdl,
-      });
-    } else {
-      TypeMetadataStorage.addDirectiveMetadata({
-        target: target as Function,
-        sdl,
-      });
-    }
+    LazyMetadataStorage.store(() => {
+      if (key) {
+        TypeMetadataStorage.addDirectivePropertyMetadata({
+          target: target.constructor,
+          fieldName: key as string,
+          sdl,
+        });
+      } else {
+        TypeMetadataStorage.addDirectiveMetadata({
+          target: target as Function,
+          sdl,
+        });
+      }
+    });
   };
 }
 

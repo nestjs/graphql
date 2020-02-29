@@ -6,7 +6,7 @@
  */
 
 import { Type } from '@nestjs/common';
-import { Field } from '../../decorators';
+import { addFieldMetadata } from '../../decorators/field.decorator';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
 import {
@@ -193,9 +193,16 @@ export class TypeMetadataStorageHost {
       properties.forEach(key => {
         if (metadata[key].type) {
           const { type, ...options } = metadata[key];
-          Field(type, options)(classPrototype, key);
+          addFieldMetadata(type, options, classPrototype, key, undefined, true);
         } else {
-          Field(metadata[key])(classPrototype, key);
+          addFieldMetadata(
+            metadata[key],
+            undefined,
+            classPrototype,
+            key,
+            undefined,
+            true,
+          );
         }
       });
     } while (
@@ -216,6 +223,10 @@ export class TypeMetadataStorageHost {
         item.directives = this.classDirectives.filter(belongsToClass);
       }
     });
+  }
+
+  clear() {
+    Object.assign(this, new TypeMetadataStorageHost());
   }
 
   private getClassFieldsByPredicate(

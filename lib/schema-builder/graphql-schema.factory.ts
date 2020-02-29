@@ -24,6 +24,7 @@ export class GraphQLSchemaFactory {
     resolvers: Function[],
     options: BuildSchemaOptions = {},
   ): Promise<GraphQLSchema> {
+    TypeMetadataStorage.clear();
     LazyMetadataStorage.load();
     TypeMetadataStorage.compile(options.orphanedTypes);
 

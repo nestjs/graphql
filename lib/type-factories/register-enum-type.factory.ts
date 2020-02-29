@@ -5,6 +5,7 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
@@ -29,9 +30,11 @@ export function registerEnumType<T extends object = any>(
   enumRef: T,
   options: EnumOptions,
 ) {
-  TypeMetadataStorage.addEnumMetadata({
-    ref: enumRef,
-    name: options.name,
-    description: options.description,
-  });
+  LazyMetadataStorage.store(() =>
+    TypeMetadataStorage.addEnumMetadata({
+      ref: enumRef,
+      name: options.name,
+      description: options.description,
+    }),
+  );
 }
