@@ -1,4 +1,4 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata, Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import 'reflect-metadata';
 import { Resolvers } from '../enums/resolvers.enum';
@@ -91,7 +91,7 @@ export function Subscription(
     );
 
     if (nameOrType && !isString(nameOrType)) {
-      LazyMetadataStorage.store(() => {
+      LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
         const { typeFn, options: typeOptions } = reflectTypeFromMetadata({
           metadataKey: 'design:returntype',
           prototype: target,

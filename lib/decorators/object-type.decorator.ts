@@ -56,16 +56,19 @@ export function ObjectType(
   const interfaces = options.implements
     ? [].concat(options.implements)
     : undefined;
-
   return target => {
-    LazyMetadataStorage.store(() =>
+    const addObjectTypeMetadata = () =>
       TypeMetadataStorage.addObjectTypeMetadata({
         name: name || target.name,
         target,
         description: options.description,
         interfaces,
         isAbstract: options.isAbstract,
-      }),
-    );
+      });
+
+    // This function must be called eagerly to allow resolvers
+    // accessing the "name" property
+    addObjectTypeMetadata();
+    LazyMetadataStorage.store(addObjectTypeMetadata);
   };
 }

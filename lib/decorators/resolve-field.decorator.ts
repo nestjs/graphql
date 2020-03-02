@@ -1,4 +1,4 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata, Type } from '@nestjs/common';
 import { isFunction, isObject } from '@nestjs/common/utils/shared.utils';
 import {
   RESOLVER_NAME_METADATA,
@@ -79,7 +79,7 @@ export function ResolveField(
       ? { name: propertyName as string }
       : {};
 
-    LazyMetadataStorage.store(() => {
+    LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
       let typeOptions: TypeOptions, typeFn: (type?: any) => GqlTypeReference;
       try {
         const implicitTypeMetadata = reflectTypeFromMetadata({

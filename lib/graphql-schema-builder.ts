@@ -7,7 +7,6 @@ import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
 import { BuildSchemaOptions } from './interfaces/build-schema-options.interface';
 import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
 import { FileSystemHelper } from './schema-builder/helpers/file-system.helper';
-import { LazyMetadataStorage } from './schema-builder/storages/lazy-metadata.storage';
 import { ScalarsExplorerService } from './services';
 
 @Injectable()
@@ -42,8 +41,6 @@ export class GraphQLSchemaBuilder {
     options: BuildSchemaOptions = {},
     resolvers: Function[],
   ) {
-    LazyMetadataStorage.load();
-
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     try {
       return await this.buildSchema(resolvers, autoSchemaFile, {

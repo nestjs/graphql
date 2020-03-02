@@ -1,12 +1,32 @@
-export class LazyMetadataStorageHost {
-  private readonly storage: Function[] = [];
+import { Type } from '@nestjs/common';
 
-  store(fn: Function) {
-    this.storage.push(fn);
+interface LazyMetadataHost {
+  func: Function;
+  target?: Type<unknown>;
+}
+
+export class LazyMetadataStorageHost {
+  private readonly storage = new Array<LazyMetadataHost>();
+
+  store(func: Function): void;
+  store(target: Type<unknown>, func: Function): void;
+  store(targetOrFn: Type<unknown> | Function, func?: Function) {
+    if (func) {
+      this.storage.push({ target: targetOrFn as Type<unknown>, func });
+    } else {
+      this.storage.push({ func: targetOrFn });
+    }
   }
 
-  load() {
-    this.storage.forEach(fn => fn());
+  load(types: Function[] = []) {
+    //console.log(this.storage, types);
+    this.storage.forEach(({ func, target }) => {
+      if (target && types.includes(target)) {
+        func();
+      } else if (!target) {
+        func();
+      }
+    });
   }
 }
 

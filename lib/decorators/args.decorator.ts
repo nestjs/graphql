@@ -93,7 +93,7 @@ export function Args(
   return (target: Object, key: string, index: number) => {
     addPipesMetadata(GqlParamtype.ARGS, property, pipes, target, key, index);
 
-    LazyMetadataStorage.store(() => {
+    LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
       const { typeFn: reflectedTypeFn, options } = reflectTypeFromMetadata({
         metadataKey: 'design:paramtypes',
         prototype: target,

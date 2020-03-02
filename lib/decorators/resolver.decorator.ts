@@ -7,9 +7,24 @@ import {
   addResolverMetadata,
   getClassName,
   getClassOrUndefined,
+  getResolverTypeFn,
 } from './resolvers.utils';
 
 export type ResolverTypeFn = (of?: void) => Type<any>;
+
+/**
+ * Extracts the name property set through the @ObjectType() decorator (if specified)
+ * @param nameOrType type reference
+ */
+function getObjectTypeNameIfExists(nameOrType: Function): string | undefined {
+  const ctor = getClassOrUndefined(nameOrType);
+  const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
+  const objectMetadata = objectTypesMetadata.find(type => type.target === ctor);
+  if (!objectMetadata) {
+    return;
+  }
+  return objectMetadata.name;
+}
 
 /**
  * Interface defining options that can be passed to `@Resolve()` decorator
@@ -58,32 +73,18 @@ export function Resolver(
     let name = nameOrType && getClassName(nameOrType);
 
     if (isFunction(nameOrType)) {
-      // extract name from @ObjectType()
-      const ctor = getClassOrUndefined(nameOrType as Function);
-      const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
-      const objectMetadata = objectTypesMetadata.find(
-        type => type.target === ctor,
-      );
-      objectMetadata && (name = objectMetadata.name);
+      const objectName = getObjectTypeNameIfExists(nameOrType as Function);
+      objectName && (name = objectName);
     }
     addResolverMetadata(undefined, name, target, key, descriptor);
 
     if (!isString(nameOrType)) {
-      LazyMetadataStorage.store(() => {
-        const getObjectType = nameOrType
-          ? nameOrType.prototype
-            ? () => nameOrType as Type<unknown>
-            : (nameOrType as ResolverTypeFn)
-          : () => {
-              throw new Error(
-                `No provided object type in '@Resolver' decorator for class '${
-                  (target as Function).name
-                }!'`,
-              );
-            };
+      LazyMetadataStorage.store(target as Type<unknown>, () => {
+        const typeFn = getResolverTypeFn(nameOrType, target as Function);
+
         TypeMetadataStorage.addResolverMetadata({
           target: target as Function,
-          typeFn: getObjectType,
+          typeFn: typeFn,
           isAbstract: (options && options.isAbstract) || false,
         });
       });
