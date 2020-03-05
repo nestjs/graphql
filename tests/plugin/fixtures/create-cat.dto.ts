@@ -45,7 +45,7 @@ export class CreateCatDto {
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false }, status2: { nullable: true }, statusArr: { nullable: true }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, date: { nullable: false, type: () => Date } };
+        return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, date: { nullable: false, type: () => Date } };
     }
 }
 __decorate([
