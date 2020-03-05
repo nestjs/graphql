@@ -10,6 +10,7 @@ export * from './interface-type.decorator';
 export * from './mutation.decorator';
 export * from './object-type.decorator';
 export * from './parent.decorator';
+export * from './plugin.decorator';
 export * from './query.decorator';
 export * from './resolve-field.decorator';
 export * from './resolve-property.decorator';

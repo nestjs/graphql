@@ -32,4 +32,9 @@ export interface BuildSchemaOptions {
    * GraphQL directives
    */
   directives?: GraphQLDirective[];
+
+  /**
+   * GraphQL schema directives mapping
+   */
+  schemaDirectives?: Record<string, any>;
 }

@@ -4,6 +4,7 @@ import { isString } from '@nestjs/common/utils/shared.utils';
 import { GraphQLSchema, printSchema, specifiedDirectives } from 'graphql';
 import { resolve } from 'path';
 import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
+import { GqlModuleOptions } from './interfaces';
 import { BuildSchemaOptions } from './interfaces/build-schema-options.interface';
 import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
 import { FileSystemHelper } from './schema-builder/helpers/file-system.helper';
@@ -19,14 +20,16 @@ export class GraphQLSchemaBuilder {
 
   async build(
     autoSchemaFile: string | boolean,
-    options: BuildSchemaOptions = {},
+    options: GqlModuleOptions,
     resolvers: Function[],
   ): Promise<any> {
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     try {
+      const buildSchemaOptions = options.buildSchemaOptions || {};
       return await this.buildSchema(resolvers, autoSchemaFile, {
-        ...options,
+        ...buildSchemaOptions,
         scalarsMap,
+        schemaDirectives: options.schemaDirectives,
       });
     } catch (err) {
       if (err && err.details) {
@@ -38,19 +41,21 @@ export class GraphQLSchemaBuilder {
 
   async buildFederatedSchema(
     autoSchemaFile: string | boolean,
-    options: BuildSchemaOptions = {},
+    options: GqlModuleOptions,
     resolvers: Function[],
   ) {
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     try {
+      const buildSchemaOptions = options.buildSchemaOptions || {};
       return await this.buildSchema(resolvers, autoSchemaFile, {
-        ...options,
+        ...buildSchemaOptions,
         directives: [
           ...specifiedDirectives,
           ...this.loadFederationDirectives(),
-          ...((options && options.directives) || []),
+          ...((buildSchemaOptions && buildSchemaOptions.directives) || []),
         ],
         scalarsMap,
+        schemaDirectives: options.schemaDirectives,
         skipCheck: true,
       });
     } catch (err) {

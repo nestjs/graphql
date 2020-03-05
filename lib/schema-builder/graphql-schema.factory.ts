@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { getIntrospectionQuery, graphql, GraphQLSchema } from 'graphql';
+import { SchemaDirectiveVisitor } from 'graphql-tools';
 import { BuildSchemaOptions } from '../interfaces';
 import { SchemaGenerationError } from './errors/schema-generation.error';
 import { MutationTypeFactory } from './factories/mutation-type.factory';
@@ -45,6 +46,13 @@ export class GraphQLSchemaFactory {
         throw new SchemaGenerationError(errors);
       }
     }
+    if (options.schemaDirectives) {
+      SchemaDirectiveVisitor.visitSchemaDirectives(
+        schema,
+        options.schemaDirectives,
+      );
+    }
+
     return schema;
   }
 }

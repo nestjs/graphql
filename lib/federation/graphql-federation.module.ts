@@ -24,7 +24,11 @@ import {
   GqlOptionsFactory,
 } from '../interfaces';
 import { GraphQLSchemaBuilderModule } from '../schema-builder/schema-builder.module';
-import { ResolversExplorerService, ScalarsExplorerService } from '../services';
+import {
+  PluginsExplorerService,
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from '../services';
 import { generateString, mergeDefaults, normalizeRoutePath } from '../utils';
 import { GraphQLFederationFactory } from './graphql-federation.factory';
 
@@ -35,6 +39,7 @@ import { GraphQLFederationFactory } from './graphql-federation.factory';
     GraphQLFactory,
     MetadataScanner,
     ResolversExplorerService,
+    PluginsExplorerService,
     ScalarsExplorerService,
     GraphQLAstExplorer,
     GraphQLTypesLoader,

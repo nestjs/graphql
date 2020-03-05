@@ -4,6 +4,7 @@ export const RESOLVER_PROPERTY_METADATA = 'graphql:resolve_property';
 export const RESOLVER_DELEGATE_METADATA = 'graphql:delegate_property';
 export const SCALAR_NAME_METADATA = 'graphql:scalar_name';
 export const SCALAR_TYPE_METADATA = 'graphql:scalar_type';
+export const PLUGIN_METADATA = 'graphql:plugin';
 export const PARAM_ARGS_METADATA = '__routeArguments__';
 export const SUBSCRIPTION_OPTIONS_METADATA = 'graphql:subscription_options;';
 

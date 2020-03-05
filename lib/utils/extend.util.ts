@@ -1,6 +1,6 @@
 import { defaultTo, isArray, isString } from 'lodash';
 
-export function extend(obj1: any, obj2: any) {
+export function extend(obj1: unknown, obj2: unknown) {
   if (isString(obj1)) {
     return isString(obj2)
       ? [defaultTo(obj1, ''), defaultTo(obj2, '')]
@@ -10,7 +10,7 @@ export function extend(obj1: any, obj2: any) {
     return defaultTo(obj1, []).concat(defaultTo(obj2, []));
   }
   return {
-    ...(obj1 || {}),
-    ...(obj2 || {}),
+    ...((obj1 as object) || {}),
+    ...((obj2 as object) || {}),
   };
 }
