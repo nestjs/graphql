@@ -68,7 +68,7 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
-    "@apollo/federation": "^0.12.0",
+    "@apollo/federation": "^0.13.0",
     "@apollo/gateway": "^0.13.0",
     "ts-morph": "^5.0.0",
     "type-graphql": "^0.17.3"
