@@ -1,25 +1,42 @@
-import { SetMetadata } from '@nestjs/common';
+import { SetMetadata, Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
+import 'reflect-metadata';
 import { Resolvers } from '../enums/resolvers.enum';
 import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants';
-import { lazyMetadataStorage } from '../storages/lazy-metadata.storage';
-import {
-  AdvancedOptions,
-  ReturnTypeFunc,
-} from './../external/type-graphql.types';
+import { BaseTypeOptions, ReturnTypeFunc } from '../interfaces';
+import { ResolverTypeMetadata } from '../schema-builder/metadata';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 import { addResolverMetadata } from './resolvers.utils';
 
-let TypeGqlSubscription: Function;
-try {
-  TypeGqlSubscription = require('type-graphql').Subscription;
-} catch (e) {}
-
-export interface SubscriptionOptions {
+/**
+ * Interface defining options that can be passed to `@Subscription()` decorator.
+ */
+export interface SubscriptionOptions extends BaseTypeOptions {
+  /**
+   * Name of the subscription.
+   */
+  name?: string;
+  /**
+   * Description of the subscription.
+   */
+  description?: string;
+  /**
+   * Subscription deprecation reason (if deprecated).
+   */
+  deprecationReason?: string;
+  /**
+   * Filter messages function.
+   */
   filter?: (
     payload: any,
     variables: any,
     context: any,
   ) => boolean | Promise<boolean>;
+  /**
+   * Resolve messages function (to transform payload/message shape).
+   */
   resolve?: (
     payload: any,
     args: any,
@@ -28,23 +45,38 @@ export interface SubscriptionOptions {
   ) => any | Promise<any>;
 }
 
+/**
+ * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ */
 export function Subscription(): MethodDecorator;
+/**
+ * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ */
 export function Subscription(name: string): MethodDecorator;
+/**
+ * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ */
 export function Subscription(
   name: string,
-  options: SubscriptionOptions,
+  options: Pick<SubscriptionOptions, 'filter' | 'resolve'>,
 ): MethodDecorator;
+/**
+ * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ */
 export function Subscription(
   typeFunc: ReturnTypeFunc,
-  options?: AdvancedOptions & SubscriptionOptions,
+  options?: SubscriptionOptions,
 ): MethodDecorator;
+/**
+ * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ */
 export function Subscription(
   nameOrType?: string | ReturnTypeFunc,
-  options: AdvancedOptions & SubscriptionOptions = {},
+  options: SubscriptionOptions = {},
 ): MethodDecorator {
   return (
     target: Record<string, any> | Function,
-    key?: string | symbol,
+    key?: string,
     descriptor?: any,
   ) => {
     const name = isString(nameOrType)
@@ -59,15 +91,25 @@ export function Subscription(
     );
 
     if (nameOrType && !isString(nameOrType)) {
-      const topics = ['undefined']; // NOTE: Added to omit options validation
-      TypeGqlSubscription &&
-        lazyMetadataStorage.store(() =>
-          TypeGqlSubscription(nameOrType, { topics, ...options })(
-            target as Function,
-            key,
-            descriptor,
-          ),
-        );
+      LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
+        const { typeFn, options: typeOptions } = reflectTypeFromMetadata({
+          metadataKey: 'design:returntype',
+          prototype: target,
+          propertyKey: key,
+          explicitTypeFn: nameOrType,
+          typeOptions: options,
+        });
+        const metadata: ResolverTypeMetadata = {
+          methodName: key,
+          schemaName: options.name || key,
+          target: target.constructor,
+          typeFn,
+          returnTypeOptions: typeOptions,
+          description: options.description,
+          deprecationReason: options.deprecationReason,
+        };
+        TypeMetadataStorage.addSubscriptionMetadata(metadata);
+      });
     }
   };
 }

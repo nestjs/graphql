@@ -69,12 +69,10 @@ export class ResolversExplorerService extends BaseExplorerService {
     const prototype = Object.getPrototypeOf(instance);
     const predicate = (
       resolverType: string,
-      isDelegated: boolean,
       isReferenceResolver: boolean,
       isPropertyResolver: boolean,
     ) =>
       isUndefined(resolverType) ||
-      isDelegated ||
       (!isReferenceResolver &&
         !isPropertyResolver &&
         ![Resolvers.MUTATION, Resolvers.QUERY, Resolvers.SUBSCRIPTION].some(
@@ -181,6 +179,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           contextId,
           wrapper.id,
           contextOptions,
+          'graphql',
         );
         return callback(...args);
       };

@@ -31,7 +31,9 @@ export class ScalarsExplorerService extends BaseExplorerService {
     );
   }
 
-  filterImplicitScalar<T extends any = any>(wrapper: InstanceWrapper<T>) {
+  filterImplicitScalar<T extends Record<string, Function | string> = any>(
+    wrapper: InstanceWrapper<T>,
+  ) {
     const { instance } = wrapper;
     if (!instance) {
       return undefined;
@@ -47,10 +49,10 @@ export class ScalarsExplorerService extends BaseExplorerService {
       ? {
           [(metadata as any) as string]: new GraphQLScalarType({
             name: (metadata as any) as string,
-            description: instance['description'],
-            parseValue: bindContext(instance.parseValue),
-            serialize: bindContext(instance.serialize),
-            parseLiteral: bindContext(instance.parseLiteral),
+            description: instance['description'] as string,
+            parseValue: bindContext(instance.parseValue as Function),
+            serialize: bindContext(instance.serialize as Function),
+            parseLiteral: bindContext(instance.parseLiteral as Function),
           }),
         }
       : undefined;
@@ -66,7 +68,9 @@ export class ScalarsExplorerService extends BaseExplorerService {
     );
   }
 
-  filterExplicitScalar<T extends any = any>(wrapper: InstanceWrapper<T>) {
+  filterExplicitScalar<T extends Record<string, Function | string> = any>(
+    wrapper: InstanceWrapper<T>,
+  ) {
     const { instance } = wrapper;
     if (!instance) {
       return undefined;
@@ -89,10 +93,10 @@ export class ScalarsExplorerService extends BaseExplorerService {
             instance.constructor,
           scalar: new GraphQLScalarType({
             name: scalarNameMetadata,
-            description: instance['description'],
-            parseValue: bindContext(instance.parseValue),
-            serialize: bindContext(instance.serialize),
-            parseLiteral: bindContext(instance.parseLiteral),
+            description: instance['description'] as string,
+            parseValue: bindContext(instance.parseValue as Function),
+            serialize: bindContext(instance.serialize as Function),
+            parseLiteral: bindContext(instance.parseLiteral as Function),
           }),
         }
       : undefined;

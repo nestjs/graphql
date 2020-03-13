@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import {
-  RESOLVER_DELEGATE_METADATA,
-  RESOLVER_NAME_METADATA,
-  RESOLVER_PROPERTY_METADATA,
   RESOLVER_REFERENCE_KEY,
   RESOLVER_REFERENCE_METADATA,
+} from '../federation/federation.constants';
+import {
+  RESOLVER_NAME_METADATA,
+  RESOLVER_PROPERTY_METADATA,
   RESOLVER_TYPE_METADATA,
 } from '../graphql.constants';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
@@ -15,7 +16,6 @@ export function extractMetadata(
   methodName: string,
   filterPredicate: (
     resolverType: string,
-    isDelegated: boolean,
     isReferenceResolver?: boolean,
     isPropertyResolver?: boolean,
   ) => boolean,
@@ -31,23 +31,12 @@ export function extractMetadata(
   );
 
   const resolverName = Reflect.getMetadata(RESOLVER_NAME_METADATA, callback);
-  const isDelegated = !!Reflect.getMetadata(
-    RESOLVER_DELEGATE_METADATA,
-    callback,
-  );
   const isReferenceResolver = !!Reflect.getMetadata(
     RESOLVER_REFERENCE_METADATA,
     callback,
   );
 
-  if (
-    filterPredicate(
-      resolverType,
-      isDelegated,
-      isReferenceResolver,
-      isPropertyResolver,
-    )
-  ) {
+  if (filterPredicate(resolverType, isReferenceResolver, isPropertyResolver)) {
     return null;
   }
 

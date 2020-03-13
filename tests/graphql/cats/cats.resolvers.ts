@@ -4,7 +4,7 @@ import {
   Args,
   Mutation,
   Query,
-  ResolveProperty,
+  ResolveField,
   Resolver,
   Subscription,
 } from '../../../lib';
@@ -24,12 +24,12 @@ export class CatsResolvers {
     return await this.catsService.findAll();
   }
 
-  @ResolveProperty('color')
+  @ResolveField('color')
   getColor() {
     return 'black';
   }
 
-  @ResolveProperty()
+  @ResolveField()
   weight() {
     return 5;
   }

@@ -1,13 +1,14 @@
 export * from './decorators';
+export * from './federation';
 export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
-export * from './graphql-federation.module';
-export * from './graphql-gateway.module';
 export * from './graphql-types.loader';
-export { GATEWAY_BUILD_SERVICE } from './graphql.constants';
 export * from './graphql.factory';
 export * from './graphql.module';
 export * from './interfaces';
+export * from './scalars';
+export * from './schema-builder';
 export * from './services/gql-arguments-host';
 export * from './services/gql-execution-context';
 export * from './tokens';
+export * from './type-factories';

@@ -1,13 +1,13 @@
 import {
-  Query,
-  Resolver,
-  Parent,
-  ResolveProperty,
-  Mutation,
   Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '../../../../lib';
-import { PostsService } from './posts.service';
 import { Post } from './posts.interfaces';
+import { PostsService } from './posts.service';
 
 @Resolver('Post')
 export class PostsResolvers {
@@ -23,7 +23,7 @@ export class PostsResolvers {
     return this.postsService.publish(id, publishDate);
   }
 
-  @ResolveProperty('user')
+  @ResolveField('user')
   getUser(@Parent() post: Post) {
     return { __typename: 'User', id: post.userId };
   }

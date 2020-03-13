@@ -2,7 +2,7 @@ import { RemoteGraphQLDataSource } from '@apollo/gateway';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { GATEWAY_BUILD_SERVICE } from '../../lib/graphql.constants';
+import { GATEWAY_BUILD_SERVICE } from '../../lib';
 import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-buildservice.module';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';

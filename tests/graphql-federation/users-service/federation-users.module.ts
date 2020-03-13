@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { GraphQLFederationModule } from '../../../lib/graphql-federation.module';
-import { UsersModule } from './users/users.module';
 import { join } from 'path';
+import { GraphQLFederationModule } from '../../../lib';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [

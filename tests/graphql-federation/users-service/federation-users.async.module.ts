@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { GraphQLFederationModule } from '../../../lib/graphql-federation.module';
-import { UsersModule } from './users/users.module';
-import { ConfigService } from './config/config.service';
+import { GraphQLFederationModule } from '../../../lib';
 import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [

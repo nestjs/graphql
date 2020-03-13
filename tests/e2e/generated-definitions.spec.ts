@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
 import { GraphQLDefinitionsFactory, GraphQLFactory } from '../../lib';
-import { ApplicationModule } from '../type-graphql/app.module';
+import { ApplicationModule } from '../code-first/app.module';
 
 const readFile = util.promisify(fs.readFile);
 

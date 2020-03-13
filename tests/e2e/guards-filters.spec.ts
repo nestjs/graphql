@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { ApplicationModule } from '../type-graphql/app.module';
+import { ApplicationModule } from '../code-first/app.module';
 
 describe('GraphQL - Guards', () => {
   let app: INestApplication;

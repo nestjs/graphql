@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "6.6.2",
+  "version": "7.0.0-next.6",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -14,6 +14,7 @@
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand",
+    "test:integration:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch",
     "prerelease": "npm run build",
     "release": "release-it"
   },
