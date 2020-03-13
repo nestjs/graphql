@@ -19,7 +19,6 @@ export class LazyMetadataStorageHost {
   }
 
   load(types: Function[] = []) {
-    //console.log(this.storage, types);
     this.storage.forEach(({ func, target }) => {
       if (target && types.includes(target)) {
         func();
