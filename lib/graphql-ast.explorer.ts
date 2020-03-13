@@ -22,10 +22,10 @@ import {
   InterfaceDeclarationStructure,
   ParameterDeclarationStructure,
   SourceFile,
-  StructureKind,
-  NewLineKind,
 } from 'ts-morph';
 import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
+
+let tsMorphLib: typeof import('ts-morph') | undefined;
 
 @Injectable()
 export class GraphQLAstExplorer {
@@ -39,13 +39,13 @@ export class GraphQLAstExplorer {
     if (!documentNode) {
       return;
     }
-    const tsMorphLib = await import('ts-morph');
+    tsMorphLib = await import('ts-morph');
     const tsAstHelper = new tsMorphLib.Project({
       manipulationSettings: {
         newLineKind:
           process.platform === 'win32'
-            ? NewLineKind.CarriageReturnLineFeed
-            : NewLineKind.LineFeed,
+            ? tsMorphLib.NewLineKind.CarriageReturnLineFeed
+            : tsMorphLib.NewLineKind.LineFeed,
       },
     });
     const tsFile = tsAstHelper.createSourceFile(outputPath, '', {
@@ -99,7 +99,9 @@ export class GraphQLAstExplorer {
     mode: 'class' | 'interface',
   ) {
     const structureKind =
-      mode === 'class' ? StructureKind.Class : StructureKind.Interface;
+      mode === 'class'
+        ? tsMorphLib.StructureKind.Class
+        : tsMorphLib.StructureKind.Interface;
     const rootInterface = this.addClassOrInterface(tsFile, mode, {
       name: 'ISchema',
       isExported: true,
@@ -143,7 +145,9 @@ export class GraphQLAstExplorer {
     );
     if (!parentRef) {
       const structureKind =
-        mode === 'class' ? StructureKind.Class : StructureKind.Interface;
+        mode === 'class'
+          ? tsMorphLib.StructureKind.Class
+          : tsMorphLib.StructureKind.Interface;
       const isRoot = this.root.indexOf(parentName) >= 0;
       parentRef = this.addClassOrInterface(tsFile, mode, {
         name: this.addSymbolIfRoot(upperFirst(parentName)),
@@ -277,7 +281,7 @@ export class GraphQLAstExplorer {
         name: get(element, 'name.value'),
         type: name,
         hasQuestionToken: !required,
-        kind: StructureKind.Parameter,
+        kind: tsMorphLib.StructureKind.Parameter,
       };
     });
   }
