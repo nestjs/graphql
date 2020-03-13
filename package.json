@@ -21,11 +21,11 @@
   "devDependencies": {
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-angular": "8.3.4",
-    "@nestjs/common": "6.11.11",
-    "@nestjs/core": "6.11.11",
-    "@nestjs/platform-express": "6.11.11",
-    "@nestjs/platform-fastify": "6.11.11",
-    "@nestjs/testing": "6.11.11",
+    "@nestjs/common": "7.0.0",
+    "@nestjs/core": "7.0.0",
+    "@nestjs/platform-express": "7.0.0",
+    "@nestjs/platform-fastify": "7.0.0",
+    "@nestjs/testing": "7.0.0",
     "@types/graphql": "14.2.3",
     "@types/jest": "25.1.4",
     "@types/node": "12.12.21",
@@ -64,7 +64,8 @@
     "uuid": "7.0.2"
   },
   "peerDependencies": {
-    "@nestjs/core": "^6.10.0",
+    "@nestjs/common": "^7.0.0",
+    "@nestjs/core": "^7.0.0",
     "graphql": "^14.1.1",
     "reflect-metadata": "^0.1.12"
   },
