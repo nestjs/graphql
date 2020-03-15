@@ -1,6 +1,6 @@
 import { compact, flatten } from 'lodash';
 import * as ts from 'typescript';
-import { HideField } from '../..';
+import { HideField } from '../../decorators';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
 import {
   getDecoratorOrUndefinedByNames,
@@ -8,18 +8,16 @@ import {
   hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
-import { AbstractFileVisitor } from './abstract.visitor';
 
 const metadataHostMap = new Map();
 
-export class ModelClassVisitor extends AbstractFileVisitor {
+export class ModelClassVisitor {
   visit(
     sourceFile: ts.SourceFile,
     ctx: ts.TransformationContext,
     program: ts.Program,
   ) {
     const typeChecker = program.getTypeChecker();
-    sourceFile = this.updateImports(sourceFile);
 
     const visitNode = (node: ts.Node): ts.Node => {
       if (ts.isClassDeclaration(node)) {
