@@ -94,9 +94,9 @@ export function getTypeReferenceAsString(
     if (type.aliasSymbol) {
       return 'Object';
     }
-    return undefined;
+    return 'Object';
   } catch {
-    return undefined;
+    return 'Object';
   }
 }
 
