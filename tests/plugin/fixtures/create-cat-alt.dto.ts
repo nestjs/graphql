@@ -36,6 +36,7 @@ export class CreateCatDto2 {
   prop: {
     [x: string]: string;
   }
+  tuple: [number, number];
 }
 `;
 
@@ -50,7 +51,7 @@ export class CreateCatDto2 {
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number }, union: { nullable: false, type: () => Object }, intersection: { nullable: false, type: () => Object }, nested: { nullable: false, type: () => ({ first: { nullable: false, type: () => String }, second: { nullable: false, type: () => Number }, status: { nullable: false, type: () => Status }, tags: { nullable: false, type: () => [String] }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number } }) } };
+        return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number }, union: { nullable: false, type: () => Object }, intersection: { nullable: false, type: () => Object }, nested: { nullable: false, type: () => ({ first: { nullable: false, type: () => String }, second: { nullable: false, type: () => Number }, status: { nullable: false, type: () => Status }, tags: { nullable: false, type: () => [String] }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number } }) }, tuple: { nullable: false, type: () => Object } };
     }
 }
 `;
