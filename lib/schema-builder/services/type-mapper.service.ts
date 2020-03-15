@@ -74,8 +74,7 @@ export class TypeMapperSevice {
       throw new InvalidNullableOptionError(hostType, options.nullable);
     }
 
-    const isNotNullable =
-      options.nullable === false || options.nullable === 'items';
+    const isNotNullable = options.nullable === 'items';
     if (!isUndefined(options.defaultValue) && isNotNullable) {
       throw new DefaultNullableConflictError(
         hostType,

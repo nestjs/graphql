@@ -6,6 +6,7 @@
  */
 
 import { Type } from '@nestjs/common';
+import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { addFieldMetadata } from '../../decorators/field.decorator';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
@@ -139,7 +140,18 @@ export class TypeMetadataStorageHost {
   }
 
   addClassFieldMetadata(metadata: PropertyMetadata) {
-    this.fields.push(metadata);
+    const existingMetadata = this.fields.find(
+      item => item.target === metadata.target && item.name === metadata.name,
+    );
+    if (existingMetadata) {
+      const options = existingMetadata.options;
+      // inherit nullable option
+      if (isUndefined(options.nullable) && isUndefined(options.defaultValue)) {
+        options.nullable = metadata.options.nullable;
+      }
+    } else {
+      this.fields.push(metadata);
+    }
   }
 
   addMethodParamMetadata(metadata: MethodArgsMetadata) {
