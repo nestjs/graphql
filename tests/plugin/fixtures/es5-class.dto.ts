@@ -11,7 +11,6 @@ export class CreateCatDtoEs5 {
 
 export const es5CreateCatDtoTextTranspiled = `\"use strict\";
 Object.defineProperty(exports, \"__esModule\", { value: true });
-var graphql = require(\"@nestjs/graphql\");
 var status_1 = require(\"./status\");
 var constants_1 = require(\"./constants\");
 var CreateCatDtoEs5 = /** @class */ (function () {
