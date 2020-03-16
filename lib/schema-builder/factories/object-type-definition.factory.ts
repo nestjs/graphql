@@ -7,9 +7,9 @@ import {
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
-import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -17,6 +17,7 @@ export interface ObjectTypeDefinition {
   target: Function;
   type: GraphQLObjectType;
   isAbstract: boolean;
+  interfaces: Function[];
 }
 
 @Injectable()
@@ -24,12 +25,15 @@ export class ObjectTypeDefinitionFactory {
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly outputTypeFactory: OutputTypeFactory,
-    private readonly argsFactory: ArgsFactory,
     private readonly typeFieldsAccessor: TypeFieldsAccessor,
     private readonly astDefinitionNodeFactory: AstDefinitionNodeFactory,
+    private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
   ) {}
 
-  public create(metadata: ObjectTypeMetadata, options: BuildSchemaOptions) {
+  public create(
+    metadata: ObjectTypeMetadata,
+    options: BuildSchemaOptions,
+  ): ObjectTypeDefinition {
     const prototype = Object.getPrototypeOf(metadata.target);
     const getParentType = () => {
       const parentTypeDefinition = this.typeDefinitionsStorage.getObjectTypeByTarget(
@@ -40,6 +44,7 @@ export class ObjectTypeDefinitionFactory {
     return {
       target: metadata.target,
       isAbstract: metadata.isAbstract || false,
+      interfaces: metadata.interfaces || [],
       type: new GraphQLObjectType({
         name: metadata.name,
         description: metadata.description,
@@ -85,6 +90,9 @@ export class ObjectTypeDefinitionFactory {
     getParentType: () => GraphQLObjectType,
   ): () => GraphQLFieldConfigMap<any, any> {
     const prototype = Object.getPrototypeOf(metadata.target);
+    metadata.properties.forEach(({ typeFn }) =>
+      this.orphanedReferenceRegistry.addToRegistryIfOrphaned(typeFn()),
+    );
 
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
@@ -97,7 +105,6 @@ export class ObjectTypeDefinitionFactory {
         );
         fields[field.schemaName] = {
           type,
-          args: this.argsFactory.create(field.methodArgs, options),
           resolve: undefined,
           description: field.description,
           deprecationReason: field.deprecationReason,

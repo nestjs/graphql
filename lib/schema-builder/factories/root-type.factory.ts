@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
 import { ResolverTypeMetadata } from '../metadata/resolver.metadata';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
@@ -17,6 +18,7 @@ export class RootTypeFactory {
     private readonly outputTypeFactory: OutputTypeFactory,
     private readonly argsFactory: ArgsFactory,
     private readonly astDefinitionNodeFactory: AstDefinitionNodeFactory,
+    private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
   ) {}
 
   public create(
@@ -51,6 +53,10 @@ export class RootTypeFactory {
         handler => !(handler.classMetadata && handler.classMetadata.isAbstract),
       )
       .forEach(handler => {
+        this.orphanedReferenceRegistry.addToRegistryIfOrphaned(
+          handler.typeFn(),
+        );
+
         const type = this.outputTypeFactory.create(
           handler.methodName,
           handler.typeFn(),
