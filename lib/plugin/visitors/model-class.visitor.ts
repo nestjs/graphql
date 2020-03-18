@@ -21,13 +21,8 @@ export class ModelClassVisitor {
 
     const visitNode = (node: ts.Node): ts.Node => {
       if (ts.isClassDeclaration(node)) {
-        // clear all properties on restart
-        const classMetadata = this.getClassMetadata(
-          node as ts.ClassDeclaration,
-        );
-        if (classMetadata) {
-          metadataHostMap.delete((node as ts.ClassDeclaration).name.getText());
-        }
+        this.clearMetadataOnRestart(node);
+
         node = ts.visitEachChild(node, visitNode, ctx);
         return this.addMetadataFactory(node as ts.ClassDeclaration);
       } else if (ts.isPropertyDeclaration(node)) {
@@ -60,6 +55,13 @@ export class ModelClassVisitor {
       return ts.visitEachChild(node, visitNode, ctx);
     };
     return ts.visitNode(sourceFile, visitNode);
+  }
+
+  clearMetadataOnRestart(node: ts.ClassDeclaration) {
+    const classMetadata = this.getClassMetadata(node);
+    if (classMetadata) {
+      metadataHostMap.delete(node.name.getText());
+    }
   }
 
   addMetadataFactory(node: ts.ClassDeclaration) {
