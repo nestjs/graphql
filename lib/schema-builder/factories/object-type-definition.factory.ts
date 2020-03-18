@@ -10,6 +10,7 @@ import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -28,6 +29,7 @@ export class ObjectTypeDefinitionFactory {
     private readonly typeFieldsAccessor: TypeFieldsAccessor,
     private readonly astDefinitionNodeFactory: AstDefinitionNodeFactory,
     private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
+    private readonly argsFactory: ArgsFactory,
   ) {}
 
   public create(
@@ -105,6 +107,7 @@ export class ObjectTypeDefinitionFactory {
         );
         fields[field.schemaName] = {
           type,
+          args: this.argsFactory.create(field.methodArgs, options),
           resolve: undefined,
           description: field.description,
           deprecationReason: field.deprecationReason,

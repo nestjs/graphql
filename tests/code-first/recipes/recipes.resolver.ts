@@ -10,6 +10,7 @@ import {
   Subscription,
 } from '../../../lib';
 import { AuthGuard } from '../common/guards/auth.guard';
+import { FilterRecipesCountArgs } from './dto/filter-recipes-count.args';
 import { NewRecipeInput } from './dto/new-recipe.input';
 import { RecipesArgs } from './dto/recipes.args';
 import { Ingredient } from './models/ingredient';
@@ -68,6 +69,11 @@ export class RecipesResolver {
   @ResolveField('ingredients', () => [Ingredient])
   getIngredients(@Parent() root) {
     return [new Ingredient({ name: 'cherry' })];
+  }
+
+  @ResolveField(type => Number)
+  count(@Args() filters: FilterRecipesCountArgs) {
+    return 10;
   }
 
   @ResolveField()

@@ -67,6 +67,7 @@ type Recipe implements IRecipe {
   lastRate: Float
   tags: [String!]!
   ingredients: [Ingredient!]!
+  count(type: String, status: String): Float!
   rating: Float!
 }
 

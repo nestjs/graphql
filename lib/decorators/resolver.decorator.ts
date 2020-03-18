@@ -48,6 +48,12 @@ export function Resolver(name: string): MethodDecorator & ClassDecorator;
  * Object resolver decorator.
  */
 export function Resolver(
+  options: ResolverOptions,
+): MethodDecorator & ClassDecorator;
+/**
+ * Object resolver decorator.
+ */
+export function Resolver(
   classType: Type<any>,
   options?: ResolverOptions,
 ): MethodDecorator & ClassDecorator;
@@ -62,7 +68,7 @@ export function Resolver(
  * Object resolver decorator.
  */
 export function Resolver(
-  nameOrType?: string | ResolverTypeFn | Type<any>,
+  nameOrTypeOrOptions?: string | ResolverTypeFn | Type<any> | ResolverOptions,
   options?: ResolverOptions,
 ): MethodDecorator & ClassDecorator {
   return (
@@ -70,6 +76,11 @@ export function Resolver(
     key?: string | symbol,
     descriptor?: any,
   ) => {
+    const [nameOrType, resolverOptions] =
+      typeof nameOrTypeOrOptions === 'object' && nameOrTypeOrOptions !== null
+        ? [undefined, nameOrTypeOrOptions]
+        : [nameOrTypeOrOptions as string | ResolverTypeFn | Type<any>, options];
+
     let name = nameOrType && getClassName(nameOrType);
 
     if (isFunction(nameOrType)) {
@@ -85,7 +96,7 @@ export function Resolver(
         TypeMetadataStorage.addResolverMetadata({
           target: target as Function,
           typeFn: typeFn,
-          isAbstract: (options && options.isAbstract) || false,
+          isAbstract: (resolverOptions && resolverOptions.isAbstract) || false,
         });
       });
     }

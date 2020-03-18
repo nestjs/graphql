@@ -327,6 +327,31 @@ describe('Code-first - schema factory', () => {
               },
             },
             {
+              args: [
+                {
+                  defaultValue: null,
+                  description: null,
+                  name: 'type',
+                  type: { kind: TypeKind.SCALAR, name: 'String', ofType: null },
+                },
+                {
+                  defaultValue: null,
+                  description: null,
+                  name: 'status',
+                  type: { kind: TypeKind.SCALAR, name: 'String', ofType: null },
+                },
+              ],
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'count',
+              type: {
+                kind: TypeKind.NON_NULL,
+                name: null,
+                ofType: { kind: TypeKind.SCALAR, name: 'Float', ofType: null },
+              },
+            },
+            {
               args: [],
               deprecationReason: null,
               description: null,

@@ -5,7 +5,7 @@ import { Recipe } from './../recipes/models/recipe';
 @Resolver(() => Recipe, { isAbstract: true })
 export class AbstractResolver {
   @Query(returns => [Recipe])
-  absractRecipes(@Args() recipesArgs: RecipesArgs): Recipe[] {
+  abstractRecipes(@Args() recipesArgs: RecipesArgs): Recipe[] {
     return [];
   }
 }
