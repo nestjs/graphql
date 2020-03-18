@@ -108,7 +108,7 @@ export class ObjectTypeDefinitionFactory {
         fields[field.schemaName] = {
           type,
           args: this.argsFactory.create(field.methodArgs, options),
-          resolve: undefined,
+          resolve: (root: object) => root[field.name],
           description: field.description,
           deprecationReason: field.deprecationReason,
           /**
