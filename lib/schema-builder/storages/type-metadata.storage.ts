@@ -192,7 +192,6 @@ export class TypeMetadataStorageHost {
   }
 
   applyPluginMetadata(prototype: Function) {
-    const classPrototype = prototype;
     do {
       if (!prototype.constructor) {
         return;
@@ -205,12 +204,12 @@ export class TypeMetadataStorageHost {
       properties.forEach(key => {
         if (metadata[key].type) {
           const { type, ...options } = metadata[key];
-          addFieldMetadata(type, options, classPrototype, key, undefined, true);
+          addFieldMetadata(type, options, prototype, key, undefined, true);
         } else {
           addFieldMetadata(
             metadata[key],
             undefined,
-            classPrototype,
+            prototype,
             key,
             undefined,
             true,
