@@ -18,6 +18,10 @@ export class GqlExecutionContext extends ExecutionContextHost
     return gqlContext;
   }
 
+  getType<TContext extends string = GqlContextType>(): TContext {
+    return super.getType();
+  }
+
   getRoot<T = any>(): T {
     return this.getArgByIndex(0);
   }
