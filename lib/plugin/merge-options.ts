@@ -5,7 +5,7 @@ export interface PluginOptions {
 }
 
 const defaultOptions: PluginOptions = {
-  typeFileNameSuffix: ['.input.ts', '.args.ts', '.entity.ts'],
+  typeFileNameSuffix: ['.input.ts', '.args.ts', '.entity.ts', '.model.ts'],
 };
 
 export const mergePluginOptions = (
