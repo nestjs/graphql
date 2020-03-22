@@ -37,7 +37,7 @@
     "apollo-server-fastify": "2.11.0",
     "class-transformer": "0.2.3",
     "eslint": "6.8.0",
-    "eslint-config-prettier": "6.10.0",
+    "eslint-config-prettier": "6.10.1",
     "eslint-plugin-import": "2.20.1",
     "graphql": "14.6.0",
     "husky": "4.2.3",
