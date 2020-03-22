@@ -141,7 +141,7 @@ export class TypeMetadataStorageHost {
 
   addClassFieldMetadata(metadata: PropertyMetadata) {
     const existingMetadata = this.fields.find(
-      item => item.target === metadata.target && item.name === metadata.name,
+      (item) => item.target === metadata.target && item.name === metadata.name,
     );
     if (existingMetadata) {
       const options = existingMetadata.options;
@@ -181,14 +181,14 @@ export class TypeMetadataStorageHost {
     this.compileExtendedResolversMetadata();
 
     orphanedTypes
-      .filter(type => type && type.prototype)
-      .forEach(type => this.applyPluginMetadata(type.prototype));
+      .filter((type) => type && type.prototype)
+      .forEach((type) => this.applyPluginMetadata(type.prototype));
   }
 
   loadClassPluginMetadata(metadata: ClassMetadata[]) {
     metadata
-      .filter(item => item.target)
-      .forEach(item => this.applyPluginMetadata(item.target.prototype));
+      .filter((item) => item.target)
+      .forEach((item) => this.applyPluginMetadata(item.target.prototype));
   }
 
   applyPluginMetadata(prototype: Function) {
@@ -201,7 +201,7 @@ export class TypeMetadataStorageHost {
       }
       const metadata = prototype.constructor[METADATA_FACTORY_NAME]();
       const properties = Object.keys(metadata);
-      properties.forEach(key => {
+      properties.forEach((key) => {
         if (metadata[key].type) {
           const { type, ...options } = metadata[key];
           addFieldMetadata(type, options, prototype, key, undefined, true);
@@ -224,7 +224,7 @@ export class TypeMetadataStorageHost {
   }
 
   private compileClassMetadata(metadata: ClassMetadata[]) {
-    metadata.forEach(item => {
+    metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
 
       if (!item.properties) {
@@ -244,10 +244,10 @@ export class TypeMetadataStorageHost {
     belongsToClass: (item: PropertyMetadata) => boolean,
   ) {
     const fields = this.fields.filter(belongsToClass);
-    fields.forEach(field => {
+    fields.forEach((field) => {
       const isHostEqual = isTargetEqual.bind(undefined, field);
       field.methodArgs = this.params.filter(
-        param => isHostEqual(param) && field.name === param.methodName,
+        (param) => isHostEqual(param) && field.name === param.methodName,
       );
       field.directives = this.fieldDirectives.filter(
         this.isFieldDirective.bind(this, field),
@@ -257,13 +257,13 @@ export class TypeMetadataStorageHost {
   }
 
   private compileResolversMetadata(metadata: BaseResolverMetadata[]) {
-    metadata.forEach(item => {
+    metadata.forEach((item) => {
       const isTypeEqual = isTargetEqual.bind(undefined, item);
       const resolverMetadata = this.resolvers.find(isTypeEqual);
 
       item.classMetadata = resolverMetadata;
       item.methodArgs = this.params.filter(
-        param => isTypeEqual(param) && item.methodName === param.methodName,
+        (param) => isTypeEqual(param) && item.methodName === param.methodName,
       );
       item.directives = this.fieldDirectives.filter(
         this.isFieldDirective.bind(this, item),
@@ -274,7 +274,7 @@ export class TypeMetadataStorageHost {
   private compileFieldResolverMetadata(metadata: FieldResolverMetadata[]) {
     this.compileResolversMetadata(metadata);
 
-    metadata.forEach(item => {
+    metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
       item.directives = this.fieldDirectives.filter(
         this.isFieldDirective.bind(this, item),
@@ -292,14 +292,14 @@ export class TypeMetadataStorageHost {
 
   private compileExternalFieldResolverMetadata(item: FieldResolverMetadata) {
     const objectTypeRef = this.resolvers
-      .find(el => isTargetEqual(el, item))
+      .find((el) => isTargetEqual(el, item))
       .typeFn();
 
     const objectTypeMetadata = this.objectTypes.find(
-      objTypeDef => objTypeDef.target === objectTypeRef,
+      (objTypeDef) => objTypeDef.target === objectTypeRef,
     );
     const objectTypeField = objectTypeMetadata.properties.find(
-      fieldDef => fieldDef.name === item.methodName,
+      (fieldDef) => fieldDef.name === item.methodName,
     );
     if (!objectTypeField) {
       if (!item.typeFn || !item.typeOptions) {
@@ -323,16 +323,19 @@ export class TypeMetadataStorageHost {
       if (objectTypeField.methodArgs.length === 0) {
         objectTypeField.methodArgs = item.methodArgs;
       }
+      if (objectTypeField.directives.length === 0) {
+        objectTypeField.directives = item.directives;
+      }
     }
   }
 
   private compileExtendedResolversMetadata() {
-    this.resolvers.forEach(item => {
+    this.resolvers.forEach((item) => {
       let parentClass = Object.getPrototypeOf(item.target);
 
       while (parentClass.prototype) {
         const parentMetadata = this.resolvers.find(
-          item => item.target === parentClass,
+          (item) => item.target === parentClass,
         );
         if (parentMetadata) {
           this.queries = this.mergeParentResolverHandlers(
@@ -378,7 +381,7 @@ export class TypeMetadataStorageHost {
     parentClass: Function,
     classMetadata: ResolverClassMetadata,
   ): T[] {
-    const mergedMetadata = metadata.map(metadata => {
+    const mergedMetadata = metadata.map((metadata) => {
       return metadata.target !== parentClass
         ? metadata
         : {
@@ -400,7 +403,7 @@ export class TypeMetadataStorageHost {
       parentClass,
       classMetadata,
     );
-    const mergedMetadata = parentMetadata.map(metadata => {
+    const mergedMetadata = parentMetadata.map((metadata) => {
       return metadata.target === parentClass
         ? metadata
         : {

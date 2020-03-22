@@ -72,7 +72,7 @@ export class ObjectTypeDefinitionFactory {
 
     return () => {
       const interfaces = (metadata.interfaces || []).map<GraphQLInterfaceType>(
-        item => this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
+        (item) => this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
       );
       if (!isUndefined(prototype)) {
         const parentClass = getParentType();
@@ -98,7 +98,7 @@ export class ObjectTypeDefinitionFactory {
 
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
-      metadata.properties.forEach(field => {
+      metadata.properties.forEach((field) => {
         const type = this.outputTypeFactory.create(
           field.name,
           field.typeFn(),
@@ -121,7 +121,6 @@ export class ObjectTypeDefinitionFactory {
             field.directives,
           ),
         };
-        return fields;
       });
       if (!isUndefined(prototype)) {
         const parent = getParentType();
@@ -137,7 +136,7 @@ export class ObjectTypeDefinitionFactory {
       }
       if (metadata.interfaces) {
         let interfaceFields: GraphQLFieldConfigMap<any, any> = {};
-        metadata.interfaces.forEach(item => {
+        metadata.interfaces.forEach((item) => {
           const interfaceType = this.typeDefinitionsStorage.getInterfaceByTarget(
             item,
           ).type;

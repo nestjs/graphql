@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "7.0.12",
+  "version": "7.0.13-next.2",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -19,6 +19,8 @@
     "release": "release-it"
   },
   "devDependencies": {
+    "@apollo/federation": "0.13.2",
+    "@apollo/gateway": "0.13.2",
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-angular": "8.3.4",
     "@nestjs/common": "7.0.4",
@@ -50,6 +52,7 @@
     "supertest": "4.0.2",
     "ts-jest": "25.2.1",
     "ts-node": "8.8.1",
+    "ts-morph": "7.0.0",
     "typescript": "3.8.3"
   },
   "dependencies": {
@@ -68,6 +71,11 @@
     "@nestjs/core": "^7.0.0",
     "graphql": "^14.1.1",
     "reflect-metadata": "^0.1.12"
+  },
+  "optionalDependencies": {
+    "@apollo/federation": "^0.13.2",
+    "@apollo/gateway": "^0.13.2",
+    "ts-morph": "^7.0.0"
   },
   "lint-staged": {
     "*.ts": [
