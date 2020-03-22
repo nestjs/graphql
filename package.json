@@ -69,11 +69,6 @@
     "graphql": "^14.1.1",
     "reflect-metadata": "^0.1.12"
   },
-  "optionalDependencies": {
-    "@apollo/federation": "^0.13.0",
-    "@apollo/gateway": "^0.13.0",
-    "ts-morph": "^7.0.0"
-  },
   "lint-staged": {
     "*.ts": [
       "prettier --write"
