@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { Resolvers } from '../enums/resolvers.enum';
 import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants';
 import { BaseTypeOptions, ReturnTypeFunc } from '../interfaces';
+import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error';
 import { ResolverTypeMetadata } from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
@@ -90,26 +91,28 @@ export function Subscription(
       descriptor,
     );
 
-    if (nameOrType && !isString(nameOrType)) {
-      LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
-        const { typeFn, options: typeOptions } = reflectTypeFromMetadata({
-          metadataKey: 'design:returntype',
-          prototype: target,
-          propertyKey: key,
-          explicitTypeFn: nameOrType,
-          typeOptions: options,
-        });
-        const metadata: ResolverTypeMetadata = {
-          methodName: key,
-          schemaName: options.name || key,
-          target: target.constructor,
-          typeFn,
-          returnTypeOptions: typeOptions,
-          description: options.description,
-          deprecationReason: options.deprecationReason,
-        };
-        TypeMetadataStorage.addSubscriptionMetadata(metadata);
+    LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
+      if (!nameOrType || isString(nameOrType)) {
+        throw new UndefinedReturnTypeError(Subscription.name, key);
+      }
+
+      const { typeFn, options: typeOptions } = reflectTypeFromMetadata({
+        metadataKey: 'design:returntype',
+        prototype: target,
+        propertyKey: key,
+        explicitTypeFn: nameOrType,
+        typeOptions: options,
       });
-    }
+      const metadata: ResolverTypeMetadata = {
+        methodName: key,
+        schemaName: options.name || key,
+        target: target.constructor,
+        typeFn,
+        returnTypeOptions: typeOptions,
+        description: options.description,
+        deprecationReason: options.deprecationReason,
+      };
+      TypeMetadataStorage.addSubscriptionMetadata(metadata);
+    });
   };
 }
