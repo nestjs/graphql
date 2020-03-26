@@ -1,6 +1,10 @@
 import { Type } from '@nestjs/common';
 import { Field } from '../decorators';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import {
+  inheritTransformationMetadata,
+  inheritValidationMetadata,
+} from './type-helpers.utils';
 
 export function OmitType<T, K extends keyof T>(
   classRef: Type<T>,
@@ -10,6 +14,11 @@ export function OmitType<T, K extends keyof T>(
 
   abstract class OmitObjectType {}
   decoratorFactory({ isAbstract: true })(OmitObjectType);
+
+  const isInheritedPredicate = (propertyKey: string) =>
+    !keys.includes(propertyKey as K);
+  inheritValidationMetadata(classRef, OmitObjectType, isInheritedPredicate);
+  inheritTransformationMetadata(classRef, OmitObjectType, isInheritedPredicate);
 
   fields
     .filter((item) => !keys.includes(item.schemaName as K))
