@@ -1,7 +1,7 @@
 import { Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import 'reflect-metadata';
-import { Resolvers } from '../enums/resolvers.enum';
+import { Resolver } from '../enums/resolver.enum';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
 import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error';
@@ -56,7 +56,7 @@ export function Query(
       ? nameOrType
       : (options && options.name) || undefined;
 
-    addResolverMetadata(Resolvers.QUERY, name, target, key, descriptor);
+    addResolverMetadata(Resolver.QUERY, name, target, key, descriptor);
 
     LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
       if (!nameOrType || isString(nameOrType)) {

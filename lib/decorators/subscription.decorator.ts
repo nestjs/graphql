@@ -1,7 +1,7 @@
 import { SetMetadata, Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import 'reflect-metadata';
-import { Resolvers } from '../enums/resolvers.enum';
+import { Resolver } from '../enums/resolver.enum';
 import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants';
 import { BaseTypeOptions, ReturnTypeFunc } from '../interfaces';
 import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error';
@@ -84,7 +84,7 @@ export function Subscription(
       ? nameOrType
       : (options && options.name) || undefined;
 
-    addResolverMetadata(Resolvers.SUBSCRIPTION, name, target, key, descriptor);
+    addResolverMetadata(Resolver.SUBSCRIPTION, name, target, key, descriptor);
     SetMetadata(SUBSCRIPTION_OPTIONS_METADATA, options)(
       target,
       key,

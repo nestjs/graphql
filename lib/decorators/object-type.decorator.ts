@@ -6,8 +6,10 @@
  */
 
 import { isString } from '@nestjs/common/utils/shared.utils';
+import { ClassType } from '../enums/class-type.enum';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
  * Interface defining options that can be passed to `@ObjectType()` decorator
@@ -56,7 +58,7 @@ export function ObjectType(
   const interfaces = options.implements
     ? [].concat(options.implements)
     : undefined;
-  return target => {
+  return (target) => {
     const addObjectTypeMetadata = () =>
       TypeMetadataStorage.addObjectTypeMetadata({
         name: name || target.name,
@@ -70,5 +72,7 @@ export function ObjectType(
     // accessing the "name" property
     addObjectTypeMetadata();
     LazyMetadataStorage.store(addObjectTypeMetadata);
+
+    addClassTypeMetadata(target, ClassType.OBJECT);
   };
 }

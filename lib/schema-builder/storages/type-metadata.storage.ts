@@ -87,12 +87,24 @@ export class TypeMetadataStorageHost {
     return this.argumentTypes;
   }
 
+  getArgumentsMetadataByTarget(
+    target: Type<unknown>,
+  ): ClassMetadata | undefined {
+    return this.argumentTypes.find((item) => item.target === target);
+  }
+
   addInterfaceMetadata(metadata: InterfaceMetadata) {
     this.interfaces.push(metadata);
   }
 
   getInterfacesMetadata(): InterfaceMetadata[] {
     return this.interfaces;
+  }
+
+  getInterfaceMetadataByTarget(
+    target: Type<unknown>,
+  ): InterfaceMetadata | undefined {
+    return this.interfaces.find((item) => item.target === target);
   }
 
   addInputTypeMetadata(metadata: ClassMetadata) {
@@ -103,12 +115,24 @@ export class TypeMetadataStorageHost {
     return this.inputTypes;
   }
 
+  getInputTypeMetadataByTarget(
+    target: Type<unknown>,
+  ): ObjectTypeMetadata | undefined {
+    return this.inputTypes.find((item) => item.target === target);
+  }
+
   addObjectTypeMetadata(metadata: ObjectTypeMetadata) {
     this.objectTypes.push(metadata);
   }
 
   getObjectTypesMetadata(): ObjectTypeMetadata[] {
     return this.objectTypes;
+  }
+
+  getObjectTypeMetadataByTarget(
+    target: Type<unknown>,
+  ): ObjectTypeMetadata | undefined {
+    return this.objectTypes.find((item) => item.target === target);
   }
 
   addEnumMetadata(metadata: EnumMetadata) {

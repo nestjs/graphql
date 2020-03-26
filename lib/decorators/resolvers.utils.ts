@@ -1,6 +1,6 @@
 import { SetMetadata, Type } from '@nestjs/common';
 import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
-import { Resolvers } from '../enums/resolvers.enum';
+import { Resolver } from '../enums/resolver.enum';
 import {
   RESOLVER_NAME_METADATA,
   RESOLVER_TYPE_METADATA,
@@ -9,7 +9,7 @@ import { UndefinedResolverTypeError } from '../schema-builder/errors/undefined-r
 import { ResolverTypeFn } from './resolver.decorator';
 
 export function addResolverMetadata(
-  resolver: Resolvers | string | undefined,
+  resolver: Resolver | string | undefined,
   name: string | undefined,
   target?: Record<string, any> | Function,
   key?: string | symbol,

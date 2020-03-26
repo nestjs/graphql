@@ -16,7 +16,7 @@ import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { head, identity } from 'lodash';
 import { GqlModuleOptions, SubscriptionOptions } from '..';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { Resolvers } from '../enums/resolvers.enum';
+import { Resolver } from '../enums/resolver.enum';
 import { GqlParamsFactory } from '../factories/params.factory';
 import {
   GRAPHQL_MODULE_OPTIONS,
@@ -75,20 +75,20 @@ export class ResolversExplorerService extends BaseExplorerService {
       isUndefined(resolverType) ||
       (!isReferenceResolver &&
         !isPropertyResolver &&
-        ![Resolvers.MUTATION, Resolvers.QUERY, Resolvers.SUBSCRIPTION].some(
-          type => type === resolverType,
+        ![Resolver.MUTATION, Resolver.QUERY, Resolver.SUBSCRIPTION].some(
+          (type) => type === resolverType,
         ));
 
     const resolvers = this.metadataScanner.scanFromPrototype(
       instance,
       prototype,
-      name => extractMetadata(instance, prototype, name, predicate),
+      (name) => extractMetadata(instance, prototype, name, predicate),
     );
 
     const isRequestScoped = !wrapper.isDependencyTreeStatic();
     return resolvers
-      .filter(resolver => !!resolver)
-      .map(resolver => {
+      .filter((resolver) => !!resolver)
+      .map((resolver) => {
         const createContext = (transform?: Function) =>
           this.createContextCallback(
             instance,
@@ -129,10 +129,10 @@ export class ResolversExplorerService extends BaseExplorerService {
   ) {
     const paramsFactory = this.gqlParamsFactory;
     const isPropertyResolver = ![
-      Resolvers.MUTATION,
-      Resolvers.QUERY,
-      Resolvers.SUBSCRIPTION,
-    ].some(type => type === resolver.type);
+      Resolver.MUTATION,
+      Resolver.QUERY,
+      Resolver.SUBSCRIPTION,
+    ].some((type) => type === resolver.type);
 
     const fieldResolverEnhancers = this.gqlOptions.fieldResolverEnhancers || [];
     const contextOptions = isPropertyResolver
@@ -223,7 +223,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           subscribe: <TPayload, TVariables, TContext, TInfo>(
             ...args: [TPayload, TVariables, TContext, TInfo]
           ) =>
-            createAsyncIterator(createSubscribeContext()(...args), payload =>
+            createAsyncIterator(createSubscribeContext()(...args), (payload) =>
               (subscriptionOptions.filter as Function).call(
                 instanceRef,
                 payload,
@@ -247,7 +247,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    const resolvers = this.flatMap(modules, instance => instance.metatype);
+    const resolvers = this.flatMap(modules, (instance) => instance.metatype);
     return resolvers;
   }
 

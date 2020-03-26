@@ -6,9 +6,11 @@
  */
 
 import { isString } from '@nestjs/common/utils/shared.utils';
+import { ClassType } from '../enums/class-type.enum';
 import { ResolveTypeFn } from '../interfaces';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
  * Interface defining options that can be passed to `@InterfaceType()` decorator.
@@ -50,7 +52,7 @@ export function InterfaceType(
     ? [nameOrOptions, interfaceOptions]
     : [undefined, nameOrOptions];
 
-  return target => {
+  return (target) => {
     const metadata = {
       name: name || target.name,
       target,
@@ -59,5 +61,7 @@ export function InterfaceType(
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addInterfaceMetadata(metadata),
     );
+
+    addClassTypeMetadata(target, ClassType.INTERFACE);
   };
 }

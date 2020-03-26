@@ -6,8 +6,10 @@
  */
 
 import { isString } from '@nestjs/common/utils/shared.utils';
+import { ClassType } from '../enums/class-type.enum';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
  * Interface defining options that can be passed to `@InputType()` decorator.
@@ -49,7 +51,7 @@ export function InputType(
     ? [nameOrOptions, inputTypeOptions]
     : [undefined, nameOrOptions];
 
-  return target => {
+  return (target) => {
     const metadata = {
       target,
       name: name || target.name,
@@ -59,5 +61,6 @@ export function InputType(
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addInputTypeMetadata(metadata),
     );
+    addClassTypeMetadata(target, ClassType.INPUT);
   };
 }
