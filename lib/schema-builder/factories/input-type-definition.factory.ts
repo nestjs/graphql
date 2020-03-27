@@ -62,7 +62,7 @@ export class InputTypeDefinitionFactory {
     };
     return () => {
       let fields: GraphQLInputFieldConfigMap = {};
-      metadata.properties.forEach(property => {
+      metadata.properties.forEach((property) => {
         property.options.defaultValue = getDefaultValue(
           instance,
           property.options,

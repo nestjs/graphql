@@ -1,4 +1,11 @@
 import { Logger, Type } from '@nestjs/common';
+import { ArgsType, InputType, InterfaceType, ObjectType } from '../decorators';
+
+export type ClassDecoratorFactory =
+  | typeof ArgsType
+  | typeof ObjectType
+  | typeof InterfaceType
+  | typeof InputType;
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const logger = new Logger('TypeHelpers');

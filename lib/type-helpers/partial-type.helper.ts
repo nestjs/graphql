@@ -3,15 +3,23 @@ import { Field } from '../decorators';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import {
   applyIsOptionalDecorator,
+  ClassDecoratorFactory,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from './type-helpers.utils';
 
-export function PartialType<T>(classRef: Type<T>): Type<Partial<T>> {
+export function PartialType<T>(
+  classRef: Type<T>,
+  decorator?: ClassDecoratorFactory,
+): Type<Partial<T>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
   abstract class PartialObjectType {}
-  decoratorFactory({ isAbstract: true })(PartialObjectType);
+  if (decorator) {
+    decorator({ isAbstract: true })(PartialObjectType);
+  } else {
+    decoratorFactory({ isAbstract: true })(PartialObjectType);
+  }
 
   inheritValidationMetadata(classRef, PartialObjectType);
   inheritTransformationMetadata(classRef, PartialObjectType);

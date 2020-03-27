@@ -37,7 +37,7 @@ export class TypeFieldsAccessor {
     for (const key in fieldsMap) {
       const targetField = fieldsMap[key];
       const args: GraphQLFieldConfigArgumentMap = {};
-      targetField.args.forEach(item => {
+      targetField.args.forEach((item) => {
         args[item.name] = omit(item, 'name');
       });
 

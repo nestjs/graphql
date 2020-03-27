@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { Field } from '../decorators';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import {
+  ClassDecoratorFactory,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from './type-helpers.utils';
@@ -9,11 +10,17 @@ import {
 export function PickType<T, K extends keyof T>(
   classRef: Type<T>,
   keys: K[],
+  decorator?: ClassDecoratorFactory,
 ): Type<Pick<T, typeof keys[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
   abstract class PickObjectType {}
   decoratorFactory({ isAbstract: true })(PickObjectType);
+  if (decorator) {
+    decorator({ isAbstract: true })(PickObjectType);
+  } else {
+    decoratorFactory({ isAbstract: true })(PickObjectType);
+  }
 
   const isInheritedPredicate = (propertyKey: string) =>
     keys.includes(propertyKey as K);
