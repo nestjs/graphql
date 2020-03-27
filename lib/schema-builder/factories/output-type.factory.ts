@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLOutputType } from 'graphql';
 import { BuildSchemaOptions, GqlTypeReference } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
+import { CannotDetermineOutputTypeError } from '../errors/cannot-determine-output-type.error';
 import { TypeMapperSevice } from '../services/type-mapper.service';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 
@@ -28,9 +29,7 @@ export class OutputTypeFactory {
     if (!gqlType) {
       gqlType = this.typeDefinitionsStorage.getOutputTypeAndExtract(typeRef);
       if (!gqlType) {
-        throw new Error(
-          `Cannot determine GraphQL output type for ${hostType}`!,
-        );
+        throw new CannotDetermineOutputTypeError(hostType);
       }
     }
 
