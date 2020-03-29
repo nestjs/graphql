@@ -11,7 +11,8 @@ import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLAstExplorer } from '../graphql-ast.explorer';
-import { GraphQLSchemaBuilder } from '../graphql-schema-builder';
+import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
+import { GraphQLSchemaHost } from '../graphql-schema.host';
 import { GraphQLTypesLoader } from '../graphql-types.loader';
 import {
   GRAPHQL_MODULE_ID,
@@ -44,6 +45,7 @@ import { GraphQLFederationFactory } from './graphql-federation.factory';
     GraphQLAstExplorer,
     GraphQLTypesLoader,
     GraphQLSchemaBuilder,
+    GraphQLSchemaHost,
   ],
   exports: [],
 })

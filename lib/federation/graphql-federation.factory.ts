@@ -4,7 +4,7 @@ import { gql } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 import { isEmpty } from 'lodash';
-import { GraphQLSchemaBuilder } from '../graphql-schema-builder';
+import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GqlModuleOptions } from '../interfaces';
 import {
   PluginsExplorerService,
@@ -25,7 +25,7 @@ export class GraphQLFederationFactory {
   async mergeOptions(
     options: GqlModuleOptions = {},
   ): Promise<GqlModuleOptions> {
-    const transformSchema = async schema =>
+    const transformSchema = async (schema) =>
       options.transformSchema ? options.transformSchema(schema) : schema;
 
     options.plugins = extend(

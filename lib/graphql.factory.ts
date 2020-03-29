@@ -14,7 +14,8 @@ import {
 } from 'graphql-tools';
 import { forEach, isEmpty } from 'lodash';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
-import { GraphQLSchemaBuilder } from './graphql-schema-builder';
+import { GraphQLSchemaBuilder } from './graphql-schema.builder';
+import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GqlModuleOptions } from './interfaces';
 import {
   PluginsExplorerService,
@@ -31,6 +32,7 @@ export class GraphQLFactory {
     private readonly pluginsExplorerService: PluginsExplorerService,
     private readonly graphqlAstExplorer: GraphQLAstExplorer,
     private readonly gqlSchemaBuilder: GraphQLSchemaBuilder,
+    private readonly gqlSchemaHost: GraphQLSchemaHost,
   ) {}
 
   async mergeOptions(
@@ -85,17 +87,22 @@ export class GraphQLFactory {
         );
       }
 
+      schema = await transformSchema(schema);
+      this.gqlSchemaHost.schema = schema;
+
       return {
         ...options,
         typeDefs: undefined,
-        schema: await transformSchema(schema),
+        schema,
       };
     }
     if (isEmpty(options.typeDefs)) {
+      const schema = await transformSchema(options.schema);
+      this.gqlSchemaHost.schema = schema;
       return {
         ...options,
         typeDefs: undefined,
-        schema: await transformSchema(options.schema),
+        schema,
       };
     }
     const executableSchema = makeExecutableSchema({
@@ -107,17 +114,20 @@ export class GraphQLFactory {
       `,
       resolverValidationOptions: options.resolverValidationOptions,
     });
-    const schema = options.schema
+    let schema = options.schema
       ? mergeSchemas({
           schemas: [options.schema, executableSchema],
         })
       : executableSchema;
 
     removeTempField(schema);
+    schema = await transformSchema(schema);
+    this.gqlSchemaHost.schema = schema;
+
     return {
       ...options,
       typeDefs: undefined,
-      schema: await transformSchema(schema),
+      schema,
     };
   }
 

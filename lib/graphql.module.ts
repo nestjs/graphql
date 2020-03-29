@@ -10,7 +10,8 @@ import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServerBase } from 'apollo-server-core';
 import { printSchema } from 'graphql';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
-import { GraphQLSchemaBuilder } from './graphql-schema-builder';
+import { GraphQLSchemaBuilder } from './graphql-schema.builder';
+import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
@@ -43,6 +44,7 @@ import {
     GraphQLAstExplorer,
     GraphQLTypesLoader,
     GraphQLSchemaBuilder,
+    GraphQLSchemaHost,
   ],
   exports: [GraphQLTypesLoader, GraphQLAstExplorer],
 })
