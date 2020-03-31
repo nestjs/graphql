@@ -10,6 +10,7 @@ import {
 } from '../utils/plugin-utils';
 
 const metadataHostMap = new Map();
+const importsToAdd = new Set<string>();
 
 export class ModelClassVisitor {
   visit(
@@ -35,7 +36,7 @@ export class ModelClassVisitor {
           return node;
         }
         const isPropertyStatic = (node.modifiers || []).some(
-          modifier => modifier.kind === ts.SyntaxKind.StaticKeyword,
+          (modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword,
         );
         if (isPropertyStatic) {
           return node;
@@ -51,6 +52,9 @@ export class ModelClassVisitor {
           return node;
         }
         return node;
+      } else if (ts.isSourceFile(node)) {
+        const visitedNode = ts.visitEachChild(node, visitNode, ctx);
+        return this.updateImports(visitedNode, Array.from(importsToAdd));
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
@@ -71,7 +75,7 @@ export class ModelClassVisitor {
     }
     const classMutableNode = ts.getMutableClone(node);
     const returnValue = ts.createObjectLiteral(
-      Object.keys(classMetadata).map(key =>
+      Object.keys(classMetadata).map((key) =>
         ts.createPropertyAssignment(
           ts.createIdentifier(key),
           classMetadata[key],
@@ -152,7 +156,7 @@ export class ModelClassVisitor {
     }
     if (node.type && ts.isTypeLiteralNode(node.type)) {
       const propertyAssignments = Array.from(node.type.members || []).map(
-        member => {
+        (member) => {
           const literalExpr = this.createDecoratorObjectLiteralExpr(
             member as ts.PropertySignature,
             typeChecker,
@@ -182,6 +186,13 @@ export class ModelClassVisitor {
       return undefined;
     }
     typeReference = replaceImportPath(typeReference, hostFilename);
+    if (typeReference && typeReference.includes('require')) {
+      // add top-level import to eagarly load class metadata
+      const importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
+      if (importPath) {
+        importsToAdd.add(importPath.slice(2, importPath.length - 1));
+      }
+    }
     return ts.createPropertyAssignment(
       key,
       ts.createArrowFunction(
@@ -224,5 +235,24 @@ export class ModelClassVisitor {
       return;
     }
     return metadataHostMap.get(node.name.getText());
+  }
+
+  updateImports(
+    sourceFile: ts.SourceFile,
+    pathsToImport: string[],
+  ): ts.SourceFile {
+    const IMPORT_PREFIX = 'eager_import_';
+    const importDeclarations = pathsToImport.map((path, index) =>
+      ts.createImportEqualsDeclaration(
+        undefined,
+        undefined,
+        IMPORT_PREFIX + index,
+        ts.createExternalModuleReference(ts.createLiteral(path)),
+      ),
+    );
+    return ts.updateSourceFileNode(sourceFile, [
+      ...importDeclarations,
+      ...sourceFile.statements,
+    ]);
   }
 }
