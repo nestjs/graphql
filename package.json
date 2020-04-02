@@ -42,7 +42,7 @@
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.10.1",
     "eslint-plugin-import": "2.20.2",
-    "graphql": "14.6.0",
+    "graphql": "15.0.0",
     "husky": "4.2.3",
     "jest": "25.2.6",
     "lint-staged": "10.1.1",
@@ -70,7 +70,7 @@
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
-    "graphql": "^14.1.1",
+    "graphql": "^14.1.1 || ^15.0.0",
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
