@@ -2,17 +2,38 @@ export const printedSchemaSnapshot = `# ----------------------------------------
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""example interface"""
+interface IRecipe {
+  id: ID!
+  title: String!
+}
+
+"""recipe object type"""
+type Recipe implements IRecipe {
+  id: ID!
+  title: String!
+  description: String
+  creationDate: DateTime!
+  averageRating: Float!
+  lastRate: Float
+  tags: [String!]!
+  ingredients: [Ingredient!]!
+  count(type: String, status: String): Float!
+  rating: Float!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
-"""The basic directions"""
-enum Direction {
-  Up
-  Down
-  Left
-  Right
+"""orphaned type"""
+type SampleOrphanedType {
+  id: ID!
+  title: String!
+  description: String
+  creationDate: DateTime!
+  averageRating: Float!
 }
 
 type Ingredient {
@@ -20,25 +41,6 @@ type Ingredient {
 
   """ingredient name"""
   name: String @deprecated(reason: "is deprecated")
-}
-
-"""example interface"""
-interface IRecipe {
-  id: ID!
-  title: String!
-}
-
-type Mutation {
-  addRecipe(newRecipeData: NewRecipeInput!): Recipe!
-  removeRecipe(id: String!): Boolean!
-}
-
-"""new recipe input"""
-input NewRecipeInput {
-  """recipe title"""
-  title: String!
-  description: String
-  ingredients: [String!]!
 }
 
 type Query {
@@ -57,31 +59,29 @@ type Query {
   ): [Recipe!]!
 }
 
-"""recipe object type"""
-type Recipe implements IRecipe {
-  id: ID!
-  title: String!
-  description: String
-  creationDate: DateTime!
-  averageRating: Float!
-  lastRate: Float
-  tags: [String!]!
-  ingredients: [Ingredient!]!
-  count(type: String, status: String): Float!
-  rating: Float!
-}
-
-"""orphaned type"""
-type SampleOrphanedType {
-  id: ID!
-  title: String!
-  description: String
-  creationDate: DateTime!
-  averageRating: Float!
+"""The basic directions"""
+enum Direction {
+  Up
+  Down
+  Left
+  Right
 }
 
 """Search result description"""
 union SearchResultUnion = Ingredient | Recipe
+
+type Mutation {
+  addRecipe(newRecipeData: NewRecipeInput!): Recipe!
+  removeRecipe(id: String!): Boolean!
+}
+
+"""new recipe input"""
+input NewRecipeInput {
+  """recipe title"""
+  title: String!
+  description: String
+  ingredients: [String!]!
+}
 
 type Subscription {
   """subscription description"""
