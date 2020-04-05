@@ -55,7 +55,7 @@ export class GraphQLAstExplorer {
     let { definitions } = documentNode;
     definitions = sortBy(definitions, ['kind', 'name']);
 
-    definitions.forEach(item =>
+    definitions.forEach((item) =>
       this.lookupDefinition(
         item as Readonly<TypeSystemDefinitionNode>,
         tsFile,
@@ -107,7 +107,7 @@ export class GraphQLAstExplorer {
       isExported: true,
       kind: structureKind,
     });
-    operationTypes.forEach(item => {
+    operationTypes.forEach((item) => {
       if (!item) {
         return;
       }
@@ -164,7 +164,7 @@ export class GraphQLAstExplorer {
         this.addExtendInterfaces(interfaces, parentRef as InterfaceDeclaration);
       }
     }
-    ((item.fields || []) as any).forEach(element => {
+    ((item.fields || []) as any).forEach((element) => {
       this.lookupFieldDefiniton(element, parentRef, mode);
     });
   }
@@ -188,6 +188,10 @@ export class GraphQLAstExplorer {
   ) {
     const propertyName = get(item, 'name.value');
     if (!propertyName) {
+      return;
+    }
+    const federatedFields = ['_entities', '_service'];
+    if (federatedFields.includes(propertyName)) {
       return;
     }
 
@@ -275,7 +279,7 @@ export class GraphQLAstExplorer {
     if (!inputs) {
       return [];
     }
-    return inputs.map(element => {
+    return inputs.map((element) => {
       const { name, required } = this.getFieldTypeDefinition(element.type);
       return {
         name: get(element, 'name.value'),
@@ -305,7 +309,7 @@ export class GraphQLAstExplorer {
     if (!interfaces) {
       return;
     }
-    interfaces.forEach(element => {
+    interfaces.forEach((element) => {
       const interfaceName = get(element, 'name.value');
       if (interfaceName) {
         parentRef.addExtends(interfaceName);
@@ -320,7 +324,7 @@ export class GraphQLAstExplorer {
     if (!interfaces) {
       return;
     }
-    interfaces.forEach(element => {
+    interfaces.forEach((element) => {
       const interfaceName = get(element, 'name.value');
       if (interfaceName) {
         parentRef.addImplements(interfaceName);
@@ -333,7 +337,7 @@ export class GraphQLAstExplorer {
     if (!name) {
       return;
     }
-    const members = map(item.values, value => ({
+    const members = map(item.values, (value) => ({
       name: get(value, 'name.value'),
       value: get(value, 'name.value'),
     }));
@@ -349,7 +353,9 @@ export class GraphQLAstExplorer {
     if (!name) {
       return;
     }
-    const types: string[] = map(item.types, value => get(value, 'name.value'));
+    const types: string[] = map(item.types, (value) =>
+      get(value, 'name.value'),
+    );
     tsFile.addTypeAlias({
       name,
       type: types.join(' | '),
