@@ -1,6 +1,6 @@
 export interface CustomScalar<T, K> {
-  description: string;
-  parseValue(value: T): K;
-  serialize(value: K): T;
-  parseLiteral(ast): K;
+  description: string | null | undefined;
+  parseValue(value: T): K | null | undefined;
+  serialize(value: K): T | null | undefined;
+  parseLiteral(ast): K | null | undefined;
 }
