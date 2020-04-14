@@ -69,19 +69,19 @@ export class ModelClassVisitor {
   }
 
   addMetadataFactory(node: ts.ClassDeclaration) {
-    const classMetadata = this.getClassMetadata(node as ts.ClassDeclaration);
-    if (!classMetadata) {
-      return node;
-    }
     const classMutableNode = ts.getMutableClone(node);
-    const returnValue = ts.createObjectLiteral(
-      Object.keys(classMetadata).map((key) =>
-        ts.createPropertyAssignment(
-          ts.createIdentifier(key),
-          classMetadata[key],
-        ),
-      ),
-    );
+    const classMetadata = this.getClassMetadata(node as ts.ClassDeclaration);
+    const returnValue = classMetadata
+      ? ts.createObjectLiteral(
+          Object.keys(classMetadata).map((key) =>
+            ts.createPropertyAssignment(
+              ts.createIdentifier(key),
+              classMetadata[key],
+            ),
+          ),
+        )
+      : ts.createObjectLiteral([], false);
+
     const method = ts.createMethod(
       undefined,
       [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
