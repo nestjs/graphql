@@ -19,8 +19,8 @@
     "release": "release-it"
   },
   "devDependencies": {
-    "@apollo/federation": "0.13.2",
-    "@apollo/gateway": "0.13.2",
+    "@apollo/federation": "0.14.0",
+    "@apollo/gateway": "0.14.0",
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-angular": "8.3.4",
     "@nestjs/common": "7.0.7",
@@ -74,8 +74,8 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
-    "@apollo/federation": "^0.13.2",
-    "@apollo/gateway": "^0.13.2",
+    "@apollo/federation": "^0.14.0",
+    "@apollo/gateway": "^0.14.0",
     "ts-morph": "^7.0.0"
   },
   "lint-staged": {
