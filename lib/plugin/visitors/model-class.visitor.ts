@@ -10,7 +10,7 @@ import {
 } from '../utils/plugin-utils';
 
 const metadataHostMap = new Map();
-const importsToAdd = new Set<string>();
+const importsToAddPerFile = new Map<string, Set<string>>();
 
 export class ModelClassVisitor {
   visit(
@@ -54,6 +54,10 @@ export class ModelClassVisitor {
         return node;
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
+        const importsToAdd = importsToAddPerFile.get(node.fileName);
+        if (!importsToAdd) {
+          return visitedNode;
+        }
         return this.updateImports(visitedNode, Array.from(importsToAdd));
       }
       return ts.visitEachChild(node, visitNode, ctx);
@@ -190,6 +194,11 @@ export class ModelClassVisitor {
       // add top-level import to eagarly load class metadata
       const importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
       if (importPath) {
+        let importsToAdd = importsToAddPerFile.get(hostFilename);
+        if (!importsToAdd) {
+          importsToAdd = new Set();
+          importsToAddPerFile.set(hostFilename, importsToAdd);
+        }
         importsToAdd.add(importPath.slice(2, importPath.length - 1));
       }
     }
