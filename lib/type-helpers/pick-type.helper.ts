@@ -1,4 +1,5 @@
 import { Type } from '@nestjs/common';
+import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { Field } from '../decorators';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import {
@@ -29,11 +30,19 @@ export function PickType<T, K extends keyof T>(
 
   fields
     .filter((item) => keys.includes(item.schemaName as K))
-    .forEach((item) =>
+    .forEach((item) => {
+      if (isFunction(item.typeFn)) {
+        /**
+         * Execute type function eagarly to update the type options object (before "clone" operation)
+         * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
+         */
+        item.typeFn();
+      }
+
       Field(item.typeFn, { ...item.options })(
         PickObjectType.prototype,
         item.name,
-      ),
-    );
+      );
+    });
   return PickObjectType as Type<Pick<T, typeof keys[number]>>;
 }
