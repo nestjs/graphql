@@ -23,6 +23,7 @@ export class TypeFieldsAccessor {
         type: targetField.type,
         description: targetField.description,
         defaultValue: targetField.defaultValue,
+        astNode: targetField.astNode,
       };
     }
     return fieldsConfig;
@@ -45,6 +46,8 @@ export class TypeFieldsAccessor {
         type: targetField.type,
         description: targetField.description,
         deprecationReason: targetField.deprecationReason,
+        astNode: targetField.astNode,
+        resolve: targetField.resolve,
         args,
       };
     }
