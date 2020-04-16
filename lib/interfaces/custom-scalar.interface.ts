@@ -5,7 +5,7 @@ import {
 } from 'graphql';
 
 export interface CustomScalar<T, K> {
-  description: string | null | undefined;
+  description?: string;
   parseValue: GraphQLScalarValueParser<K>;
   serialize: GraphQLScalarSerializer<T>;
   parseLiteral: GraphQLScalarLiteralParser<K>;
