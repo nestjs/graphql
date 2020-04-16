@@ -27,6 +27,20 @@ import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 
 let tsMorphLib: typeof import('ts-morph') | undefined;
 
+export interface DefinitionsGeneratorOptions {
+  /**
+   * If true, the additional "__typename" field is generated for every object type.
+   * @default false
+   */
+  emitTypenameField?: boolean;
+
+  /**
+   * If true, resolvers (query/mutation/etc) are generated as plain fields without arguments.
+   * @default false
+   */
+  skipResolverArgs?: boolean;
+}
+
 @Injectable()
 export class GraphQLAstExplorer {
   private readonly root = ['Query', 'Mutation', 'Subscription'];
@@ -35,6 +49,7 @@ export class GraphQLAstExplorer {
     documentNode: DocumentNode,
     outputPath: string,
     mode: 'class' | 'interface',
+    options: DefinitionsGeneratorOptions = {},
   ): Promise<SourceFile> {
     if (!documentNode) {
       return;
@@ -60,6 +75,7 @@ export class GraphQLAstExplorer {
         item as Readonly<TypeSystemDefinitionNode>,
         tsFile,
         mode,
+        options,
       ),
     );
 
@@ -71,6 +87,7 @@ export class GraphQLAstExplorer {
     item: Readonly<TypeSystemDefinitionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
+    options: DefinitionsGeneratorOptions,
   ) {
     switch (item.kind) {
       case 'SchemaDefinition':
@@ -81,9 +98,9 @@ export class GraphQLAstExplorer {
         );
       case 'ObjectTypeDefinition':
       case 'InputObjectTypeDefinition':
-        return this.addObjectTypeDefinition(item, tsFile, mode);
+        return this.addObjectTypeDefinition(item, tsFile, mode, options);
       case 'InterfaceTypeDefinition':
-        return this.addObjectTypeDefinition(item, tsFile, 'interface');
+        return this.addObjectTypeDefinition(item, tsFile, 'interface', options);
       case 'ScalarTypeDefinition':
         return this.addScalarDefinition(item, tsFile);
       case 'EnumTypeDefinition':
@@ -133,6 +150,7 @@ export class GraphQLAstExplorer {
       | InterfaceTypeDefinitionNode,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
+    options: DefinitionsGeneratorOptions,
   ) {
     const parentName = get(item, 'name.value');
     if (!parentName) {
@@ -164,8 +182,17 @@ export class GraphQLAstExplorer {
         this.addExtendInterfaces(interfaces, parentRef as InterfaceDeclaration);
       }
     }
+
+    const isObjectType = item.kind === 'ObjectTypeDefinition';
+    if (isObjectType && options.emitTypenameField) {
+      parentRef.addProperty({
+        name: '__typename',
+        type: `'${parentRef.getName()}'`,
+        hasQuestionToken: true,
+      });
+    }
     ((item.fields || []) as any).forEach((element) => {
-      this.lookupFieldDefiniton(element, parentRef, mode);
+      this.lookupFieldDefiniton(element, parentRef, mode, options);
     });
   }
 
@@ -173,11 +200,12 @@ export class GraphQLAstExplorer {
     item: FieldDefinitionNode | InputValueDefinitionNode,
     parentRef: InterfaceDeclaration | ClassDeclaration,
     mode: 'class' | 'interface',
+    options: DefinitionsGeneratorOptions,
   ) {
     switch (item.kind) {
       case 'FieldDefinition':
       case 'InputValueDefinition':
-        return this.lookupField(item, parentRef, mode);
+        return this.lookupField(item, parentRef, mode, options);
     }
   }
 
@@ -185,6 +213,7 @@ export class GraphQLAstExplorer {
     item: FieldDefinitionNode | InputValueDefinitionNode,
     parentRef: InterfaceDeclaration | ClassDeclaration,
     mode: 'class' | 'interface',
+    options: DefinitionsGeneratorOptions,
   ) {
     const propertyName = get(item, 'name.value');
     if (!propertyName) {
@@ -204,14 +233,22 @@ export class GraphQLAstExplorer {
       });
       return;
     }
-    (parentRef as ClassDeclaration).addMethod({
-      isAbstract: mode === 'class',
-      name: propertyName,
-      returnType: `${type} | Promise<${type}>`,
-      parameters: this.getFunctionParameters(
-        (item as FieldDefinitionNode).arguments,
-      ),
-    });
+    if (options.skipResolverArgs) {
+      (parentRef as ClassDeclaration).addProperty({
+        name: propertyName,
+        type,
+        hasQuestionToken: !required,
+      });
+    } else {
+      (parentRef as ClassDeclaration).addMethod({
+        isAbstract: mode === 'class',
+        name: propertyName,
+        returnType: `${type} | Promise<${type}>`,
+        parameters: this.getFunctionParameters(
+          (item as FieldDefinitionNode).arguments,
+        ),
+      });
+    }
   }
 
   getFieldTypeDefinition(

@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { Config } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
+import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
 export interface ServerRegistration {
@@ -48,7 +49,7 @@ export interface GqlModuleOptions
   definitions?: {
     path?: string;
     outputAs?: 'class' | 'interface';
-  };
+  } & DefinitionsGeneratorOptions;
   autoSchemaFile?: string | boolean;
   buildSchemaOptions?: BuildSchemaOptions;
   /**
