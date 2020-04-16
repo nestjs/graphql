@@ -2,13 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
-import { GraphQLScalarType } from 'graphql';
 import {
   GRAPHQL_MODULE_OPTIONS,
   SCALAR_NAME_METADATA,
   SCALAR_TYPE_METADATA,
 } from '../graphql.constants';
+import { ScalarsTypeMap } from '../interfaces';
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
+import { createScalarType } from '../utils/scalar-types.utils';
 import { BaseExplorerService } from './base-explorer.service';
 
 @Injectable()
@@ -26,50 +27,41 @@ export class ScalarsExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    return this.flatMap<any>(modules, (instance) =>
-      this.filterImplicitScalar(instance),
+    return this.flatMap<unknown>(modules, (instance) =>
+      this.filterSchemaFirstScalar(instance),
     );
   }
 
-  filterImplicitScalar<T extends Record<string, Function | string> = any>(
+  filterSchemaFirstScalar<T extends Record<string, Function | string> = any>(
     wrapper: InstanceWrapper<T>,
   ) {
     const { instance } = wrapper;
     if (!instance) {
       return undefined;
     }
-    const metadata = Reflect.getMetadata(
+    const scalarName: string = Reflect.getMetadata(
       SCALAR_NAME_METADATA,
       instance.constructor,
     );
-    if (!metadata) {
+    if (!scalarName) {
       return;
     }
-    const bindContext = (fn: Function | undefined) =>
-      fn ? fn.bind(instance) : undefined;
-
     return {
-      [(metadata as any) as string]: new GraphQLScalarType({
-        name: (metadata as any) as string,
-        description: instance['description'] as string,
-        parseValue: bindContext(instance.parseValue as Function),
-        serialize: bindContext(instance.serialize as Function),
-        parseLiteral: bindContext(instance.parseLiteral as Function),
-      }),
+      [scalarName]: createScalarType(scalarName, instance),
     };
   }
 
-  getScalarsMap() {
+  getScalarsMap(): ScalarsTypeMap[] {
     const modules = this.getModules(
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    return this.flatMap<any>(modules, (instance) =>
-      this.filterExplicitScalar(instance),
+    return this.flatMap<ScalarsTypeMap>(modules, (instance) =>
+      this.filterCodeFirstScalar(instance),
     );
   }
 
-  filterExplicitScalar<T extends Record<string, Function | string> = any>(
+  filterCodeFirstScalar<T extends Record<string, Function | string> = any>(
     wrapper: InstanceWrapper<T>,
   ) {
     const { instance } = wrapper;
@@ -87,20 +79,13 @@ export class ScalarsExplorerService extends BaseExplorerService {
     if (!scalarNameMetadata) {
       return;
     }
-    const bindContext = (fn: Function | undefined) =>
-      fn ? fn.bind(instance) : undefined;
+    const typeRef =
+      (isFunction(scalarTypeMetadata) && scalarTypeMetadata()) ||
+      instance.constructor;
 
     return {
-      type:
-        (isFunction(scalarTypeMetadata) && scalarTypeMetadata()) ||
-        instance.constructor,
-      scalar: new GraphQLScalarType({
-        name: scalarNameMetadata,
-        description: instance['description'] as string,
-        parseValue: bindContext(instance.parseValue as Function),
-        serialize: bindContext(instance.serialize as Function),
-        parseLiteral: bindContext(instance.parseLiteral as Function),
-      }),
+      type: typeRef,
+      scalar: createScalarType(scalarNameMetadata, instance),
     };
   }
 }
