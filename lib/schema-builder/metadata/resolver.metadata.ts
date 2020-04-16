@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { GqlTypeReference } from '../../interfaces';
+import { Complexity, GqlTypeReference } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
 import { DirectiveMetadata } from './directive.metadata';
 import { MethodArgsMetadata } from './param.metadata';
@@ -20,6 +20,7 @@ export interface BaseResolverMetadata {
   methodArgs?: MethodArgsMetadata[];
   classMetadata?: ResolverClassMetadata;
   directives?: DirectiveMetadata[];
+  complexity?: Complexity;
 }
 
 export interface ResolverTypeMetadata extends BaseResolverMetadata {

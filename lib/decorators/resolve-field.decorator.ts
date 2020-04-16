@@ -4,6 +4,7 @@ import {
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
 } from '../graphql.constants';
+import { Complexity } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import {
   GqlTypeReference,
@@ -30,6 +31,10 @@ export interface ResolveFieldOptions extends BaseTypeOptions {
    * Field deprecation reason (if deprecated).
    */
   deprecationReason?: string;
+  /**
+   * Field complexity options.
+   */
+  complexity?: Complexity;
 }
 
 /**
@@ -102,6 +107,7 @@ export function ResolveField(
         typeOptions,
         description: (options as ResolveFieldOptions).description,
         deprecationReason: (options as ResolveFieldOptions).deprecationReason,
+        complexity: (options as ResolveFieldOptions).complexity,
       });
     });
   };

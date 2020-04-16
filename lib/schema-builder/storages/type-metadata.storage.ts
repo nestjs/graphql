@@ -339,6 +339,7 @@ export class TypeMetadataStorageHost {
         options: item.typeOptions,
         methodArgs: item.methodArgs,
         directives: item.directives,
+        complexity: item.complexity,
       };
       this.addClassFieldMetadata(fieldMetadata);
 
@@ -350,6 +351,7 @@ export class TypeMetadataStorageHost {
       if (objectTypeField.directives.length === 0) {
         objectTypeField.directives = item.directives;
       }
+      objectTypeField.complexity = item.complexity;
     }
   }
 

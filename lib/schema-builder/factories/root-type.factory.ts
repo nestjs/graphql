@@ -26,11 +26,11 @@ export class RootTypeFactory {
     resolversMetadata: ResolverTypeMetadata[],
     objectTypeName: 'Subscription' | 'Mutation' | 'Query',
     options: BuildSchemaOptions,
-    fieldsFactory: FieldsFactory = handlers =>
+    fieldsFactory: FieldsFactory = (handlers) =>
       this.generateFields(handlers, options),
   ): GraphQLObjectType {
     const handlers = typeRefs
-      ? resolversMetadata.filter(query => typeRefs.includes(query.target))
+      ? resolversMetadata.filter((query) => typeRefs.includes(query.target))
       : resolversMetadata;
 
     if (handlers.length === 0) {
@@ -50,9 +50,10 @@ export class RootTypeFactory {
 
     handlers
       .filter(
-        handler => !(handler.classMetadata && handler.classMetadata.isAbstract),
+        (handler) =>
+          !(handler.classMetadata && handler.classMetadata.isAbstract),
       )
-      .forEach(handler => {
+      .forEach((handler) => {
         this.orphanedReferenceRegistry.addToRegistryIfOrphaned(
           handler.typeFn(),
         );
@@ -80,6 +81,9 @@ export class RootTypeFactory {
             type,
             handler.directives,
           ),
+          extensions: {
+            complexity: handler.complexity,
+          },
         };
       });
     return fieldConfigMap;
