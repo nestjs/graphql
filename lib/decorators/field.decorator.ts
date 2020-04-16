@@ -6,6 +6,7 @@
  */
 
 import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { Complexity } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
@@ -28,6 +29,10 @@ export interface FieldOptions extends BaseTypeOptions {
    * Field deprecation reason (if deprecated).
    */
   deprecationReason?: string;
+  /**
+   * Field complexity options.
+   */
+  complexity?: Complexity;
 }
 
 /**
@@ -105,6 +110,7 @@ export function addFieldMetadata(
       target: prototype.constructor,
       description: options.description,
       deprecationReason: options.deprecationReason,
+      complexity: options.complexity,
     });
 
     if (isResolver) {
@@ -113,6 +119,7 @@ export function addFieldMetadata(
         methodName: propertyKey,
         schemaName: options.name || propertyKey,
         target: prototype.constructor,
+        complexity: options.complexity,
       });
     }
   };

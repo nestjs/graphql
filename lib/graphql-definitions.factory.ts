@@ -4,7 +4,10 @@ import { gql } from 'apollo-server-core';
 import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
 import { makeExecutableSchema } from 'graphql-tools';
-import { GraphQLAstExplorer } from './graphql-ast.explorer';
+import {
+  DefinitionsGeneratorOptions,
+  GraphQLAstExplorer,
+} from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { removeTempField } from './utils';
 
@@ -12,27 +15,35 @@ export class GraphQLDefinitionsFactory {
   private readonly gqlAstExplorer = new GraphQLAstExplorer();
   private readonly gqlTypesLoader = new GraphQLTypesLoader();
 
-  async generate(options: {
-    typePaths: string[];
-    path: string;
-    outputAs?: 'class' | 'interface';
-    watch?: boolean;
-    debug?: boolean;
-    federation?: boolean;
-  }) {
+  async generate(
+    options: {
+      typePaths: string[];
+      path: string;
+      outputAs?: 'class' | 'interface';
+      watch?: boolean;
+      debug?: boolean;
+      federation?: boolean;
+    } & DefinitionsGeneratorOptions,
+  ) {
     const isDebugEnabled = !(options && options.debug === false);
     const typePathsExists = options.typePaths && !isEmpty(options.typePaths);
-    const isFederation = options && options.federation;
     if (!typePathsExists) {
       throw new Error(`"typePaths" property cannot be empty.`);
     }
+
+    const isFederation = options && options.federation;
+    const definitionsGeneratorOptions: DefinitionsGeneratorOptions = {
+      emitTypenameField: options.emitTypenameField,
+      skipResolverArgs: options.skipResolverArgs,
+    };
+
     if (options.watch) {
       this.printMessage(
         'GraphQL factory is watching your files...',
         isDebugEnabled,
       );
       const watcher = chokidar.watch(options.typePaths);
-      watcher.on('change', async file => {
+      watcher.on('change', async (file) => {
         this.printMessage(
           `[${new Date().toLocaleTimeString()}] "${file}" has been changed.`,
           isDebugEnabled,
@@ -43,6 +54,7 @@ export class GraphQLDefinitionsFactory {
           options.outputAs,
           isFederation,
           isDebugEnabled,
+          definitionsGeneratorOptions,
         );
       });
     }
@@ -52,6 +64,7 @@ export class GraphQLDefinitionsFactory {
       options.outputAs,
       isFederation,
       isDebugEnabled,
+      definitionsGeneratorOptions,
     );
   }
 
@@ -61,6 +74,7 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isFederation: boolean,
     isDebugEnabled: boolean,
+    definitionsGeneratorOptions: DefinitionsGeneratorOptions = {},
   ) {
     if (isFederation) {
       return this.exploreAndEmitFederation(
@@ -68,6 +82,7 @@ export class GraphQLDefinitionsFactory {
         path,
         outputAs,
         isDebugEnabled,
+        definitionsGeneratorOptions,
       );
     }
     return this.exploreAndEmitRegular(
@@ -75,6 +90,7 @@ export class GraphQLDefinitionsFactory {
       path,
       outputAs,
       isDebugEnabled,
+      definitionsGeneratorOptions,
     );
   }
 
@@ -83,6 +99,7 @@ export class GraphQLDefinitionsFactory {
     path: string,
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
+    definitionsGeneratorOptions: DefinitionsGeneratorOptions,
   ) {
     const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
 
@@ -107,6 +124,7 @@ export class GraphQLDefinitionsFactory {
       `,
       path,
       outputAs,
+      definitionsGeneratorOptions,
     );
     await tsFile.save();
     this.printMessage(
@@ -120,6 +138,7 @@ export class GraphQLDefinitionsFactory {
     path: string,
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
+    definitionsGeneratorOptions: DefinitionsGeneratorOptions,
   ) {
     const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(
       typePaths || [],
@@ -138,6 +157,7 @@ export class GraphQLDefinitionsFactory {
       `,
       path,
       outputAs,
+      definitionsGeneratorOptions,
     );
     await tsFile.save();
     this.printMessage(

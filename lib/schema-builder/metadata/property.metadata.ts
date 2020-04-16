@@ -1,4 +1,4 @@
-import { GqlTypeReference } from '../../interfaces';
+import { Complexity, GqlTypeReference } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
 import { DirectiveMetadata } from './directive.metadata';
 import { MethodArgsMetadata } from './param.metadata';
@@ -13,4 +13,5 @@ export interface PropertyMetadata {
   deprecationReason?: string;
   methodArgs?: MethodArgsMetadata[];
   directives?: DirectiveMetadata[];
+  complexity?: Complexity;
 }

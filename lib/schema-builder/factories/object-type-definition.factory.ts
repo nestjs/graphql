@@ -120,6 +120,9 @@ export class ObjectTypeDefinitionFactory {
             type,
             field.directives,
           ),
+          extensions: {
+            complexity: field.complexity,
+          },
         };
       });
       if (!isUndefined(prototype)) {
