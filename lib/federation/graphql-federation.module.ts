@@ -30,7 +30,12 @@ import {
   ResolversExplorerService,
   ScalarsExplorerService,
 } from '../services';
-import { generateString, mergeDefaults, normalizeRoutePath } from '../utils';
+import {
+  generateString,
+  mergeDefaults,
+  normalizeRoutePath,
+  extend,
+} from '../utils';
 import { GraphQLFederationFactory } from './graphql-federation.factory';
 
 @Module({
@@ -137,11 +142,13 @@ export class GraphQLFederationModule implements OnModuleInit {
     );
 
     const { typePaths } = this.options;
-    const typeDefs = await this.graphqlTypesLoader.mergeTypesByPaths(typePaths);
+    const typeDefs =
+      (await this.graphqlTypesLoader.mergeTypesByPaths(typePaths)) || [];
 
+    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
     const apolloOptions = await this.graphqlFederationFactory.mergeOptions({
       ...this.options,
-      typeDefs,
+      typeDefs: mergedTypeDefs,
     });
 
     if (this.options.definitions && this.options.definitions.path) {
