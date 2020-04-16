@@ -8,7 +8,7 @@ import { ApplicationModule } from '../code-first/app.module';
 
 const readFile = util.promisify(fs.readFile);
 
-const generatedDefinitions = fileName =>
+const generatedDefinitions = (fileName) =>
   path.join(__dirname, '..', 'generated-definitions', fileName);
 
 describe('Generated Definitions', () => {
@@ -105,6 +105,30 @@ describe('Generated Definitions', () => {
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 
+  it('should generate queries with methods as fields (skipResolverArgs: true)', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('query.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions(
+      'query-skip-args.test-definitions.ts',
+    );
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        skipResolverArgs: true,
+      },
+    });
+
+    expect(
+      await readFile(
+        generatedDefinitions('query-skip-args.fixture.ts'),
+        'utf8',
+      ),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
   it('should generate mutations', async () => {
     const typeDefs = await readFile(
       generatedDefinitions('mutation.graphql'),
@@ -173,6 +197,25 @@ describe('Generated Definitions', () => {
 
     expect(
       await readFile(generatedDefinitions('federation.fixture.ts'), 'utf8'),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
+  it('should generate with __typename field for each object type', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('typename.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions('typename.test-definitions.ts');
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        emitTypenameField: true,
+      },
+    });
+
+    expect(
+      await readFile(generatedDefinitions('typename.fixture.ts'), 'utf8'),
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 

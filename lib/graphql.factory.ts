@@ -13,7 +13,10 @@ import {
   SchemaDirectiveVisitor,
 } from 'graphql-tools';
 import { forEach, isEmpty } from 'lodash';
-import { GraphQLAstExplorer } from './graphql-ast.explorer';
+import {
+  DefinitionsGeneratorOptions,
+  GraphQLAstExplorer,
+} from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GqlModuleOptions } from './interfaces';
@@ -192,12 +195,17 @@ export class GraphQLFactory {
     if (isEmpty(typeDefs) || !options.definitions) {
       return;
     }
+    const definitionsGeneratorOptions: DefinitionsGeneratorOptions = {
+      emitTypenameField: options.definitions.emitTypenameField,
+      skipResolverArgs: options.definitions.skipResolverArgs,
+    };
     const tsFile = await this.graphqlAstExplorer.explore(
       gql`
         ${typeDefs}
       `,
       options.definitions.path,
       options.definitions.outputAs,
+      definitionsGeneratorOptions,
     );
     if (
       !existsSync(options.definitions.path) ||
