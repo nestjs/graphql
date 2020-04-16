@@ -26,7 +26,7 @@ export class ScalarsExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    return this.flatMap<any>(modules, instance =>
+    return this.flatMap<any>(modules, (instance) =>
       this.filterImplicitScalar(instance),
     );
   }
@@ -42,20 +42,21 @@ export class ScalarsExplorerService extends BaseExplorerService {
       SCALAR_NAME_METADATA,
       instance.constructor,
     );
+    if (!metadata) {
+      return;
+    }
     const bindContext = (fn: Function | undefined) =>
       fn ? fn.bind(instance) : undefined;
 
-    return metadata
-      ? {
-          [(metadata as any) as string]: new GraphQLScalarType({
-            name: (metadata as any) as string,
-            description: instance['description'] as string,
-            parseValue: bindContext(instance.parseValue as Function),
-            serialize: bindContext(instance.serialize as Function),
-            parseLiteral: bindContext(instance.parseLiteral as Function),
-          }),
-        }
-      : undefined;
+    return {
+      [(metadata as any) as string]: new GraphQLScalarType({
+        name: (metadata as any) as string,
+        description: instance['description'] as string,
+        parseValue: bindContext(instance.parseValue as Function),
+        serialize: bindContext(instance.serialize as Function),
+        parseLiteral: bindContext(instance.parseLiteral as Function),
+      }),
+    };
   }
 
   getScalarsMap() {
@@ -63,7 +64,7 @@ export class ScalarsExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    return this.flatMap<any>(modules, instance =>
+    return this.flatMap<any>(modules, (instance) =>
       this.filterExplicitScalar(instance),
     );
   }
@@ -83,22 +84,23 @@ export class ScalarsExplorerService extends BaseExplorerService {
       SCALAR_TYPE_METADATA,
       instance.constructor,
     );
+    if (!scalarNameMetadata) {
+      return;
+    }
     const bindContext = (fn: Function | undefined) =>
       fn ? fn.bind(instance) : undefined;
 
-    return scalarNameMetadata
-      ? {
-          type:
-            (isFunction(scalarTypeMetadata) && scalarTypeMetadata()) ||
-            instance.constructor,
-          scalar: new GraphQLScalarType({
-            name: scalarNameMetadata,
-            description: instance['description'] as string,
-            parseValue: bindContext(instance.parseValue as Function),
-            serialize: bindContext(instance.serialize as Function),
-            parseLiteral: bindContext(instance.parseLiteral as Function),
-          }),
-        }
-      : undefined;
+    return {
+      type:
+        (isFunction(scalarTypeMetadata) && scalarTypeMetadata()) ||
+        instance.constructor,
+      scalar: new GraphQLScalarType({
+        name: scalarNameMetadata,
+        description: instance['description'] as string,
+        parseValue: bindContext(instance.parseValue as Function),
+        serialize: bindContext(instance.serialize as Function),
+        parseLiteral: bindContext(instance.parseLiteral as Function),
+      }),
+    };
   }
 }
