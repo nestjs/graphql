@@ -12,10 +12,12 @@ import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
 import {
   BaseResolverMetadata,
+  ClassExtensionsMetadata,
   ClassMetadata,
   EnumMetadata,
   FieldResolverMetadata,
   MethodArgsMetadata,
+  PropertyExtensionsMetadata,
   PropertyMetadata,
   ResolverClassMetadata,
   ResolverTypeMetadata,
@@ -47,6 +49,8 @@ export class TypeMetadataStorageHost {
   private readonly unions = new Array<UnionMetadata>();
   private readonly classDirectives = new Array<ClassDirectiveMetadata>();
   private readonly fieldDirectives = new Array<PropertyDirectiveMetadata>();
+  private readonly classExtensions = new Array<ClassExtensionsMetadata>();
+  private readonly fieldExtensions = new Array<PropertyExtensionsMetadata>();
   private readonly objectTypes = new Array<ObjectTypeMetadata>();
   private readonly inputTypes = new Array<ClassMetadata>();
   private readonly argumentTypes = new Array<ClassMetadata>();
@@ -159,6 +163,14 @@ export class TypeMetadataStorageHost {
     this.fieldDirectives.push(metadata);
   }
 
+  addExtensionsMetadata(metadata: ClassExtensionsMetadata) {
+    this.classExtensions.push(metadata);
+  }
+
+  addExtensionsPropertyMetadata(metadata: PropertyExtensionsMetadata) {
+    this.fieldExtensions.push(metadata);
+  }
+
   addResolverMetadata(metadata: ResolverClassMetadata) {
     this.resolvers.push(metadata);
   }
@@ -184,7 +196,9 @@ export class TypeMetadataStorageHost {
 
   compile(orphanedTypes: Function[] = []) {
     this.classDirectives.reverse();
+    this.classExtensions.reverse();
     this.fieldDirectives.reverse();
+    this.fieldExtensions.reverse();
 
     const classMetadata = [
       ...this.objectTypes,
@@ -257,6 +271,11 @@ export class TypeMetadataStorageHost {
       if (!item.directives) {
         item.directives = this.classDirectives.filter(belongsToClass);
       }
+      if (!item.extensions) {
+        item.extensions = this.classExtensions
+          .filter(belongsToClass)
+          .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
+      }
     });
   }
 
@@ -274,8 +293,11 @@ export class TypeMetadataStorageHost {
         (param) => isHostEqual(param) && field.name === param.methodName,
       );
       field.directives = this.fieldDirectives.filter(
-        this.isFieldDirective.bind(this, field),
+        this.isFieldDirectiveOrExtension.bind(this, field),
       );
+      field.extensions = this.fieldExtensions
+        .filter(this.isFieldDirectiveOrExtension.bind(this, field))
+        .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
     return fields;
   }
@@ -290,8 +312,11 @@ export class TypeMetadataStorageHost {
         (param) => isTypeEqual(param) && item.methodName === param.methodName,
       );
       item.directives = this.fieldDirectives.filter(
-        this.isFieldDirective.bind(this, item),
+        this.isFieldDirectiveOrExtension.bind(this, item),
       );
+      item.extensions = this.fieldExtensions
+        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+        .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
   }
 
@@ -301,8 +326,12 @@ export class TypeMetadataStorageHost {
     metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
       item.directives = this.fieldDirectives.filter(
-        this.isFieldDirective.bind(this, item),
+        this.isFieldDirectiveOrExtension.bind(this, item),
       );
+      item.extensions = this.fieldExtensions
+        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+        .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
+
       item.objectTypeFn =
         item.kind === 'external'
           ? this.resolvers.find(belongsToClass).typeFn
@@ -339,17 +368,22 @@ export class TypeMetadataStorageHost {
         options: item.typeOptions,
         methodArgs: item.methodArgs,
         directives: item.directives,
+        extensions: item.extensions,
         complexity: item.complexity,
       };
       this.addClassFieldMetadata(fieldMetadata);
 
       objectTypeMetadata.properties.push(fieldMetadata);
     } else {
-      if (objectTypeField.methodArgs.length === 0) {
+      const isEmpty = (arr: unknown[]) => arr.length === 0;
+      if (isEmpty(objectTypeField.methodArgs)) {
         objectTypeField.methodArgs = item.methodArgs;
       }
-      if (objectTypeField.directives.length === 0) {
+      if (isEmpty(objectTypeField.directives)) {
         objectTypeField.directives = item.directives;
+      }
+      if (!objectTypeField.extensions) {
+        objectTypeField.extensions = item.extensions;
       }
       objectTypeField.complexity = item.complexity;
     }
@@ -390,9 +424,9 @@ export class TypeMetadataStorageHost {
     });
   }
 
-  private isFieldDirective(
+  private isFieldDirectiveOrExtension(
     host: Record<'target' | 'methodName' | 'name', any>,
-    metadata: PropertyDirectiveMetadata,
+    metadata: PropertyDirectiveMetadata | PropertyExtensionsMetadata,
   ): boolean {
     return (
       metadata.target === host.target &&
@@ -443,4 +477,7 @@ export class TypeMetadataStorageHost {
   }
 }
 
-export const TypeMetadataStorage = new TypeMetadataStorageHost();
+const globalRef = global as any;
+export const TypeMetadataStorage: TypeMetadataStorageHost =
+  globalRef.GqlTypeMetadataStorage ||
+  (globalRef.GqlTypeMetadataStorage = new TypeMetadataStorageHost());

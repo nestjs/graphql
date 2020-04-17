@@ -13,5 +13,6 @@ export interface PropertyMetadata {
   deprecationReason?: string;
   methodArgs?: MethodArgsMetadata[];
   directives?: DirectiveMetadata[];
+  extensions?: Record<string, unknown>;
   complexity?: Complexity;
 }

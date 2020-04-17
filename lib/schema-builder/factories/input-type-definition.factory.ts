@@ -43,6 +43,7 @@ export class InputTypeDefinitionFactory {
           metadata.name,
           metadata.directives,
         ),
+        extensions: metadata.extensions,
       }),
     };
   }
@@ -89,6 +90,7 @@ export class InputTypeDefinitionFactory {
             type,
             property.directives,
           ),
+          extensions: metadata.extensions,
         };
       });
 

@@ -7,5 +7,6 @@ export interface ClassMetadata {
   description?: string;
   isAbstract?: boolean;
   directives?: DirectiveMetadata[];
+  extensions?: Record<string, unknown>;
   properties?: PropertyMetadata[];
 }

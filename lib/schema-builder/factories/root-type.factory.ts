@@ -83,6 +83,7 @@ export class RootTypeFactory {
           ),
           extensions: {
             complexity: handler.complexity,
+            ...handler.extensions,
           },
         };
       });

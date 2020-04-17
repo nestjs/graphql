@@ -20,6 +20,7 @@ export interface BaseResolverMetadata {
   methodArgs?: MethodArgsMetadata[];
   classMetadata?: ResolverClassMetadata;
   directives?: DirectiveMetadata[];
+  extensions?: Record<string, unknown>;
   complexity?: Complexity;
 }
 

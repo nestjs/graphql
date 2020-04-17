@@ -2,6 +2,7 @@ export * from './args-type.decorator';
 export * from './args.decorator';
 export * from './context.decorator';
 export * from './directive.decorator';
+export * from './extensions.decorator';
 export * from './field.decorator';
 export * from './hide-field.decorator';
 export * from './info.decorator';

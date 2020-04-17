@@ -58,6 +58,7 @@ export class ObjectTypeDefinitionFactory {
           metadata.name,
           metadata.directives,
         ),
+        extensions: metadata.extensions,
         interfaces: this.generateInterfaces(metadata, getParentType),
         fields: this.generateFields(metadata, options, getParentType),
       }),
@@ -122,6 +123,7 @@ export class ObjectTypeDefinitionFactory {
           ),
           extensions: {
             complexity: field.complexity,
+            ...field.extensions,
           },
         };
       });

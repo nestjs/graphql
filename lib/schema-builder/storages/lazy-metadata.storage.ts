@@ -32,8 +32,8 @@ export class LazyMetadataStorageHost {
 
   private concatPrototypes(types: Function[]): Function[] {
     const typesWithPrototypes = types
-      .filter(type => type && type.prototype)
-      .map(type => {
+      .filter((type) => type && type.prototype)
+      .map((type) => {
         const parentTypes = [];
 
         let parent: Function = type;
@@ -52,4 +52,7 @@ export class LazyMetadataStorageHost {
   }
 }
 
-export const LazyMetadataStorage = new LazyMetadataStorageHost();
+const globalRef = global as any;
+export const LazyMetadataStorage: LazyMetadataStorageHost =
+  globalRef.GqlLazyMetadataStorageHost ||
+  (globalRef.GqlLazyMetadataStorageHost = new LazyMetadataStorageHost());
