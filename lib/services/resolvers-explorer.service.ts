@@ -13,6 +13,7 @@ import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module';
 import { Module } from '@nestjs/core/injector/module';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
 import { head, identity } from 'lodash';
 import { GqlModuleOptions, SubscriptionOptions } from '..';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
@@ -29,8 +30,6 @@ import { createAsyncIterator } from '../utils/async-iterator.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
-
-const gqlContextIdSymbol = Symbol('GQL_CONTEXT_ID');
 
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
@@ -151,11 +150,17 @@ export class ResolversExplorerService extends BaseExplorerService {
           args,
         );
         let contextId: ContextId;
-        if (gqlContext && gqlContext[gqlContextIdSymbol]) {
-          contextId = gqlContext[gqlContextIdSymbol];
+        if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
+          contextId = gqlContext[REQUEST_CONTEXT_ID];
+        } else if (
+          gqlContext &&
+          gqlContext.req &&
+          gqlContext.req[REQUEST_CONTEXT_ID]
+        ) {
+          contextId = gqlContext.req[REQUEST_CONTEXT_ID];
         } else {
           contextId = createContextId();
-          Object.defineProperty(gqlContext, gqlContextIdSymbol, {
+          Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
             value: contextId,
             enumerable: false,
             configurable: false,
