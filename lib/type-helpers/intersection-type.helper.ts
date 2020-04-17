@@ -1,24 +1,24 @@
 import { Type } from '@nestjs/common';
-import { Field } from '../decorators';
-import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import {
-  ClassDecoratorFactory,
-  inheritValidationMetadata,
   inheritTransformationMetadata,
-} from './type-helpers.utils';
+  inheritValidationMetadata,
+} from '@nestjs/mapped-types';
+import { Field } from '../decorators';
+import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
+import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 
 export function IntersectionType<A, B>(
   classARef: Type<A>,
   classBRef: Type<B>,
   decorator?: ClassDecoratorFactory,
 ): Type<A & B> {
-  const forA = getFieldsAndDecoratorForType(classARef);
-  const forB = getFieldsAndDecoratorForType(classBRef);
-  const decoratorFactory = forA.decoratorFactory;
-  const fields = [...forA.fields, ...forB.fields];
+  const { decoratorFactory, fields: fieldsA } = getFieldsAndDecoratorForType(
+    classARef,
+  );
+  const { fields: fieldsB } = getFieldsAndDecoratorForType(classBRef);
+  const fields = [...fieldsA, ...fieldsB];
 
   abstract class IntersectionObjectType {}
-  decoratorFactory({ isAbstract: true })(IntersectionObjectType);
   if (decorator) {
     decorator({ isAbstract: true })(IntersectionObjectType);
   } else {
