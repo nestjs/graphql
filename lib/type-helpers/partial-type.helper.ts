@@ -1,13 +1,13 @@
 import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
-import { Field } from '../decorators';
-import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import {
   applyIsOptionalDecorator,
-  ClassDecoratorFactory,
   inheritTransformationMetadata,
   inheritValidationMetadata,
-} from './type-helpers.utils';
+} from '@nestjs/mapped-types';
+import { Field } from '../decorators';
+import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
+import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 
 export function PartialType<T>(
   classRef: Type<T>,
