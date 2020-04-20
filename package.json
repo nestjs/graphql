@@ -58,7 +58,7 @@
     "typescript": "3.8.3"
   },
   "dependencies": {
-    "@nestjs/mapped-types": "0.0.1",
+    "@nestjs/mapped-types": "0.0.2",
     "chokidar": "3.3.1",
     "fast-glob": "3.2.2",
     "iterall": "1.2.2",
