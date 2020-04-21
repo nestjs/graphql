@@ -5,8 +5,20 @@ import { getFieldsAndDecoratorForType } from '../../lib/schema-builder/utils/get
 import { PartialType } from '../../lib/type-helpers';
 
 describe('PartialType', () => {
+  @ObjectType({ isAbstract: true })
+  abstract class BaseType {
+    @Field()
+    id: string;
+
+    @Field()
+    createdAt: Date;
+
+    @Field()
+    updatedAt: Date;
+  }
+
   @ObjectType()
-  class CreateUserDto {
+  class CreateUserDto extends BaseType {
     @Field({ nullable: true })
     login: string;
 
@@ -23,10 +35,31 @@ describe('PartialType', () => {
     const { fields } = getFieldsAndDecoratorForType(
       Object.getPrototypeOf(UpdateUserDto),
     );
-    expect(fields.length).toEqual(2);
-    expect(fields[0].name).toEqual('login');
-    expect(fields[0].options.nullable).toBeTruthy();
-    expect(fields[1].name).toEqual('password');
-    expect(fields[1].options.nullable).toBeTruthy();
+
+    expect(fields.length).toEqual(5);
+    expect(fields).toEqual(
+      jasmine.arrayContaining([
+        jasmine.objectContaining({
+          name: 'id',
+          options: { nullable: true },
+        }),
+        jasmine.objectContaining({
+          name: 'createdAt',
+          options: { nullable: true },
+        }),
+        jasmine.objectContaining({
+          name: 'updatedAt',
+          options: { nullable: true },
+        }),
+        jasmine.objectContaining({
+          name: 'login',
+          options: { nullable: true },
+        }),
+        jasmine.objectContaining({
+          name: 'password',
+          options: { nullable: true },
+        }),
+      ]),
+    );
   });
 });

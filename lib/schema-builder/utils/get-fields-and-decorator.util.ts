@@ -9,7 +9,7 @@ import {
 import { ClassType } from '../../enums/class-type.enum';
 import { CLASS_TYPE_METADATA } from '../../graphql.constants';
 import { UnableToFindFieldsError } from '../errors/unable-to-find-fields.error';
-import { ClassMetadata } from '../metadata';
+import { ClassMetadata, PropertyMetadata } from '../metadata';
 import { LazyMetadataStorage } from '../storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage';
 
@@ -27,10 +27,12 @@ export function getFieldsAndDecoratorForType<T>(objType: Type<T>) {
     decoratorFactory,
   ] = getClassMetadataAndFactoryByTargetAndType(classType, objType);
 
-  const fields = classMetadata?.properties;
+  let fields = classMetadata?.properties;
   if (!fields) {
     throw new UnableToFindFieldsError(objType.name);
   }
+  fields = inheritClassFields(objType, fields);
+
   return {
     fields,
     decoratorFactory,
@@ -69,5 +71,23 @@ function getClassMetadataAndFactoryByTargetAndType(
         TypeMetadataStorage.getInterfaceMetadataByTarget(objType),
         InterfaceType,
       ];
+  }
+}
+
+function inheritClassFields(
+  objType: Type<unknown>,
+  fields: PropertyMetadata[],
+) {
+  try {
+    const parentClass = Object.getPrototypeOf(objType);
+    if (parentClass === Function) {
+      return fields;
+    }
+    const { fields: parentFields } = getFieldsAndDecoratorForType(
+      parentClass as Type<unknown>,
+    );
+    return inheritClassFields(parentClass, [...parentFields, ...fields]);
+  } catch (err) {
+    return fields;
   }
 }
