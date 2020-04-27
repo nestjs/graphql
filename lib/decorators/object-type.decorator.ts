@@ -27,6 +27,10 @@ export interface ObjectTypeOptions {
    * Interfaces implemented by this object.
    */
   implements?: Function | Function[];
+  /**
+   * If `true`, type will show up as "extend type TypeName" in the federation SDL
+   */
+  extendsObjectType?: boolean;
 }
 
 /**
@@ -66,6 +70,7 @@ export function ObjectType(
         description: options.description,
         interfaces,
         isAbstract: options.isAbstract,
+        extendsObjectType: options.extendsObjectType,
       });
 
     // This function must be called eagerly to allow resolvers

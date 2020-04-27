@@ -9,6 +9,7 @@ import {
   InputValueDefinitionNode,
   ObjectTypeDefinitionNode,
   parse,
+  ObjectTypeExtensionNode,
 } from 'graphql';
 import { head } from 'lodash';
 import { DirectiveParsingError } from '../errors/directive-parsing.error';
@@ -25,17 +26,32 @@ export class AstDefinitionNodeFactory {
   createObjectTypeNode(
     name: string,
     directiveMetadata?: DirectiveMetadata[],
-  ): ObjectTypeDefinitionNode | undefined {
-    if (isEmpty(directiveMetadata)) {
-      return;
-    }
+  ): ObjectTypeDefinitionNode {
     return {
       kind: 'ObjectTypeDefinition',
       name: {
         kind: 'Name',
         value: name,
       },
-      directives: directiveMetadata.map(this.createDirectiveNode),
+      directives: isEmpty(directiveMetadata)
+        ? undefined
+        : directiveMetadata.map(this.createDirectiveNode),
+    };
+  }
+
+  createObjectTypeExtensionNode(
+    name: string,
+    directiveMetadata?: DirectiveMetadata[],
+  ): ObjectTypeExtensionNode {
+    return {
+      kind: 'ObjectTypeExtension',
+      name: {
+        kind: 'Name',
+        value: name,
+      },
+      directives: isEmpty(directiveMetadata)
+        ? undefined
+        : directiveMetadata.map(this.createDirectiveNode),
     };
   }
 

@@ -9,4 +9,5 @@ export interface ClassMetadata {
   directives?: DirectiveMetadata[];
   extensions?: Record<string, unknown>;
   properties?: PropertyMetadata[];
+  extendsObjectType?: boolean;
 }

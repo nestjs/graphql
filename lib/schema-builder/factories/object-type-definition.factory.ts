@@ -58,6 +58,14 @@ export class ObjectTypeDefinitionFactory {
           metadata.name,
           metadata.directives,
         ),
+        extensionASTNodes: !metadata.extendsObjectType
+          ? undefined
+          : [
+              this.astDefinitionNodeFactory.createObjectTypeExtensionNode(
+                metadata.name,
+                metadata.directives,
+              ),
+            ],
         extensions: metadata.extensions,
         interfaces: this.generateInterfaces(metadata, getParentType),
         fields: this.generateFields(metadata, options, getParentType),
