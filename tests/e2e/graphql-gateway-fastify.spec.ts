@@ -5,10 +5,12 @@ import { AppModule as PostsModule } from '../graphql-federation/posts-service/fe
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
 import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { AppModule as UsersNicknameModule } from '../graphql-federation/users-nickname-service/federation-users-nickname.async.module';
 
 describe('GraphQL Gateway with fastify', () => {
   let postsApp: INestApplication;
   let usersApp: INestApplication;
+  let usersNicknameApp: INestApplication;
   let gatewayApp: INestApplication;
 
   beforeEach(async () => {
@@ -25,6 +27,12 @@ describe('GraphQL Gateway with fastify', () => {
 
     postsApp = postsModule.createNestApplication();
     await postsApp.listenAsync(3002);
+    const usersNicknameModule = await Test.createTestingModule({
+      imports: [UsersNicknameModule],
+    }).compile();
+
+    usersNicknameApp = usersNicknameModule.createNestApplication();
+    await usersNicknameApp.listenAsync(3003);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
@@ -32,10 +40,7 @@ describe('GraphQL Gateway with fastify', () => {
 
     gatewayApp = gatewayModule.createNestApplication(new FastifyAdapter());
     await gatewayApp.init();
-    await gatewayApp
-      .getHttpAdapter()
-      .getInstance()
-      .ready();
+    await gatewayApp.getHttpAdapter().getInstance().ready();
   });
 
   it(`should run lookup across boundaries`, () => {
@@ -53,6 +58,7 @@ describe('GraphQL Gateway with fastify', () => {
             user {
               id,
               name,
+              nickname,
             }
           }
         }`,
@@ -67,6 +73,7 @@ describe('GraphQL Gateway with fastify', () => {
               user: {
                 id: '5',
                 name: 'GraphQL',
+                nickname: 'The fantastic GraphQL',
               },
             },
           ],
@@ -85,6 +92,7 @@ describe('GraphQL Gateway with fastify', () => {
           getUser(id: "5") {
             id,
             name,
+            nickname,
             posts {
               id,
               title,
@@ -98,6 +106,7 @@ describe('GraphQL Gateway with fastify', () => {
           getUser: {
             id: '5',
             name: 'GraphQL',
+            nickname: 'The fantastic GraphQL',
             posts: [
               {
                 id: '1',
@@ -114,6 +123,7 @@ describe('GraphQL Gateway with fastify', () => {
   afterEach(async () => {
     await postsApp.close();
     await usersApp.close();
+    await usersNicknameApp.close();
     await gatewayApp.close();
   });
 });

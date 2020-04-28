@@ -3,11 +3,13 @@ import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
+import { AppModule as UsersNicknameModule } from '../graphql-federation/users-nickname-service/federation-users-nickname.async.module';
 import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
 
 describe('GraphQL Gateway', () => {
   let postsApp: INestApplication;
   let usersApp: INestApplication;
+  let usersNicknameApp: INestApplication;
   let gatewayApp: INestApplication;
 
   beforeEach(async () => {
@@ -24,6 +26,13 @@ describe('GraphQL Gateway', () => {
 
     postsApp = postsModule.createNestApplication();
     await postsApp.listenAsync(3002);
+
+    const usersNicknameModule = await Test.createTestingModule({
+      imports: [UsersNicknameModule],
+    }).compile();
+
+    usersNicknameApp = usersNicknameModule.createNestApplication();
+    await usersNicknameApp.listenAsync(3003);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
@@ -48,6 +57,7 @@ describe('GraphQL Gateway', () => {
             user {
               id,
               name,
+              nickname,
             }
           }
         }`,
@@ -62,6 +72,7 @@ describe('GraphQL Gateway', () => {
               user: {
                 id: '5',
                 name: 'GraphQL',
+                nickname: 'The fantastic GraphQL',
               },
             },
           ],
@@ -80,6 +91,7 @@ describe('GraphQL Gateway', () => {
           getUser(id: "5") {
             id,
             name,
+            nickname,
             posts {
               id,
               title,
@@ -93,6 +105,7 @@ describe('GraphQL Gateway', () => {
           getUser: {
             id: '5',
             name: 'GraphQL',
+            nickname: 'The fantastic GraphQL',
             posts: [
               {
                 id: '1',
@@ -109,6 +122,7 @@ describe('GraphQL Gateway', () => {
   afterEach(async () => {
     await postsApp.close();
     await usersApp.close();
+    await usersNicknameApp.close();
     await gatewayApp.close();
   });
 });

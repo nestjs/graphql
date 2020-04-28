@@ -9,6 +9,7 @@ import { GraphQLGatewayModule } from '../../../lib';
         serviceList: [
           { name: 'users', url: 'http://localhost:3001/graphql' },
           { name: 'posts', url: 'http://localhost:3002/graphql' },
+          { name: 'users-nickname', url: 'http://localhost:3003/graphql' },
         ],
       },
     }),
