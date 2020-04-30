@@ -20,21 +20,15 @@ export function mergeDefaults(
     moduleOptions.context = async (...args: unknown[]) => {
       const ctx = await (options.context as Function)(...args);
       const { req } = args[0] as Record<string, unknown>;
-      if (typeof ctx === 'object') {
-        return {
-          req,
-          ...ctx,
-        };
+      if (ctx && typeof ctx === 'object') {
+        ctx.req = req;
       }
       return ctx;
     };
   } else {
     moduleOptions.context = ({ req }: Record<string, unknown>) => {
-      if (typeof options.context === 'object') {
-        return {
-          req,
-          ...options.context,
-        };
+      if (options.context && typeof options.context === 'object') {
+        (options.context as Record<string, unknown>).req = req;
       }
       return options.context;
     };
