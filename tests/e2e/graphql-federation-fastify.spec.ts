@@ -14,10 +14,7 @@ describe('GraphQL federation with fastify', () => {
 
     app = module.createNestApplication(new FastifyAdapter());
     await app.init();
-    await app
-      .getHttpAdapter()
-      .getInstance()
-      .ready();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   it(`should return query result`, () => {
@@ -40,7 +37,7 @@ describe('GraphQL federation with fastify', () => {
           getPosts: [
             {
               id: '1',
-              title: 'Hello world',
+              title: 'HELLO WORLD',
               body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             },
           ],
