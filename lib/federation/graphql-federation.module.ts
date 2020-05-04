@@ -10,7 +10,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServerBase } from 'apollo-server-core';
-import { SchemaDirectiveVisitor } from 'apollo-server-express';
+import { SchemaDirectiveVisitor } from 'graphql-tools';
 import { GraphQLAstExplorer } from '../graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GraphQLSchemaHost } from '../graphql-schema.host';
