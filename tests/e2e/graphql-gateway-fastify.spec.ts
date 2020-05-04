@@ -32,10 +32,7 @@ describe('GraphQL Gateway with fastify', () => {
 
     gatewayApp = gatewayModule.createNestApplication(new FastifyAdapter());
     await gatewayApp.init();
-    await gatewayApp
-      .getHttpAdapter()
-      .getInstance()
-      .ready();
+    await gatewayApp.getHttpAdapter().getInstance().ready();
   });
 
   it(`should run lookup across boundaries`, () => {
@@ -62,7 +59,7 @@ describe('GraphQL Gateway with fastify', () => {
           getPosts: [
             {
               id: '1',
-              title: 'Hello world',
+              title: 'HELLO WORLD',
               body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               user: {
                 id: '5',
@@ -101,7 +98,7 @@ describe('GraphQL Gateway with fastify', () => {
             posts: [
               {
                 id: '1',
-                title: 'Hello world',
+                title: 'HELLO WORLD',
                 body:
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               },

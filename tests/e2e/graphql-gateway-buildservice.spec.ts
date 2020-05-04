@@ -69,7 +69,7 @@ describe('GraphQL Gateway buildservice', () => {
           getPosts: [
             {
               id: '1',
-              title: 'Hello world',
+              title: 'HELLO WORLD',
               body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               user: {
                 id: '5',

@@ -1,3 +1,5 @@
+directive @upper on FIELD_DEFINITION
+
 scalar Date
 
 type Post @key(fields: "id") {

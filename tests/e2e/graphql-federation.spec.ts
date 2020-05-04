@@ -72,7 +72,7 @@ describe('GraphQL Federation', () => {
             getPosts: [
               {
                 id: '1',
-                title: 'Hello world',
+                title: 'HELLO WORLD',
                 body:
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               },
@@ -104,7 +104,7 @@ describe('GraphQL Federation', () => {
             getPosts: [
               {
                 id: '1',
-                title: 'Hello world',
+                title: 'HELLO WORLD',
                 body:
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 user: {
@@ -136,7 +136,7 @@ describe('GraphQL Federation', () => {
           data: {
             publishPost: {
               id: '1',
-              title: 'Hello world',
+              title: 'HELLO WORLD',
               body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               publishDate: 500,
             },

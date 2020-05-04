@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 const data = [
   {
     id: 1,
-    title: 'hello world',
+    title: 'HELLO WORLD',
     authorId: 2,
   },
   {
@@ -17,7 +17,7 @@ const data = [
 @Injectable()
 export class PostService {
   public findOne(id: number) {
-    const post = data.find(p => p.id === id);
+    const post = data.find((p) => p.id === id);
     if (post) {
       return new Post(post);
     }
@@ -25,10 +25,10 @@ export class PostService {
   }
 
   public all() {
-    return data.map(p => new Post(p));
+    return data.map((p) => new Post(p));
   }
 
   public forAuthor(authorId: number) {
-    return data.filter(p => p.authorId === authorId).map(p => new Post(p));
+    return data.filter((p) => p.authorId === authorId).map((p) => new Post(p));
   }
 }
