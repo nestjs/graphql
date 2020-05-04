@@ -10,7 +10,6 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ApolloServerBase } from 'apollo-server-core';
-import { SchemaDirectiveVisitor } from 'graphql-tools';
 import { GraphQLAstExplorer } from '../graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GraphQLSchemaHost } from '../graphql-schema.host';
@@ -186,10 +185,11 @@ export class GraphQLFederationModule implements OnModuleInit {
   }
 
   private registerExpress(apolloOptions: GqlModuleOptions) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-express',
-      'GraphQLModule',
-      () => require('apollo-server-express'),
+    const {
+      ApolloServer,
+      SchemaDirectiveVisitor,
+    } = loadPackage('apollo-server-express', 'GraphQLModule', () =>
+      require('apollo-server-express'),
     );
     const {
       disableHealthCheck,
@@ -200,7 +200,8 @@ export class GraphQLFederationModule implements OnModuleInit {
     const app = this.httpAdapterHost.httpAdapter.getInstance();
     const path = this.getNormalizedPath(apolloOptions);
 
-    // If custom directives are provided merge them into schema per Apollo https://www.apollographql.com/docs/apollo-server/federation/implementing-services/#defining-custom-directives
+    // If custom directives are provided merge them into schema per Apollo
+    // https://www.apollographql.com/docs/apollo-server/federation/implementing-services/#defining-custom-directives
     if (apolloOptions.schemaDirectives) {
       SchemaDirectiveVisitor.visitSchemaDirectives(
         apolloOptions.schema,
@@ -221,15 +222,25 @@ export class GraphQLFederationModule implements OnModuleInit {
   }
 
   private registerFastify(apolloOptions: GqlModuleOptions) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-fastify',
-      'GraphQLModule',
-      () => require('apollo-server-fastify'),
+    const {
+      ApolloServer,
+      SchemaDirectiveVisitor,
+    } = loadPackage('apollo-server-fastify', 'GraphQLModule', () =>
+      require('apollo-server-fastify'),
     );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
     const path = this.getNormalizedPath(apolloOptions);
+
+    // If custom directives are provided merge them into schema per Apollo
+    // https://www.apollographql.com/docs/apollo-server/federation/implementing-services/#defining-custom-directives
+    if (apolloOptions.schemaDirectives) {
+      SchemaDirectiveVisitor.visitSchemaDirectives(
+        apolloOptions.schema,
+        apolloOptions.schemaDirectives,
+      );
+    }
 
     const apolloServer = new ApolloServer(apolloOptions as any);
     const {
