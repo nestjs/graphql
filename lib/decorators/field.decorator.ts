@@ -14,7 +14,7 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 
 /**
- * Interface defining options that can be passed to `@InputType()` decorator.
+ * Interface defining options that can be passed to `@Field()` decorator.
  */
 export interface FieldOptions extends BaseTypeOptions {
   /**
