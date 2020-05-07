@@ -20,18 +20,29 @@ export function mergeDefaults(
     moduleOptions.context = async (...args: unknown[]) => {
       const ctx = await (options.context as Function)(...args);
       const { req } = args[0] as Record<string, unknown>;
-      if (ctx && typeof ctx === 'object') {
-        ctx.req = req;
-      }
-      return ctx;
+      return assignReqProperty(ctx, req);
     };
   } else {
     moduleOptions.context = ({ req }: Record<string, unknown>) => {
-      if (options.context && typeof options.context === 'object') {
-        (options.context as Record<string, unknown>).req = req;
-      }
-      return options.context;
+      return assignReqProperty(options.context as Record<string, any>, req);
     };
   }
   return moduleOptions;
+}
+
+function assignReqProperty(
+  ctx: Record<string, unknown> | undefined,
+  req: unknown,
+) {
+  if (!ctx) {
+    return { req };
+  }
+  if (
+    typeof ctx !== 'object' ||
+    (ctx && ctx.req && typeof ctx.req === 'object')
+  ) {
+    return ctx;
+  }
+  ctx.req = req;
+  return ctx;
 }
