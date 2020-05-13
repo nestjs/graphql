@@ -43,6 +43,12 @@ type Ingredient {
   name: String @deprecated(reason: "is deprecated")
 }
 
+type Category {
+  name: String!
+  description: String!
+  tags: [String!]!
+}
+
 type Query {
   move(direction: Direction!): Direction!
 
@@ -52,6 +58,7 @@ type Query {
     id: String = "1"
   ): IRecipe!
   search: [SearchResultUnion!]! @deprecated(reason: "test")
+  categories: [Category!]!
   recipes(
     """number of items to skip"""
     skip: Int = 0
