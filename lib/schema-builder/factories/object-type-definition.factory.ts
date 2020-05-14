@@ -109,7 +109,12 @@ export class ObjectTypeDefinitionFactory {
         fields[field.schemaName] = {
           type,
           args: this.argsFactory.create(field.methodArgs, options),
-          resolve: (root: object) => root[field.name],
+          resolve: (root: object) => {
+            const value = root[field.name];
+            return typeof value === 'undefined'
+              ? field.options.defaultValue
+              : value;
+          },
           description: field.description,
           deprecationReason: field.deprecationReason,
           /**

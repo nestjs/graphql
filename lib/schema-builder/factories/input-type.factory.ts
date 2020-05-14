@@ -34,11 +34,11 @@ export class InputTypeFactory {
         throw new CannotDetermineInputTypeError(hostType);
       }
     }
-
     return this.typeMapperService.mapToGqlType(
       hostType,
       inputType,
       typeOptions,
+      true,
     );
   }
 }
