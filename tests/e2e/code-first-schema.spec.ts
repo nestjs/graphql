@@ -63,9 +63,15 @@ describe('Code-first - schema factory', () => {
     it('should define 4 queries', async () => {
       const type = getQuery(introspectionSchema);
 
-      expect(type.fields.length).toEqual(4);
-      expect(type.fields.map(item => item.name)).toEqual(
-        jasmine.arrayContaining(['recipes', 'search', 'move', 'recipe']),
+      expect(type.fields.length).toEqual(5);
+      expect(type.fields.map((item) => item.name)).toEqual(
+        jasmine.arrayContaining([
+          'recipes',
+          'search',
+          'categories',
+          'move',
+          'recipe',
+        ]),
       );
     });
 
@@ -73,7 +79,7 @@ describe('Code-first - schema factory', () => {
       const type = getMutation(introspectionSchema);
 
       expect(type.fields.length).toEqual(2);
-      expect(type.fields.map(item => item.name)).toEqual(
+      expect(type.fields.map((item) => item.name)).toEqual(
         jasmine.arrayContaining(['addRecipe', 'removeRecipe']),
       );
     });
@@ -82,7 +88,7 @@ describe('Code-first - schema factory', () => {
       const type = getSubscription(introspectionSchema);
 
       expect(type.fields.length).toEqual(1);
-      expect(type.fields.map(item => item.name)).toEqual(
+      expect(type.fields.map((item) => item.name)).toEqual(
         jasmine.arrayContaining(['recipeAdded']),
       );
     });
