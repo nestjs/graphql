@@ -29,7 +29,7 @@ export class TypeMapperSevice {
     if (typeRef instanceof GraphQLScalarType) {
       return typeRef;
     }
-    const scalarHost = scalarsMap.find(item => item.type === typeRef);
+    const scalarHost = scalarsMap.find((item) => item.type === typeRef);
     if (scalarHost) {
       return scalarHost.scalar;
     }
@@ -48,6 +48,7 @@ export class TypeMapperSevice {
     hostType: string,
     typeRef: T,
     options: TypeOptions,
+    isInputTypeCtx: boolean,
   ): T {
     this.validateTypeOptions(hostType, options);
     let graphqlType: T | GraphQLList<T> | GraphQLNonNull<T> = typeRef;
@@ -60,10 +61,18 @@ export class TypeMapperSevice {
       );
     }
 
-    const isNotNullable =
-      isUndefined(options.defaultValue) &&
-      (!options.nullable || options.nullable === 'items');
-
+    let isNotNullable: boolean;
+    if (isInputTypeCtx) {
+      /**
+       * The input values (e.g., args) remain "nullable"
+       * even if the "defaultValue" is specified.
+       */
+      isNotNullable =
+        isUndefined(options.defaultValue) &&
+        (!options.nullable || options.nullable === 'items');
+    } else {
+      isNotNullable = !options.nullable || options.nullable === 'items';
+    }
     return isNotNullable
       ? (new GraphQLNonNull(graphqlType) as T)
       : (graphqlType as T);

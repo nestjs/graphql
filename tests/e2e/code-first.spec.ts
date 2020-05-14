@@ -15,6 +15,80 @@ describe('Code-first', () => {
     await app.init();
   });
 
+  it('should return the categories result', () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
+        {
+          categories {
+            name
+            description
+            tags
+          }
+        }`,
+      })
+      .expect(200, {
+        data: {
+          categories: [
+            {
+              name: 'Category #1',
+              description: 'default value',
+              tags: [],
+            },
+          ],
+        },
+      });
+  });
+
+  it(`should return query result`, () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
+        {
+          recipes {
+            id,
+            ingredients {
+              name
+            },
+            rating,
+            averageRating
+          }
+        }`,
+      })
+      .expect(200, {
+        data: {
+          recipes: [
+            {
+              id: '1',
+              ingredients: [
+                {
+                  name: 'cherry',
+                },
+              ],
+              rating: 10,
+              averageRating: 0.5,
+            },
+            {
+              id: '2',
+              ingredients: [
+                {
+                  name: 'cherry',
+                },
+              ],
+              rating: 10,
+              averageRating: 0.5,
+            },
+          ],
+        },
+      });
+  });
+
   it(`should return query result`, () => {
     return request(app.getHttpServer())
       .post('/graphql')

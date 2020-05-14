@@ -32,7 +32,11 @@ export class OutputTypeFactory {
         throw new CannotDetermineOutputTypeError(hostType);
       }
     }
-
-    return this.typeMapperService.mapToGqlType(hostType, gqlType, typeOptions);
+    return this.typeMapperService.mapToGqlType(
+      hostType,
+      gqlType,
+      typeOptions,
+      false,
+    );
   }
 }

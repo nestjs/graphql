@@ -17,6 +17,7 @@ import { Ingredient } from './models/ingredient';
 import { IRecipe, Recipe } from './models/recipe';
 import { RecipesService } from './recipes.service';
 import { SearchResultUnion } from './unions/search-result.union';
+import { Category } from './models/category';
 
 const pubSub = new PubSub();
 
@@ -48,6 +49,11 @@ export class RecipesResolver {
         name: 'test',
       }),
     ];
+  }
+
+  @Query((returns) => [Category])
+  categories() {
+    return [new Category({ name: 'Category #1' })];
   }
 
   @Query((returns) => [Recipe])
