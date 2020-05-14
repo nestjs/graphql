@@ -10,7 +10,7 @@ import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields
 
 export function PickType<T, K extends keyof T>(
   classRef: Type<T>,
-  keys: K[],
+  keys: readonly K[],
   decorator?: ClassDecoratorFactory,
 ): Type<Pick<T, typeof keys[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
