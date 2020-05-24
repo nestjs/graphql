@@ -55,7 +55,7 @@
     "ts-jest": "26.0.0",
     "ts-morph": "7.0.0",
     "ts-node": "8.10.1",
-    "typescript": "3.8.3"
+    "typescript": "3.9.3"
   },
   "dependencies": {
     "@nestjs/mapped-types": "0.0.4",

@@ -11,6 +11,7 @@ export class CreateCatDtoEs5 {
 
 export const es5CreateCatDtoTextTranspiled = `\"use strict\";
 Object.defineProperty(exports, \"__esModule\", { value: true });
+exports.CreateCatDtoEs5 = void 0;
 var status_1 = require(\"./status\");
 var constants_1 = require(\"./constants\");
 var CreateCatDtoEs5 = /** @class */ (function () {
