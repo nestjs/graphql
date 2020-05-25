@@ -1,19 +1,31 @@
 import { Query, Args, ResolveReference, Resolver } from '../../../lib';
+import { FederationSearchResultUnion } from '../unions/search-result.union';
+import { User } from '../user/user.entity';
 import { PostService } from './post.service';
 import { Post } from './post.entity';
 
-@Resolver(of => Post)
+@Resolver((of) => Post)
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
-  @Query(returns => Post)
+  @Query((returns) => Post)
   public findPost(@Args('id') id: number) {
     return this.postService.findOne(id);
   }
 
-  @Query(returns => [Post])
+  @Query((returns) => [Post])
   public getPosts() {
     return this.postService.all();
+  }
+
+  @Query((returns) => [FederationSearchResultUnion], {
+    deprecationReason: 'test',
+  })
+  search(): Array<typeof FederationSearchResultUnion> {
+    return [
+      new User({ id: 1, posts: [] }),
+      new Post({ id: 2, title: 'lorem ipsum', authorId: 1 }),
+    ];
   }
 
   @ResolveReference()

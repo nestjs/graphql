@@ -30,8 +30,43 @@ describe('Code-first - Federation', () => {
         data: {
           _service: {
             sdl:
-              'type Post @key(fields: "id") {\n  id: ID!\n  title: String!\n  authorId: Int!\n}\n\ntype Query {\n  findPost(id: Float!): Post!\n  getPosts: [Post!]!\n}\n\ntype User @extends @key(fields: "id") {\n  id: ID! @external\n  posts: [Post!]!\n}\n',
+              '"Search result description"\nunion FederationSearchResultUnion = Post | User\n\ntype Post @key(fields: "id") {\n  id: ID!\n  title: String!\n  authorId: Int!\n}\n\ntype Query {\n  findPost(id: Float!): Post!\n  getPosts: [Post!]!\n  search: [FederationSearchResultUnion!]! @deprecated(reason: "test")\n}\n\ntype User @extends @key(fields: "id") {\n  id: ID! @external\n  posts: [Post!]!\n}\n',
           },
+        },
+      });
+  });
+
+  it('should return the search result', () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
+        {
+          search {
+            ... on Post {
+              title
+            }
+            ... on User {
+              id
+            }
+            __typename
+          }
+        }`,
+      })
+      .expect(200, {
+        data: {
+          search: [
+            {
+              id: '1',
+              __typename: 'User',
+            },
+            {
+              title: 'lorem ipsum',
+              __typename: 'Post',
+            },
+          ],
         },
       });
   });
