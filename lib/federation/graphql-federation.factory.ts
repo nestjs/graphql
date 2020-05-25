@@ -1,4 +1,3 @@
-import { IResolvers } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { transformSchema } from 'apollo-graphql';
