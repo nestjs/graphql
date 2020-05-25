@@ -115,7 +115,7 @@ export class GraphQLFederationFactory {
     return schema;
   }
 
-  private getResolvers(optionResolvers: IResolvers | Array<IResolvers>) {
+  private getResolvers(optionResolvers: any) {
     optionResolvers = Array.isArray(optionResolvers)
       ? optionResolvers
       : [optionResolvers];
