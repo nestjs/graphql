@@ -19,8 +19,6 @@
     "release": "release-it"
   },
   "devDependencies": {
-    "@apollo/federation": "0.16.0",
-    "@apollo/gateway": "0.16.0",
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-angular": "8.3.4",
     "@nestjs/common": "7.1.0",
@@ -53,11 +51,12 @@
     "rimraf": "3.0.2",
     "supertest": "4.0.2",
     "ts-jest": "26.0.0",
-    "ts-morph": "7.0.0",
     "ts-node": "8.10.1",
     "typescript": "3.9.3"
   },
   "dependencies": {
+    "@apollo/federation": "0.16.0",
+    "@apollo/gateway": "0.16.0",
     "@nestjs/mapped-types": "0.0.5",
     "chokidar": "3.4.0",
     "fast-glob": "3.2.2",
@@ -65,18 +64,18 @@
     "lodash": "4.17.15",
     "merge-graphql-schemas": "1.7.8",
     "normalize-path": "3.0.0",
+    "ts-morph": "7.0.0",
     "tslib": "2.0.0",
     "uuid": "8.1.0"
+  },
+  "engines": {
+    "node": ">=12.13.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "graphql": "^14.1.1 || ^15.0.0",
-    "reflect-metadata": "^0.1.12"
-  },
-  "optionalDependencies": {
-    "@apollo/federation": "^0.16.0",
-    "@apollo/gateway": "^0.16.0",
+    "reflect-metadata": "^0.1.12",
     "ts-morph": "^7.0.0"
   },
   "lint-staged": {
