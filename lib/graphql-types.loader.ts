@@ -1,12 +1,12 @@
+import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
-import { mergeTypes } from 'merge-graphql-schemas';
 import * as util from 'util';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const normalize = require('normalize-path');
-
 const readFile = util.promisify(fs.readFile);
 
 @Injectable()
@@ -15,21 +15,25 @@ export class GraphQLTypesLoader {
     if (!paths || paths.length === 0) {
       return null;
     }
-
     const types = await this.getTypesFromPaths(paths);
     const flatTypes = flatten(types);
-    return mergeTypes(flatTypes, { all: true }) as any;
+
+    return mergeTypeDefs(flatTypes, {
+      throwOnConflict: true,
+      commentDescriptions: true,
+      reverseDirectives: true,
+    });
   }
 
   private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
     paths = util.isArray(paths)
-      ? paths.map(path => normalize(path))
+      ? paths.map((path) => normalize(path))
       : normalize(paths);
 
     const filePaths = await glob(paths, {
       ignore: ['node_modules'],
     });
-    const fileContentsPromises = filePaths.sort().map(filePath => {
+    const fileContentsPromises = filePaths.sort().map((filePath) => {
       return readFile(filePath.toString(), 'utf8');
     });
 
