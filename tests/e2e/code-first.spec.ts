@@ -43,6 +43,38 @@ describe('Code-first', () => {
       });
   });
 
+  it('should return the search result', () => {
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
+        {
+          search {
+            ... on Recipe {
+              title
+            }
+            ... on Ingredient {
+              name
+            }
+          }
+        }`,
+      })
+      .expect(200, {
+        data: {
+          search: [
+            {
+              title: 'recipe',
+            },
+            {
+              name: 'test',
+            },
+          ],
+        },
+      });
+  });
+
   it(`should return query result`, () => {
     return request(app.getHttpServer())
       .post('/graphql')
