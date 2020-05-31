@@ -46,7 +46,7 @@ import {
     GraphQLSchemaBuilder,
     GraphQLSchemaHost,
   ],
-  exports: [GraphQLTypesLoader, GraphQLAstExplorer],
+  exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
 })
 export class GraphQLModule implements OnModuleInit {
   protected apolloServer: ApolloServerBase;
