@@ -7,11 +7,13 @@ import { ObjectTypeDefinitionFactory } from './factories/object-type-definition.
 import { UnionDefinitionFactory } from './factories/union-definition.factory';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { TypeMetadataStorage } from './storages/type-metadata.storage';
+import { MiddlewareStorage } from './storages/middleware.storage';
 
 @Injectable()
 export class TypeDefinitionsGenerator {
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly middlewareStorage: MiddlewareStorage,
     private readonly enumDefinitionFactory: EnumDefinitionFactory,
     private readonly inputTypeDefinitionFactory: InputTypeDefinitionFactory,
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
@@ -20,6 +22,7 @@ export class TypeDefinitionsGenerator {
   ) {}
 
   generate(options: BuildSchemaOptions) {
+    this.prepareMiddleware();
     this.generateUnionDefs();
     this.generateEnumDefs();
     this.generateInterfaceDefs(options);
@@ -27,9 +30,19 @@ export class TypeDefinitionsGenerator {
     this.generateInputTypeDefs(options);
   }
 
+  private prepareMiddleware() {
+    const metadata = TypeMetadataStorage.getMiddlewarePropertyMetadata();
+
+    metadata.forEach(({ middleware }) => {
+      middleware.forEach((m) => {
+        this.middlewareStorage.addMiddleware(m);
+      });
+    });
+  }
+
   private generateInputTypeDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getInputTypesMetadata();
-    const inputTypeDefs = metadata.map(metadata =>
+    const inputTypeDefs = metadata.map((metadata) =>
       this.inputTypeDefinitionFactory.create(metadata, options),
     );
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
@@ -37,7 +50,7 @@ export class TypeDefinitionsGenerator {
 
   private generateObjectTypeDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getObjectTypesMetadata();
-    const objectTypeDefs = metadata.map(metadata =>
+    const objectTypeDefs = metadata.map((metadata) =>
       this.objectTypeDefinitionFactory.create(metadata, options),
     );
     this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
@@ -45,7 +58,7 @@ export class TypeDefinitionsGenerator {
 
   private generateInterfaceDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getInterfacesMetadata();
-    const interfaceDefs = metadata.map(metadata =>
+    const interfaceDefs = metadata.map((metadata) =>
       this.interfaceDefinitionFactory.create(metadata, options),
     );
     this.typeDefinitionsStorage.addInterfaces(interfaceDefs);
@@ -53,7 +66,7 @@ export class TypeDefinitionsGenerator {
 
   private generateEnumDefs() {
     const metadata = TypeMetadataStorage.getEnumsMetadata();
-    const enumDefs = metadata.map(metadata =>
+    const enumDefs = metadata.map((metadata) =>
       this.enumDefinitionFactory.create(metadata),
     );
     this.typeDefinitionsStorage.addEnums(enumDefs);
@@ -61,7 +74,7 @@ export class TypeDefinitionsGenerator {
 
   private generateUnionDefs() {
     const metadata = TypeMetadataStorage.getUnionsMetadata();
-    const unionDefs = metadata.map(metadata =>
+    const unionDefs = metadata.map((metadata) =>
       this.unionDefinitionFactory.create(metadata),
     );
     this.typeDefinitionsStorage.addUnions(unionDefs);

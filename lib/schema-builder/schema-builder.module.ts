@@ -14,6 +14,8 @@ import { TypeFieldsAccessor } from './services/type-fields.accessor';
 import { TypeMapperSevice } from './services/type-mapper.service';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
+import { MiddlewareStorage } from './storages/middleware.storage';
+import { ApplyMiddlewareHelper } from './helpers/apply-middleware.helper';
 
 @Module({
   providers: [
@@ -25,6 +27,8 @@ import { TypeDefinitionsGenerator } from './type-definitions.generator';
     TypeMapperSevice,
     TypeFieldsAccessor,
     OrphanedReferenceRegistry,
+    MiddlewareStorage,
+    ApplyMiddlewareHelper,
   ],
   exports: [GraphQLSchemaFactory, FileSystemHelper],
 })

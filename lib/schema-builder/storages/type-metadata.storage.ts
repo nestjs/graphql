@@ -31,6 +31,7 @@ import { InterfaceMetadata } from '../metadata/interface.metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { isTargetEqual } from '../utils/is-target-equal-util';
 import { isThrowing } from '../utils/is-throwing.util';
+import { PropertyMiddlewareMetadata } from '../metadata/middleware.metadata';
 
 export class TypeMetadataStorageHost {
   /**
@@ -51,6 +52,7 @@ export class TypeMetadataStorageHost {
   private readonly fieldDirectives = new Array<PropertyDirectiveMetadata>();
   private readonly classExtensions = new Array<ClassExtensionsMetadata>();
   private readonly fieldExtensions = new Array<PropertyExtensionsMetadata>();
+  private readonly fieldMiddleware = new Array<PropertyMiddlewareMetadata>();
   private readonly objectTypes = new Array<ObjectTypeMetadata>();
   private readonly inputTypes = new Array<ClassMetadata>();
   private readonly argumentTypes = new Array<ClassMetadata>();
@@ -171,6 +173,14 @@ export class TypeMetadataStorageHost {
     this.fieldExtensions.push(metadata);
   }
 
+  addMiddlewarePropertyMetadata(metadata: PropertyMiddlewareMetadata) {
+    this.fieldMiddleware.push(metadata);
+  }
+
+  getMiddlewarePropertyMetadata(): PropertyMiddlewareMetadata[] {
+    return this.fieldMiddleware;
+  }
+
   addResolverMetadata(metadata: ResolverClassMetadata) {
     this.resolvers.push(metadata);
   }
@@ -199,6 +209,7 @@ export class TypeMetadataStorageHost {
     this.classExtensions.reverse();
     this.fieldDirectives.reverse();
     this.fieldExtensions.reverse();
+    this.fieldMiddleware.reverse();
 
     const classMetadata = [
       ...this.objectTypes,
@@ -293,11 +304,14 @@ export class TypeMetadataStorageHost {
         (param) => isHostEqual(param) && field.name === param.methodName,
       );
       field.directives = this.fieldDirectives.filter(
-        this.isFieldDirectiveOrExtension.bind(this, field),
+        this.isFieldForHost.bind(this, field),
       );
       field.extensions = this.fieldExtensions
-        .filter(this.isFieldDirectiveOrExtension.bind(this, field))
+        .filter(this.isFieldForHost.bind(this, field))
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
+      field.middleware = this.fieldMiddleware.filter(
+        this.isFieldForHost.bind(this, field),
+      );
     });
     return fields;
   }
@@ -312,10 +326,10 @@ export class TypeMetadataStorageHost {
         (param) => isTypeEqual(param) && item.methodName === param.methodName,
       );
       item.directives = this.fieldDirectives.filter(
-        this.isFieldDirectiveOrExtension.bind(this, item),
+        this.isFieldForHost.bind(this, item),
       );
       item.extensions = this.fieldExtensions
-        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+        .filter(this.isFieldForHost.bind(this, item))
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
   }
@@ -326,10 +340,10 @@ export class TypeMetadataStorageHost {
     metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
       item.directives = this.fieldDirectives.filter(
-        this.isFieldDirectiveOrExtension.bind(this, item),
+        this.isFieldForHost.bind(this, item),
       );
       item.extensions = this.fieldExtensions
-        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+        .filter(this.isFieldForHost.bind(this, item))
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
 
       item.objectTypeFn =
@@ -424,9 +438,9 @@ export class TypeMetadataStorageHost {
     });
   }
 
-  private isFieldDirectiveOrExtension(
+  private isFieldForHost(
     host: Record<'target' | 'methodName' | 'name', any>,
-    metadata: PropertyDirectiveMetadata | PropertyExtensionsMetadata,
+    metadata: { target: Function; fieldName: string },
   ): boolean {
     return (
       metadata.target === host.target &&

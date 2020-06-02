@@ -1,14 +1,22 @@
-import { Field, ID, InterfaceType, ObjectType } from '../../../../lib';
+import {
+  Field,
+  ID,
+  InterfaceType,
+  ObjectType,
+  UseMiddleware,
+} from '../../../../lib';
 import { METADATA_FACTORY_NAME } from '../../../../lib/plugin/plugin-constants';
+import { LogMiddleware } from '../../common/middleware/log.middleware';
+import { AuthMiddleware } from '../../common/middleware/auth.middleware';
 
 @InterfaceType({
   description: 'example interface',
-  resolveType: value => {
+  resolveType: (value) => {
     return Recipe;
   },
 })
 export abstract class IRecipe {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()
@@ -17,7 +25,7 @@ export abstract class IRecipe {
 
 @ObjectType({ implements: IRecipe, description: 'recipe object type' })
 export class Recipe {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()
@@ -28,6 +36,10 @@ export class Recipe {
 
   @Field()
   creationDate: Date;
+
+  @Field()
+  @UseMiddleware(LogMiddleware, AuthMiddleware)
+  internalNotes: string;
 
   @Field()
   get averageRating(): number {

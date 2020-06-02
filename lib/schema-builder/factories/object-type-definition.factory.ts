@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   GraphQLFieldConfigMap,
+  GraphQLFieldResolver,
   GraphQLInterfaceType,
   GraphQLObjectType,
 } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
+import { BuildSchemaOptions, Middleware } from '../../interfaces';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
@@ -13,6 +14,10 @@ import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
+import { ModuleRef } from '@nestjs/core';
+import { MiddlewareStorage } from '../storages/middleware.storage';
+import { ApplyMiddlewareHelper } from '../helpers/apply-middleware.helper';
+import { PropertyMetadata } from '../metadata';
 
 export interface ObjectTypeDefinition {
   target: Function;
@@ -25,6 +30,8 @@ export interface ObjectTypeDefinition {
 export class ObjectTypeDefinitionFactory {
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly middlewareStorage: MiddlewareStorage,
+    private readonly applyMiddlewareHelper: ApplyMiddlewareHelper,
     private readonly outputTypeFactory: OutputTypeFactory,
     private readonly typeFieldsAccessor: TypeFieldsAccessor,
     private readonly astDefinitionNodeFactory: AstDefinitionNodeFactory,
@@ -43,6 +50,7 @@ export class ObjectTypeDefinitionFactory {
       );
       return parentTypeDefinition ? parentTypeDefinition.type : undefined;
     };
+
     return {
       target: metadata.target,
       isAbstract: metadata.isAbstract || false,
@@ -109,12 +117,7 @@ export class ObjectTypeDefinitionFactory {
         fields[field.schemaName] = {
           type,
           args: this.argsFactory.create(field.methodArgs, options),
-          resolve: (root: object) => {
-            const value = root[field.name];
-            return typeof value === 'undefined'
-              ? field.options.defaultValue
-              : value;
-          },
+          resolve: this.createGraphQLFieldResolver(field),
           description: field.description,
           deprecationReason: field.deprecationReason,
           /**
@@ -164,6 +167,56 @@ export class ObjectTypeDefinitionFactory {
         };
       }
       return fields;
+    };
+  }
+
+  combineResolvers<
+    TSource = any,
+    TContext = any,
+    TArgs = { [argName: string]: any }
+  >(
+    ...resolvers: Array<GraphQLFieldResolver<TSource, TContext, TArgs>>
+  ): GraphQLFieldResolver<TSource, TContext, TArgs> {
+    return (...args) =>
+      resolvers.reduce(
+        (prevPromise, resolver) =>
+          prevPromise.then((prev) =>
+            prev === undefined ? resolver(...args) : prev,
+          ),
+        Promise.resolve(),
+      );
+  }
+
+  createGraphQLFieldResolver(
+    field: PropertyMetadata,
+  ): GraphQLFieldResolver<any, any> {
+    const rootResolve = (root: object) => {
+      const value = root[field.name];
+      return typeof value === 'undefined' ? field.options.defaultValue : value;
+    };
+
+    const middleware: Middleware[] = (field.middleware || []).reduce(
+      (m, meta) => {
+        return [...meta.middleware, ...m];
+      },
+      [],
+    );
+
+    if (!middleware.length) {
+      return rootResolve;
+    }
+
+    return (source, args, context, info) => {
+      return this.applyMiddlewareHelper.applyMiddleware(
+        {
+          source,
+          args,
+          context,
+          info,
+        },
+        middleware,
+        rootResolve,
+      );
     };
   }
 }

@@ -27,11 +27,13 @@ export class RecipesService {
       new Recipe({
         id: '1',
         title: 'Pizza',
+        internalNotes: 'Extra Pepperoni',
         creationDate: new Date(),
       }),
       new Recipe({
         id: '2',
         title: 'Spaghetti',
+        internalNotes: 'Extra Meatballs',
         creationDate: new Date(),
       }),
     ] as Recipe[];
