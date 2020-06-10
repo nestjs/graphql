@@ -2,7 +2,7 @@ import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
 import * as glob from 'fast-glob';
 import * as fs from 'fs';
-import { flatten } from 'lodash';
+import flatten from 'lodash.flatten';
 import * as util from 'util';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

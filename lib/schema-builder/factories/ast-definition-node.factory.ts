@@ -10,7 +10,7 @@ import {
   ObjectTypeDefinitionNode,
   parse,
 } from 'graphql';
-import { head } from 'lodash';
+import head from 'lodash.head';
 import { DirectiveParsingError } from '../errors/directive-parsing.error';
 import { DirectiveMetadata } from '../metadata/directive.metadata';
 
@@ -110,7 +110,7 @@ export class AstDefinitionNodeFactory {
     const parsed = parse(`type String ${directive.sdl}`);
     const definitions = parsed.definitions as ObjectTypeDefinitionNode[];
     const directives = definitions
-      .filter(item => item.directives && item.directives.length > 0)
+      .filter((item) => item.directives && item.directives.length > 0)
       .map(({ directives }) => directives)
       .reduce((acc, item) => [...acc, ...item]);
 

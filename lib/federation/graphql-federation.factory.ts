@@ -20,7 +20,8 @@ import {
   isUnionType,
 } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
-import { forEach, isEmpty } from 'lodash';
+import forEach from 'lodash.foreach';
+import isEmpty from 'lodash.isempty';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GqlModuleOptions } from '../interfaces';
 import {

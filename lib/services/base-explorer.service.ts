@@ -1,6 +1,10 @@
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module } from '@nestjs/core/injector/module';
-import { flattenDeep, groupBy, identity, isEmpty, mapValues } from 'lodash';
+import flattenDeep from 'lodash.flattendeep';
+import groupBy from 'lodash.groupby';
+import identity from 'lodash.identity';
+import isEmpty from 'lodash.isempty';
+import mapValues from 'lodash.mapvalues';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 
 export class BaseExplorerService {
@@ -21,7 +25,7 @@ export class BaseExplorerService {
   ): Module[] {
     const modules = [...modulesContainer.values()];
     return modules.filter(({ metatype }) =>
-      include.some(item => item === metatype),
+      include.some((item) => item === metatype),
     );
   }
 
@@ -30,9 +34,9 @@ export class BaseExplorerService {
     callback: (instance: InstanceWrapper, moduleRef: Module) => T | T[],
   ): T[] {
     const invokeMap = () => {
-      return modules.map(moduleRef => {
+      return modules.map((moduleRef) => {
         const providers = [...moduleRef.providers.values()];
-        return providers.map(wrapper => callback(wrapper, moduleRef));
+        return providers.map((wrapper) => callback(wrapper, moduleRef));
       });
     };
     return flattenDeep(invokeMap()).filter(identity);

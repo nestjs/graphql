@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { get } from 'lodash';
+import get from 'lodash.get';
 import {
   GqlTypeReference,
   ReturnTypeFunc,

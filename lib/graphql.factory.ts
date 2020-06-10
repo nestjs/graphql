@@ -13,7 +13,8 @@ import {
   mergeSchemas,
   SchemaDirectiveVisitor,
 } from 'graphql-tools';
-import { forEach, isEmpty } from 'lodash';
+import forEach from 'lodash.foreach';
+import isEmpty from 'lodash.isempty';
 import {
   DefinitionsGeneratorOptions,
   GraphQLAstExplorer,
