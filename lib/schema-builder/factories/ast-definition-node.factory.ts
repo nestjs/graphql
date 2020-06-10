@@ -10,7 +10,7 @@ import {
   ObjectTypeDefinitionNode,
   parse,
 } from 'graphql';
-import { head } from 'lodash';
+import head = require('lodash.head');
 import { DirectiveParsingError } from '../errors/directive-parsing.error';
 import { DirectiveMetadata } from '../metadata/directive.metadata';
 

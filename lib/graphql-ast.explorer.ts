@@ -14,7 +14,10 @@ import {
   TypeSystemDefinitionNode,
   UnionTypeDefinitionNode,
 } from 'graphql';
-import { get, map, sortBy, upperFirst } from 'lodash';
+import get = require('lodash.get');
+import map = require('lodash.map');
+import sortBy = require('lodash.sortby');
+import upperFirst = require('lodash.upperfirst');
 import {
   ClassDeclaration,
   ClassDeclarationStructure,

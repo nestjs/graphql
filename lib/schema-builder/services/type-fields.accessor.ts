@@ -7,7 +7,7 @@ import {
   GraphQLInterfaceType,
   GraphQLObjectType,
 } from 'graphql';
-import { omit } from 'lodash';
+import omit = require('lodash.omit');
 
 @Injectable()
 export class TypeFieldsAccessor {

@@ -1,4 +1,5 @@
-import { compact, flatten } from 'lodash';
+import compact = require('lodash.compact');
+import flatten = require('lodash.flatten');
 import * as ts from 'typescript';
 import { HideField } from '../../decorators';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';

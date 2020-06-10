@@ -1,4 +1,4 @@
-import { head } from 'lodash';
+import head = require('lodash.head');
 import { dirname, posix } from 'path';
 import * as ts from 'typescript';
 import {
