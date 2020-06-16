@@ -19,4 +19,4 @@ test-schema.graphql
 
 # dist
 /lib/src
-/dist
+# /dist
