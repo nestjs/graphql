@@ -33,6 +33,11 @@ export class GraphQLTypesLoader {
     const filePaths = await glob(paths, {
       ignore: ['node_modules'],
     });
+    if (filePaths.length === 0) {
+      throw new Error(
+        `No type definitions were found with the specified file name patterns: "${paths}". Please make sure there is at least one file that matches the given patterns.`,
+      );
+    }
     const fileContentsPromises = filePaths.sort().map((filePath) => {
       return readFile(filePath.toString(), 'utf8');
     });
