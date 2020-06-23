@@ -17,7 +17,7 @@ export function getDecoratorOrUndefinedByNames(
   names: string[],
   decorators: ts.NodeArray<ts.Decorator>,
 ): ts.Decorator | undefined {
-  return (decorators || ts.createNodeArray()).find(item =>
+  return (decorators || ts.createNodeArray()).find((item) =>
     names.includes(getDecoratorName(item)),
   );
 }
@@ -61,6 +61,9 @@ export function getTypeReferenceAsString(
     const text = getText(type, typeChecker);
     if (text === Date.name) {
       return text;
+    }
+    if (isOptionalBoolean(text)) {
+      return Boolean.name;
     }
     if (isEnum(type)) {
       return getText(type, typeChecker);
@@ -109,8 +112,8 @@ export function hasPropertyKey(
   properties: ts.NodeArray<ts.PropertyAssignment>,
 ): boolean {
   return properties
-    .filter(item => !isDynamicallyAdded(item))
-    .some(item => item.name.getText() === key);
+    .filter((item) => !isDynamicallyAdded(item))
+    .some((item) => item.name.getText() === key);
 }
 
 export function replaceImportPath(typeReference: string, fileName: string) {
@@ -245,4 +248,12 @@ export function extractTypeArgumentIfArray(type: ts.Type) {
     type,
     isArray: false,
   };
+}
+
+/**
+ * when "strict" mode enabled, TypeScript transform optional boolean properties to "boolean | undefined"
+ * @param text
+ */
+function isOptionalBoolean(text: string) {
+  return typeof text === 'string' && text === 'boolean | undefined';
 }
