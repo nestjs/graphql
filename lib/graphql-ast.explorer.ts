@@ -2,17 +2,24 @@ import { Injectable } from '@nestjs/common';
 import {
   DocumentNode,
   EnumTypeDefinitionNode,
+  EnumTypeExtensionNode,
   FieldDefinitionNode,
   InputObjectTypeDefinitionNode,
+  InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
+  InterfaceTypeExtensionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
   OperationTypeDefinitionNode,
   ScalarTypeDefinitionNode,
+  ScalarTypeExtensionNode,
   TypeNode,
   TypeSystemDefinitionNode,
+  TypeSystemExtensionNode,
   UnionTypeDefinitionNode,
+  UnionTypeExtensionNode,
 } from 'graphql';
 import { get, map, sortBy, upperFirst } from 'lodash';
 import {
@@ -84,7 +91,7 @@ export class GraphQLAstExplorer {
   }
 
   lookupDefinition(
-    item: Readonly<TypeSystemDefinitionNode>,
+    item: Readonly<TypeSystemDefinitionNode | TypeSystemExtensionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
@@ -97,15 +104,21 @@ export class GraphQLAstExplorer {
           mode,
         );
       case 'ObjectTypeDefinition':
+      case 'ObjectTypeExtension':
       case 'InputObjectTypeDefinition':
+      case 'InputObjectTypeExtension':
         return this.addObjectTypeDefinition(item, tsFile, mode, options);
       case 'InterfaceTypeDefinition':
+      case 'InterfaceTypeExtension':
         return this.addObjectTypeDefinition(item, tsFile, 'interface', options);
       case 'ScalarTypeDefinition':
+      case 'ScalarTypeExtension':
         return this.addScalarDefinition(item, tsFile);
       case 'EnumTypeDefinition':
+      case 'EnumTypeExtension':
         return this.addEnumDefinition(item, tsFile);
       case 'UnionTypeDefinition':
+      case 'UnionTypeExtension':
         return this.addUnionDefinition(item, tsFile);
     }
   }
@@ -146,8 +159,11 @@ export class GraphQLAstExplorer {
   addObjectTypeDefinition(
     item:
       | ObjectTypeDefinitionNode
+      | ObjectTypeExtensionNode
       | InputObjectTypeDefinitionNode
-      | InterfaceTypeDefinitionNode,
+      | InputObjectTypeExtensionNode
+      | InterfaceTypeDefinitionNode
+      | InterfaceTypeExtensionNode,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
@@ -327,7 +343,10 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addScalarDefinition(item: ScalarTypeDefinitionNode, tsFile: SourceFile) {
+  addScalarDefinition(
+    item: ScalarTypeDefinitionNode | ScalarTypeExtensionNode,
+    tsFile: SourceFile,
+  ) {
     const name = get(item, 'name.value');
     if (!name || name === 'Date') {
       return;
@@ -369,7 +388,10 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addEnumDefinition(item: EnumTypeDefinitionNode, tsFile: SourceFile) {
+  addEnumDefinition(
+    item: EnumTypeDefinitionNode | EnumTypeExtensionNode,
+    tsFile: SourceFile,
+  ) {
     const name = get(item, 'name.value');
     if (!name) {
       return;
@@ -385,7 +407,10 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addUnionDefinition(item: UnionTypeDefinitionNode, tsFile: SourceFile) {
+  addUnionDefinition(
+    item: UnionTypeDefinitionNode | UnionTypeExtensionNode,
+    tsFile: SourceFile,
+  ) {
     const name = get(item, 'name.value');
     if (!name) {
       return;
