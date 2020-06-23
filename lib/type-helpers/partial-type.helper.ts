@@ -7,6 +7,7 @@ import {
 } from '@nestjs/mapped-types';
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
+import { METADATA_FACTORY_NAME } from '../plugin/plugin-constants';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 
 export function PartialType<T>(
@@ -39,6 +40,15 @@ export function PartialType<T>(
     );
     applyIsOptionalDecorator(PartialObjectType, item.name);
   });
+
+  if (PartialObjectType[METADATA_FACTORY_NAME]) {
+    const pluginFields = Object.keys(
+      PartialObjectType[METADATA_FACTORY_NAME](),
+    );
+    pluginFields.forEach((key) =>
+      applyIsOptionalDecorator(PartialObjectType, key),
+    );
+  }
 
   Object.defineProperty(PartialObjectType, 'name', {
     value: `Partial${classRef.name}`,
