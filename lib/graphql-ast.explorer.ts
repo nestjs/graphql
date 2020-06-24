@@ -252,14 +252,16 @@ export class GraphQLAstExplorer {
     if (options.skipResolverArgs) {
       (parentRef as ClassDeclaration).addProperty({
         name: propertyName,
-        type,
+        type: this.addSymbolIfRoot(type),
         hasQuestionToken: !required,
       });
     } else {
       (parentRef as ClassDeclaration).addMethod({
         isAbstract: mode === 'class',
         name: propertyName,
-        returnType: `${type} | Promise<${type}>`,
+        returnType: `${this.addSymbolIfRoot(
+          type,
+        )} | Promise<${this.addSymbolIfRoot(type)}>`,
         parameters: this.getFunctionParameters(
           (item as FieldDefinitionNode).arguments,
         ),
