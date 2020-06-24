@@ -118,15 +118,16 @@ export class GraphQLFederationModule implements OnModuleInit {
     if (options.useFactory) {
       return {
         provide: GRAPHQL_MODULE_OPTIONS,
-        useFactory: options.useFactory,
+        useFactory: async (...args: any[]) =>
+          mergeDefaults(await options.useFactory(...args)),
         inject: options.inject || [],
       };
     }
 
     return {
       provide: GRAPHQL_MODULE_OPTIONS,
-      useFactory: (optionsFactory: GqlOptionsFactory) =>
-        optionsFactory.createGqlOptions(),
+      useFactory: async (optionsFactory: GqlOptionsFactory) =>
+        mergeDefaults(await optionsFactory.createGqlOptions()),
       inject: [options.useExisting || options.useClass],
     };
   }
