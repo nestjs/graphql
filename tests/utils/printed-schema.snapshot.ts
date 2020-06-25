@@ -95,3 +95,91 @@ type Subscription {
   recipeAdded: Recipe!
 }
 `;
+
+export const sortedPrintedSchemaSnapshot = `# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Category {
+  description: String!
+  name: String!
+  tags: [String!]!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+"""The basic directions"""
+enum Direction {
+  Down
+  Left
+  Right
+  Up
+}
+
+type Ingredient {
+  id: ID!
+
+  """ingredient name"""
+  name: String @deprecated(reason: "is deprecated")
+}
+
+"""example interface"""
+interface IRecipe {
+  id: ID!
+  title: String!
+}
+
+type Mutation {
+  addRecipe(newRecipeData: NewRecipeInput!): Recipe!
+  removeRecipe(id: String!): Boolean!
+}
+
+"""new recipe input"""
+input NewRecipeInput {
+  description: String
+  ingredients: [String!]!
+
+  """recipe title"""
+  title: String!
+}
+
+type Query {
+  categories: [Category!]!
+  move(direction: Direction!): Direction!
+
+  """get recipe by id"""
+  recipe(
+    """recipe id"""
+    id: String = "1"
+  ): IRecipe!
+  recipes(
+    """number of items to skip"""
+    skip: Int = 0
+    take: Int = 25
+  ): [Recipe!]!
+  search: [SearchResultUnion!]! @deprecated(reason: "test")
+}
+
+"""recipe object type"""
+type Recipe implements IRecipe {
+  averageRating: Float!
+  count(status: String, type: String): Float!
+  creationDate: Date!
+  description: String
+  id: ID!
+  ingredients: [Ingredient!]!
+  lastRate: Float
+  rating: Float!
+  tags: [String!]!
+  title: String!
+}
+
+"""Search result description"""
+union SearchResultUnion = Ingredient | Recipe
+
+type Subscription {
+  """subscription description"""
+  recipeAdded: Recipe!
+}
+`;

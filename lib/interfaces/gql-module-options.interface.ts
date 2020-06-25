@@ -62,6 +62,10 @@ export interface GqlModuleOptions
    * Enable/disable enhancers for @ResolveField()
    */
   fieldResolverEnhancers?: Enhancer[];
+  /**
+   * Sort the schema lexicographically
+   */
+  sortSchema?: boolean;
 }
 
 export interface GqlOptionsFactory {

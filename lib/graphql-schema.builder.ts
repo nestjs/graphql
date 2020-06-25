@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isString } from '@nestjs/common/utils/shared.utils';
-import { GraphQLSchema, printSchema, specifiedDirectives } from 'graphql';
+import {
+  GraphQLSchema,
+  printSchema,
+  specifiedDirectives,
+  lexicographicSortSchema,
+} from 'graphql';
 import { resolve } from 'path';
 import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
 import { GqlModuleOptions } from './interfaces';
@@ -26,11 +31,16 @@ export class GraphQLSchemaBuilder {
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     try {
       const buildSchemaOptions = options.buildSchemaOptions || {};
-      return await this.buildSchema(resolvers, autoSchemaFile, {
-        ...buildSchemaOptions,
-        scalarsMap,
-        schemaDirectives: options.schemaDirectives,
-      });
+      return await this.buildSchema(
+        resolvers,
+        autoSchemaFile,
+        {
+          ...buildSchemaOptions,
+          scalarsMap,
+          schemaDirectives: options.schemaDirectives,
+        },
+        options.sortSchema,
+      );
     } catch (err) {
       if (err && err.details) {
         console.error(err.details);
@@ -47,17 +57,22 @@ export class GraphQLSchemaBuilder {
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     try {
       const buildSchemaOptions = options.buildSchemaOptions || {};
-      return await this.buildSchema(resolvers, autoSchemaFile, {
-        ...buildSchemaOptions,
-        directives: [
-          ...specifiedDirectives,
-          ...this.loadFederationDirectives(),
-          ...((buildSchemaOptions && buildSchemaOptions.directives) || []),
-        ],
-        scalarsMap,
-        schemaDirectives: options.schemaDirectives,
-        skipCheck: true,
-      });
+      return await this.buildSchema(
+        resolvers,
+        autoSchemaFile,
+        {
+          ...buildSchemaOptions,
+          directives: [
+            ...specifiedDirectives,
+            ...this.loadFederationDirectives(),
+            ...((buildSchemaOptions && buildSchemaOptions.directives) || []),
+          ],
+          scalarsMap,
+          schemaDirectives: options.schemaDirectives,
+          skipCheck: true,
+        },
+        options.sortSchema,
+      );
     } catch (err) {
       if (err && err.details) {
         console.error(err.details);
@@ -70,6 +85,7 @@ export class GraphQLSchemaBuilder {
     resolvers: Function[],
     autoSchemaFile: boolean | string,
     options: BuildSchemaOptions = {},
+    sortSchema?: boolean,
   ): Promise<GraphQLSchema> {
     const schema = await this.gqlSchemaFactory.create(resolvers, options);
     if (typeof autoSchemaFile !== 'boolean') {
@@ -77,7 +93,9 @@ export class GraphQLSchemaBuilder {
         ? autoSchemaFile
         : resolve(process.cwd(), 'schema.gql');
 
-      const fileContent = GRAPHQL_SDL_FILE_HEADER + printSchema(schema);
+      const fileContent =
+        GRAPHQL_SDL_FILE_HEADER +
+        printSchema(sortSchema ? lexicographicSortSchema(schema) : schema);
       await this.fileSystemHelper.writeFile(filename, fileContent);
     }
     return schema;

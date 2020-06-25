@@ -6,6 +6,7 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLSchemaConfig,
+  lexicographicSortSchema,
   printSchema,
 } from 'graphql';
 import {
@@ -92,6 +93,7 @@ export class GraphQLFactory {
       }
 
       schema = await transformSchema(schema);
+      schema = options.sortSchema ? lexicographicSortSchema(schema) : schema;
       this.gqlSchemaHost.schema = schema;
 
       return {
@@ -126,6 +128,7 @@ export class GraphQLFactory {
 
     removeTempField(schema);
     schema = await transformSchema(schema);
+    schema = options.sortSchema ? lexicographicSortSchema(schema) : schema;
     this.gqlSchemaHost.schema = schema;
 
     return {
