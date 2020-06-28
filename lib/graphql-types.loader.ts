@@ -26,12 +26,20 @@ export class GraphQLTypesLoader {
   }
 
   private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
+    let includeNodeModules = false;
+
+    if (util.isArray(paths)) {
+      includeNodeModules = paths.some((path) => path.includes('node_modules'));
+    } else {
+      includeNodeModules = paths.includes('node_modules');
+    }
+
     paths = util.isArray(paths)
       ? paths.map((path) => normalize(path))
       : normalize(paths);
 
     const filePaths = await glob(paths, {
-      ignore: ['node_modules'],
+      ignore: includeNodeModules ? [] : ['node_modules'],
     });
     if (filePaths.length === 0) {
       throw new Error(
