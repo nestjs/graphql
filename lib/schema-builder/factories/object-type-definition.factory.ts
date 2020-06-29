@@ -72,16 +72,22 @@ export class ObjectTypeDefinitionFactory {
     const prototype = Object.getPrototypeOf(metadata.target);
 
     return () => {
-      const interfaces = (metadata.interfaces || []).map<GraphQLInterfaceType>(
-        (item) => this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
-      );
-      if (!isUndefined(prototype)) {
-        const parentClass = getParentType();
-        if (!parentClass) {
-          return interfaces;
+      try {
+        const interfaces = (metadata.interfaces || []).map<GraphQLInterfaceType>(
+          (item) => this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
+        );
+        if (!isUndefined(prototype)) {
+          const parentClass = getParentType();
+          if (!parentClass) {
+            return interfaces;
+          }
+          const parentInterfaces = parentClass.getInterfaces();
+          return Array.from(new Set([...interfaces, ...parentInterfaces]));
+         } catch(error) {
+           const newErrorMessage = 'Couldn\'t find target interface for ' + item + ' because ' + error
+           this.logger.error(newErrorMessage);
+           throw new Error(newErrorMessage);
         }
-        const parentInterfaces = parentClass.getInterfaces();
-        return Array.from(new Set([...interfaces, ...parentInterfaces]));
       }
       return interfaces;
     };
