@@ -9,6 +9,7 @@ import { BuildSchemaOptions } from '../../interfaces';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
+import { TypeMetadataStorage } from '../storages';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
@@ -99,7 +100,20 @@ export class ObjectTypeDefinitionFactory {
 
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
-      metadata.properties.forEach((field) => {
+
+      let properties = [];
+      if (metadata.interfaces) {
+        const implementedInterfaces = TypeMetadataStorage.getInterfacesMetadata()
+          .filter((it) => metadata.interfaces.includes(it.target))
+          .map((it) => it.properties);
+
+        implementedInterfaces.forEach((fields) =>
+          properties.push(...(fields || [])),
+        );
+      }
+      properties = properties.concat(metadata.properties);
+
+      properties.forEach((field) => {
         const type = this.outputTypeFactory.create(
           field.name,
           field.typeFn(),
@@ -144,25 +158,7 @@ export class ObjectTypeDefinitionFactory {
           };
         }
       }
-      if (metadata.interfaces) {
-        let interfaceFields: GraphQLFieldConfigMap<any, any> = {};
-        metadata.interfaces.forEach((item) => {
-          const interfaceType = this.typeDefinitionsStorage.getInterfaceByTarget(
-            item,
-          ).type;
-          const fieldMetadata = this.typeFieldsAccessor.extractFromInterfaceOrObjectType(
-            interfaceType,
-          );
-          interfaceFields = {
-            ...interfaceFields,
-            ...fieldMetadata,
-          };
-        });
-        fields = {
-          ...interfaceFields,
-          ...fields,
-        };
-      }
+
       return fields;
     };
   }

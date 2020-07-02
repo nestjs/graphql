@@ -348,13 +348,17 @@ export class TypeMetadataStorageHost {
       .find((el) => isTargetEqual(el, item))
       .typeFn();
 
-    const objectTypeMetadata = this.objectTypes.find(
-      (objTypeDef) => objTypeDef.target === objectTypeRef,
-    );
-    const objectTypeField = objectTypeMetadata.properties.find(
+    const objectOrInterfaceTypeMetadata =
+      this.objectTypes.find(
+        (objTypeDef) => objTypeDef.target === objectTypeRef,
+      ) ||
+      this.interfaces.find(
+        (interfaceTypeDef) => interfaceTypeDef.target === objectTypeRef,
+      );
+    const objectOrInterfaceTypeField = objectOrInterfaceTypeMetadata.properties.find(
       (fieldDef) => fieldDef.name === item.methodName,
     );
-    if (!objectTypeField) {
+    if (!objectOrInterfaceTypeField) {
       if (!item.typeFn || !item.typeOptions) {
         throw new UndefinedTypeError(item.target.name, item.methodName);
       }
@@ -373,21 +377,21 @@ export class TypeMetadataStorageHost {
       };
       this.addClassFieldMetadata(fieldMetadata);
 
-      objectTypeMetadata.properties.push(fieldMetadata);
+      objectOrInterfaceTypeMetadata.properties.push(fieldMetadata);
     } else {
       const isEmpty = (arr: unknown[]) => arr.length === 0;
-      if (isEmpty(objectTypeField.methodArgs)) {
-        objectTypeField.methodArgs = item.methodArgs;
+      if (isEmpty(objectOrInterfaceTypeField.methodArgs)) {
+        objectOrInterfaceTypeField.methodArgs = item.methodArgs;
       }
-      if (isEmpty(objectTypeField.directives)) {
-        objectTypeField.directives = item.directives;
+      if (isEmpty(objectOrInterfaceTypeField.directives)) {
+        objectOrInterfaceTypeField.directives = item.directives;
       }
-      if (!objectTypeField.extensions) {
-        objectTypeField.extensions = item.extensions;
+      if (!objectOrInterfaceTypeField.extensions) {
+        objectOrInterfaceTypeField.extensions = item.extensions;
       }
-      objectTypeField.complexity =
+      objectOrInterfaceTypeField.complexity =
         item.complexity === undefined
-          ? objectTypeField.complexity
+          ? objectOrInterfaceTypeField.complexity
           : item.complexity;
     }
   }

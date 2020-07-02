@@ -6,12 +6,14 @@ export const printedSchemaSnapshot = `# ----------------------------------------
 interface IRecipe {
   id: ID!
   title: String!
+  interfaceResolver(arg: Float): Boolean!
 }
 
 """recipe object type"""
 type Recipe implements IRecipe {
   id: ID!
   title: String!
+  interfaceResolver(arg: Float): Boolean!
   description: String
   creationDate: DateTime!
   averageRating: Float!

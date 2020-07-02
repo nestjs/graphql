@@ -16,6 +16,7 @@ import {
 import { DirectionsResolver } from '../code-first/directions/directions.resolver';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
 import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
+import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
 import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
 import {
@@ -45,7 +46,12 @@ describe('Code-first - schema factory', () => {
 
     beforeAll(async () => {
       schema = await schemaFactory.create(
-        [RecipesResolver, DirectionsResolver, AbstractResolver],
+        [
+          RecipesResolver,
+          DirectionsResolver,
+          AbstractResolver,
+          IRecipesResolver,
+        ],
         { orphanedTypes: [SampleOrphanedType] },
       );
       introspectionSchema = await (
@@ -238,6 +244,29 @@ describe('Code-first - schema factory', () => {
                 kind: TypeKind.NON_NULL,
                 name: null,
                 ofType: { kind: TypeKind.SCALAR, name: 'String', ofType: null },
+              },
+            },
+            {
+              args: [
+                {
+                  defaultValue: null,
+                  description: null,
+                  name: 'arg',
+                  type: { kind: 'SCALAR', name: 'Float', ofType: null },
+                },
+              ],
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'interfaceResolver',
+              type: {
+                kind: TypeKind.NON_NULL,
+                name: null,
+                ofType: {
+                  kind: TypeKind.SCALAR,
+                  name: 'Boolean',
+                  ofType: null,
+                },
               },
             },
             {
@@ -487,6 +516,29 @@ describe('Code-first - schema factory', () => {
                 kind: TypeKind.NON_NULL,
                 name: null,
                 ofType: { kind: TypeKind.SCALAR, name: 'String', ofType: null },
+              },
+            },
+            {
+              args: [
+                {
+                  defaultValue: null,
+                  description: null,
+                  name: 'arg',
+                  type: { kind: 'SCALAR', name: 'Float', ofType: null },
+                },
+              ],
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'interfaceResolver',
+              type: {
+                kind: TypeKind.NON_NULL,
+                name: null,
+                ofType: {
+                  kind: TypeKind.SCALAR,
+                  name: 'Boolean',
+                  ofType: null,
+                },
               },
             },
           ],

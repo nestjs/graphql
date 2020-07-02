@@ -6,7 +6,7 @@ import { MethodArgsMetadata } from './param.metadata';
 
 export interface ResolverClassMetadata {
   target: Function;
-  typeFn: (of?: void) => Type<unknown>;
+  typeFn: (of?: void) => Type<unknown> | Function;
   isAbstract?: boolean;
   parent?: ResolverClassMetadata;
 }
@@ -33,5 +33,5 @@ export interface FieldResolverMetadata extends BaseResolverMetadata {
   kind: 'internal' | 'external';
   typeOptions?: TypeOptions;
   typeFn?: (type?: void) => GqlTypeReference;
-  objectTypeFn?: (of?: void) => Type<unknown>;
+  objectTypeFn?: (of?: void) => Type<unknown> | Function;
 }

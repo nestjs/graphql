@@ -89,6 +89,7 @@ describe('Code-first', () => {
               name
             },
             rating,
+            interfaceResolver,
             averageRating
           }
         }`,
@@ -104,6 +105,7 @@ describe('Code-first', () => {
                 },
               ],
               rating: 10,
+              interfaceResolver: true,
               averageRating: 0.5,
             },
             {
@@ -114,6 +116,7 @@ describe('Code-first', () => {
                 },
               ],
               rating: 10,
+              interfaceResolver: true,
               averageRating: 0.5,
             },
           ],

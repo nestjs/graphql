@@ -10,7 +10,7 @@ import {
   getResolverTypeFn,
 } from './resolvers.utils';
 
-export type ResolverTypeFn = (of?: void) => Type<any>;
+export type ResolverTypeFn = (of?: void) => Function;
 
 /**
  * Extracts the name property set through the @ObjectType() decorator (if specified)
@@ -19,7 +19,9 @@ export type ResolverTypeFn = (of?: void) => Type<any>;
 function getObjectTypeNameIfExists(nameOrType: Function): string | undefined {
   const ctor = getClassOrUndefined(nameOrType);
   const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
-  const objectMetadata = objectTypesMetadata.find(type => type.target === ctor);
+  const objectMetadata = objectTypesMetadata.find(
+    (type) => type.target === ctor,
+  );
   if (!objectMetadata) {
     return;
   }
@@ -54,7 +56,7 @@ export function Resolver(
  * Object resolver decorator.
  */
 export function Resolver(
-  classType: Type<any>,
+  classType: Function,
   options?: ResolverOptions,
 ): MethodDecorator & ClassDecorator;
 /**
@@ -68,7 +70,12 @@ export function Resolver(
  * Object resolver decorator.
  */
 export function Resolver(
-  nameOrTypeOrOptions?: string | ResolverTypeFn | Type<any> | ResolverOptions,
+  nameOrTypeOrOptions?:
+    | string
+    | ResolverTypeFn
+    | Type<any>
+    | Function
+    | ResolverOptions,
   options?: ResolverOptions,
 ): MethodDecorator & ClassDecorator {
   return (

@@ -4,9 +4,11 @@ import { GraphQLFieldConfigMap, GraphQLInterfaceType } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
 import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error';
 import { InterfaceMetadata } from '../metadata/interface.metadata';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage';
+import { ArgsFactory } from './args.factory';
 import { OutputTypeFactory } from './output-type.factory';
 import { ResolveTypeFactory } from './resolve-type.factory';
 
@@ -22,7 +24,9 @@ export class InterfaceDefinitionFactory {
     private readonly resolveTypeFactory: ResolveTypeFactory,
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly outputTypeFactory: OutputTypeFactory,
+    private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
     private readonly typeFieldsAccessor: TypeFieldsAccessor,
+    private readonly argsFactory: ArgsFactory,
   ) {}
 
   public create(
@@ -46,17 +50,17 @@ export class InterfaceDefinitionFactory {
     const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
     const implementedTypes = objectTypesMetadata
       .filter(
-        objectType =>
+        (objectType) =>
           objectType.interfaces &&
           objectType.interfaces.includes(metadata.target),
       )
-      .map(objectType => objectType.target);
+      .map((objectType) => objectType.target);
 
     return metadata.resolveType
       ? this.resolveTypeFactory.getResolveTypeFunction(metadata.resolveType)
       : (instance: any) => {
           const target = implementedTypes.find(
-            Type => instance instanceof Type,
+            (Type) => instance instanceof Type,
           );
           if (!target) {
             throw new ReturnTypeCannotBeResolvedError(metadata.name);
@@ -70,6 +74,9 @@ export class InterfaceDefinitionFactory {
     options: BuildSchemaOptions,
   ): () => GraphQLFieldConfigMap<any, any> {
     const prototype = Object.getPrototypeOf(metadata.target);
+    metadata.properties.forEach(({ typeFn }) =>
+      this.orphanedReferenceRegistry.addToRegistryIfOrphaned(typeFn()),
+    );
     const getParentType = () => {
       const parentTypeDefinition = this.typeDefinitionsStorage.getInterfaceByTarget(
         prototype,
@@ -79,15 +86,27 @@ export class InterfaceDefinitionFactory {
 
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
-      metadata.properties.forEach(property => {
-        fields[property.schemaName] = {
-          description: property.description,
+      metadata.properties.forEach((field) => {
+        fields[field.schemaName] = {
+          description: field.description,
           type: this.outputTypeFactory.create(
-            property.name,
-            property.typeFn(),
+            field.name,
+            field.typeFn(),
             options,
-            property.options,
+            field.options,
           ),
+          args: this.argsFactory.create(field.methodArgs, options),
+          resolve: (root: object) => {
+            const value = root[field.name];
+            return typeof value === 'undefined'
+              ? field.options.defaultValue
+              : value;
+          },
+          deprecationReason: field.deprecationReason,
+          extensions: {
+            complexity: field.complexity,
+            ...field.extensions,
+          },
         };
       });
 
