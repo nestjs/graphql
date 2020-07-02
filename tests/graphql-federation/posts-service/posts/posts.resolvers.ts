@@ -8,14 +8,19 @@ import {
 } from '../../../../lib';
 import { Post } from './posts.interfaces';
 import { PostsService } from './posts.service';
+import { PostType } from './post-type.enum';
 
 @Resolver('Post')
 export class PostsResolvers {
   constructor(private readonly postsService: PostsService) {}
 
   @Query('getPosts')
-  getPosts() {
-    return this.postsService.findAll();
+  getPosts(@Args('type') type: PostType) {
+    if (type) {
+      return this.postsService.findByType(type);
+    } else {
+      return this.postsService.findAll();
+    }
   }
 
   @Mutation()

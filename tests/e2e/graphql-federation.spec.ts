@@ -40,6 +40,42 @@ describe('GraphQL Federation', () => {
           },
         });
     });
+
+    it('should resolve references', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          variables: {
+            representations: [
+              {
+                __typename: 'User',
+                id: '5',
+              },
+            ],
+          },
+          query: `
+            query ($representations: [_Any!]!) {
+              _entities(representations: $representations) {
+                __typename
+                ... on User {
+                  id
+                  name
+                }
+              }
+            }`,
+        })
+        .expect(200, {
+          data: {
+            _entities: [
+              {
+                __typename: 'User',
+                id: '5',
+                name: 'GraphQL',
+              },
+            ],
+          },
+        });
+    });
   });
 
   describe('PostsService', () => {
@@ -140,6 +176,33 @@ describe('GraphQL Federation', () => {
               body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               publishDate: 500,
             },
+          },
+        });
+    });
+
+    it('should accept enum as query input', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          variables: {
+            postType: 'TEXT',
+          },
+          query: `
+            query ($postType: PostType!) {
+              getPosts(type: $postType) {
+                id
+                type
+              }
+            }`,
+        })
+        .expect(200, {
+          data: {
+            getPosts: [
+              {
+                id: '1',
+                type: 'TEXT',
+              },
+            ],
           },
         });
     });
