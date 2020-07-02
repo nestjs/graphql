@@ -385,7 +385,10 @@ export class TypeMetadataStorageHost {
       if (!objectTypeField.extensions) {
         objectTypeField.extensions = item.extensions;
       }
-      objectTypeField.complexity = item.complexity;
+      objectTypeField.complexity =
+        item.complexity === undefined
+          ? objectTypeField.complexity
+          : item.complexity;
     }
   }
 
