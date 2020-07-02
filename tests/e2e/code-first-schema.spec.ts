@@ -66,7 +66,7 @@ describe('Code-first - schema factory', () => {
         printedSchemaSnapshot,
       );
     });
-    it('should define 4 queries', async () => {
+    it('should define 5 queries', async () => {
       const type = getQuery(introspectionSchema);
 
       expect(type.fields.length).toEqual(5);
