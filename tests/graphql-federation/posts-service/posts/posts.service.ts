@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Post } from './posts.interfaces';
+import { PostType } from './post-type.enum';
 
 @Injectable()
 export class PostsService {
@@ -10,6 +11,7 @@ export class PostsService {
       body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       userId: '5',
       publishDate: new Date(0),
+      type: PostType.TEXT,
     },
   ];
 
@@ -23,6 +25,10 @@ export class PostsService {
 
   findByUserId(id: string) {
     return Promise.resolve(this.posts.filter((p) => p.userId === id));
+  }
+
+  findByType(type: PostType) {
+    return Promise.resolve(this.posts.filter((p) => p.type === type));
   }
 
   async publish(id: string, publishDate: Date) {

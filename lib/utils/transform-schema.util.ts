@@ -1,4 +1,5 @@
 // This file is copied from `apollo-tooling`. The only difference is that it has a hack to not remove federation specific properties.
+// The changed lines are 31-40 and 85-87 and the original file can be found here:
 // https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo-graphql/src/schema/transformSchema.ts
 
 import {

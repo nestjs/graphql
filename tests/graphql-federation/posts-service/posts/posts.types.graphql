@@ -2,12 +2,18 @@ directive @upper on FIELD_DEFINITION
 
 scalar Date
 
+enum PostType {
+  TEXT
+  IMAGE
+}
+
 type Post @key(fields: "id") {
   id: ID!
   title: String!
   body: String!
   user: User
   publishDate: Date
+  type: PostType
 }
 
 extend type User @key(fields: "id") {
@@ -16,7 +22,7 @@ extend type User @key(fields: "id") {
 }
 
 extend type Query {
-  getPosts: [Post]
+  getPosts(type: PostType): [Post]
 }
 
 extend type Mutation {
