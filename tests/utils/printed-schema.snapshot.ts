@@ -129,6 +129,7 @@ type Ingredient {
 """example interface"""
 interface IRecipe {
   id: ID!
+  interfaceResolver(arg: Float): Boolean!
   title: String!
 }
 
@@ -171,6 +172,7 @@ type Recipe implements IRecipe {
   description: String
   id: ID!
   ingredients: [Ingredient!]!
+  interfaceResolver(arg: Float): Boolean!
   lastRate: Float
   rating: Float!
   tags: [String!]!
