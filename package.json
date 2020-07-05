@@ -42,7 +42,7 @@
     "eslint": "7.4.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-import": "2.22.0",
-    "graphql": "15.2.0",
+    "graphql": "15.3.0",
     "graphql-tools": "6.0.12",
     "husky": "4.2.5",
     "jest": "26.1.0",
