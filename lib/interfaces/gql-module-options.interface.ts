@@ -66,6 +66,10 @@ export interface GqlModuleOptions
    * Sort the schema lexicographically
    */
   sortSchema?: boolean;
+  /**
+   * Apply `transformSchema` to the `autoSchemaFile`
+   */
+  transformAutoSchemaFile?: boolean;
 }
 
 export interface GqlOptionsFactory {

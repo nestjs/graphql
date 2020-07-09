@@ -40,6 +40,7 @@ export class GraphQLSchemaBuilder {
           schemaDirectives: options.schemaDirectives,
         },
         options.sortSchema,
+        options.transformAutoSchemaFile && options.transformSchema,
       );
     } catch (err) {
       if (err && err.details) {
@@ -72,6 +73,7 @@ export class GraphQLSchemaBuilder {
           skipCheck: true,
         },
         options.sortSchema,
+        options.transformAutoSchemaFile && options.transformSchema,
       );
     } catch (err) {
       if (err && err.details) {
@@ -86,6 +88,9 @@ export class GraphQLSchemaBuilder {
     autoSchemaFile: boolean | string,
     options: BuildSchemaOptions = {},
     sortSchema?: boolean,
+    transformSchema?: (
+      schema: GraphQLSchema,
+    ) => GraphQLSchema | Promise<GraphQLSchema>,
   ): Promise<GraphQLSchema> {
     const schema = await this.gqlSchemaFactory.create(resolvers, options);
     if (typeof autoSchemaFile !== 'boolean') {
@@ -93,9 +98,16 @@ export class GraphQLSchemaBuilder {
         ? autoSchemaFile
         : resolve(process.cwd(), 'schema.gql');
 
+      const transformedSchema = transformSchema
+        ? await transformSchema(schema)
+        : schema;
       const fileContent =
         GRAPHQL_SDL_FILE_HEADER +
-        printSchema(sortSchema ? lexicographicSortSchema(schema) : schema);
+        printSchema(
+          sortSchema
+            ? lexicographicSortSchema(transformedSchema)
+            : transformedSchema,
+        );
       await this.fileSystemHelper.writeFile(filename, fileContent);
     }
     return schema;
