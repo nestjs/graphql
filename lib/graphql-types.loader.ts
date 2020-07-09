@@ -26,12 +26,14 @@ export class GraphQLTypesLoader {
   }
 
   private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
-    paths = util.isArray(paths)
+    const includeNodeModules = this.includeNodeModules(paths);
+
+    paths = Array.isArray(paths)
       ? paths.map((path) => normalize(path))
       : normalize(paths);
 
     const filePaths = await glob(paths, {
-      ignore: ['node_modules'],
+      ignore: includeNodeModules ? [] : ['node_modules'],
     });
     if (filePaths.length === 0) {
       throw new Error(
@@ -43,5 +45,12 @@ export class GraphQLTypesLoader {
     });
 
     return Promise.all(fileContentsPromises);
+  }
+
+  private includeNodeModules(pathOrPaths: string | string[]): boolean {
+    if (Array.isArray(pathOrPaths)) {
+      return pathOrPaths.some((path) => path.includes('node_modules'));
+    }
+    return pathOrPaths.includes('node_modules');
   }
 }
