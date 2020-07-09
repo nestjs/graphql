@@ -60,6 +60,7 @@
   "dependencies": {
     "@graphql-tools/merge": "6.0.12",
     "@nestjs/mapped-types": "0.0.5",
+    "apollo-server-core": "2.15.1",
     "chokidar": "3.4.0",
     "fast-glob": "3.2.4",
     "iterall": "1.2.2",
