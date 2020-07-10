@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { Config } from 'apollo-server-core';
+import { Config, GraphQLExecutor } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
@@ -39,6 +39,9 @@ export interface GqlModuleOptions
   typeDefs?: string | string[];
   typePaths?: string[];
   include?: Function[];
+  executorFactory?: (
+    schema: GraphQLSchema,
+  ) => GraphQLExecutor | Promise<GraphQLExecutor>;
   installSubscriptionHandlers?: boolean;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;

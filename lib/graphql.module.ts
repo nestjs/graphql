@@ -137,6 +137,7 @@ export class GraphQLModule implements OnModuleInit {
       ...this.options,
       typeDefs: mergedTypeDefs,
     });
+    await this.runExecutorFactoryIfPresent(apolloOptions);
 
     if (this.options.definitions && this.options.definitions.path) {
       await this.graphqlFactory.generateDefinitions(
@@ -234,5 +235,13 @@ export class GraphQLModule implements OnModuleInit {
     return useGlobalPrefix
       ? normalizeRoutePath(prefix) + gqlOptionsPath
       : gqlOptionsPath;
+  }
+
+  private async runExecutorFactoryIfPresent(apolloOptions: GqlModuleOptions) {
+    if (!apolloOptions.executorFactory) {
+      return;
+    }
+    const executor = await apolloOptions.executorFactory(apolloOptions.schema);
+    apolloOptions.executor = executor;
   }
 }

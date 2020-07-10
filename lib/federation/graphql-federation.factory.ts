@@ -10,15 +10,15 @@ import {
   GraphQLInterfaceType,
   GraphQLObjectType,
   GraphQLResolveInfo,
+  GraphQLScalarType,
   GraphQLSchema,
   GraphQLUnionType,
   isEnumType,
   isInputObjectType,
   isInterfaceType,
   isObjectType,
-  isUnionType,
   isScalarType,
-  GraphQLScalarType,
+  isUnionType,
 } from 'graphql';
 import { mergeSchemas } from 'graphql-tools';
 import { forEach, isEmpty } from 'lodash';
@@ -205,22 +205,6 @@ export class GraphQLFederationFactory {
       }
       return type;
     });
-  }
-
-  private isIntrospectionType(typename: string): boolean {
-    return [
-      '__Schema',
-      '__Directive',
-      '__DirectiveLocation',
-      '__Type',
-      '__Field',
-      '__InputValue',
-      '__EnumValue',
-      '__TypeKind',
-      '_Any',
-      '_Entity',
-      '_Service',
-    ].includes(typename);
   }
 
   /**
