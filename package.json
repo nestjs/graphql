@@ -76,6 +76,7 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
+    "@apollo/gateway": "^0.17.0",
     "ts-morph": "^7.0.0"
   },
   "lint-staged": {
