@@ -29,7 +29,7 @@
     "@nestjs/platform-fastify": "7.3.2",
     "@nestjs/testing": "7.3.2",
     "@types/graphql": "14.2.3",
-    "@types/jest": "26.0.6",
+    "@types/jest": "26.0.7",
     "@types/node": "12.12.31",
     "@types/node-fetch": "2.5.7",
     "@types/normalize-path": "3.0.0",
