@@ -16,14 +16,23 @@ export type ResolverTypeFn = (of?: void) => Function;
  * Extracts the name property set through the @ObjectType() decorator (if specified)
  * @param nameOrType type reference
  */
-function getObjectTypeNameIfExists(nameOrType: Function): string | undefined {
+function getObjectOrInterfaceTypeNameIfExists(
+  nameOrType: Function,
+): string | undefined {
   const ctor = getClassOrUndefined(nameOrType);
   const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
   const objectMetadata = objectTypesMetadata.find(
     (type) => type.target === ctor,
   );
   if (!objectMetadata) {
-    return;
+    const interfaceTypesMetadata = TypeMetadataStorage.getInterfacesMetadata();
+    const interfaceMetadata = interfaceTypesMetadata.find(
+      (type) => type.target === ctor,
+    );
+    if (!interfaceMetadata) {
+      return;
+    }
+    return interfaceMetadata.name;
   }
   return objectMetadata.name;
 }
@@ -91,7 +100,9 @@ export function Resolver(
     let name = nameOrType && getClassName(nameOrType);
 
     if (isFunction(nameOrType)) {
-      const objectName = getObjectTypeNameIfExists(nameOrType as Function);
+      const objectName = getObjectOrInterfaceTypeNameIfExists(
+        nameOrType as Function,
+      );
       objectName && (name = objectName);
     }
     addResolverMetadata(undefined, name, target, key, descriptor);

@@ -3,12 +3,12 @@ import { METADATA_FACTORY_NAME } from '../../../../lib/plugin/plugin-constants';
 
 @InterfaceType({
   description: 'example interface',
-  resolveType: value => {
+  resolveType: (value) => {
     return Recipe;
   },
 })
 export abstract class IRecipe {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()
@@ -17,7 +17,7 @@ export abstract class IRecipe {
 
 @ObjectType({ implements: IRecipe, description: 'recipe object type' })
 export class Recipe {
-  @Field(type => ID)
+  @Field((type) => ID)
   id: string;
 
   @Field()

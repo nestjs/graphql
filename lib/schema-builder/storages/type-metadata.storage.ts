@@ -9,6 +9,7 @@ import { Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { addFieldMetadata } from '../../decorators/field.decorator';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
+import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
 import {
   BaseResolverMetadata,
@@ -355,6 +356,12 @@ export class TypeMetadataStorageHost {
       this.interfaces.find(
         (interfaceTypeDef) => interfaceTypeDef.target === objectTypeRef,
       );
+    if (!objectOrInterfaceTypeMetadata) {
+      throw new CannotDetermineHostTypeError(
+        item.schemaName,
+        objectTypeRef?.name,
+      );
+    }
     const objectOrInterfaceTypeField = objectOrInterfaceTypeMetadata.properties.find(
       (fieldDef) => fieldDef.name === item.methodName,
     );
