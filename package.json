@@ -64,7 +64,7 @@
     "chokidar": "3.4.1",
     "fast-glob": "3.2.4",
     "iterall": "1.2.2",
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "normalize-path": "3.0.0",
     "tslib": "2.0.0",
     "uuid": "8.3.0"
