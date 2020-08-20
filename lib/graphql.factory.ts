@@ -9,11 +9,9 @@ import {
   lexicographicSortSchema,
   printSchema,
 } from 'graphql';
-import {
-  makeExecutableSchema,
-  mergeSchemas,
-  SchemaDirectiveVisitor,
-} from 'graphql-tools';
+import { mergeSchemas } from '@graphql-tools/merge';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { forEach, isEmpty } from 'lodash';
 import {
   DefinitionsGeneratorOptions,
