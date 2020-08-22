@@ -49,7 +49,7 @@ import {
   exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
 })
 export class GraphQLModule implements OnModuleInit {
-  protected apolloServer: ApolloServerBase;
+  apolloServer: ApolloServerBase;
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,

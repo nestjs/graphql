@@ -55,7 +55,7 @@ import { GraphQLFederationFactory } from './graphql-federation.factory';
   exports: [GraphQLSchemaHost, GraphQLTypesLoader, GraphQLAstExplorer],
 })
 export class GraphQLFederationModule implements OnModuleInit {
-  private apolloServer: ApolloServerBase;
+  apolloServer: ApolloServerBase;
 
   constructor(
     @Optional()

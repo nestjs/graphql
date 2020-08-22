@@ -1,10 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import { ApolloServerTestClient } from 'apollo-server-testing';
+import { createTestClient } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
+import { gql } from 'apollo-server-express';
 
 describe('Code-first', () => {
   let app: INestApplication;
+  let apolloClient: ApolloServerTestClient;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -13,43 +16,35 @@ describe('Code-first', () => {
 
     app = module.createNestApplication();
     await app.init();
+    apolloClient = createTestClient(module);
   });
 
-  it('should return the categories result', () => {
-    return request(app.getHttpServer())
-      .post('/graphql')
-      .send({
-        operationName: null,
-        variables: {},
-        query: `
+  it('should return the categories result', async () => {
+    const response = await apolloClient.query({
+      query: gql`
         {
           categories {
             name
             description
             tags
           }
-        }`,
-      })
-      .expect(200, {
-        data: {
-          categories: [
-            {
-              name: 'Category #1',
-              description: 'default value',
-              tags: [],
-            },
-          ],
+        }
+      `,
+    });
+    expect(response.data).toEqual({
+      categories: [
+        {
+          name: 'Category #1',
+          description: 'default value',
+          tags: [],
         },
-      });
+      ],
+    });
   });
 
-  it('should return the search result', () => {
-    return request(app.getHttpServer())
-      .post('/graphql')
-      .send({
-        operationName: null,
-        variables: {},
-        query: `
+  it('should return the search result', async () => {
+    const response = await apolloClient.query({
+      query: gql`
         {
           search {
             ... on Recipe {
@@ -59,115 +54,104 @@ describe('Code-first', () => {
               name
             }
           }
-        }`,
-      })
-      .expect(200, {
-        data: {
-          search: [
-            {
-              title: 'recipe',
-            },
-            {
-              name: 'test',
-            },
-          ],
+        }
+      `,
+    });
+    expect(response.data).toEqual({
+      search: [
+        {
+          title: 'recipe',
         },
-      });
+        {
+          name: 'test',
+        },
+      ],
+    });
   });
 
-  it(`should return query result`, () => {
-    return request(app.getHttpServer())
-      .post('/graphql')
-      .send({
-        operationName: null,
-        variables: {},
-        query: `
+  it(`should return query result`, async () => {
+    const response = await apolloClient.query({
+      query: gql`
         {
           recipes {
-            id,
+            id
             ingredients {
               name
-            },
-            rating,
-            interfaceResolver,
+            }
+            rating
+            interfaceResolver
             averageRating
           }
-        }`,
-      })
-      .expect(200, {
-        data: {
-          recipes: [
+        }
+      `,
+    });
+    expect(response.data).toEqual({
+      recipes: [
+        {
+          id: '1',
+          ingredients: [
             {
-              id: '1',
-              ingredients: [
-                {
-                  name: 'cherry',
-                },
-              ],
-              rating: 10,
-              interfaceResolver: true,
-              averageRating: 0.5,
-            },
-            {
-              id: '2',
-              ingredients: [
-                {
-                  name: 'cherry',
-                },
-              ],
-              rating: 10,
-              interfaceResolver: true,
-              averageRating: 0.5,
+              name: 'cherry',
             },
           ],
+          rating: 10,
+          interfaceResolver: true,
+          averageRating: 0.5,
         },
-      });
+        {
+          id: '2',
+          ingredients: [
+            {
+              name: 'cherry',
+            },
+          ],
+          rating: 10,
+          interfaceResolver: true,
+          averageRating: 0.5,
+        },
+      ],
+    });
   });
 
-  it(`should return query result`, () => {
-    return request(app.getHttpServer())
-      .post('/graphql')
-      .send({
-        operationName: null,
-        variables: {},
-        query: `
+  it(`should return query result`, async () => {
+    const response = await apolloClient.query({
+      query: gql`
         {
           recipes {
-            id,
+            id
             ingredients {
               name
-            },
-            rating,
+            }
+            rating
             averageRating
           }
-        }`,
-      })
-      .expect(200, {
-        data: {
-          recipes: [
+        }
+      `,
+    });
+    expect(response.data).toEqual({
+      recipes: [
+        {
+          id: '1',
+          ingredients: [
             {
-              id: '1',
-              ingredients: [
-                {
-                  name: 'cherry',
-                },
-              ],
-              rating: 10,
-              averageRating: 0.5,
-            },
-            {
-              id: '2',
-              ingredients: [
-                {
-                  name: 'cherry',
-                },
-              ],
-              rating: 10,
-              averageRating: 0.5,
+              name: 'cherry',
             },
           ],
+          rating: 10,
+          averageRating: 0.5,
         },
-      });
+        {
+          id: '2',
+          ingredients: [
+            {
+              name: 'cherry',
+            },
+          ],
+          rating: 10,
+          averageRating: 0.5,
+        },
+      ],
+    });
   });
 
   afterEach(async () => {
