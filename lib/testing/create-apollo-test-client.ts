@@ -28,6 +28,6 @@ function getApolloServer(testingModule: TestingModule): ApolloServerBase {
     return graphqlModule.apolloServer;
   } catch (error) {}
   throw new Error(
-    'Nest could not find GraphQLFederationModule or GraphQLModule element (this provider does not exist in the current context)',
+    'Nest could not find either the GraphQLFederationModule or GraphQLModule. Both modules are not registered in the given application.',
   );
 }
