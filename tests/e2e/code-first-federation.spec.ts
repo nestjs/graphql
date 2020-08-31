@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { gql } from 'apollo-server-express';
 import { ApolloServerTestClient } from 'apollo-server-testing';
-import { createTestClient } from '../../lib';
 import { ApplicationModule } from '../code-first-federation/app.module';
+import { createTestClient } from '../utils/create-test-client';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;
