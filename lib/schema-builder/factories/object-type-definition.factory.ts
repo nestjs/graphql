@@ -39,9 +39,9 @@ export class ObjectTypeDefinitionFactory {
   ): ObjectTypeDefinition {
     const prototype = Object.getPrototypeOf(metadata.target);
     const getParentType = () => {
-      const parentTypeDefinition = this.typeDefinitionsStorage.getObjectTypeByTarget(
-        prototype,
-      );
+      const parentTypeDefinition =
+        this.typeDefinitionsStorage.getObjectTypeByTarget(prototype) ||
+        this.typeDefinitionsStorage.getInterfaceByTarget(prototype);
       return parentTypeDefinition ? parentTypeDefinition.type : undefined;
     };
     return {
@@ -68,7 +68,7 @@ export class ObjectTypeDefinitionFactory {
 
   private generateInterfaces(
     metadata: ObjectTypeMetadata,
-    getParentType: () => GraphQLObjectType,
+    getParentType: () => GraphQLObjectType | GraphQLInterfaceType,
   ) {
     const prototype = Object.getPrototypeOf(metadata.target);
 
@@ -91,7 +91,7 @@ export class ObjectTypeDefinitionFactory {
   private generateFields(
     metadata: ObjectTypeMetadata,
     options: BuildSchemaOptions,
-    getParentType: () => GraphQLObjectType,
+    getParentType: () => GraphQLObjectType | GraphQLInterfaceType,
   ): () => GraphQLFieldConfigMap<any, any> {
     const prototype = Object.getPrototypeOf(metadata.target);
     metadata.properties.forEach(({ typeFn }) =>
