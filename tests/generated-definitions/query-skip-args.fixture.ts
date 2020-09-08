@@ -11,5 +11,7 @@ export interface Cat {
 }
 
 export interface IQuery {
-    cat?: Cat;
+    cat?: Nullable<Cat>;
 }
+
+type Nullable<T> = T | null;

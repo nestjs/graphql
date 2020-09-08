@@ -8,7 +8,9 @@
 /* eslint-disable */
 export interface Foo {
     a: string[];
-    b?: string[];
-    c: string[];
-    d?: string[];
+    b?: Nullable<string[]>;
+    c: Nullable<string>[];
+    d?: Nullable<Nullable<string>[]>;
 }
+
+type Nullable<T> = T | null;

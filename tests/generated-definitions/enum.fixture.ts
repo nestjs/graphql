@@ -11,3 +11,5 @@ export enum Foobar {
     Bar = "Bar",
     Baz = "Baz"
 }
+
+type Nullable<T> = T | null;

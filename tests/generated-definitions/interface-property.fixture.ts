@@ -12,5 +12,7 @@ export interface Bar {
 
 export interface Foo {
     a: Bar;
-    b?: Bar;
+    b?: Nullable<Bar>;
 }
+
+type Nullable<T> = T | null;

@@ -18,10 +18,12 @@ export class Post {
 }
 
 export abstract class IQuery {
-    abstract getPosts(): Post[] | Promise<Post[]>;
+    abstract getPosts(): Nullable<Nullable<Post>[]> | Promise<Nullable<Nullable<Post>[]>>;
 }
 
 export class User {
     id: string;
-    posts?: Post[];
+    posts?: Nullable<Nullable<Post>[]>;
 }
+
+type Nullable<T> = T | null;

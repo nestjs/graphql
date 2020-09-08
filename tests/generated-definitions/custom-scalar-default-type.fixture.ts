@@ -7,3 +7,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CustomDate = unknown;
+type Nullable<T> = T | null;
