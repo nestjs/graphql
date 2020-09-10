@@ -2,6 +2,7 @@ import { Inject, Module } from '@nestjs/common';
 import {
   DynamicModule,
   OnModuleInit,
+  OnModuleDestroy,
   Provider,
 } from '@nestjs/common/interfaces';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
@@ -48,7 +49,7 @@ import {
   ],
   exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
 })
-export class GraphQLModule implements OnModuleInit {
+export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   protected apolloServer: ApolloServerBase;
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
@@ -152,6 +153,10 @@ export class GraphQLModule implements OnModuleInit {
         httpAdapter.getHttpServer(),
       );
     }
+  }
+
+  async onModuleDestroy() {
+    this.apolloServer.stop();
   }
 
   private registerGqlServer(apolloOptions: GqlModuleOptions) {
