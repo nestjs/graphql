@@ -39,7 +39,7 @@
     "apollo-server-fastify": "2.16.1",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
-    "eslint": "7.8.1",
+    "eslint": "7.9.0",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-import": "2.22.0",
     "graphql": "15.3.0",
