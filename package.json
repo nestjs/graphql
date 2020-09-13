@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@apollo/federation": "0.18.1",
-    "@apollo/gateway": "0.17.0",
+    "@apollo/gateway": "0.20.0",
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-angular": "11.0.0",
     "@nestjs/common": "7.4.4",
@@ -76,7 +76,7 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
-    "@apollo/gateway": "^0.17.0",
+    "@apollo/gateway": "^0.20.0",
     "ts-morph": "^8.0.0"
   },
   "lint-staged": {
