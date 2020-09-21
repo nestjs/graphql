@@ -8,6 +8,8 @@ import {
   hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
+import { PluginOptions } from '../merge-options';
+import { getDescriptionOfNode } from '../utils/ast-utils';
 
 const metadataHostMap = new Map();
 const importsToAddPerFile = new Map<string, Set<string>>();
@@ -17,6 +19,7 @@ export class ModelClassVisitor {
     sourceFile: ts.SourceFile,
     ctx: ts.TransformationContext,
     program: ts.Program,
+    pluginOptions: PluginOptions,
   ) {
     const typeChecker = program.getTypeChecker();
 
@@ -47,6 +50,7 @@ export class ModelClassVisitor {
             typeChecker,
             sourceFile.fileName,
             sourceFile,
+            pluginOptions,
           );
         } catch (err) {
           return node;
@@ -109,12 +113,15 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     hostFilename: string,
     sourceFile: ts.SourceFile,
+    pluginOptions: PluginOptions,
   ) {
     const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
       compilerNode,
       typeChecker,
       ts.createNodeArray(),
       hostFilename,
+      sourceFile,
+      pluginOptions,
     );
     this.addClassMetadata(compilerNode, objectLiteralExpr, sourceFile);
   }
@@ -126,6 +133,8 @@ export class ModelClassVisitor {
       ts.PropertyAssignment
     > = ts.createNodeArray(),
     hostFilename = '',
+    sourceFile: ts.SourceFile,
+    pluginOptions: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const isRequired = !node.questionToken;
 
@@ -138,6 +147,14 @@ export class ModelClassVisitor {
         typeChecker,
         existingProperties,
         hostFilename,
+        sourceFile,
+        pluginOptions,
+      ),
+      this.createDescriptionPropertyAssigment(
+        node,
+        existingProperties,
+        pluginOptions,
+        sourceFile,
       ),
     ];
     const objectLiteral = ts.createObjectLiteral(compact(flatten(properties)));
@@ -149,6 +166,8 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename: string,
+    sourceFile: ts.SourceFile,
+    pluginOptions: PluginOptions,
   ) {
     const key = 'type';
     if (hasPropertyKey(key, existingProperties)) {
@@ -166,6 +185,8 @@ export class ModelClassVisitor {
             typeChecker,
             existingProperties,
             hostFilename,
+            sourceFile,
+            pluginOptions,
           );
           return ts.createPropertyAssignment(
             ts.createIdentifier(member.name.getText()),
@@ -263,5 +284,28 @@ export class ModelClassVisitor {
       ...importDeclarations,
       ...sourceFile.statements,
     ]);
+  }
+
+  createDescriptionPropertyAssigment(
+    node: ts.PropertyDeclaration | ts.PropertySignature,
+    existingProperties: ts.NodeArray<
+      ts.PropertyAssignment
+    > = ts.createNodeArray(),
+    options: PluginOptions = {},
+    sourceFile?: ts.SourceFile,
+  ): ts.PropertyAssignment {
+    if (!options.introspectComments || !sourceFile) {
+      return;
+    }
+    const description = getDescriptionOfNode(node, sourceFile);
+
+    const keyOfComment = 'description';
+    if (!hasPropertyKey(keyOfComment, existingProperties) && description) {
+      const descriptionPropertyAssignment = ts.createPropertyAssignment(
+        keyOfComment,
+        ts.createLiteral(description),
+      );
+      return descriptionPropertyAssignment;
+    }
   }
 }

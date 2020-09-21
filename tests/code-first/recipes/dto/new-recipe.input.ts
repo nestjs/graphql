@@ -13,6 +13,6 @@ export class NewRecipeInput {
   description?: string;
 
   @Type(() => String)
-  @Field(type => [String])
+  @Field((type) => [String])
   ingredients: string[];
 }

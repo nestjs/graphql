@@ -8,6 +8,7 @@ import { OrphanedReferenceRegistry } from '../services/orphaned-reference.regist
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util';
 import { ArgsFactory } from './args.factory';
 import { OutputTypeFactory } from './output-type.factory';
 import { ResolveTypeFactory } from './resolve-type.factory';
@@ -49,11 +50,10 @@ export class InterfaceDefinitionFactory {
   private createResolveTypeFn(metadata: InterfaceMetadata) {
     const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
     const implementedTypes = objectTypesMetadata
-      .filter(
-        (objectType) =>
-          objectType.interfaces &&
-          objectType.interfaces.includes(metadata.target),
-      )
+      .filter((objectType) => {
+        const interfaces = getInterfacesArray(objectType.interfaces);
+        return interfaces.includes(metadata.target);
+      })
       .map((objectType) => objectType.target);
 
     return metadata.resolveType

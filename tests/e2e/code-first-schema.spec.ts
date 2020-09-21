@@ -308,7 +308,7 @@ describe('Code-first - schema factory', () => {
             {
               args: [],
               deprecationReason: null,
-              description: null,
+              description: 'last rate description',
               isDeprecated: false,
               name: 'lastRate',
               type: { kind: TypeKind.SCALAR, name: 'Float', ofType: null },

@@ -14,8 +14,21 @@ type AliasedType = {
 type NumberAlias = number;
 
 export class CreateCatDto2 {
+  /**
+  * name description
+  *  
+  * @example 'test'
+  * @example 'test2'
+  * @memberof CreateCatDto2
+  */
   name: string;
+
+  // commentedOutProperty: string;
+
+  /** test on age */
   age: number = 3;
+
+  // test on tags (should be ignored)
   tags: string[];
   status: Status = Status.ENABLED;
   readonly breed?: string | undefined;
@@ -52,7 +65,7 @@ export class CreateCatDto2 {
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number }, union: { nullable: false, type: () => Object }, intersection: { nullable: false, type: () => Object }, optionalBoolean: { nullable: true, type: () => Boolean }, nested: { nullable: false, type: () => ({ first: { nullable: false, type: () => String }, second: { nullable: false, type: () => Number }, status: { nullable: false, type: () => Status }, tags: { nullable: false, type: () => [String] }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number } }) }, tuple: { nullable: false, type: () => Object } };
+        return { name: { nullable: false, type: () => String, description: "name description" }, age: { nullable: false, type: () => Number, description: "test on age" }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number }, union: { nullable: false, type: () => Object }, intersection: { nullable: false, type: () => Object }, optionalBoolean: { nullable: true, type: () => Boolean }, nested: { nullable: false, type: () => ({ first: { nullable: false, type: () => String }, second: { nullable: false, type: () => Number }, status: { nullable: false, type: () => Status }, tags: { nullable: false, type: () => [String] }, nodes: { nullable: false, type: () => [Object] }, alias: { nullable: false, type: () => Object }, numberAlias: { nullable: false, type: () => Number } }) }, tuple: { nullable: false, type: () => Object } };
     }
 }
 `;

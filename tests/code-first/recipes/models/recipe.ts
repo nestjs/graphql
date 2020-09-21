@@ -40,7 +40,11 @@ export class Recipe {
 
   static [METADATA_FACTORY_NAME]() {
     return {
-      lastRate: { nullable: true, type: () => Number },
+      lastRate: {
+        nullable: true,
+        type: () => Number,
+        description: 'last rate description',
+      },
       tags: { nullable: false, type: () => [String] },
     };
   }

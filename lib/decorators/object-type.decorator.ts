@@ -26,7 +26,7 @@ export interface ObjectTypeOptions {
   /**
    * Interfaces implemented by this object.
    */
-  implements?: Function | Function[];
+  implements?: Function | Function[] | (() => Function | Function[]);
 }
 
 /**
@@ -55,16 +55,13 @@ export function ObjectType(
     ? [nameOrOptions, objectTypeOptions]
     : [undefined, nameOrOptions];
 
-  const interfaces = options.implements
-    ? [].concat(options.implements)
-    : undefined;
   return (target) => {
     const addObjectTypeMetadata = () =>
       TypeMetadataStorage.addObjectTypeMetadata({
         name: name || target.name,
         target,
         description: options.description,
-        interfaces,
+        interfaces: options.implements,
         isAbstract: options.isAbstract,
       });
 

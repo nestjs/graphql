@@ -11,6 +11,7 @@ import { OrphanedReferenceRegistry } from '../services/orphaned-reference.regist
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
 import { TypeMetadataStorage } from '../storages';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util';
 import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
@@ -47,7 +48,7 @@ export class ObjectTypeDefinitionFactory {
     return {
       target: metadata.target,
       isAbstract: metadata.isAbstract || false,
-      interfaces: metadata.interfaces || [],
+      interfaces: getInterfacesArray(metadata.interfaces),
       type: new GraphQLObjectType({
         name: metadata.name,
         description: metadata.description,
@@ -73,8 +74,11 @@ export class ObjectTypeDefinitionFactory {
     const prototype = Object.getPrototypeOf(metadata.target);
 
     return () => {
-      const interfaces = (metadata.interfaces || []).map<GraphQLInterfaceType>(
-        (item) => this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
+      const interfaces: GraphQLInterfaceType[] = getInterfacesArray(
+        metadata.interfaces,
+      ).map(
+        (item: Function) =>
+          this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
       );
       if (!isUndefined(prototype)) {
         const parentClass = getParentType();
@@ -104,7 +108,9 @@ export class ObjectTypeDefinitionFactory {
       let properties = [];
       if (metadata.interfaces) {
         const implementedInterfaces = TypeMetadataStorage.getInterfacesMetadata()
-          .filter((it) => metadata.interfaces.includes(it.target))
+          .filter((it) =>
+            getInterfacesArray(metadata.interfaces).includes(it.target),
+          )
           .map((it) => it.properties);
 
         implementedInterfaces.forEach((fields) =>

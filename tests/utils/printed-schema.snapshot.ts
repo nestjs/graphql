@@ -17,6 +17,8 @@ type Recipe implements IRecipe {
   description: String
   creationDate: DateTime!
   averageRating: Float!
+
+  """last rate description"""
   lastRate: Float
   tags: [String!]!
   ingredients: [Ingredient!]!
@@ -173,6 +175,8 @@ type Recipe implements IRecipe {
   id: ID!
   ingredients: [Ingredient!]!
   interfaceResolver(arg: Float): Boolean!
+
+  """last rate description"""
   lastRate: Float
   rating: Float!
   tags: [String!]!
