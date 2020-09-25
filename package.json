@@ -51,7 +51,7 @@
     "reflect-metadata": "0.1.13",
     "release-it": "14.0.3",
     "rimraf": "3.0.2",
-    "supertest": "4.0.2",
+    "supertest": "5.0.0",
     "ts-jest": "26.4.0",
     "ts-morph": "8.0.0",
     "ts-node": "9.0.0",
