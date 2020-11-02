@@ -67,7 +67,7 @@
     "lodash": "4.17.20",
     "normalize-path": "3.0.0",
     "tslib": "2.0.1",
-    "uuid": "8.3.0"
+    "uuid": "8.3.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0",
