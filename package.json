@@ -61,7 +61,7 @@
     "@graphql-tools/merge": "6.0.13",
     "@nestjs/mapped-types": "0.1.1",
     "apollo-server-core": "2.16.1",
-    "chokidar": "3.4.2",
+    "chokidar": "3.4.3",
     "fast-glob": "3.2.4",
     "iterall": "1.2.2",
     "lodash": "4.17.20",
