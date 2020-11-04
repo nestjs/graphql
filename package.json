@@ -58,7 +58,7 @@
     "typescript": "3.9.7"
   },
   "dependencies": {
-    "@graphql-tools/merge": "6.0.13",
+    "@graphql-tools/merge": "6.2.5",
     "@nestjs/mapped-types": "0.1.1",
     "apollo-server-core": "2.16.1",
     "chokidar": "3.4.3",
