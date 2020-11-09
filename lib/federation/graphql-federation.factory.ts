@@ -20,7 +20,7 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
-import { mergeSchemas } from 'graphql-tools';
+import { mergeSchemas } from '@graphql-tools/merge';
 import { forEach, isEmpty } from 'lodash';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GqlModuleOptions } from '../interfaces';
