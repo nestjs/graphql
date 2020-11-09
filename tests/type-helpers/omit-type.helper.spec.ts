@@ -15,11 +15,14 @@ describe('OmitType', () => {
     @MinLength(10)
     @Field()
     password: string;
+
+    @Field({ name: 'id' })
+    _id: string;
   }
 
-  class UpdateUserDto extends OmitType(CreateUserDto, ['login']) {}
+  class UpdateUserDto extends OmitType(CreateUserDto, ['login', '_id']) {}
 
-  it('should inherit all fields except for "login"', () => {
+  it('should inherit all fields except for "login" and "_id"', () => {
     const { fields } = getFieldsAndDecoratorForType(
       Object.getPrototypeOf(UpdateUserDto),
     );

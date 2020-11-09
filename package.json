@@ -58,7 +58,7 @@
     "typescript": "3.9.7"
   },
   "dependencies": {
-    "@graphql-tools/merge": "6.0.13",
+    "@graphql-tools/merge": "6.2.5",
     "@nestjs/mapped-types": "0.1.1",
     "apollo-server-core": "2.16.1",
     "chokidar": "3.4.3",
@@ -66,7 +66,7 @@
     "iterall": "1.2.2",
     "lodash": "4.17.20",
     "normalize-path": "3.0.0",
-    "tslib": "2.0.1",
+    "tslib": "2.0.3",
     "uuid": "8.3.1"
   },
   "peerDependencies": {

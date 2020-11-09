@@ -16,7 +16,7 @@ export class ArgsFactory {
     options: BuildSchemaOptions,
   ): GraphQLFieldConfigArgumentMap {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
-    args.forEach(param => {
+    args.forEach((param) => {
       if (param.kind === 'arg') {
         fieldConfigMap[param.name] = {
           description: param.description,
@@ -32,13 +32,13 @@ export class ArgsFactory {
         const argumentTypes = TypeMetadataStorage.getArgumentsMetadata();
         const hostType = param.typeFn();
         const argumentType = argumentTypes.find(
-          item => item.target === hostType,
-        )!;
+          (item) => item.target === hostType,
+        );
 
         let parent = Object.getPrototypeOf(argumentType.target);
         while (!isUndefined(parent.prototype)) {
           const parentArgType = argumentTypes.find(
-            item => item.target === parent,
+            (item) => item.target === parent,
           );
           if (parentArgType) {
             this.inheritParentArgs(parentArgType, options, fieldConfigMap);
@@ -57,7 +57,7 @@ export class ArgsFactory {
     fieldConfigMap: GraphQLFieldConfigArgumentMap = {},
   ) {
     const argumentInstance = new (argType.target as any)();
-    argType.properties.forEach(field => {
+    argType.properties.forEach((field) => {
       field.options.defaultValue = getDefaultValue(
         argumentInstance,
         field.options,
