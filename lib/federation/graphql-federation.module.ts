@@ -2,6 +2,7 @@ import {
   DynamicModule,
   Inject,
   Module,
+  OnModuleDestroy,
   OnModuleInit,
   Optional,
   Provider,
@@ -54,8 +55,12 @@ import { GraphQLFederationFactory } from './graphql-federation.factory';
   ],
   exports: [GraphQLSchemaHost, GraphQLTypesLoader, GraphQLAstExplorer],
 })
-export class GraphQLFederationModule implements OnModuleInit {
-  private apolloServer: ApolloServerBase;
+export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
+  private _apolloServer: ApolloServerBase;
+
+  get apolloServer(): ApolloServerBase {
+    return this._apolloServer;
+  }
 
   constructor(
     @Optional()
@@ -173,6 +178,10 @@ export class GraphQLFederationModule implements OnModuleInit {
     }
   }
 
+  async onModuleDestroy() {
+    await this._apolloServer?.stop();
+  }
+
   private registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
@@ -220,7 +229,7 @@ export class GraphQLFederationModule implements OnModuleInit {
       cors,
       bodyParserConfig,
     });
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private registerFastify(apolloOptions: GqlModuleOptions) {
@@ -261,7 +270,7 @@ export class GraphQLFederationModule implements OnModuleInit {
       }),
     );
 
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private getNormalizedPath(apolloOptions: GqlModuleOptions): string {

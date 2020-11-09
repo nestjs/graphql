@@ -5,3 +5,4 @@ export * from './generate-token.util';
 export * from './merge-defaults.util';
 export * from './normalize-route-path.util';
 export * from './remove-temp.util';
+export * from './get-apollo-server';
