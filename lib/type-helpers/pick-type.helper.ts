@@ -29,7 +29,7 @@ export function PickType<T, K extends keyof T>(
   inheritTransformationMetadata(classRef, PickObjectType, isInheritedPredicate);
 
   fields
-    .filter((item) => keys.includes(item.schemaName as K))
+    .filter((item) => keys.includes(item.name as K))
     .forEach((item) => {
       if (isFunction(item.typeFn)) {
         /**
