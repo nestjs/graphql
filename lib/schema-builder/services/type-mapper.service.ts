@@ -62,7 +62,7 @@ export class TypeMapperSevice {
     if (options.isArray) {
       graphqlType = this.mapToGqlList(
         graphqlType,
-        options.arrayDepth!,
+        options.arrayDepth,
         this.hasArrayOptions(options),
       );
     }

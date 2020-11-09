@@ -2,7 +2,13 @@
 // decorators in the models, when you are sharing same models across backend and frontend.
 // to use this shim simply configure your webpack configuration to use this file instead of @nestjs/graphql module.
 /* eslint @typescript-eslint/no-empty-function: 0 */
-import { FieldOptions, InputTypeOptions, InterfaceTypeOptions, ObjectTypeOptions, ReturnTypeFunc } from ".."
+import {
+  FieldOptions,
+  InputTypeOptions,
+  InterfaceTypeOptions,
+  ObjectTypeOptions,
+  ReturnTypeFunc,
+} from '..';
 
 // for webpack this is resolved this way:
 // resolve: { // see: https://webpack.js.org/configuration/resolve/
@@ -12,60 +18,60 @@ import { FieldOptions, InputTypeOptions, InterfaceTypeOptions, ObjectTypeOptions
 // }
 
 export function ArgsType(): ClassDecorator {
-    return (target: Function) => {}
+  return (target: Function) => {};
 }
 
-export function Directive(sdl: string,
-    ): MethodDecorator & PropertyDecorator & ClassDecorator {
-    return (target: Function | Object, key?: string | symbol) => {}
+export function Directive(
+  sdl: string,
+): MethodDecorator & PropertyDecorator & ClassDecorator {
+  return (target: Function | Object, key?: string | symbol) => {};
 }
 
 export function Extensions(
-    value: Record<string, unknown>,
-  ): MethodDecorator & ClassDecorator & PropertyDecorator {
-    return (target: Function | object, propertyKey?: string | symbol) => {}
+  value: Record<string, unknown>,
+): MethodDecorator & ClassDecorator & PropertyDecorator {
+  return (target: Function | object, propertyKey?: string | symbol) => {};
 }
 
 export function Field(
-    typeOrOptions?: ReturnTypeFunc | FieldOptions,
-    fieldOptions?: FieldOptions,
-  ): PropertyDecorator & MethodDecorator {
-    return (
-      prototype: Object,
-      propertyKey?: string,
-      descriptor?: TypedPropertyDescriptor<any>,
-    ) => {}
+  typeOrOptions?: ReturnTypeFunc | FieldOptions,
+  fieldOptions?: FieldOptions,
+): PropertyDecorator & MethodDecorator {
+  return (
+    prototype: Object,
+    propertyKey?: string,
+    descriptor?: TypedPropertyDescriptor<any>,
+  ) => {};
 }
 
 export function HideField(): PropertyDecorator {
-    return (target: Record<string, any>, propertyKey: string | symbol) => {};
-  }
-  
+  return (target: Record<string, any>, propertyKey: string | symbol) => {};
+}
+
 export function InputType(
   nameOrOptions?: string | InputTypeOptions,
   inputTypeOptions?: InputTypeOptions,
-  ): ClassDecorator {
-    return (target) => {}
-} 
+): ClassDecorator {
+  return (target) => {};
+}
 
 export function InterfaceType(
-    nameOrOptions?: string | InterfaceTypeOptions,
-    interfaceOptions?: InterfaceTypeOptions,
-  ): ClassDecorator {
-      return (target) => {}
+  nameOrOptions?: string | InterfaceTypeOptions,
+  interfaceOptions?: InterfaceTypeOptions,
+): ClassDecorator {
+  return (target) => {};
 }
 
 export function ObjectType(
-    nameOrOptions?: string | ObjectTypeOptions,
-    objectTypeOptions?: ObjectTypeOptions,
-  ): ClassDecorator {
-
-    return (target) => {}
+  nameOrOptions?: string | ObjectTypeOptions,
+  objectTypeOptions?: ObjectTypeOptions,
+): ClassDecorator {
+  return (target) => {};
 }
 
 export function Scalar(
-    name: string,
-    typeFunc?: ReturnTypeFunc,
-  ): ClassDecorator {
-    return (target, key?, descriptor?) => {};
+  name: string,
+  typeFunc?: ReturnTypeFunc,
+): ClassDecorator {
+  return (target, key?, descriptor?) => {};
 }
