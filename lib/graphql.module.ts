@@ -1,8 +1,8 @@
 import { Inject, Module } from '@nestjs/common';
 import {
   DynamicModule,
-  OnModuleInit,
   OnModuleDestroy,
+  OnModuleInit,
   Provider,
 } from '@nestjs/common/interfaces';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
@@ -50,7 +50,12 @@ import {
   exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
 })
 export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
-  protected apolloServer: ApolloServerBase;
+  private _apolloServer: ApolloServerBase;
+
+  get apolloServer(): ApolloServerBase {
+    return this._apolloServer;
+  }
+
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
@@ -149,14 +154,14 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
     this.registerGqlServer(apolloOptions);
     if (this.options.installSubscriptionHandlers) {
-      this.apolloServer.installSubscriptionHandlers(
+      this._apolloServer.installSubscriptionHandlers(
         httpAdapter.getHttpServer(),
       );
     }
   }
 
   async onModuleDestroy() {
-    await this.apolloServer?.stop();
+    await this._apolloServer?.stop();
   }
 
   private registerGqlServer(apolloOptions: GqlModuleOptions) {
@@ -199,7 +204,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       bodyParserConfig,
     });
 
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private registerFastify(apolloOptions: GqlModuleOptions) {
@@ -230,7 +235,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       }),
     );
 
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
