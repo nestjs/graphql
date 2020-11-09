@@ -156,7 +156,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    this.apolloServer.stop();
+    await this.apolloServer?.stop();
   }
 
   private registerGqlServer(apolloOptions: GqlModuleOptions) {
