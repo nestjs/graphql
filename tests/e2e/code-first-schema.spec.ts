@@ -119,7 +119,7 @@ describe('Code-first - schema factory', () => {
           enumValues: [
             {
               deprecationReason: null,
-              description: null,
+              description: 'The primary direction',
               isDeprecated: false,
               name: 'Up',
             },
@@ -140,6 +140,12 @@ describe('Code-first - schema factory', () => {
               description: null,
               isDeprecated: false,
               name: 'Right',
+            },
+            {
+              deprecationReason: 'Replaced with Left or Right',
+              description: null,
+              isDeprecated: true,
+              name: 'Sideways',
             },
           ],
         }),
