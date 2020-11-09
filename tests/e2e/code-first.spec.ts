@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { ApolloServerTestClient } from 'apollo-server-testing';
-import { createTestClient } from '../utils/create-test-client';
-import { ApplicationModule } from '../code-first/app.module';
 import { gql } from 'apollo-server-express';
+import { ApolloServerTestClient } from 'apollo-server-testing';
+import { ApplicationModule } from '../code-first/app.module';
+import { createTestClient } from '../utils/create-test-client';
 
 describe('Code-first', () => {
   let app: INestApplication;
