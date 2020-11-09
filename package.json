@@ -61,6 +61,7 @@
     "@graphql-tools/schema": "6.0.13",
     "@graphql-tools/utils": "6.0.13",
     "@nestjs/mapped-types": "0.1.1",
+    "apollo-env": "0.6.5",
     "apollo-server-core": "2.16.1",
     "chokidar": "3.4.3",
     "fast-glob": "3.2.4",
