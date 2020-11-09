@@ -5,7 +5,8 @@ import { getApolloServer } from '../../lib';
 /**
  * Provides a single hook to run operations through the request pipeline,
  * enabling the most thorough tests possible without starting up an HTTP server.
- * @param testingModule the Nest.js testing module
+ *
+ * @param testingModule Nest testing module reference
  * @returns a query and mutate function that can be used to run operations against the
  * server instance. Currently, queries and mutations are the only operation
  * types supported by createTestClient.
