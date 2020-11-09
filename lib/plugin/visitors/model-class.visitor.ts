@@ -1,15 +1,15 @@
 import { compact, flatten } from 'lodash';
 import * as ts from 'typescript';
 import { HideField } from '../../decorators';
+import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
+import { getDescriptionOfNode } from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
   hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
-import { PluginOptions } from '../merge-options';
-import { getDescriptionOfNode } from '../utils/ast-utils';
 
 const metadataHostMap = new Map();
 const importsToAddPerFile = new Map<string, Set<string>>();
@@ -101,7 +101,7 @@ export class ModelClassVisitor {
       undefined,
       ts.createBlock([ts.createReturn(returnValue)], true),
     );
-    (classMutableNode as ts.ClassDeclaration).members = ts.createNodeArray([
+    (classMutableNode as any).members = ts.createNodeArray([
       ...(classMutableNode as ts.ClassDeclaration).members,
       method,
     ]);

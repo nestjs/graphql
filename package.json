@@ -55,7 +55,7 @@
     "ts-jest": "26.4.4",
     "ts-morph": "8.0.0",
     "ts-node": "9.0.0",
-    "typescript": "3.9.7"
+    "typescript": "^4.0.5"
   },
   "dependencies": {
     "@graphql-tools/merge": "6.2.5",
