@@ -117,7 +117,11 @@ export class GraphQLGatewayModule implements OnModuleInit {
       buildService,
     });
 
-    this.registerGqlServer({ ...serverOpts, gateway, subscriptions: false });
+    await this.registerGqlServer({
+      ...serverOpts,
+      gateway,
+      subscriptions: false,
+    });
 
     if (serverOpts.installSubscriptionHandlers) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
@@ -130,14 +134,14 @@ export class GraphQLGatewayModule implements OnModuleInit {
     }
   }
 
-  private registerGqlServer(apolloOptions: GqlModuleOptions) {
+  private async registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
 
     if (adapterName === 'ExpressAdapter') {
       this.registerExpress(apolloOptions);
     } else if (adapterName === 'FastifyAdapter') {
-      this.registerFastify(apolloOptions);
+      await this.registerFastify(apolloOptions);
     } else {
       throw new Error(`No support for current HttpAdapter: ${adapterName}`);
     }
@@ -170,7 +174,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     this.apolloServer = apolloServer;
   }
 
-  private registerFastify(apolloOptions: GqlModuleOptions) {
+  private async registerFastify(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage(
       'apollo-server-fastify',
       'GraphQLModule',
@@ -188,7 +192,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
       bodyParserConfig,
       path,
     } = apolloOptions;
-    app.register(
+    await app.register(
       apolloServer.createHandler({
         disableHealthCheck,
         onHealthCheck,
