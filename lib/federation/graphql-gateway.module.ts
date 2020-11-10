@@ -2,6 +2,7 @@ import {
   DynamicModule,
   Inject,
   Module,
+  OnModuleDestroy,
   OnModuleInit,
   Optional,
   Provider,
@@ -22,8 +23,12 @@ import { generateString, normalizeRoutePath } from '../utils';
 import { GRAPHQL_GATEWAY_MODULE_OPTIONS } from './federation.constants';
 
 @Module({})
-export class GraphQLGatewayModule implements OnModuleInit {
-  private apolloServer: ApolloServerBase;
+export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
+  private _apolloServer: ApolloServerBase;
+
+  get apolloServer(): ApolloServerBase {
+    return this._apolloServer;
+  }
 
   constructor(
     @Optional()
@@ -135,6 +140,10 @@ export class GraphQLGatewayModule implements OnModuleInit {
     }
   }
 
+  async onModuleDestroy() {
+    await this._apolloServer?.stop();
+  }
+
   private async registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
@@ -172,7 +181,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
       cors,
       bodyParserConfig,
     });
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private async registerFastify(apolloOptions: GqlModuleOptions) {
@@ -204,7 +213,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
       }),
     );
 
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
