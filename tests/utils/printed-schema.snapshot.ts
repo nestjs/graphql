@@ -72,10 +72,12 @@ type Query {
 
 """The basic directions"""
 enum Direction {
+  """The primary direction"""
   Up
   Down
   Left
   Right
+  Sideways @deprecated(reason: "Replaced with Left or Right")
 }
 
 """Search result description"""
@@ -118,6 +120,9 @@ enum Direction {
   Down
   Left
   Right
+  Sideways @deprecated(reason: "Replaced with Left or Right")
+
+  """The primary direction"""
   Up
 }
 
