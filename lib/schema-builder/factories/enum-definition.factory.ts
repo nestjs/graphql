@@ -18,8 +18,11 @@ export class EnumDefinitionFactory {
         name: metadata.name,
         description: metadata.description,
         values: Object.keys(enumValues).reduce((prevValue, key) => {
+          const valueMap = metadata.valuesMap[key];
           prevValue[key] = {
             value: enumValues[key],
+            description: valueMap?.description,
+            deprecationReason: valueMap?.deprecationReason,
           };
           return prevValue;
         }, {}),
@@ -28,7 +31,7 @@ export class EnumDefinitionFactory {
   }
 
   private getEnumValues(enumObject: Record<string, any>) {
-    const enumKeys = Object.keys(enumObject).filter(key =>
+    const enumKeys = Object.keys(enumObject).filter((key) =>
       isNaN(parseInt(key, 10)),
     );
     return enumKeys.reduce((prev, nextKey) => {

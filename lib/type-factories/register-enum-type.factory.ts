@@ -5,13 +5,14 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
+import { EnumMetadataValuesMap } from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
  * Interface defining options that can be passed to `registerEnumType` function.
  */
-export interface EnumOptions {
+export interface EnumOptions<T extends object = any> {
   /**
    * Name of the enum.
    */
@@ -20,6 +21,10 @@ export interface EnumOptions {
    * Description of the enum.
    */
   description?: string;
+  /**
+   * A map of options for the values of the enum.
+   */
+  valuesMap?: EnumMetadataValuesMap<T>;
 }
 
 /**
@@ -28,13 +33,14 @@ export interface EnumOptions {
  */
 export function registerEnumType<T extends object = any>(
   enumRef: T,
-  options: EnumOptions,
+  options: EnumOptions<T>,
 ) {
   LazyMetadataStorage.store(() =>
     TypeMetadataStorage.addEnumMetadata({
       ref: enumRef,
       name: options.name,
       description: options.description,
+      valuesMap: options.valuesMap || {},
     }),
   );
 }
