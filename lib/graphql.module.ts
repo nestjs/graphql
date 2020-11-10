@@ -152,7 +152,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       );
     }
 
-    this.registerGqlServer(apolloOptions);
+    await this.registerGqlServer(apolloOptions);
     if (this.options.installSubscriptionHandlers) {
       this._apolloServer.installSubscriptionHandlers(
         httpAdapter.getHttpServer(),
@@ -164,14 +164,14 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     await this._apolloServer?.stop();
   }
 
-  private registerGqlServer(apolloOptions: GqlModuleOptions) {
+  private async registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 
     if (platformName === 'express') {
       this.registerExpress(apolloOptions);
     } else if (platformName === 'fastify') {
-      this.registerFastify(apolloOptions);
+      await this.registerFastify(apolloOptions);
     } else {
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
@@ -207,7 +207,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     this._apolloServer = apolloServer;
   }
 
-  private registerFastify(apolloOptions: GqlModuleOptions) {
+  private async registerFastify(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage(
       'apollo-server-fastify',
       'GraphQLModule',
@@ -225,7 +225,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       cors,
       bodyParserConfig,
     } = this.options;
-    app.register(
+
+    await app.register(
       apolloServer.createHandler({
         disableHealthCheck,
         onHealthCheck,
