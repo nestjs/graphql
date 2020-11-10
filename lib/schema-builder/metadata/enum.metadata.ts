@@ -3,9 +3,8 @@ export interface EnumMetadataValuesMapOptions {
   description?: string;
 }
 
-export type EnumMetadataValuesMap<T extends object> = Record<
-  keyof T,
-  EnumMetadataValuesMapOptions
+export type EnumMetadataValuesMap<T extends object> = Partial<
+  Record<keyof T, EnumMetadataValuesMapOptions>
 >;
 
 export interface EnumMetadata<T extends object = any> {
