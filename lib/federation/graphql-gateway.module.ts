@@ -7,7 +7,7 @@ import {
   Provider,
 } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { HttpAdapterHost } from '@nestjs/core';
+import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { ApolloServerBase } from 'apollo-server-core';
 import { GATEWAY_BUILD_SERVICE } from '.';
 import { GRAPHQL_MODULE_ID } from '../graphql.constants';
@@ -18,7 +18,7 @@ import {
   GatewayOptionsFactory,
   GqlModuleOptions,
 } from '../interfaces';
-import { generateString } from '../utils';
+import { generateString, normalizeRoutePath } from '../utils';
 import { GRAPHQL_GATEWAY_MODULE_OPTIONS } from './federation.constants';
 
 @Module({})
@@ -33,6 +33,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
     private readonly buildService: GatewayBuildService,
     @Inject(GRAPHQL_GATEWAY_MODULE_OPTIONS)
     private readonly options: GatewayModuleOptions,
+    private readonly applicationConfig: ApplicationConfig,
   ) {}
 
   static forRoot(options: GatewayModuleOptions): DynamicModule {
@@ -158,9 +159,9 @@ export class GraphQLGatewayModule implements OnModuleInit {
       onHealthCheck,
       cors,
       bodyParserConfig,
-      path,
     } = apolloOptions;
     const app = this.httpAdapterHost.httpAdapter.getInstance();
+    const path = this.getNormalizedPath(apolloOptions);
 
     const apolloServer = new ApolloServer(apolloOptions);
     apolloServer.applyMiddleware({
@@ -183,6 +184,7 @@ export class GraphQLGatewayModule implements OnModuleInit {
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
+    const path = this.getNormalizedPath(apolloOptions);
 
     const apolloServer = new ApolloServer(apolloOptions);
     const {
@@ -190,8 +192,8 @@ export class GraphQLGatewayModule implements OnModuleInit {
       onHealthCheck,
       cors,
       bodyParserConfig,
-      path,
     } = apolloOptions;
+
     await app.register(
       apolloServer.createHandler({
         disableHealthCheck,
@@ -203,5 +205,14 @@ export class GraphQLGatewayModule implements OnModuleInit {
     );
 
     this.apolloServer = apolloServer;
+  }
+
+  private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
+    const prefix = this.applicationConfig.getGlobalPrefix();
+    const useGlobalPrefix = prefix && this.options.server?.useGlobalPrefix;
+    const gqlOptionsPath = normalizeRoutePath(apolloOptions.path);
+    return useGlobalPrefix
+      ? normalizeRoutePath(prefix) + gqlOptionsPath
+      : gqlOptionsPath;
   }
 }
