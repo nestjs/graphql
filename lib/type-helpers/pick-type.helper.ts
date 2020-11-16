@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
+  inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
@@ -15,7 +16,13 @@ export function PickType<T, K extends keyof T>(
 ): Type<Pick<T, typeof keys[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
-  abstract class PickObjectType {}
+  const isInheritedPredicate = (propertyKey: string) =>
+    keys.includes(propertyKey as K);
+  abstract class PickObjectType {
+    constructor() {
+      inheritPropertyInitializers(this, classRef, isInheritedPredicate);
+    }
+  }
   decoratorFactory({ isAbstract: true })(PickObjectType);
   if (decorator) {
     decorator({ isAbstract: true })(PickObjectType);
@@ -23,8 +30,6 @@ export function PickType<T, K extends keyof T>(
     decoratorFactory({ isAbstract: true })(PickObjectType);
   }
 
-  const isInheritedPredicate = (propertyKey: string) =>
-    keys.includes(propertyKey as K);
   inheritValidationMetadata(classRef, PickObjectType, isInheritedPredicate);
   inheritTransformationMetadata(classRef, PickObjectType, isInheritedPredicate);
 

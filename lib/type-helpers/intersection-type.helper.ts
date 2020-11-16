@@ -1,5 +1,6 @@
 import { Type } from '@nestjs/common';
 import {
+  inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
@@ -18,7 +19,12 @@ export function IntersectionType<A, B>(
   const { fields: fieldsB } = getFieldsAndDecoratorForType(classBRef);
   const fields = [...fieldsA, ...fieldsB];
 
-  abstract class IntersectionObjectType {}
+  abstract class IntersectionObjectType {
+    constructor() {
+      inheritPropertyInitializers(this, classARef);
+      inheritPropertyInitializers(this, classBRef);
+    }
+  }
   if (decorator) {
     decorator({ isAbstract: true })(IntersectionObjectType);
   } else {

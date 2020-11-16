@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
   applyIsOptionalDecorator,
+  inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
@@ -16,7 +17,11 @@ export function PartialType<T>(
 ): Type<Partial<T>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
-  abstract class PartialObjectType {}
+  abstract class PartialObjectType {
+    constructor() {
+      inheritPropertyInitializers(this, classRef);
+    }
+  }
   if (decorator) {
     decorator({ isAbstract: true })(PartialObjectType);
   } else {
