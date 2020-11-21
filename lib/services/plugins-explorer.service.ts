@@ -20,7 +20,9 @@ export class PluginsExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    return this.flatMap<any>(modules, instance => this.filterPlugins(instance));
+    return this.flatMap<any>(modules, (instance) =>
+      this.filterPlugins(instance),
+    );
   }
 
   filterPlugins<T = any>(wrapper: InstanceWrapper<T>) {

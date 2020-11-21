@@ -21,7 +21,7 @@ export class BaseExplorerService {
   ): Module[] {
     const modules = [...modulesContainer.values()];
     return modules.filter(({ metatype }) =>
-      include.some(item => item === metatype),
+      include.some((item) => item === metatype),
     );
   }
 
@@ -30,9 +30,9 @@ export class BaseExplorerService {
     callback: (instance: InstanceWrapper, moduleRef: Module) => T | T[],
   ): T[] {
     const invokeMap = () => {
-      return modules.map(moduleRef => {
+      return modules.map((moduleRef) => {
         const providers = [...moduleRef.providers.values()];
-        return providers.map(wrapper => callback(wrapper, moduleRef));
+        return providers.map((wrapper) => callback(wrapper, moduleRef));
       });
     };
     return flattenDeep(invokeMap()).filter(identity);

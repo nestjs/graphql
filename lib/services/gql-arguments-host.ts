@@ -8,7 +8,8 @@ export interface GraphQLArgumentsHost extends ArgumentsHost {
   getContext<T = any>(): T;
 }
 
-export class GqlArgumentsHost extends ExecutionContextHost
+export class GqlArgumentsHost
+  extends ExecutionContextHost
   implements GraphQLArgumentsHost {
   static create(context: ArgumentsHost): GqlArgumentsHost {
     const type = context.getType();

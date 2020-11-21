@@ -5,7 +5,8 @@ import { GraphQLArgumentsHost } from './gql-arguments-host';
 export type GqlContextType = 'graphql' | ContextType;
 export type GraphQLExecutionContext = GqlExecutionContext;
 
-export class GqlExecutionContext extends ExecutionContextHost
+export class GqlExecutionContext
+  extends ExecutionContextHost
   implements GraphQLArgumentsHost {
   static create(context: ExecutionContext): GqlExecutionContext {
     const type = context.getType();

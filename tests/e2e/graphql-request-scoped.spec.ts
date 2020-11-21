@@ -22,7 +22,7 @@ describe('GraphQL request scoped', () => {
     app = module.createNestApplication();
     await app.init();
 
-    const performHttpCall = end =>
+    const performHttpCall = (end) =>
       request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -44,9 +44,9 @@ describe('GraphQL request scoped', () => {
           end();
         });
 
-    await new Promise(resolve => performHttpCall(resolve));
-    await new Promise(resolve => performHttpCall(resolve));
-    await new Promise(resolve => performHttpCall(resolve));
+    await new Promise((resolve) => performHttpCall(resolve));
+    await new Promise((resolve) => performHttpCall(resolve));
+    await new Promise((resolve) => performHttpCall(resolve));
   });
 
   it(`should create resolver for each incoming request`, () => {

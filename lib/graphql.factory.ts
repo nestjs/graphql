@@ -234,6 +234,9 @@ export class GraphQLFactory {
     const definitionsGeneratorOptions: DefinitionsGeneratorOptions = {
       emitTypenameField: options.definitions.emitTypenameField,
       skipResolverArgs: options.definitions.skipResolverArgs,
+      defaultScalarType: options.definitions.defaultScalarType,
+      customScalarTypeMapping: options.definitions.customScalarTypeMapping,
+      additionalHeader: options.definitions.additionalHeader,
     };
     const tsFile = await this.graphqlAstExplorer.explore(
       gql`

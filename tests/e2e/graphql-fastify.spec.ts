@@ -14,10 +14,7 @@ describe('GraphQL with fastify', () => {
 
     app = module.createNestApplication(new FastifyAdapter());
     await app.init();
-    await app
-      .getHttpAdapter()
-      .getInstance()
-      .ready();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   it(`should return query result`, () => {

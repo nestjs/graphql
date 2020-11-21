@@ -35,7 +35,7 @@ describe('Request scope', () => {
 
   describe('when one service is request scoped', () => {
     beforeAll(async () => {
-      const performHttpCall = end =>
+      const performHttpCall = (end) =>
         request(server)
           .post('/graphql')
           .send({
@@ -54,9 +54,9 @@ describe('Request scope', () => {
             if (err) return end(err);
             end();
           });
-      await new Promise(resolve => performHttpCall(resolve));
-      await new Promise(resolve => performHttpCall(resolve));
-      await new Promise(resolve => performHttpCall(resolve));
+      await new Promise((resolve) => performHttpCall(resolve));
+      await new Promise((resolve) => performHttpCall(resolve));
+      await new Promise((resolve) => performHttpCall(resolve));
     });
 
     it(`should create resolver for each request`, async () => {
