@@ -46,6 +46,25 @@ export interface DefinitionsGeneratorOptions {
    * @default false
    */
   skipResolverArgs?: boolean;
+
+  /**
+   * If provided, specifies a default generated TypeScript type for custom scalars.
+   * @default 'any'
+   */
+  defaultScalarType?: string;
+
+  /**
+   * If provided, specifies a mapping of types to use for custom scalars
+   * @default undefined
+   */
+  customScalarTypeMapping?: Record<string, string | { name: string }>;
+
+  /**
+   * If provided, specifies a custom header to add after the
+   * to the output file (eg. for custom type imports or comments)
+   * @default undefined
+   */
+  additionalHeader?: string;
 }
 
 @Injectable()
@@ -86,7 +105,10 @@ export class GraphQLAstExplorer {
       ),
     );
 
-    tsFile.insertText(0, DEFINITIONS_FILE_HEADER);
+    const header = options.additionalHeader
+      ? `${DEFINITIONS_FILE_HEADER}\n${options.additionalHeader}\n\n`
+      : DEFINITIONS_FILE_HEADER;
+    tsFile.insertText(0, header);
     return tsFile;
   }
 
@@ -113,7 +135,7 @@ export class GraphQLAstExplorer {
         return this.addObjectTypeDefinition(item, tsFile, 'interface', options);
       case 'ScalarTypeDefinition':
       case 'ScalarTypeExtension':
-        return this.addScalarDefinition(item, tsFile);
+        return this.addScalarDefinition(item, tsFile, options);
       case 'EnumTypeDefinition':
       case 'EnumTypeExtension':
         return this.addEnumDefinition(item, tsFile);
@@ -348,14 +370,20 @@ export class GraphQLAstExplorer {
   addScalarDefinition(
     item: ScalarTypeDefinitionNode | ScalarTypeExtensionNode,
     tsFile: SourceFile,
+    options: DefinitionsGeneratorOptions,
   ) {
     const name = get(item, 'name.value');
     if (!name || name === 'Date') {
       return;
     }
+
+    const typeMapping = options.customScalarTypeMapping?.[name];
+    const mappedTypeName =
+      typeof typeMapping === 'string' ? typeMapping : typeMapping?.name;
+
     tsFile.addTypeAlias({
       name,
-      type: 'any',
+      type: mappedTypeName ?? options.defaultScalarType ?? 'any',
       isExported: true,
     });
   }

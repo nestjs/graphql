@@ -35,6 +35,9 @@ export class GraphQLDefinitionsFactory {
     const definitionsGeneratorOptions: DefinitionsGeneratorOptions = {
       emitTypenameField: options.emitTypenameField,
       skipResolverArgs: options.skipResolverArgs,
+      defaultScalarType: options.defaultScalarType,
+      customScalarTypeMapping: options.customScalarTypeMapping,
+      additionalHeader: options.additionalHeader,
     };
 
     if (options.watch) {

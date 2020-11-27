@@ -4,7 +4,7 @@ export function getQuery(
   introspectionSchema: IntrospectionSchema,
 ): IntrospectionObjectType {
   return introspectionSchema.types.find(
-    item => item.name === introspectionSchema.queryType.name,
+    (item) => item.name === introspectionSchema.queryType.name,
   ) as IntrospectionObjectType;
 }
 
@@ -12,7 +12,7 @@ export function getMutation(
   introspectionSchema: IntrospectionSchema,
 ): IntrospectionObjectType {
   return introspectionSchema.types.find(
-    item => item.name === introspectionSchema.mutationType.name,
+    (item) => item.name === introspectionSchema.mutationType.name,
   ) as IntrospectionObjectType;
 }
 
@@ -20,7 +20,7 @@ export function getSubscription(
   introspectionSchema: IntrospectionSchema,
 ): IntrospectionObjectType {
   return introspectionSchema.types.find(
-    item => item.name === introspectionSchema.subscriptionType.name,
+    (item) => item.name === introspectionSchema.subscriptionType.name,
   ) as IntrospectionObjectType;
 }
 
@@ -29,7 +29,7 @@ export function getQueryByName(
   name: string,
 ) {
   const queryType = getQuery(introspectionSchema);
-  return queryType.fields.find(item => item.name === name);
+  return queryType.fields.find((item) => item.name === name);
 }
 
 export function getMutationByName(
@@ -37,7 +37,7 @@ export function getMutationByName(
   name: string,
 ) {
   const mutationType = getMutation(introspectionSchema);
-  return mutationType.fields.find(item => item.name === name);
+  return mutationType.fields.find((item) => item.name === name);
 }
 
 export function getSubscriptionByName(
@@ -45,5 +45,5 @@ export function getSubscriptionByName(
   name: string,
 ) {
   const subscriptionType = getSubscription(introspectionSchema);
-  return subscriptionType.fields.find(item => item.name === name);
+  return subscriptionType.fields.find((item) => item.name === name);
 }
