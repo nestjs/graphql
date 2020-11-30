@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { GraphQLFieldConfigArgumentMap } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
+import { CannotDetermineArgTypeError } from '../errors/cannot-determine-arg-type.error';
 import { getDefaultValue } from '../helpers/get-default-value.helper';
 import { ClassMetadata, MethodArgsMetadata } from '../metadata';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage';
@@ -34,6 +35,12 @@ export class ArgsFactory {
         const argumentType = argumentTypes.find(
           (item) => item.target === hostType,
         );
+        if (!argumentType) {
+          throw new CannotDetermineArgTypeError(
+            (hostType as Function).name || (hostType as any),
+            param,
+          );
+        }
 
         let parent = Object.getPrototypeOf(argumentType.target);
         while (!isUndefined(parent.prototype)) {
