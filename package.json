@@ -40,7 +40,7 @@
     "apollo-server-testing": "2.16.1",
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
-    "eslint": "7.14.0",
+    "eslint": "7.15.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.22.1",
     "graphql": "15.4.0",
