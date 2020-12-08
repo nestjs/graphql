@@ -63,7 +63,6 @@
     "@graphql-tools/utils": "6.2.4",
     "@nestjs/mapped-types": "0.1.1",
     "apollo-env": "0.6.5",
-    "apollo-server-core": "2.16.1",
     "chokidar": "3.4.3",
     "fast-glob": "3.2.4",
     "iterall": "1.2.2",
@@ -76,7 +75,8 @@
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "graphql": "^14.1.1 || ^15.0.0",
-    "reflect-metadata": "^0.1.12"
+    "reflect-metadata": "^0.1.12",
+    "apollo-server-core": "2.19.0",
   },
   "optionalDependencies": {
     "@apollo/gateway": "^0.17.0",
