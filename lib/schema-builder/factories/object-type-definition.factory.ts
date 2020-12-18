@@ -4,8 +4,11 @@ import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
   GraphQLObjectType,
+  GraphQLResolveInfo,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
+import { FieldMiddleware } from '../../interfaces/field-middleware.interface';
+import { PropertyMetadata } from '../metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
@@ -119,22 +122,19 @@ export class ObjectTypeDefinitionFactory {
       }
       properties = properties.concat(metadata.properties);
 
-      properties.forEach((field) => {
+      properties.forEach((field: PropertyMetadata) => {
         const type = this.outputTypeFactory.create(
           field.name,
           field.typeFn(),
           options,
           field.options,
         );
+        const resolve = this.createFieldResolver(field);
+
         fields[field.schemaName] = {
           type,
           args: this.argsFactory.create(field.methodArgs, options),
-          resolve: (root: object) => {
-            const value = root[field.name];
-            return typeof value === 'undefined'
-              ? field.options.defaultValue
-              : value;
-          },
+          resolve,
           description: field.description,
           deprecationReason: field.deprecationReason,
           /**
@@ -166,6 +166,62 @@ export class ObjectTypeDefinitionFactory {
       }
 
       return fields;
+    };
+  }
+
+  private createFieldResolver<
+    TSource extends object = any,
+    TContext = {},
+    TArgs = { [argName: string]: any },
+    TOutput = any
+  >(field: PropertyMetadata) {
+    const rootFieldResolver = (root: object) => {
+      const value = root[field.name];
+      return typeof value === 'undefined' ? field.options.defaultValue : value;
+    };
+    if (!field.middleware || field.middleware?.length === 0) {
+      return rootFieldResolver;
+    }
+
+    return (
+      root: TSource,
+      context: TContext,
+      args: TArgs,
+      info: GraphQLResolveInfo,
+    ): TOutput | Promise<TOutput> => {
+      let index = -1;
+
+      const run = async (currentIndex: number): Promise<TOutput> => {
+        if (currentIndex <= index) {
+          throw new Error('next() called multiple times');
+        }
+
+        index = currentIndex;
+        let middlewareFn: FieldMiddleware;
+
+        if (currentIndex === field.middleware.length) {
+          middlewareFn = () => rootFieldResolver(root);
+        } else {
+          middlewareFn = field.middleware[currentIndex];
+        }
+
+        let tempResult: TOutput = undefined;
+        const result = await middlewareFn(
+          {
+            info,
+            args,
+            context,
+            source: root,
+          },
+          async () => {
+            tempResult = await run(currentIndex + 1);
+            return tempResult;
+          },
+        );
+
+        return result !== undefined ? result : tempResult;
+      };
+      return run(0);
     };
   }
 }

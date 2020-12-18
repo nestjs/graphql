@@ -75,6 +75,7 @@ describe('Code-first', () => {
         {
           recipes {
             id
+            description
             ingredients {
               name
             }
@@ -89,6 +90,7 @@ describe('Code-first', () => {
       recipes: [
         {
           id: '1',
+          description: 'Description: Calzone',
           ingredients: [
             {
               name: 'cherry',
@@ -100,6 +102,7 @@ describe('Code-first', () => {
         },
         {
           id: '2',
+          description: 'Placeholder',
           ingredients: [
             {
               name: 'cherry',

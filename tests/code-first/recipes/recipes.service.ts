@@ -27,6 +27,7 @@ export class RecipesService {
       new Recipe({
         id: '1',
         title: 'Pizza',
+        description: 'Calzone',
         creationDate: new Date(),
       }),
       new Recipe({

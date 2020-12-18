@@ -1,4 +1,11 @@
-import { Field, ID, InterfaceType, ObjectType } from '../../../../lib';
+import {
+  Field,
+  ID,
+  InterfaceType,
+  MiddlewareContext,
+  NextFn,
+  ObjectType,
+} from '../../../../lib';
 import { METADATA_FACTORY_NAME } from '../../../../lib/plugin/plugin-constants';
 
 @InterfaceType()
@@ -20,7 +27,15 @@ export abstract class IRecipe extends Base {
 
 @ObjectType({ implements: IRecipe, description: 'recipe object type' })
 export class Recipe extends IRecipe {
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    middleware: [
+      async (ctx: MiddlewareContext, next: NextFn) => {
+        const value = await next();
+        return value ? 'Description: ' + value : 'Placeholder';
+      },
+    ],
+  })
   description?: string;
 
   @Field()
