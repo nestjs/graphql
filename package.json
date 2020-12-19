@@ -41,7 +41,7 @@
     "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "eslint": "7.16.0",
-    "eslint-config-prettier": "7.0.0",
+    "eslint-config-prettier": "7.1.0",
     "eslint-plugin-import": "2.22.1",
     "graphql": "15.4.0",
     "husky": "4.3.6",
