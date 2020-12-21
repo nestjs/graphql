@@ -65,6 +65,11 @@ export class RecipesResolver {
   async addRecipe(
     @Args('newRecipeData') newRecipeData: NewRecipeInput,
   ): Promise<Recipe> {
+    console.log(newRecipeData);
+    if ('id' in newRecipeData) {
+      throw new Error('id should not be in `data`');
+    }
+    
     const recipe = await this.recipesService.create(newRecipeData);
     pubSub.publish('recipeAdded', { recipeAdded: recipe });
     return recipe;

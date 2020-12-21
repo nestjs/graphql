@@ -13,8 +13,8 @@ export class RecipesService {
 
   async create(data: NewRecipeInput): Promise<Recipe> {
     return {
-      id: 3,
       ...data,
+      id: data._id,
     } as any;
   }
 

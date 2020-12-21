@@ -23,7 +23,7 @@ describe('GraphQL - Pipes', () => {
         operationName: null,
         variables: {},
         query:
-          'mutation {\n  addRecipe(newRecipeData: {title: "test", ingredients: []}) {\n    id\n  }\n}\n',
+          'mutation {\n  addRecipe(newRecipeData: {id: "foo", title: "test", ingredients: []}) {\n    id\n  }\n}\n',
       })
       .expect(200, {
         data: null,
@@ -53,6 +53,23 @@ describe('GraphQL - Pipes', () => {
             path: ['addRecipe'],
           },
         ],
+      });
+  });
+
+  it(`should not throw if it validates`, () => {
+    const description = "foo".repeat(50);
+
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query:
+          `mutation {\n  addRecipe(newRecipeData: {id: "foo", title: "test", description: "${description}" ingredients: []}) {\n    id\n  }\n}\n`,
+      })
+      .expect(200, {
+        data: null,
+        
       });
   });
 

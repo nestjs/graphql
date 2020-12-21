@@ -564,6 +564,16 @@ describe('Code-first - schema factory', () => {
           inputFields: [
             {
               defaultValue: null,
+              description: null,
+              name: 'id',
+              type: {
+                kind: 'NON_NULL',
+                name: null,
+                ofType: { kind: 'SCALAR', name: 'String', ofType: null },
+              },
+            },
+            {
+              defaultValue: null,
               description: 'recipe title',
               name: 'title',
               type: {

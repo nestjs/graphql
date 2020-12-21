@@ -90,6 +90,8 @@ type Mutation {
 
 """new recipe input"""
 input NewRecipeInput {
+  id: String!
+
   """recipe title"""
   title: String!
   description: String
@@ -148,6 +150,7 @@ type Mutation {
 """new recipe input"""
 input NewRecipeInput {
   description: String
+  id: String!
   ingredients: [String!]!
 
   """recipe title"""

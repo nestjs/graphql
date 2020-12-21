@@ -4,6 +4,9 @@ import { Field, InputType } from '../../../../lib';
 
 @InputType({ description: 'new recipe input' })
 export class NewRecipeInput {
+  @Field({ name: 'id' })
+  _id: string;
+  
   @Field({ description: 'recipe title' })
   @MaxLength(30)
   title: string;
