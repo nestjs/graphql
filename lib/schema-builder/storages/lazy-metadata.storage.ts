@@ -1,33 +1,65 @@
 import { flatten, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 
-interface LazyMetadataHost {
-  func: Function;
-  target?: Type<unknown>;
-}
+const NO_TARGET_METADATA = Symbol('NO_TARGET_METADATA');
+const FIELD_LAZY_METADATA = Symbol('FIELD_LAZY_METADATA');
 
 export class LazyMetadataStorageHost {
-  private readonly storage = new Array<LazyMetadataHost>();
+  private readonly lazyMetadataByTarget = new Map<
+    Type<unknown> | symbol,
+    Function[]
+  >();
 
   store(func: Function): void;
   store(target: Type<unknown>, func: Function): void;
-  store(targetOrFn: Type<unknown> | Function, func?: Function) {
-    if (func) {
-      this.storage.push({ target: targetOrFn as Type<unknown>, func });
+  store(
+    target: Type<unknown>,
+    func: Function,
+    options?: { isField: boolean },
+  ): void;
+  store(
+    targetOrFn: Type<unknown> | Function,
+    func?: Function,
+    options?: { isField: boolean },
+  ) {
+    if (func && options?.isField) {
+      this.updateStorage(FIELD_LAZY_METADATA, func);
+      this.updateStorage(targetOrFn as Type<unknown>, func);
+    } else if (func) {
+      this.updateStorage(targetOrFn as Type<unknown>, func);
     } else {
-      this.storage.push({ func: targetOrFn });
+      this.updateStorage(NO_TARGET_METADATA, targetOrFn);
     }
   }
 
-  load(types: Function[] = []) {
+  load(
+    types: Function[] = [],
+    options: {
+      skipNoTargetMetadata?: boolean;
+      skipFieldLazyMetadata?: boolean;
+    } = {
+      skipNoTargetMetadata: false,
+      skipFieldLazyMetadata: false,
+    },
+  ) {
     types = this.concatPrototypes(types);
-    this.storage.forEach(({ func, target }) => {
-      if (target && types.includes(target)) {
-        func();
-      } else if (!target) {
-        func();
-      }
-    });
+
+    let loadersToExecute = types
+      .map((target) => this.lazyMetadataByTarget.get(target as Type<unknown>))
+      .filter((metadata) => metadata)
+      .flat();
+
+    if (!options.skipNoTargetMetadata) {
+      loadersToExecute = loadersToExecute.concat(
+        ...(this.lazyMetadataByTarget.get(NO_TARGET_METADATA) || []),
+      );
+    }
+    if (!options.skipFieldLazyMetadata) {
+      loadersToExecute = loadersToExecute.concat(
+        ...(this.lazyMetadataByTarget.get(FIELD_LAZY_METADATA) || []),
+      );
+    }
+    loadersToExecute.forEach((func) => func());
   }
 
   private concatPrototypes(types: Function[]): Function[] {
@@ -49,6 +81,15 @@ export class LazyMetadataStorageHost {
       });
 
     return flatten(typesWithPrototypes);
+  }
+
+  private updateStorage(key: symbol | Type<unknown>, func: Function) {
+    const existingArray = this.lazyMetadataByTarget.get(key);
+    if (existingArray) {
+      existingArray.push(func);
+    } else {
+      this.lazyMetadataByTarget.set(key, [func]);
+    }
   }
 }
 

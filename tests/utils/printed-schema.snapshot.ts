@@ -54,8 +54,6 @@ type Category {
 }
 
 type Query {
-  move(direction: Direction!): Direction!
-
   """get recipe by id"""
   recipe(
     """recipe id"""
@@ -68,7 +66,11 @@ type Query {
     skip: Int = 0
     take: Int = 25
   ): [Recipe!]!
+  move(direction: Direction!): Direction!
 }
+
+"""Search result description"""
+union SearchResultUnion = Ingredient | Recipe
 
 """The basic directions"""
 enum Direction {
@@ -79,9 +81,6 @@ enum Direction {
   Right
   Sideways @deprecated(reason: "Replaced with Left or Right")
 }
-
-"""Search result description"""
-union SearchResultUnion = Ingredient | Recipe
 
 type Mutation {
   addRecipe(newRecipeData: NewRecipeInput!): Recipe!

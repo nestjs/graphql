@@ -19,13 +19,18 @@ export function getFieldsAndDecoratorForType<T>(objType: Type<T>) {
     throw new UnableToFindFieldsError(objType.name);
   }
 
-  LazyMetadataStorage.load([objType]);
-  TypeMetadataStorage.compile();
+  LazyMetadataStorage.load([objType], {
+    skipNoTargetMetadata: true,
+    skipFieldLazyMetadata: true,
+  });
 
   const [
     classMetadata,
     decoratorFactory,
   ] = getClassMetadataAndFactoryByTargetAndType(classType, objType);
+
+  TypeMetadataStorage.loadClassPluginMetadata([classMetadata]);
+  TypeMetadataStorage.compileClassMetadata([classMetadata]);
 
   let fields = classMetadata?.properties;
   if (!fields) {

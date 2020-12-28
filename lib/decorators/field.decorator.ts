@@ -5,6 +5,7 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
+import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { Complexity, FieldMiddleware } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
@@ -131,6 +132,10 @@ export function addFieldMetadata(
   if (loadEagerly) {
     applyMetadataFn();
   } else {
-    LazyMetadataStorage.store(applyMetadataFn);
+    LazyMetadataStorage.store(
+      prototype.constructor as Type<unknown>,
+      applyMetadataFn,
+      { isField: true },
+    );
   }
 }

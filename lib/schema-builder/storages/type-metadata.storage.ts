@@ -262,7 +262,7 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  private compileClassMetadata(metadata: ClassMetadata[]) {
+  compileClassMetadata(metadata: ClassMetadata[]) {
     metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
 
