@@ -15,6 +15,9 @@ export function ArgsType(): ClassDecorator {
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addArgsMetadata(metadata),
     );
+    // This function must be called eagerly to allow resolvers
+    // accessing the "name" property
+    TypeMetadataStorage.addArgsMetadata(metadata);
     addClassTypeMetadata(target, ClassType.ARGS);
   };
 }

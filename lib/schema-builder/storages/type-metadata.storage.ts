@@ -226,7 +226,7 @@ export class TypeMetadataStorageHost {
 
   loadClassPluginMetadata(metadata: ClassMetadata[]) {
     metadata
-      .filter((item) => item.target)
+      .filter((item) => item?.target)
       .forEach((item) => this.applyPluginMetadata(item.target.prototype));
   }
 
