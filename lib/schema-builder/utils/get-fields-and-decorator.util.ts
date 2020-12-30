@@ -20,7 +20,6 @@ export function getFieldsAndDecoratorForType<T>(objType: Type<T>) {
   }
 
   LazyMetadataStorage.load([objType], {
-    skipNoTargetMetadata: true,
     skipFieldLazyMetadata: true,
   });
 

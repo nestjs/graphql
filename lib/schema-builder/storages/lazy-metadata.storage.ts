@@ -35,10 +35,8 @@ export class LazyMetadataStorageHost {
   load(
     types: Function[] = [],
     options: {
-      skipNoTargetMetadata?: boolean;
       skipFieldLazyMetadata?: boolean;
     } = {
-      skipNoTargetMetadata: false,
       skipFieldLazyMetadata: false,
     },
   ) {
@@ -49,11 +47,10 @@ export class LazyMetadataStorageHost {
       .filter((metadata) => metadata)
       .flat();
 
-    if (!options.skipNoTargetMetadata) {
-      loadersToExecute = loadersToExecute.concat(
-        ...(this.lazyMetadataByTarget.get(NO_TARGET_METADATA) || []),
-      );
-    }
+    loadersToExecute = loadersToExecute.concat(
+      ...(this.lazyMetadataByTarget.get(NO_TARGET_METADATA) || []),
+    );
+
     if (!options.skipFieldLazyMetadata) {
       loadersToExecute = loadersToExecute.concat(
         ...(this.lazyMetadataByTarget.get(FIELD_LAZY_METADATA) || []),
