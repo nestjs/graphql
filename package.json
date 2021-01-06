@@ -69,7 +69,7 @@
     "iterall": "1.2.2",
     "lodash": "4.17.20",
     "normalize-path": "3.0.0",
-    "tslib": "2.0.3",
+    "tslib": "2.1.0",
     "uuid": "8.3.2"
   },
   "peerDependencies": {
