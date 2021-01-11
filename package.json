@@ -39,7 +39,7 @@
     "apollo-server-fastify": "2.16.1",
     "apollo-server-testing": "2.16.1",
     "class-transformer": "0.3.1",
-    "class-validator": "0.12.2",
+    "class-validator": "0.13.0",
     "eslint": "7.17.0",
     "eslint-config-prettier": "7.1.0",
     "eslint-plugin-import": "2.22.1",
