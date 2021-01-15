@@ -64,7 +64,7 @@
     "@nestjs/mapped-types": "0.2.0",
     "apollo-env": "0.6.5",
     "apollo-server-core": "2.16.1",
-    "chokidar": "3.5.0",
+    "chokidar": "3.5.1",
     "fast-glob": "3.2.4",
     "iterall": "1.2.2",
     "lodash": "4.17.20",
