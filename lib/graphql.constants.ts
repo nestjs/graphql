@@ -1,6 +1,8 @@
 export const RESOLVER_TYPE_METADATA = 'graphql:resolver_type';
 export const RESOLVER_NAME_METADATA = 'graphql:resolver_name';
 export const RESOLVER_PROPERTY_METADATA = 'graphql:resolve_property';
+export const FIELD_RESOLVER_MIDDLEWARE_METADATA =
+  'graphql:field_resolver_middleware';
 export const RESOLVER_DELEGATE_METADATA = 'graphql:delegate_property';
 export const SCALAR_NAME_METADATA = 'graphql:scalar_name';
 export const SCALAR_TYPE_METADATA = 'graphql:scalar_type';

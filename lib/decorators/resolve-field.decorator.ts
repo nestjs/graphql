@@ -1,10 +1,11 @@
 import { SetMetadata, Type } from '@nestjs/common';
 import { isFunction, isObject } from '@nestjs/common/utils/shared.utils';
 import {
+  FIELD_RESOLVER_MIDDLEWARE_METADATA,
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
 } from '../graphql.constants';
-import { Complexity } from '../interfaces';
+import { Complexity, FieldMiddleware } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import {
   GqlTypeReference,
@@ -35,6 +36,10 @@ export interface ResolveFieldOptions extends BaseTypeOptions {
    * Field complexity options.
    */
   complexity?: Complexity;
+  /**
+   * Array of middleware to apply.
+   */
+  middleware?: FieldMiddleware[];
 }
 
 /**
@@ -74,6 +79,10 @@ export function ResolveField(
 
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
     SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
+    SetMetadata(
+      FIELD_RESOLVER_MIDDLEWARE_METADATA,
+      (options as ResolveFieldOptions)?.middleware,
+    )(target, key, descriptor);
 
     options = isObject(options)
       ? {

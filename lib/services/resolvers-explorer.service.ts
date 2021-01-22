@@ -14,12 +14,15 @@ import { Module } from '@nestjs/core/injector/module';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
+import { GraphQLResolveInfo } from 'graphql';
 import { head, identity } from 'lodash';
 import { GqlModuleOptions, SubscriptionOptions } from '..';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { Resolver } from '../enums/resolver.enum';
 import { GqlParamsFactory } from '../factories/params.factory';
 import {
+  FIELD_RESOLVER_MIDDLEWARE_METADATA,
+  FIELD_TYPENAME,
   GRAPHQL_MODULE_OPTIONS,
   PARAM_ARGS_METADATA,
   SUBSCRIPTION_OPTIONS_METADATA,
@@ -27,6 +30,7 @@ import {
 } from '../graphql.constants';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 import { createAsyncIterator } from '../utils/async-iterator.util';
+import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
@@ -134,13 +138,14 @@ export class ResolversExplorerService extends BaseExplorerService {
     ].some((type) => type === resolver.type);
 
     const fieldResolverEnhancers = this.gqlOptions.fieldResolverEnhancers || [];
-    const contextOptions = isPropertyResolver
-      ? {
-          guards: fieldResolverEnhancers.includes('guards'),
-          filters: fieldResolverEnhancers.includes('filters'),
-          interceptors: fieldResolverEnhancers.includes('interceptors'),
-        }
-      : undefined;
+    const contextOptions =
+      isPropertyResolver && resolver.methodName !== FIELD_TYPENAME
+        ? {
+            guards: fieldResolverEnhancers.includes('guards'),
+            filters: fieldResolverEnhancers.includes('filters'),
+            interceptors: fieldResolverEnhancers.includes('interceptors'),
+          }
+        : undefined;
 
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
@@ -188,7 +193,13 @@ export class ResolversExplorerService extends BaseExplorerService {
         );
         return callback(...args);
       };
-      return resolverCallback;
+      return isPropertyResolver
+        ? this.registerFieldMiddlewareIfExists(
+            resolverCallback,
+            instance,
+            resolver.methodName,
+          )
+        : resolverCallback;
     }
     const resolverCallback = this.externalContextCreator.create<
       Record<number, ParamMetadata>,
@@ -204,7 +215,14 @@ export class ResolversExplorerService extends BaseExplorerService {
       contextOptions,
       'graphql',
     );
-    return resolverCallback;
+
+    return isPropertyResolver
+      ? this.registerFieldMiddlewareIfExists(
+          resolverCallback,
+          instance,
+          resolver.methodName,
+        )
+      : resolverCallback;
   }
 
   createSubscriptionMetadata(
@@ -259,11 +277,9 @@ export class ResolversExplorerService extends BaseExplorerService {
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
     const coreModuleArray = [...this.modulesContainer.entries()]
       .filter(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         ([key, { metatype }]) =>
           metatype && metatype.name === InternalCoreModule.name,
       )
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(([key, value]) => value);
 
     const coreModuleRef = head(coreModuleArray);
@@ -275,5 +291,36 @@ export class ResolversExplorerService extends BaseExplorerService {
       instance: request,
       isResolved: true,
     });
+  }
+
+  private registerFieldMiddlewareIfExists<
+    TSource extends object = any,
+    TContext = {},
+    TArgs = { [argName: string]: any },
+    TOutput = any
+  >(resolverFn: Function, instance: object, methodKey: string) {
+    const fieldMiddleware = Reflect.getMetadata(
+      FIELD_RESOLVER_MIDDLEWARE_METADATA,
+      instance[methodKey],
+    );
+
+    const middlewareFunctions = (
+      this.gqlOptions?.buildSchemaOptions?.fieldMiddleware || []
+    ).concat(fieldMiddleware || []);
+
+    if (middlewareFunctions?.length === 0) {
+      return resolverFn;
+    }
+
+    const originalResolveFnFactory = (
+      ...args: [TSource, TArgs, TContext, GraphQLResolveInfo]
+    ) => () => resolverFn(...args);
+
+    return decorateFieldResolverWithMiddleware<
+      TSource,
+      TContext,
+      TArgs,
+      TOutput
+    >(originalResolveFnFactory, middlewareFunctions);
   }
 }

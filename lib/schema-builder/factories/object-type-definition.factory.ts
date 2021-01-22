@@ -4,10 +4,9 @@ import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
   GraphQLObjectType,
-  GraphQLResolveInfo,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
-import { FieldMiddleware } from '../../interfaces/field-middleware.interface';
+import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util';
 import { PropertyMetadata } from '../metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
@@ -185,46 +184,14 @@ export class ObjectTypeDefinitionFactory {
     if (middlewareFunctions?.length === 0) {
       return rootFieldResolver;
     }
+    const rootResolveFnFactory = (root: TSource) => () =>
+      rootFieldResolver(root);
 
-    return (
-      root: TSource,
-      context: TContext,
-      args: TArgs,
-      info: GraphQLResolveInfo,
-    ): TOutput | Promise<TOutput> => {
-      let index = -1;
-
-      const run = async (currentIndex: number): Promise<TOutput> => {
-        if (currentIndex <= index) {
-          throw new Error('next() called multiple times');
-        }
-
-        index = currentIndex;
-        let middlewareFn: FieldMiddleware;
-
-        if (currentIndex === middlewareFunctions.length) {
-          middlewareFn = () => rootFieldResolver(root);
-        } else {
-          middlewareFn = middlewareFunctions[currentIndex];
-        }
-
-        let tempResult: TOutput = undefined;
-        const result = await middlewareFn(
-          {
-            info,
-            args,
-            context,
-            source: root,
-          },
-          async () => {
-            tempResult = await run(currentIndex + 1);
-            return tempResult;
-          },
-        );
-
-        return result !== undefined ? result : tempResult;
-      };
-      return run(0);
-    };
+    return decorateFieldResolverWithMiddleware<
+      TSource,
+      TContext,
+      TArgs,
+      TOutput
+    >(rootResolveFnFactory, middlewareFunctions);
   }
 }
