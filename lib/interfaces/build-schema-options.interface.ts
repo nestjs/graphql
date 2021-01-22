@@ -1,4 +1,5 @@
 import { GraphQLDirective, GraphQLScalarType } from 'graphql';
+import { FieldMiddleware } from './field-middleware.interface';
 
 export type DateScalarMode = 'isoDate' | 'timestamp';
 export type NumberScalarMode = 'float' | 'integer';
@@ -45,4 +46,9 @@ export interface BuildSchemaOptions {
    * GraphQL schema directives mapping
    */
   schemaDirectives?: Record<string, any>;
+
+  /**
+   * Array of global field middleware functions
+   */
+  fieldMiddleware?: FieldMiddleware[];
 }

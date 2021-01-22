@@ -129,7 +129,7 @@ export class ObjectTypeDefinitionFactory {
           options,
           field.options,
         );
-        const resolve = this.createFieldResolver(field);
+        const resolve = this.createFieldResolver(field, options);
 
         fields[field.schemaName] = {
           type,
@@ -174,12 +174,15 @@ export class ObjectTypeDefinitionFactory {
     TContext = {},
     TArgs = { [argName: string]: any },
     TOutput = any
-  >(field: PropertyMetadata) {
+  >(field: PropertyMetadata, options: BuildSchemaOptions) {
     const rootFieldResolver = (root: object) => {
       const value = root[field.name];
       return typeof value === 'undefined' ? field.options.defaultValue : value;
     };
-    if (!field.middleware || field.middleware?.length === 0) {
+    const middlewareFunctions = (options.fieldMiddleware || []).concat(
+      field.middleware || [],
+    );
+    if (middlewareFunctions?.length === 0) {
       return rootFieldResolver;
     }
 
@@ -199,10 +202,10 @@ export class ObjectTypeDefinitionFactory {
         index = currentIndex;
         let middlewareFn: FieldMiddleware;
 
-        if (currentIndex === field.middleware.length) {
+        if (currentIndex === middlewareFunctions.length) {
           middlewareFn = () => rootFieldResolver(root);
         } else {
-          middlewareFn = field.middleware[currentIndex];
+          middlewareFn = middlewareFunctions[currentIndex];
         }
 
         let tempResult: TOutput = undefined;
