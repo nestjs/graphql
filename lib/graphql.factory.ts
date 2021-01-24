@@ -26,6 +26,7 @@ import {
   ScalarsExplorerService,
 } from './services';
 import { extend, removeTempField } from './utils';
+import { isGraphQLWSSubscriptionConfig } from './graphql-ws/is-graphql-ws-subscription.util';
 
 @Injectable()
 export class GraphQLFactory {
@@ -50,6 +51,12 @@ export class GraphQLFactory {
       options.plugins || [],
       this.pluginsExplorerService.explore(),
     );
+
+    // remove subscriptions configuration if graphql-ws is used
+    if (isGraphQLWSSubscriptionConfig(options.subscriptions)) {
+      const { subscriptions, installSubscriptionHandlers, ...rest } = options;
+      options = { ...rest };
+    }
 
     const transformSchema = async (schema: GraphQLSchema) =>
       options.transformSchema ? await options.transformSchema(schema) : schema;

@@ -33,6 +33,8 @@ import {
   mergeDefaults,
   normalizeRoutePath,
 } from './utils';
+import { isGraphQLWSSubscriptionConfig } from './graphql-ws/is-graphql-ws-subscription.util';
+import { GraphqlWsSubscriptionService } from './graphql-ws/graphql-ws-subscription.service';
 
 @Module({
   imports: [GraphQLSchemaBuilderModule],
@@ -51,6 +53,7 @@ import {
 })
 export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   private _apolloServer: ApolloServerBase;
+  private _graphQlWsServer?: GraphqlWsSubscriptionService;
 
   get apolloServer(): ApolloServerBase {
     return this._apolloServer;
@@ -154,13 +157,27 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
     await this.registerGqlServer(apolloOptions);
     if (this.options.installSubscriptionHandlers) {
-      this._apolloServer.installSubscriptionHandlers(
-        httpAdapter.getHttpServer(),
-      );
+      if (isGraphQLWSSubscriptionConfig(this.options.subscriptions)) {
+        this._graphQlWsServer = new GraphqlWsSubscriptionService(
+          {
+            schema: apolloOptions.schema,
+            keepAlive: this.options.subscriptions.keepAlive,
+            context: this.options.context,
+            onConnect: this.options.subscriptions.onConnect,
+            onDisconnect: this.options.subscriptions.onDisconnect,
+          },
+          httpAdapter.getHttpServer(),
+        );
+      } else {
+        this._apolloServer.installSubscriptionHandlers(
+          httpAdapter.getHttpServer(),
+        );
+      }
     }
   }
 
   async onModuleDestroy() {
+    await this._graphQlWsServer?.stop();
     await this._apolloServer?.stop();
   }
 

@@ -4,6 +4,9 @@ import { Config, GraphQLExecutor } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
+import { ServerOptions } from 'graphql-ws';
+import { IncomingMessage } from 'http';
+import * as ws from 'ws';
 
 export interface ServerRegistration {
   path?: string;
@@ -23,9 +26,32 @@ export interface IResolverValidationOptions {
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
+export type DefaultSubscriptionsConfig = Config['subscriptions'];
+
+type WebSocket = typeof ws.prototype;
+
+export type GraphqlWsContextExtra = {
+  readonly socket: WebSocket;
+  readonly request: IncomingMessage;
+};
+
+export type GraphQLWsSubscriptionsConfig = Partial<
+  Pick<
+    ServerOptions<GraphqlWsContextExtra>,
+    'connectionInitWaitTimeout' | 'onConnect' | 'onDisconnect' | 'onClose'
+  >
+> & {
+  protocol: 'graphql-ws';
+  keepAlive?: number;
+};
+
+export type SubscriptionConfig =
+  | DefaultSubscriptionsConfig
+  | GraphQLWsSubscriptionsConfig;
+
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 export interface GqlModuleOptions
-  extends Omit<Config, 'typeDefs'>,
+  extends Omit<Config, 'typeDefs' | 'subscriptions'>,
     Partial<
       Pick<
         ServerRegistration,
@@ -43,6 +69,7 @@ export interface GqlModuleOptions
     schema: GraphQLSchema,
   ) => GraphQLExecutor | Promise<GraphQLExecutor>;
   installSubscriptionHandlers?: boolean;
+  subscriptions?: SubscriptionConfig;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;
   schemaDirectives?: Record<string, any>;

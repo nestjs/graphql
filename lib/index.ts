@@ -1,4 +1,5 @@
 export * from './decorators';
+export { GraphqlWsException } from './graphql-ws/graphql-ws.exception';
 export * from './federation';
 export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
