@@ -157,11 +157,28 @@ export class TypeMetadataStorageHost {
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
-    this.classDirectives.push(metadata);
+    const exist = this.fieldDirectives.some((directiveMetadata) => {
+      return (
+        directiveMetadata.sdl === metadata.sdl &&
+        directiveMetadata.target === metadata.target
+      );
+    });
+    if (!exist) {
+      this.classDirectives.push(metadata);
+    }
   }
 
   addDirectivePropertyMetadata(metadata: PropertyDirectiveMetadata) {
-    this.fieldDirectives.push(metadata);
+    const exist = this.fieldDirectives.some((directiveMetadata) => {
+      return (
+        directiveMetadata.fieldName === metadata.fieldName &&
+        directiveMetadata.sdl === metadata.sdl &&
+        directiveMetadata.target === metadata.target
+      );
+    });
+    if (!exist) {
+      this.fieldDirectives.push(metadata);
+    }
   }
 
   addExtensionsMetadata(metadata: ClassExtensionsMetadata) {
@@ -270,13 +287,7 @@ export class TypeMetadataStorageHost {
         item.properties = this.getClassFieldsByPredicate(belongsToClass);
       }
       if (!item.directives) {
-        item.directives = this.classDirectives
-          .filter(belongsToClass)
-          .reduce(
-            (acc, curr) =>
-              acc.some((item) => item.sdl === curr.sdl) ? acc : [...acc, curr],
-            [],
-          );
+        item.directives = this.classDirectives.filter(belongsToClass);
       }
       if (!item.extensions) {
         item.extensions = this.classExtensions
@@ -299,8 +310,12 @@ export class TypeMetadataStorageHost {
       field.methodArgs = this.params.filter(
         (param) => isHostEqual(param) && field.name === param.methodName,
       );
-      field.directives = this.getDirectives(field);
-      field.extensions = this.getExtensions(field);
+      field.directives = this.fieldDirectives.filter(
+        this.isFieldDirectiveOrExtension.bind(this, field),
+      );
+      field.extensions = this.fieldExtensions
+        .filter(this.isFieldDirectiveOrExtension.bind(this, field))
+        .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
     return fields;
   }
@@ -314,8 +329,12 @@ export class TypeMetadataStorageHost {
       item.methodArgs = this.params.filter(
         (param) => isTypeEqual(param) && item.methodName === param.methodName,
       );
-      item.directives = this.getDirectives(item);
-      item.extensions = this.getExtensions(item);
+      item.directives = this.fieldDirectives.filter(
+        this.isFieldDirectiveOrExtension.bind(this, item),
+      );
+      item.extensions = this.fieldExtensions
+        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+        .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
   }
 
@@ -324,8 +343,12 @@ export class TypeMetadataStorageHost {
 
     metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
-      item.directives = this.getDirectives(item);
-      item.extensions = this.getExtensions(item);
+      item.directives = this.fieldDirectives.filter(
+        this.isFieldDirectiveOrExtension.bind(this, item),
+      );
+      item.extensions = this.fieldExtensions
+        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+        .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
 
       item.objectTypeFn =
         item.kind === 'external'
@@ -430,26 +453,6 @@ export class TypeMetadataStorageHost {
         parentClass = Object.getPrototypeOf(parentClass);
       }
     });
-  }
-
-  private getDirectives(
-    field: PropertyMetadata | BaseResolverMetadata,
-  ): PropertyDirectiveMetadata[] {
-    return this.fieldDirectives
-      .filter(this.isFieldDirectiveOrExtension.bind(this, field))
-      .reduce(
-        (acc, curr) =>
-          acc.some((item) => item.sdl === curr.sdl) ? acc : [...acc, curr],
-        [],
-      );
-  }
-
-  private getExtensions(
-    field: PropertyMetadata | BaseResolverMetadata,
-  ): Record<string, unknown> {
-    return this.fieldExtensions
-      .filter(this.isFieldDirectiveOrExtension.bind(this, field))
-      .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
   }
 
   private isFieldDirectiveOrExtension(
