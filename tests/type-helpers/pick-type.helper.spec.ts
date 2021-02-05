@@ -1,6 +1,12 @@
 import { Transform } from 'class-transformer';
 import { MinLength } from 'class-validator';
-import { ArgsType, Field, ObjectType } from '../../lib/decorators';
+import {
+  ArgsType,
+  Directive,
+  Extensions,
+  Field,
+  ObjectType,
+} from '../../lib/decorators';
 import { getFieldsAndDecoratorForType } from '../../lib/schema-builder/utils/get-fields-and-decorator.util';
 import { PickType } from '../../lib/type-helpers';
 
@@ -10,6 +16,7 @@ describe('PickType', () => {
     @Transform((str) => str + '_transformed')
     @MinLength(10)
     @Field({ nullable: true })
+    @Directive('@upper')
     login: string;
 
     @MinLength(10)
@@ -17,6 +24,7 @@ describe('PickType', () => {
     password: string;
 
     @Field({ name: 'id' })
+    @Extensions({ extension: true })
     _id: string;
   }
 
@@ -25,11 +33,16 @@ describe('PickType', () => {
   class UpdateUserWithIdDto extends PickType(CreateUserDto, ['_id']) {}
 
   it('should inherit "login" field', () => {
-    const { fields } = getFieldsAndDecoratorForType(
-      Object.getPrototypeOf(UpdateUserDto),
-    );
+    const prototype = Object.getPrototypeOf(UpdateUserDto);
+    const { fields } = getFieldsAndDecoratorForType(prototype);
     expect(fields.length).toEqual(1);
     expect(fields[0].name).toEqual('login');
+    expect(fields[0].directives.length).toEqual(1);
+    expect(fields[0].directives).toContainEqual({
+      fieldName: 'login',
+      sdl: '@upper',
+      target: prototype,
+    });
   });
 
   it('should inherit renamed "_id" field', () => {
@@ -38,6 +51,7 @@ describe('PickType', () => {
     );
     expect(fields.length).toEqual(1);
     expect(fields[0].name).toEqual('_id');
+    expect(fields[0].extensions).toEqual({ extension: true });
   });
 
   @ArgsType()

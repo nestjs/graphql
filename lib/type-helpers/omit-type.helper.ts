@@ -8,6 +8,7 @@ import {
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import { applyFieldDecorators } from './type-helpers.utils';
 
 export function OmitType<T, K extends keyof T>(
   classRef: Type<T>,
@@ -47,6 +48,7 @@ export function OmitType<T, K extends keyof T>(
         OmitObjectType.prototype,
         item.name,
       );
+      applyFieldDecorators(OmitObjectType, item);
     });
   return OmitObjectType as Type<Omit<T, typeof keys[number]>>;
 }

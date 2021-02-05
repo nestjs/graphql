@@ -7,6 +7,7 @@ import {
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import { applyFieldDecorators } from './type-helpers.utils';
 
 export function IntersectionType<A, B>(
   classARef: Type<A>,
@@ -41,6 +42,7 @@ export function IntersectionType<A, B>(
       IntersectionObjectType.prototype,
       item.name,
     );
+    applyFieldDecorators(IntersectionObjectType, item);
   });
 
   Object.defineProperty(IntersectionObjectType, 'name', {

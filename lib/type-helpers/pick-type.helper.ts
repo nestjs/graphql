@@ -8,6 +8,7 @@ import {
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import { applyFieldDecorators } from './type-helpers.utils';
 
 export function PickType<T, K extends keyof T>(
   classRef: Type<T>,
@@ -48,6 +49,7 @@ export function PickType<T, K extends keyof T>(
         PickObjectType.prototype,
         item.name,
       );
+      applyFieldDecorators(PickObjectType, item);
     });
   return PickObjectType as Type<Pick<T, typeof keys[number]>>;
 }

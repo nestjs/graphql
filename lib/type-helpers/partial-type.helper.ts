@@ -10,6 +10,7 @@ import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
 import { METADATA_FACTORY_NAME } from '../plugin/plugin-constants';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import { applyFieldDecorators } from './type-helpers.utils';
 
 export function PartialType<T>(
   classRef: Type<T>,
@@ -44,6 +45,7 @@ export function PartialType<T>(
       item.name,
     );
     applyIsOptionalDecorator(PartialObjectType, item.name);
+    applyFieldDecorators(PartialObjectType, item);
   });
 
   if (PartialObjectType[METADATA_FACTORY_NAME]) {
