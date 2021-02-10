@@ -32,7 +32,7 @@ export class InputTypeFactory {
         typeRef as any,
       );
       if (!inputType) {
-        throw new CannotDetermineInputTypeError(hostType);
+        throw new CannotDetermineInputTypeError(hostType, typeRef);
       }
     }
     return this.typeMapperService.mapToGqlType(
