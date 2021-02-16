@@ -87,7 +87,7 @@ export class ObjectTypeDefinitionFactory {
         if (!parentClass) {
           return interfaces;
         }
-        const parentInterfaces = parentClass.getInterfaces();
+        const parentInterfaces = parentClass.getInterfaces?.() ?? [];
         return Array.from(new Set([...interfaces, ...parentInterfaces]));
       }
       return interfaces;
