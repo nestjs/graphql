@@ -129,9 +129,7 @@ export class ModelClassVisitor {
   createDecoratorObjectLiteralExpr(
     node: ts.PropertyDeclaration | ts.PropertySignature,
     typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<
-      ts.PropertyAssignment
-    > = ts.createNodeArray(),
+    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
     hostFilename = '',
     sourceFile: ts.SourceFile,
     pluginOptions: PluginOptions,
@@ -272,14 +270,24 @@ export class ModelClassVisitor {
     pathsToImport: string[],
   ): ts.SourceFile {
     const IMPORT_PREFIX = 'eager_import_';
-    const importDeclarations = pathsToImport.map((path, index) =>
-      ts.createImportEqualsDeclaration(
+    const importDeclarations = pathsToImport.map((path, index) => {
+      if (ts.createImportEqualsDeclaration.length === 5) {
+        // support TS v4.2+
+        return (ts.createImportEqualsDeclaration as any)(
+          undefined,
+          undefined,
+          false,
+          IMPORT_PREFIX + index,
+          ts.createExternalModuleReference(ts.createLiteral(path)),
+        );
+      }
+      return (ts.createImportEqualsDeclaration as any)(
         undefined,
         undefined,
         IMPORT_PREFIX + index,
         ts.createExternalModuleReference(ts.createLiteral(path)),
-      ),
-    );
+      );
+    });
     return ts.updateSourceFileNode(sourceFile, [
       ...importDeclarations,
       ...sourceFile.statements,
@@ -288,9 +296,7 @@ export class ModelClassVisitor {
 
   createDescriptionPropertyAssigment(
     node: ts.PropertyDeclaration | ts.PropertySignature,
-    existingProperties: ts.NodeArray<
-      ts.PropertyAssignment
-    > = ts.createNodeArray(),
+    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
     options: PluginOptions = {},
     sourceFile?: ts.SourceFile,
   ): ts.PropertyAssignment {
