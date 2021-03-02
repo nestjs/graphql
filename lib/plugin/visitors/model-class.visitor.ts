@@ -269,9 +269,10 @@ export class ModelClassVisitor {
     sourceFile: ts.SourceFile,
     pathsToImport: string[],
   ): ts.SourceFile {
+    const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
     const IMPORT_PREFIX = 'eager_import_';
     const importDeclarations = pathsToImport.map((path, index) => {
-      if (ts.createImportEqualsDeclaration.length === 5) {
+      if (major == 4 && minor >= 2) {
         // support TS v4.2+
         return (ts.createImportEqualsDeclaration as any)(
           undefined,
