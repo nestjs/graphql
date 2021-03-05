@@ -100,14 +100,14 @@ function createWrappedExplicitTypeFn(
   explicitTypeFn: ReturnTypeFunc,
   options: TypeOptions,
 ) {
-  return () => {
-    const explicitTypeRef = explicitTypeFn();
-    if (Array.isArray(explicitTypeRef)) {
-      const { depth, typeRef } = getTypeReferenceAndArrayDepth(explicitTypeRef);
-      options.isArray = true;
-      options.arrayDepth = depth;
-      return typeRef;
-    }
-    return explicitTypeRef;
-  };
+  let explicitTypeRef = explicitTypeFn();
+
+  if (Array.isArray(explicitTypeRef)) {
+    const { depth, typeRef } = getTypeReferenceAndArrayDepth(explicitTypeRef);
+    options.isArray = true;
+    options.arrayDepth = depth;
+    explicitTypeRef = typeRef;
+  }
+
+  return () => explicitTypeRef;
 }
