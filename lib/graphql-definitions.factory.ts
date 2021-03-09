@@ -1,9 +1,9 @@
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { gql } from 'apollo-server-core';
 import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
   DefinitionsGeneratorOptions,
   GraphQLAstExplorer,
@@ -151,7 +151,7 @@ export class GraphQLDefinitionsFactory {
     }
     let schema = makeExecutableSchema({
       typeDefs,
-      resolverValidationOptions: { allowResolversNotInSchema: true },
+      resolverValidationOptions: { requireResolversToMatchSchema: 'ignore' },
     });
     schema = removeTempField(schema);
     const tsFile = await this.gqlAstExplorer.explore(

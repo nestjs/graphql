@@ -1,3 +1,4 @@
+import { IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { Config, GraphQLExecutor } from 'apollo-server-core';
@@ -11,14 +12,6 @@ export interface ServerRegistration {
   bodyParserConfig?: any | boolean;
   onHealthCheck?: (req: any) => Promise<any>;
   disableHealthCheck?: boolean;
-}
-
-export interface IResolverValidationOptions {
-  requireResolversForArgs?: boolean;
-  requireResolversForNonScalar?: boolean;
-  requireResolversForAllFields?: boolean;
-  requireResolversForResolveType?: boolean;
-  allowResolversNotInSchema?: boolean;
 }
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;

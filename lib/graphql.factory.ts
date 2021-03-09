@@ -1,3 +1,6 @@
+import { mergeSchemas } from '@graphql-tools/merge';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { gql } from 'apollo-server-core';
 import { existsSync, lstatSync, readFileSync } from 'fs';
@@ -9,9 +12,6 @@ import {
   lexicographicSortSchema,
   printSchema,
 } from 'graphql';
-import { mergeSchemas } from '@graphql-tools/merge';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { forEach, isEmpty } from 'lodash';
 import {
   DefinitionsGeneratorOptions,
@@ -67,7 +67,7 @@ export class GraphQLFactory {
         `,
         resolverValidationOptions: {
           ...(options.resolverValidationOptions || {}),
-          requireResolversForResolveType: false,
+          requireResolversForResolveType: 'ignore',
         },
       });
       let schema = options.schema

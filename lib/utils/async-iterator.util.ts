@@ -4,6 +4,7 @@ type AsyncIterator<T> = {
   next(value?: any): Promise<IteratorResult<T>>;
   return(): any;
   throw(error: any): any;
+  [$$asyncIterator]: any;
 };
 
 export const createAsyncIterator = async <T = any>(
