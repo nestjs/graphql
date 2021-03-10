@@ -54,6 +54,7 @@ export class GraphQLSchemaFactory {
     }
 
     TypeMetadataStorage.clear();
+    this.typeDefinitionsGenerator.clearTypeDefinitionStorage();
     LazyMetadataStorage.load(resolvers);
     TypeMetadataStorage.compile(options.orphanedTypes);
 

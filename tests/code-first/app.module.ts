@@ -12,6 +12,12 @@ import { RecipesModule } from './recipes/recipes.module';
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
     }),
+    GraphQLModule.forRoot({
+      debug: false,
+      installSubscriptionHandlers: true,
+      autoSchemaFile: true,
+      path: 'not-default',
+    }),
   ],
 })
 export class ApplicationModule {}

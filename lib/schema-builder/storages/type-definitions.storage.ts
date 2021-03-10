@@ -41,6 +41,11 @@ export class TypeDefinitionsStorage {
   private inputTypeDefinitionsLinks?: Map<GqlInputTypeKey, GqlInputType>;
   private outputTypeDefinitionsLinks?: Map<GqlOutputTypeKey, GqlOutputType>;
 
+  clear() {
+    this.inputTypeDefinitionsLinks = null;
+    this.outputTypeDefinitionsLinks = null;
+  }
+
   addEnums(enumDefs: EnumDefinition[]) {
     enumDefs.forEach(item => this.enumTypeDefinitions.set(item.enumRef, item));
   }

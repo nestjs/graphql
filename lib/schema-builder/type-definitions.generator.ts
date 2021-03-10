@@ -27,6 +27,10 @@ export class TypeDefinitionsGenerator {
     this.generateInputTypeDefs(options);
   }
 
+  clearTypeDefinitionStorage() {
+    this.typeDefinitionsStorage.clear();
+  }
+
   private generateInputTypeDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getInputTypesMetadata();
     const inputTypeDefs = metadata.map((metadata) =>
