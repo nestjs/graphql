@@ -22,6 +22,8 @@
 * [Description](#Description)
 * [Installation](#Installation)
 * [Quick Start](#Quick-Start)
+* [API](#API)
+  * [Field](#Field)
 * [Support](#Support)
 * [Stay in touch](#Stay-in-touch)
 * [License](#License)
@@ -47,6 +49,20 @@ $ npm i --save @nestjs/graphql apollo-server-fastify graphql
 ## Quick Start
 
 [Overview & Tutorial](https://docs.nestjs.com/graphql/quick-start)
+
+## API
+
+### @Field
+Parameters:
+  - `name?: string` - Name of the field used for the schema.
+  - `description?: string` - Description to be shown in the documentation for the schema.
+  - `deprecationReason?: string` - Deprecation reason to be shown in the documentation for the schema.
+  - `complexity?: ComplexityEstimator | number` // not really sure how this works/how to document it
+  - `nullable?: boolean | 'items' | 'itemsAndList'` - Whether the Field is nullable or not, it can take a boolean or when dealing with lists one of the following strings: 
+    - `items`: The list will always exist, but the items can be nullable.
+    -  `itemsAndList`: The list might be nullable.
+  - `defaultValue?:` // have a strong feeling that fields don't make use of this property
+
 
 ## Support
 
