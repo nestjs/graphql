@@ -157,11 +157,28 @@ export class TypeMetadataStorageHost {
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
-    this.classDirectives.push(metadata);
+    const exist = this.fieldDirectives.some((directiveMetadata) => {
+      return (
+        directiveMetadata.sdl === metadata.sdl &&
+        directiveMetadata.target === metadata.target
+      );
+    });
+    if (!exist) {
+      this.classDirectives.push(metadata);
+    }
   }
 
   addDirectivePropertyMetadata(metadata: PropertyDirectiveMetadata) {
-    this.fieldDirectives.push(metadata);
+    const exist = this.fieldDirectives.some((directiveMetadata) => {
+      return (
+        directiveMetadata.fieldName === metadata.fieldName &&
+        directiveMetadata.sdl === metadata.sdl &&
+        directiveMetadata.target === metadata.target
+      );
+    });
+    if (!exist) {
+      this.fieldDirectives.push(metadata);
+    }
   }
 
   addExtensionsMetadata(metadata: ClassExtensionsMetadata) {
