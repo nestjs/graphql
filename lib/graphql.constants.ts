@@ -17,7 +17,8 @@ export const GRAPHQL_MODULE_ID = 'GqlModuleId';
 export const SUBSCRIPTION_TYPE = 'Subscription';
 
 export const DEFINITIONS_FILE_HEADER = `
-/** ------------------------------------------------------
+/*
+ * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
  */
