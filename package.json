@@ -19,6 +19,7 @@
     "release": "release-it"
   },
   "devDependencies": {
+    "@apollo/gateway": "0.24.4",
     "@apollo/federation": "0.22.0",
     "@commitlint/cli": "12.0.1",
     "@commitlint/config-angular": "12.0.1",
@@ -34,6 +35,8 @@
     "@types/normalize-path": "3.0.0",
     "@typescript-eslint/eslint-plugin": "4.18.0",
     "@typescript-eslint/parser": "4.18.0",
+    "apollo-server-core": "2.21.1",
+    "apollo-server-testing": "2.21.1",
     "apollo-server-express": "2.21.1",
     "apollo-server-fastify": "2.21.1",
     "class-transformer": "0.4.0",
@@ -66,19 +69,33 @@
     "lodash": "4.17.21",
     "normalize-path": "3.0.0",
     "tslib": "2.1.0",
+    "ts-morph": "10.0.1",
     "uuid": "8.3.2"
   },
   "peerDependencies": {
+    "@apollo/gateway": "^0.24.4",
+    "@apollo/federation": "^0.22.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0",
     "apollo-server-core": "^2.21.1",
-    "graphql": "^14.1.1 || ^15.0.0",
-    "reflect-metadata": "^0.1.12"
-  },
-  "optionalDependencies": {
-    "@apollo/gateway": "^0.24.4",
     "apollo-server-testing": "^2.21.1",
+    "graphql": "^14.1.1 || ^15.0.0",
+    "reflect-metadata": "^0.1.12",
     "ts-morph": "^10.0.1"
+  },
+  "peerDependenciesMeta": {
+    "@apollo/gateway": {
+      "optional": true
+    },
+    "@apollo/federation": {
+      "optional": true
+    },
+    "apollo-server-testing": {
+      "optional": true
+    },
+    "ts-morph": {
+      "optional": true
+    }
   },
   "lint-staged": {
     "*.ts": [
