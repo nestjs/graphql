@@ -9,6 +9,7 @@ import {
   ObjectTypeOptions,
   ReturnTypeFunc,
 } from '..';
+import * as typeFactories from '../type-factories';
 
 // for webpack this is resolved this way:
 // resolve: { // see: https://webpack.js.org/configuration/resolve/
@@ -75,3 +76,10 @@ export function Scalar(
 ): ClassDecorator {
   return (target, key?, descriptor?) => {};
 }
+
+export function dummyFn() {
+  return;
+}
+
+export const createUnionType: typeof typeFactories.createUnionType = dummyFn as any;
+export const registerEnumType: typeof typeFactories.registerEnumType = dummyFn;
