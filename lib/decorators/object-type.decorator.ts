@@ -24,7 +24,7 @@ export interface ObjectTypeOptions {
    */
   isAbstract?: boolean;
   /**
-   * Interfaces implemented by this object.
+   * Interfaces implemented by this object type.
    */
   implements?: Function | Function[] | (() => Function | Function[]);
 }

@@ -28,6 +28,10 @@ export interface InterfaceTypeOptions {
    * Custom implementation of the "resolveType" function.
    */
   resolveType?: ResolveTypeFn<any, any>;
+  /**
+   * Interfaces implemented by this interface.
+   */
+  implements?: Function | Function[] | (() => Function | Function[]);
 }
 
 /**
@@ -58,6 +62,7 @@ export function InterfaceType(
         name: name || target.name,
         target,
         ...options,
+        interfaces: options.implements,
       };
       TypeMetadataStorage.addInterfaceMetadata(metadata);
     };

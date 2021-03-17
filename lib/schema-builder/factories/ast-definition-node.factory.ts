@@ -7,6 +7,7 @@ import {
   GraphQLOutputType,
   InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
+  InterfaceTypeDefinitionNode,
   ObjectTypeDefinitionNode,
   parse,
 } from 'graphql';
@@ -48,6 +49,23 @@ export class AstDefinitionNodeFactory {
     }
     return {
       kind: 'InputObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: name,
+      },
+      directives: directiveMetadata.map(this.createDirectiveNode),
+    };
+  }
+
+  createInterfaceTypeNode(
+    name: string,
+    directiveMetadata?: DirectiveMetadata[],
+  ): InterfaceTypeDefinitionNode | undefined {
+    if (isEmpty(directiveMetadata)) {
+      return;
+    }
+    return {
+      kind: 'InterfaceTypeDefinition',
       name: {
         kind: 'Name',
         value: name,
@@ -110,7 +128,7 @@ export class AstDefinitionNodeFactory {
     const parsed = parse(`type String ${directive.sdl}`);
     const definitions = parsed.definitions as ObjectTypeDefinitionNode[];
     const directives = definitions
-      .filter(item => item.directives && item.directives.length > 0)
+      .filter((item) => item.directives && item.directives.length > 0)
       .map(({ directives }) => directives)
       .reduce((acc, item) => [...acc, ...item]);
 
