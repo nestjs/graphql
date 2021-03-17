@@ -1,5 +1,6 @@
 
-/** ------------------------------------------------------
+/*
+ * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
  */
@@ -11,5 +12,7 @@ export interface Cat {
 }
 
 export interface IQuery {
-    cat?: Cat;
+    cat?: Nullable<Cat>;
 }
+
+type Nullable<T> = T | null;

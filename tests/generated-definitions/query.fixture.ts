@@ -1,5 +1,6 @@
 
-/** ------------------------------------------------------
+/*
+ * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
  */
@@ -11,5 +12,7 @@ export interface Cat {
 }
 
 export interface IQuery {
-    cat(id: string): Cat | Promise<Cat>;
+    cat(id: string): Nullable<Cat> | Promise<Nullable<Cat>>;
 }
+
+type Nullable<T> = T | null;
