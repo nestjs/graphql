@@ -125,18 +125,18 @@ enum Direction {
   Up
 }
 
-type Ingredient {
-  id: ID!
-
-  """ingredient name"""
-  name: String @deprecated(reason: "is deprecated")
-}
-
 """example interface"""
 interface IRecipe {
   id: ID!
   interfaceResolver(arg: Float): Boolean!
   title: String!
+}
+
+type Ingredient {
+  id: ID!
+
+  """ingredient name"""
+  name: String @deprecated(reason: "is deprecated")
 }
 
 type Mutation {
