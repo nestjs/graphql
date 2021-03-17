@@ -12,10 +12,12 @@ export interface Cat {
 }
 
 export interface IMutation {
-    createCat(name?: string): Cat | Promise<Cat>;
-    returnsQuery(): IQuery | Promise<IQuery>;
+    createCat(name?: Nullable<string>): Nullable<Cat> | Promise<Nullable<Cat>>;
+    returnsQuery(): Nullable<IQuery> | Promise<Nullable<IQuery>>;
 }
 
 export interface IQuery {
-    query(): number | Promise<number>;
+    query(): Nullable<number> | Promise<Nullable<number>>;
 }
+
+type Nullable<T> = T | null;

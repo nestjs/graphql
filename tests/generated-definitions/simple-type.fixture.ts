@@ -10,7 +10,9 @@
 export interface Cat {
     id: number;
     name: string;
-    age?: number;
-    color?: string;
-    weight?: number;
+    age?: Nullable<number>;
+    color?: Nullable<string>;
+    weight?: Nullable<number>;
 }
+
+type Nullable<T> = T | null;

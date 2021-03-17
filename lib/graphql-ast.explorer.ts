@@ -109,6 +109,17 @@ export class GraphQLAstExplorer {
       ? `${DEFINITIONS_FILE_HEADER}\n${options.additionalHeader}\n\n`
       : DEFINITIONS_FILE_HEADER;
     tsFile.insertText(0, header);
+    tsFile.addTypeAlias({
+      name: 'Nullable',
+      isExported: false,
+      type: 'T | null',
+      typeParameters: [
+        {
+          name: 'T',
+        },
+      ],
+    });
+
     return tsFile;
   }
 
@@ -263,6 +274,7 @@ export class GraphQLAstExplorer {
     }
 
     const { name: type, required } = this.getFieldTypeDefinition(item.type);
+
     if (!this.isRoot(parentRef.getName())) {
       (parentRef as InterfaceDeclaration).addProperty({
         name: propertyName,
@@ -271,6 +283,7 @@ export class GraphQLAstExplorer {
       });
       return;
     }
+
     if (options.skipResolverArgs) {
       (parentRef as ClassDeclaration).addProperty({
         name: propertyName,
@@ -281,9 +294,7 @@ export class GraphQLAstExplorer {
       (parentRef as ClassDeclaration).addMethod({
         isAbstract: mode === 'class',
         name: propertyName,
-        returnType: `${this.addSymbolIfRoot(
-          type,
-        )} | Promise<${this.addSymbolIfRoot(type)}>`,
+        returnType: `${type} | Promise<${type}>`,
         parameters: this.getFunctionParameters(
           (item as FieldDefinitionNode).arguments,
         ),
@@ -292,28 +303,37 @@ export class GraphQLAstExplorer {
   }
 
   getFieldTypeDefinition(
-    type: TypeNode,
+    typeNode: TypeNode,
   ): {
     name: string;
     required: boolean;
   } {
-    const { required, type: nestedType } = this.getNestedType(type);
-    type = nestedType;
+    const { required, type } = this.getNestedType(typeNode);
 
     const isArray = type.kind === 'ListType';
     if (isArray) {
-      const { type: nestedType } = this.getNestedType(get(type, 'type'));
-      type = nestedType;
+      const {
+        type: arrayType,
+        required: arrayTypeRequired,
+      } = this.getNestedType(get(type, 'type'));
 
-      const typeName = get(type, 'name.value');
+      const typeName = this.addSymbolIfRoot(get(arrayType, 'name.value'));
+      const name = arrayTypeRequired
+        ? this.getType(typeName)
+        : `Nullable<${this.getType(typeName)}>`;
+
       return {
-        name: this.getType(typeName) + '[]',
+        name: required ? name + '[]' : `Nullable<${name}[]>`,
         required,
       };
     }
-    const typeName = get(type, 'name.value');
+
+    const typeName = this.addSymbolIfRoot(get(type, 'name.value'));
+
     return {
-      name: this.getType(typeName),
+      name: required
+        ? this.getType(typeName)
+        : `Nullable<${this.getType(typeName)}>`,
       required,
     };
   }
