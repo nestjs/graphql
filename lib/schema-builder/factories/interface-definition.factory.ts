@@ -49,10 +49,6 @@ export class InterfaceDefinitionFactory {
       return parentTypeDefinition ? parentTypeDefinition.type : undefined;
     };
     const resolveType = this.createResolveTypeFn(metadata);
-    console.log({
-      interfaces: getInterfacesArray(metadata.interfaces),
-      metadata,
-    });
     return {
       target: metadata.target,
       isAbstract: metadata.isAbstract || false,
