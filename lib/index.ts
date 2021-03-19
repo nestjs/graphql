@@ -2,7 +2,6 @@ export * from './decorators';
 export * from './federation';
 export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
-export * from './graphql-base-exception-filter';
 export * from './graphql-schema.host';
 export * from './graphql-types.loader';
 export * from './graphql.factory';

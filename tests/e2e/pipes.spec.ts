@@ -1,7 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { GraphQLBaseExceptionFilter } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
 
 describe('GraphQL - Pipes', () => {
@@ -13,7 +12,6 @@ describe('GraphQL - Pipes', () => {
     }).compile();
 
     app = module.createNestApplication();
-    app.useGlobalFilters(new GraphQLBaseExceptionFilter());
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
@@ -32,7 +30,7 @@ describe('GraphQL - Pipes', () => {
         errors: [
           {
             extensions: {
-              code: '400',
+              code: 'BAD_USER_INPUT',
               response: {
                 error: 'Bad Request',
                 message: [
@@ -41,14 +39,7 @@ describe('GraphQL - Pipes', () => {
                 statusCode: 400,
               },
             },
-            locations: [
-              {
-                column: 3,
-                line: 2,
-              },
-            ],
             message: 'Bad Request Exception',
-            path: ['addRecipe'],
           },
         ],
       });

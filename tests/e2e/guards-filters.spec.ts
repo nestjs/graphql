@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
-import { GraphQLBaseExceptionFilter } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
 
 describe('GraphQL - Guards', () => {
@@ -13,7 +12,6 @@ describe('GraphQL - Guards', () => {
     }).compile();
 
     app = module.createNestApplication();
-    app.useGlobalFilters(new GraphQLBaseExceptionFilter());
     await app.init();
   });
 
@@ -28,14 +26,7 @@ describe('GraphQL - Guards', () => {
       .expect(200, {
         errors: [
           {
-            message: 'Unauthorized',
-            locations: [
-              {
-                line: 2,
-                column: 3,
-              },
-            ],
-            path: ['recipe'],
+            message: 'Unauthorized error',
             extensions: {
               code: 'UNAUTHENTICATED',
               response: {
