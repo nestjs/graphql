@@ -66,6 +66,12 @@ export interface GqlModuleOptions
    * Apply `transformSchema` to the `autoSchemaFile`
    */
   transformAutoSchemaFile?: boolean;
+  /**
+   * If enabled, will register a global interceptor that automatically maps
+   * "HttpException" class instances to corresponding Apollo errors.
+   * @default true
+   */
+  autoTransformHttpErrors?: boolean;
 }
 
 export interface GqlOptionsFactory {
