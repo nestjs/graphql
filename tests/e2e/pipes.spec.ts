@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { GraphQLBaseExceptionFilter } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
 
 describe('GraphQL - Pipes', () => {
@@ -12,6 +13,7 @@ describe('GraphQL - Pipes', () => {
     }).compile();
 
     app = module.createNestApplication();
+    app.useGlobalFilters(new GraphQLBaseExceptionFilter());
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
@@ -30,17 +32,13 @@ describe('GraphQL - Pipes', () => {
         errors: [
           {
             extensions: {
-              code: 'INTERNAL_SERVER_ERROR',
-              exception: {
-                message: 'Bad Request Exception',
-                response: {
-                  error: 'Bad Request',
-                  message: [
-                    'description must be longer than or equal to 30 characters',
-                  ],
-                  statusCode: 400,
-                },
-                status: 400,
+              code: '400',
+              response: {
+                error: 'Bad Request',
+                message: [
+                  'description must be longer than or equal to 30 characters',
+                ],
+                statusCode: 400,
               },
             },
             locations: [
