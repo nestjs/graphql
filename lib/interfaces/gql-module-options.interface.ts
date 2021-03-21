@@ -66,9 +66,6 @@ export interface GqlModuleOptions
    * Apply `transformSchema` to the `autoSchemaFile`
    */
   transformAutoSchemaFile?: boolean;
-  /**
-   * Pass a custom apollo server
-   */
 }
 
 export interface GqlOptionsFactory {
