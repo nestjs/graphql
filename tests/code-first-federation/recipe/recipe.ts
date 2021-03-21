@@ -1,4 +1,5 @@
 import {
+  Directive,
   Field,
   ID,
   InterfaceType,
@@ -19,6 +20,10 @@ export abstract class Base {
 export abstract class IRecipe extends Base {
   @Field()
   title: string;
+
+  @Field()
+  @Directive('@external')
+  externalField: string;
 }
 
 @ObjectType({ implements: IRecipe })
