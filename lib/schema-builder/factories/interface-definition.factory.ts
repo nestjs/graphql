@@ -111,14 +111,15 @@ export class InterfaceDefinitionFactory {
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
       metadata.properties.forEach((field) => {
+        const type = this.outputTypeFactory.create(
+          field.name,
+          field.typeFn(),
+          options,
+          field.options,
+        );
         fields[field.schemaName] = {
           description: field.description,
-          type: this.outputTypeFactory.create(
-            field.name,
-            field.typeFn(),
-            options,
-            field.options,
-          ),
+          type,
           args: this.argsFactory.create(field.methodArgs, options),
           resolve: (root: object) => {
             const value = root[field.name];
@@ -127,6 +128,15 @@ export class InterfaceDefinitionFactory {
               : value;
           },
           deprecationReason: field.deprecationReason,
+          /**
+           * AST node has to be manually created in order to define directives
+           * (more on this topic here: https://github.com/graphql/graphql-js/issues/1343)
+           */
+          astNode: this.astDefinitionNodeFactory.createFieldNode(
+            field.name,
+            type,
+            field.directives,
+          ),
           extensions: {
             complexity: field.complexity,
             ...field.extensions,
