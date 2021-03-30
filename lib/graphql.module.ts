@@ -195,6 +195,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     const app = httpAdapter.getInstance();
     const apolloServer = new ApolloServer(apolloOptions as any);
 
+    new Promise(resolve => resolve(apolloServer.start()));
+
     apolloServer.applyMiddleware({
       app,
       path,
