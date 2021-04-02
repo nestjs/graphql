@@ -12,6 +12,10 @@ import {
   es5CreateCatDtoText,
   es5CreateCatDtoTextTranspiled,
 } from './fixtures/es5-class.dto';
+import {
+  createNullCatDtoText,
+  createNullCatDtoTextTranspiled
+} from './fixtures/create-null-cat.dto';
 
 describe('API model properties', () => {
   it('should add the metadata factory when no decorators exist', () => {
@@ -83,5 +87,26 @@ describe('API model properties', () => {
       },
     });
     expect(result.outputText).toEqual(es5CreateCatDtoTextTranspiled);
+  });
+
+  it('should add the decorator when union type includes null', () => {
+    const options: ts.CompilerOptions = {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ESNext,
+      newLine: ts.NewLineKind.LineFeed,
+      noEmitHelpers: true,
+      strict: true,
+    };
+    const filename = 'create-cat.input.ts';
+    const fakeProgram = ts.createProgram([filename], options);
+
+    const result = ts.transpileModule(createNullCatDtoText, {
+      compilerOptions: options,
+      fileName: filename,
+      transformers: {
+        before: [before({}, fakeProgram)],
+      },
+    });
+    expect(result.outputText).toEqual(createNullCatDtoTextTranspiled);
   });
 });

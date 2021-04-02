@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import { HideField } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
-import { getDescriptionOfNode } from '../utils/ast-utils';
+import { getDescriptionOfNode, isNull } from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
@@ -134,7 +134,8 @@ export class ModelClassVisitor {
     sourceFile: ts.SourceFile,
     pluginOptions: PluginOptions,
   ): ts.ObjectLiteralExpression {
-    const isRequired = !node.questionToken;
+    const type = typeChecker.getTypeAtLocation(node);
+    const isRequired = !node.questionToken && !isNull(type);
 
     const properties = [
       ...existingProperties,

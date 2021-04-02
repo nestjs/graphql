@@ -70,6 +70,14 @@ export function isEnumLiteral(type: Type) {
   return hasFlag(type, TypeFlags.EnumLiteral) && !type.isUnion();
 }
 
+export function isNull(type: Type) {
+  if (type.isUnion()) {
+    return Boolean(type.types.find((t) => hasFlag(t, TypeFlags.Null)));
+  } else {
+    return hasFlag(type, TypeFlags.Null);
+  }
+}
+
 export function hasFlag(type: Type, flag: TypeFlags) {
   return (type.flags & flag) === flag;
 }
