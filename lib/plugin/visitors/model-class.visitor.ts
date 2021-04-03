@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import { HideField } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
-import { findNullableTypeFromUnion, getDescriptionOfNode, isNull } from '../utils/ast-utils';
+import { findNullableTypeFromUnion, getDescriptionOfNode, isNull, isUndefined } from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
@@ -135,7 +135,7 @@ export class ModelClassVisitor {
     pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const type = typeChecker.getTypeAtLocation(node);
-    const isNullable = !!node.questionToken || isNull(type);
+    const isNullable = !!node.questionToken || isNull(type) || isUndefined(type);
 
     const properties = [
       ...existingProperties,

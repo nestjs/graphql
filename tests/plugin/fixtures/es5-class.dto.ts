@@ -21,7 +21,7 @@ var CreateCatDtoEs5 = /** @class */ (function () {
         this.obj = constants_1.CONSTANT_OBJECT;
     }
     CreateCatDtoEs5._GRAPHQL_METADATA_FACTORY = function () {
-        return { name: { nullable: false, type: function () { return String; } }, status: { nullable: false, type: function () { return Object; } }, obj: { nullable: false, type: function () { return Object; } } };
+        return { name: { type: function () { return String; } }, status: { type: function () { return Object; } }, obj: { type: function () { return Object; } } };
     };
     return CreateCatDtoEs5;
 }());
