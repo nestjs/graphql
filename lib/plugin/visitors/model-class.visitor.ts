@@ -135,12 +135,12 @@ export class ModelClassVisitor {
     pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const type = typeChecker.getTypeAtLocation(node);
-    const isRequired = !node.questionToken && !isNull(type);
+    const isNullable = !!node.questionToken || isNull(type);
 
     const properties = [
       ...existingProperties,
-      !hasPropertyKey('nullable', existingProperties) &&
-        ts.createPropertyAssignment('nullable', ts.createLiteral(!isRequired)),
+      !hasPropertyKey('nullable', existingProperties) && isNullable &&
+        ts.createPropertyAssignment('nullable', ts.createLiteral(isNullable)),
       this.createTypePropertyAssignment(
         node.type,
         typeChecker,
