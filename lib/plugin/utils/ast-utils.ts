@@ -16,6 +16,8 @@ import {
   CommentRange,
   getLeadingCommentRanges,
   getTrailingCommentRanges,
+  UnionTypeNode,
+  TypeNode,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
 
@@ -179,4 +181,11 @@ export function getDescriptionOfNode(
     introspectCommentsAndExamples(trailingCommentRanges);
   }
   return description.join('\n');
+}
+
+export function findNullableTypeFromUnion(typeNode: UnionTypeNode, typeChecker: TypeChecker) {
+  return typeNode.types.find(
+    (tNode: TypeNode) =>
+      hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null)
+  );
 }

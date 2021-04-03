@@ -13,9 +13,9 @@ import {
   es5CreateCatDtoTextTranspiled,
 } from './fixtures/es5-class.dto';
 import {
-  createNullCatDtoText,
-  createNullCatDtoTextTranspiled
-} from './fixtures/create-null-cat.dto';
+  nullableDtoText,
+  nullableDtoTextTranspiled
+} from './fixtures/nullable.dto';
 
 describe('API model properties', () => {
   it('should add the metadata factory when no decorators exist', () => {
@@ -89,24 +89,24 @@ describe('API model properties', () => {
     expect(result.outputText).toEqual(es5CreateCatDtoTextTranspiled);
   });
 
-  it('should add the decorator when union type includes null', () => {
+  it('should support & understand nullable type unions', () => {
     const options: ts.CompilerOptions = {
       module: ts.ModuleKind.ESNext,
       target: ts.ScriptTarget.ESNext,
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
-      strict: true,
+      strict: true
     };
-    const filename = 'create-cat.input.ts';
+    const filename = 'nullable.input.ts';
     const fakeProgram = ts.createProgram([filename], options);
 
-    const result = ts.transpileModule(createNullCatDtoText, {
+    const result = ts.transpileModule(nullableDtoText, {
       compilerOptions: options,
       fileName: filename,
       transformers: {
         before: [before({}, fakeProgram)],
       },
     });
-    expect(result.outputText).toEqual(createNullCatDtoTextTranspiled);
+    expect(result.outputText).toEqual(nullableDtoTextTranspiled);
   });
 });
