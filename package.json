@@ -19,7 +19,7 @@
     "release": "release-it"
   },
   "devDependencies": {
-    "@apollo/federation": "0.22.0",
+    "@apollo/federation": "0.23.0",
     "@commitlint/cli": "12.1.1",
     "@commitlint/config-angular": "12.1.1",
     "@nestjs/common": "7.6.15",
@@ -34,8 +34,8 @@
     "@types/normalize-path": "3.0.0",
     "@typescript-eslint/eslint-plugin": "4.21.0",
     "@typescript-eslint/parser": "4.21.0",
-    "apollo-server-express": "2.21.2",
-    "apollo-server-fastify": "2.21.2",
+    "apollo-server-express": "2.22.2",
+    "apollo-server-fastify": "2.22.2",
     "class-transformer": "0.4.0",
     "class-validator": "0.13.1",
     "eslint": "7.23.0",
@@ -76,7 +76,7 @@
     "reflect-metadata": "^0.1.12"
   },
   "optionalDependencies": {
-    "@apollo/gateway": "^0.24.4",
+    "@apollo/gateway": "^0.26.0",
     "apollo-server-testing": "^2.21.1",
     "ts-morph": "^10.0.1"
   },
