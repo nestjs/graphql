@@ -12,7 +12,18 @@ export class BaseExplorerService {
       return [...modulesContainer.values()];
     }
     const whitelisted = this.includeWhitelisted(modulesContainer, include);
-    return whitelisted;
+
+    const modules = [];
+    const toCheck = [...whitelisted];
+    while (toCheck.length) {
+      const mod = toCheck.pop();
+      if (!modules.includes(mod)) {
+        modules.push(mod);
+        toCheck.push(...mod.imports);
+      }
+    }
+
+    return modules;
   }
 
   includeWhitelisted(
