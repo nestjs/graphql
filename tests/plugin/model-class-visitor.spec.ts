@@ -42,6 +42,7 @@ describe('API model properties', () => {
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
+      removeComments: true,
     };
     const filename = 'create-cat.input.ts';
     const fakeProgram = ts.createProgram([filename], options);
@@ -50,7 +51,14 @@ describe('API model properties', () => {
       compilerOptions: options,
       fileName: filename,
       transformers: {
-        before: [before({}, fakeProgram)],
+        before: [
+          before(
+            {
+              introspectComments: true,
+            },
+            fakeProgram,
+          ),
+        ],
       },
     });
     expect(result.outputText).toEqual(createCatDtoTextAltTranspiled);

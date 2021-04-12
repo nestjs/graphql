@@ -1,12 +1,14 @@
 import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
+  inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import { applyFieldDecorators } from './type-helpers.utils';
 
 export function OmitType<T, K extends keyof T>(
   classRef: Type<T>,
@@ -15,20 +17,24 @@ export function OmitType<T, K extends keyof T>(
 ): Type<Omit<T, typeof keys[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
-  abstract class OmitObjectType {}
+  const isInheritedPredicate = (propertyKey: string) =>
+    !keys.includes(propertyKey as K);
+  abstract class OmitObjectType {
+    constructor() {
+      inheritPropertyInitializers(this, classRef, isInheritedPredicate);
+    }
+  }
   if (decorator) {
     decorator({ isAbstract: true })(OmitObjectType);
   } else {
     decoratorFactory({ isAbstract: true })(OmitObjectType);
   }
 
-  const isInheritedPredicate = (propertyKey: string) =>
-    !keys.includes(propertyKey as K);
   inheritValidationMetadata(classRef, OmitObjectType, isInheritedPredicate);
   inheritTransformationMetadata(classRef, OmitObjectType, isInheritedPredicate);
 
   fields
-    .filter((item) => !keys.includes(item.schemaName as K))
+    .filter((item) => !keys.includes(item.name as K))
     .forEach((item) => {
       if (isFunction(item.typeFn)) {
         /**
@@ -42,6 +48,7 @@ export function OmitType<T, K extends keyof T>(
         OmitObjectType.prototype,
         item.name,
       );
+      applyFieldDecorators(OmitObjectType, item);
     });
   return OmitObjectType as Type<Omit<T, typeof keys[number]>>;
 }

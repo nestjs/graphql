@@ -17,10 +17,7 @@ describe('GraphQL Fastify (global prefix)', () => {
       app.setGlobalPrefix('/api/v1');
       await app.init();
 
-      await app
-        .getHttpAdapter()
-        .getInstance()
-        .ready();
+      await app.getHttpAdapter().getInstance().ready();
     });
 
     it('should return query result', () => {

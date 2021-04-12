@@ -2,6 +2,7 @@ import {
   DynamicModule,
   Inject,
   Module,
+  OnModuleDestroy,
   OnModuleInit,
   Optional,
   Provider,
@@ -54,8 +55,12 @@ import { GraphQLFederationFactory } from './graphql-federation.factory';
   ],
   exports: [GraphQLSchemaHost, GraphQLTypesLoader, GraphQLAstExplorer],
 })
-export class GraphQLFederationModule implements OnModuleInit {
-  private apolloServer: ApolloServerBase;
+export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
+  private _apolloServer: ApolloServerBase;
+
+  get apolloServer(): ApolloServerBase {
+    return this._apolloServer;
+  }
 
   constructor(
     @Optional()
@@ -118,15 +123,16 @@ export class GraphQLFederationModule implements OnModuleInit {
     if (options.useFactory) {
       return {
         provide: GRAPHQL_MODULE_OPTIONS,
-        useFactory: options.useFactory,
+        useFactory: async (...args: any[]) =>
+          mergeDefaults(await options.useFactory(...args)),
         inject: options.inject || [],
       };
     }
 
     return {
       provide: GRAPHQL_MODULE_OPTIONS,
-      useFactory: (optionsFactory: GqlOptionsFactory) =>
-        optionsFactory.createGqlOptions(),
+      useFactory: async (optionsFactory: GqlOptionsFactory) =>
+        mergeDefaults(await optionsFactory.createGqlOptions()),
       inject: [options.useExisting || options.useClass],
     };
   }
@@ -150,6 +156,7 @@ export class GraphQLFederationModule implements OnModuleInit {
       ...this.options,
       typeDefs: mergedTypeDefs,
     });
+    await this.runExecutorFactoryIfPresent(apolloOptions);
 
     if (this.options.definitions && this.options.definitions.path) {
       await this.graphqlFactory.generateDefinitions(
@@ -158,7 +165,7 @@ export class GraphQLFederationModule implements OnModuleInit {
       );
     }
 
-    this.registerGqlServer(apolloOptions);
+    await this.registerGqlServer(apolloOptions);
 
     if (this.options.installSubscriptionHandlers) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
@@ -171,14 +178,18 @@ export class GraphQLFederationModule implements OnModuleInit {
     }
   }
 
-  private registerGqlServer(apolloOptions: GqlModuleOptions) {
+  async onModuleDestroy() {
+    await this._apolloServer?.stop();
+  }
+
+  private async registerGqlServer(apolloOptions: GqlModuleOptions) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 
     if (platformName === 'express') {
       this.registerExpress(apolloOptions);
     } else if (platformName === 'fastify') {
-      this.registerFastify(apolloOptions);
+      await this.registerFastify(apolloOptions);
     } else {
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
@@ -218,10 +229,10 @@ export class GraphQLFederationModule implements OnModuleInit {
       cors,
       bodyParserConfig,
     });
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
-  private registerFastify(apolloOptions: GqlModuleOptions) {
+  private async registerFastify(apolloOptions: GqlModuleOptions) {
     const {
       ApolloServer,
       SchemaDirectiveVisitor,
@@ -249,7 +260,7 @@ export class GraphQLFederationModule implements OnModuleInit {
       cors,
       bodyParserConfig,
     } = this.options;
-    app.register(
+    await app.register(
       apolloServer.createHandler({
         disableHealthCheck,
         onHealthCheck,
@@ -259,7 +270,7 @@ export class GraphQLFederationModule implements OnModuleInit {
       }),
     );
 
-    this.apolloServer = apolloServer;
+    this._apolloServer = apolloServer;
   }
 
   private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
@@ -269,5 +280,13 @@ export class GraphQLFederationModule implements OnModuleInit {
     return useGlobalPrefix
       ? normalizeRoutePath(prefix) + gqlOptionsPath
       : gqlOptionsPath;
+  }
+
+  private async runExecutorFactoryIfPresent(apolloOptions: GqlModuleOptions) {
+    if (!apolloOptions.executorFactory) {
+      return;
+    }
+    const executor = await apolloOptions.executorFactory(apolloOptions.schema);
+    apolloOptions.executor = executor;
   }
 }

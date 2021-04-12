@@ -1,29 +1,41 @@
-import { Field, ID, InterfaceType, ObjectType } from '../../../../lib';
+import {
+  Field,
+  ID,
+  InterfaceType,
+  MiddlewareContext,
+  NextFn,
+  ObjectType,
+} from '../../../../lib';
 import { METADATA_FACTORY_NAME } from '../../../../lib/plugin/plugin-constants';
+
+@InterfaceType()
+export abstract class Base {
+  @Field((type) => ID)
+  id: string;
+}
 
 @InterfaceType({
   description: 'example interface',
-  resolveType: value => {
+  resolveType: (value) => {
     return Recipe;
   },
 })
-export abstract class IRecipe {
-  @Field(type => ID)
-  id: string;
-
+export abstract class IRecipe extends Base {
   @Field()
   title: string;
 }
 
 @ObjectType({ implements: IRecipe, description: 'recipe object type' })
-export class Recipe {
-  @Field(type => ID)
-  id: string;
-
-  @Field()
-  title: string;
-
-  @Field({ nullable: true })
+export class Recipe extends IRecipe {
+  @Field({
+    nullable: true,
+    middleware: [
+      async (ctx: MiddlewareContext, next: NextFn) => {
+        const value = await next();
+        return value ? 'Description: ' + value : 'Placeholder';
+      },
+    ],
+  })
   description?: string;
 
   @Field()
@@ -35,12 +47,17 @@ export class Recipe {
   }
 
   constructor(recipe: Partial<Recipe>) {
+    super();
     Object.assign(this, recipe);
   }
 
   static [METADATA_FACTORY_NAME]() {
     return {
-      lastRate: { nullable: true, type: () => Number },
+      lastRate: {
+        nullable: true,
+        type: () => Number,
+        description: 'last rate description',
+      },
       tags: { nullable: false, type: () => [String] },
     };
   }

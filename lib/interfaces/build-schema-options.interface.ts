@@ -1,6 +1,8 @@
 import { GraphQLDirective, GraphQLScalarType } from 'graphql';
+import { FieldMiddleware } from './field-middleware.interface';
 
 export type DateScalarMode = 'isoDate' | 'timestamp';
+export type NumberScalarMode = 'float' | 'integer';
 
 export interface ScalarsTypeMap {
   type: Function;
@@ -10,8 +12,15 @@ export interface ScalarsTypeMap {
 export interface BuildSchemaOptions {
   /**
    * Date scalar mode
+   * @default 'isoDate'
    */
   dateScalarMode?: DateScalarMode;
+
+  /**
+   * Number scalar mode
+   * @default 'float'
+   */
+  numberScalarMode?: NumberScalarMode;
 
   /**
    * Scalars map
@@ -37,4 +46,9 @@ export interface BuildSchemaOptions {
    * GraphQL schema directives mapping
    */
   schemaDirectives?: Record<string, any>;
+
+  /**
+   * Array of global field middleware functions
+   */
+  fieldMiddleware?: FieldMiddleware[];
 }

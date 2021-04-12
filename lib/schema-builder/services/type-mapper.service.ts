@@ -3,6 +3,7 @@ import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   GraphQLBoolean,
   GraphQLFloat,
+  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
@@ -12,6 +13,7 @@ import {
 import {
   DateScalarMode,
   GqlTypeReference,
+  NumberScalarMode,
   ScalarsTypeMap,
 } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
@@ -25,6 +27,7 @@ export class TypeMapperSevice {
     typeRef: T,
     scalarsMap: ScalarsTypeMap[] = [],
     dateScalarMode: DateScalarMode = 'isoDate',
+    numberScalarMode: NumberScalarMode = 'float',
   ): GraphQLScalarType | undefined {
     if (typeRef instanceof GraphQLScalarType) {
       return typeRef;
@@ -35,9 +38,12 @@ export class TypeMapperSevice {
     }
     const dateScalar =
       dateScalarMode === 'timestamp' ? GraphQLTimestamp : GraphQLISODateTime;
+    const numberScalar =
+      numberScalarMode === 'float' ? GraphQLFloat : GraphQLInt;
+
     const typeScalarMapping = new Map<Function, GraphQLScalarType>([
       [String, GraphQLString],
-      [Number, GraphQLFloat],
+      [Number, numberScalar],
       [Boolean, GraphQLBoolean],
       [Date, dateScalar],
     ]);
@@ -56,7 +62,7 @@ export class TypeMapperSevice {
     if (options.isArray) {
       graphqlType = this.mapToGqlList(
         graphqlType,
-        options.arrayDepth!,
+        options.arrayDepth,
         this.hasArrayOptions(options),
       );
     }

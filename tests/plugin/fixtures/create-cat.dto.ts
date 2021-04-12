@@ -32,27 +32,23 @@ export class CreateCatDto {
 
 export const createCatDtoTextTranspiled = `var Status;
 (function (Status) {
-    Status[Status["ENABLED"] = 0] = "ENABLED";
-    Status[Status["DISABLED"] = 1] = "DISABLED";
+    Status[Status[\"ENABLED\"] = 0] = \"ENABLED\";
+    Status[Status[\"DISABLED\"] = 1] = \"DISABLED\";
 })(Status || (Status = {}));
 var OneValueEnum;
 (function (OneValueEnum) {
-    OneValueEnum[OneValueEnum["ONE"] = 0] = "ONE";
+    OneValueEnum[OneValueEnum[\"ONE\"] = 0] = \"ONE\";
 })(OneValueEnum || (OneValueEnum = {}));
-let CreateCatDto = /** @class */ (() => {
-    class CreateCatDto {
-        constructor() {
-            this.age = 3;
-            this.status = Status.ENABLED;
-        }
-        static _GRAPHQL_METADATA_FACTORY() {
-            return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, date: { nullable: false, type: () => Date } };
-        }
+export class CreateCatDto {
+    constructor() {
+        this.age = 3;
+        this.status = Status.ENABLED;
     }
-    __decorate([
-        HideField()
-    ], CreateCatDto.prototype, "hidden", void 0);
-    return CreateCatDto;
-})();
-export { CreateCatDto };
+    static _GRAPHQL_METADATA_FACTORY() {
+        return { name: { nullable: false, type: () => String }, age: { nullable: false, type: () => Number }, tags: { nullable: false, type: () => [String] }, status: { nullable: false, type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { nullable: false, type: () => [Object] }, date: { nullable: false, type: () => Date } };
+    }
+}
+__decorate([
+    HideField()
+], CreateCatDto.prototype, \"hidden\", void 0);
 `;

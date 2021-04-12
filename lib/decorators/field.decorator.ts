@@ -5,8 +5,9 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
+import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
-import { Complexity } from '../interfaces';
+import { Complexity, FieldMiddleware } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
@@ -33,6 +34,10 @@ export interface FieldOptions extends BaseTypeOptions {
    * Field complexity options.
    */
   complexity?: Complexity;
+  /**
+   * Array of middleware to apply.
+   */
+  middleware?: FieldMiddleware[];
 }
 
 /**
@@ -111,6 +116,7 @@ export function addFieldMetadata(
       description: options.description,
       deprecationReason: options.deprecationReason,
       complexity: options.complexity,
+      middleware: options.middleware,
     });
 
     if (isResolver) {
@@ -126,6 +132,10 @@ export function addFieldMetadata(
   if (loadEagerly) {
     applyMetadataFn();
   } else {
-    LazyMetadataStorage.store(applyMetadataFn);
+    LazyMetadataStorage.store(
+      prototype.constructor as Type<unknown>,
+      applyMetadataFn,
+      { isField: true },
+    );
   }
 }

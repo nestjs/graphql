@@ -1,5 +1,6 @@
 
-/** ------------------------------------------------------
+/*
+ * ------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
  */
@@ -12,4 +13,9 @@ export interface Cat {
 
 export interface IMutation {
     createCat(name?: string): Cat | Promise<Cat>;
+    returnsQuery(): IQuery | Promise<IQuery>;
+}
+
+export interface IQuery {
+    query(): number | Promise<number>;
 }

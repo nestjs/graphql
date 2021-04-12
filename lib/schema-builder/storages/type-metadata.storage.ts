@@ -9,6 +9,7 @@ import { Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { addFieldMetadata } from '../../decorators/field.decorator';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
+import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
 import {
   BaseResolverMetadata,
@@ -156,11 +157,28 @@ export class TypeMetadataStorageHost {
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
-    this.classDirectives.push(metadata);
+    const exist = this.fieldDirectives.some((directiveMetadata) => {
+      return (
+        directiveMetadata.sdl === metadata.sdl &&
+        directiveMetadata.target === metadata.target
+      );
+    });
+    if (!exist) {
+      this.classDirectives.push(metadata);
+    }
   }
 
   addDirectivePropertyMetadata(metadata: PropertyDirectiveMetadata) {
-    this.fieldDirectives.push(metadata);
+    const exist = this.fieldDirectives.some((directiveMetadata) => {
+      return (
+        directiveMetadata.fieldName === metadata.fieldName &&
+        directiveMetadata.sdl === metadata.sdl &&
+        directiveMetadata.target === metadata.target
+      );
+    });
+    if (!exist) {
+      this.fieldDirectives.push(metadata);
+    }
   }
 
   addExtensionsMetadata(metadata: ClassExtensionsMetadata) {
@@ -225,7 +243,7 @@ export class TypeMetadataStorageHost {
 
   loadClassPluginMetadata(metadata: ClassMetadata[]) {
     metadata
-      .filter((item) => item.target)
+      .filter((item) => item?.target)
       .forEach((item) => this.applyPluginMetadata(item.target.prototype));
   }
 
@@ -261,7 +279,7 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  private compileClassMetadata(metadata: ClassMetadata[]) {
+  compileClassMetadata(metadata: ClassMetadata[]) {
     metadata.forEach((item) => {
       const belongsToClass = isTargetEqual.bind(undefined, item);
 
@@ -348,13 +366,23 @@ export class TypeMetadataStorageHost {
       .find((el) => isTargetEqual(el, item))
       .typeFn();
 
-    const objectTypeMetadata = this.objectTypes.find(
-      (objTypeDef) => objTypeDef.target === objectTypeRef,
-    );
-    const objectTypeField = objectTypeMetadata.properties.find(
+    const objectOrInterfaceTypeMetadata =
+      this.objectTypes.find(
+        (objTypeDef) => objTypeDef.target === objectTypeRef,
+      ) ||
+      this.interfaces.find(
+        (interfaceTypeDef) => interfaceTypeDef.target === objectTypeRef,
+      );
+    if (!objectOrInterfaceTypeMetadata) {
+      throw new CannotDetermineHostTypeError(
+        item.schemaName,
+        objectTypeRef?.name,
+      );
+    }
+    const objectOrInterfaceTypeField = objectOrInterfaceTypeMetadata.properties.find(
       (fieldDef) => fieldDef.name === item.methodName,
     );
-    if (!objectTypeField) {
+    if (!objectOrInterfaceTypeField) {
       if (!item.typeFn || !item.typeOptions) {
         throw new UndefinedTypeError(item.target.name, item.methodName);
       }
@@ -373,19 +401,22 @@ export class TypeMetadataStorageHost {
       };
       this.addClassFieldMetadata(fieldMetadata);
 
-      objectTypeMetadata.properties.push(fieldMetadata);
+      objectOrInterfaceTypeMetadata.properties.push(fieldMetadata);
     } else {
       const isEmpty = (arr: unknown[]) => arr.length === 0;
-      if (isEmpty(objectTypeField.methodArgs)) {
-        objectTypeField.methodArgs = item.methodArgs;
+      if (isEmpty(objectOrInterfaceTypeField.methodArgs)) {
+        objectOrInterfaceTypeField.methodArgs = item.methodArgs;
       }
-      if (isEmpty(objectTypeField.directives)) {
-        objectTypeField.directives = item.directives;
+      if (isEmpty(objectOrInterfaceTypeField.directives)) {
+        objectOrInterfaceTypeField.directives = item.directives;
       }
-      if (!objectTypeField.extensions) {
-        objectTypeField.extensions = item.extensions;
+      if (!objectOrInterfaceTypeField.extensions) {
+        objectOrInterfaceTypeField.extensions = item.extensions;
       }
-      objectTypeField.complexity = item.complexity;
+      objectOrInterfaceTypeField.complexity =
+        item.complexity === undefined
+          ? objectOrInterfaceTypeField.complexity
+          : item.complexity;
     }
   }
 

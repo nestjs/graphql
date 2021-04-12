@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLNamedType } from 'graphql';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util';
 import { ObjectTypeDefinition } from './object-type-definition.factory';
 
 @Injectable()
@@ -26,13 +27,11 @@ export class OrphanedTypesFactory {
       ...inputTypeDefs,
     ];
     return classTypeDefs
-      .filter(item => !item.isAbstract)
-      .filter(item => {
-        const implementsReferencedInterface =
-          (item as ObjectTypeDefinition).interfaces &&
-          (item as ObjectTypeDefinition).interfaces.some(i =>
-            types.includes(i),
-          );
+      .filter((item) => !item.isAbstract)
+      .filter((item: ObjectTypeDefinition) => {
+        const implementsReferencedInterface = getInterfacesArray(
+          item.interfaces,
+        ).some((i) => types.includes(i));
         return types.includes(item.target) || implementsReferencedInterface;
       })
       .map(({ type }) => type);

@@ -185,6 +185,79 @@ describe('Generated Definitions', () => {
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 
+  it('should generate custom scalars with a default type', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('custom-scalar.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions(
+      'custom-scalar-default-type.test-definitions.ts',
+    );
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        defaultScalarType: 'unknown',
+      },
+    });
+
+    expect(
+      await readFile(
+        generatedDefinitions('custom-scalar-default-type.fixture.ts'),
+        'utf8',
+      ),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
+  it('should generate custom scalars with a type mapping', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('custom-scalar-type-mapping.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions(
+      'custom-scalar-type-mapping.test-definitions.ts',
+    );
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        customScalarTypeMapping: {
+          List: 'string[]',
+          Point: '[number, number]',
+          DateTime: Date,
+        },
+      },
+    });
+
+    expect(
+      await readFile(
+        generatedDefinitions('custom-scalar-type-mapping.fixture.ts'),
+        'utf8',
+      ),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
+  it('should prepend a custom header', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('custom-header.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions(
+      'custom-header.test-definitions.ts',
+    );
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        additionalHeader: '/* Put anything here you like */',
+      },
+    });
+
+    expect(
+      await readFile(generatedDefinitions('custom-header.fixture.ts'), 'utf8'),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
   it('should generate for a federated graph', async () => {
     const outputFile = generatedDefinitions('federation.test-definitions.ts');
     const factory = new GraphQLDefinitionsFactory();

@@ -12,6 +12,10 @@ import {
   TypeChecker,
   TypeFlags,
   TypeFormatFlags,
+  SourceFile,
+  CommentRange,
+  getLeadingCommentRanges,
+  getTrailingCommentRanges,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
 
@@ -133,4 +137,38 @@ function getNameFromExpression(expression: LeftHandSideExpression) {
     return (expression as PropertyAccessExpression).name;
   }
   return expression;
+}
+
+export function getDescriptionOfNode(
+  node: Node,
+  sourceFile: SourceFile,
+): string {
+  const sourceText = sourceFile.getFullText();
+  // in case we decide to include "// comments"
+  const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/\/+.*|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
+  //const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
+
+  const description = [];
+  const introspectCommentsAndExamples = (comments?: CommentRange[]) =>
+    comments?.forEach((comment) => {
+      const commentSource = sourceText.substring(comment.pos, comment.end);
+      const oneComment = commentSource.replace(replaceRegex, '').trim();
+      if (oneComment) {
+        description.push(oneComment);
+      }
+    });
+
+  const leadingCommentRanges = getLeadingCommentRanges(
+    sourceText,
+    node.getFullStart(),
+  );
+  introspectCommentsAndExamples(leadingCommentRanges);
+  if (!description.length) {
+    const trailingCommentRanges = getTrailingCommentRanges(
+      sourceText,
+      node.getFullStart(),
+    );
+    introspectCommentsAndExamples(trailingCommentRanges);
+  }
+  return description.join('\n');
 }

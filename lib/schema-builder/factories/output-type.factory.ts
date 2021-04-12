@@ -25,6 +25,7 @@ export class OutputTypeFactory {
       typeRef,
       buildOptions.scalarsMap,
       buildOptions.dateScalarMode,
+      buildOptions.numberScalarMode,
     );
     if (!gqlType) {
       gqlType = this.typeDefinitionsStorage.getOutputTypeAndExtract(typeRef);

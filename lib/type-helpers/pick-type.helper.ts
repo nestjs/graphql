@@ -1,12 +1,14 @@
 import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
+  inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
+import { applyFieldDecorators } from './type-helpers.utils';
 
 export function PickType<T, K extends keyof T>(
   classRef: Type<T>,
@@ -15,7 +17,13 @@ export function PickType<T, K extends keyof T>(
 ): Type<Pick<T, typeof keys[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
-  abstract class PickObjectType {}
+  const isInheritedPredicate = (propertyKey: string) =>
+    keys.includes(propertyKey as K);
+  abstract class PickObjectType {
+    constructor() {
+      inheritPropertyInitializers(this, classRef, isInheritedPredicate);
+    }
+  }
   decoratorFactory({ isAbstract: true })(PickObjectType);
   if (decorator) {
     decorator({ isAbstract: true })(PickObjectType);
@@ -23,13 +31,11 @@ export function PickType<T, K extends keyof T>(
     decoratorFactory({ isAbstract: true })(PickObjectType);
   }
 
-  const isInheritedPredicate = (propertyKey: string) =>
-    keys.includes(propertyKey as K);
   inheritValidationMetadata(classRef, PickObjectType, isInheritedPredicate);
   inheritTransformationMetadata(classRef, PickObjectType, isInheritedPredicate);
 
   fields
-    .filter((item) => keys.includes(item.schemaName as K))
+    .filter((item) => keys.includes(item.name as K))
     .forEach((item) => {
       if (isFunction(item.typeFn)) {
         /**
@@ -43,6 +49,7 @@ export function PickType<T, K extends keyof T>(
         PickObjectType.prototype,
         item.name,
       );
+      applyFieldDecorators(PickObjectType, item);
     });
   return PickObjectType as Type<Pick<T, typeof keys[number]>>;
 }

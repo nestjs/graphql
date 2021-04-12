@@ -1,7 +1,9 @@
 import { compact, flatten } from 'lodash';
 import * as ts from 'typescript';
 import { HideField } from '../../decorators';
+import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
+import { getDescriptionOfNode } from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
@@ -17,6 +19,7 @@ export class ModelClassVisitor {
     sourceFile: ts.SourceFile,
     ctx: ts.TransformationContext,
     program: ts.Program,
+    pluginOptions: PluginOptions,
   ) {
     const typeChecker = program.getTypeChecker();
 
@@ -47,6 +50,7 @@ export class ModelClassVisitor {
             typeChecker,
             sourceFile.fileName,
             sourceFile,
+            pluginOptions,
           );
         } catch (err) {
           return node;
@@ -97,7 +101,7 @@ export class ModelClassVisitor {
       undefined,
       ts.createBlock([ts.createReturn(returnValue)], true),
     );
-    (classMutableNode as ts.ClassDeclaration).members = ts.createNodeArray([
+    (classMutableNode as any).members = ts.createNodeArray([
       ...(classMutableNode as ts.ClassDeclaration).members,
       method,
     ]);
@@ -109,12 +113,15 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     hostFilename: string,
     sourceFile: ts.SourceFile,
+    pluginOptions: PluginOptions,
   ) {
     const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
       compilerNode,
       typeChecker,
       ts.createNodeArray(),
       hostFilename,
+      sourceFile,
+      pluginOptions,
     );
     this.addClassMetadata(compilerNode, objectLiteralExpr, sourceFile);
   }
@@ -122,10 +129,10 @@ export class ModelClassVisitor {
   createDecoratorObjectLiteralExpr(
     node: ts.PropertyDeclaration | ts.PropertySignature,
     typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<
-      ts.PropertyAssignment
-    > = ts.createNodeArray(),
+    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
     hostFilename = '',
+    sourceFile: ts.SourceFile,
+    pluginOptions: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const isRequired = !node.questionToken;
 
@@ -138,6 +145,14 @@ export class ModelClassVisitor {
         typeChecker,
         existingProperties,
         hostFilename,
+        sourceFile,
+        pluginOptions,
+      ),
+      this.createDescriptionPropertyAssigment(
+        node,
+        existingProperties,
+        pluginOptions,
+        sourceFile,
       ),
     ];
     const objectLiteral = ts.createObjectLiteral(compact(flatten(properties)));
@@ -149,6 +164,8 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename: string,
+    sourceFile: ts.SourceFile,
+    pluginOptions: PluginOptions,
   ) {
     const key = 'type';
     if (hasPropertyKey(key, existingProperties)) {
@@ -166,6 +183,8 @@ export class ModelClassVisitor {
             typeChecker,
             existingProperties,
             hostFilename,
+            sourceFile,
+            pluginOptions,
           );
           return ts.createPropertyAssignment(
             ts.createIdentifier(member.name.getText()),
@@ -250,18 +269,50 @@ export class ModelClassVisitor {
     sourceFile: ts.SourceFile,
     pathsToImport: string[],
   ): ts.SourceFile {
+    const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
     const IMPORT_PREFIX = 'eager_import_';
-    const importDeclarations = pathsToImport.map((path, index) =>
-      ts.createImportEqualsDeclaration(
+    const importDeclarations = pathsToImport.map((path, index) => {
+      if (major == 4 && minor >= 2) {
+        // support TS v4.2+
+        return (ts.createImportEqualsDeclaration as any)(
+          undefined,
+          undefined,
+          false,
+          IMPORT_PREFIX + index,
+          ts.createExternalModuleReference(ts.createLiteral(path)),
+        );
+      }
+      return (ts.createImportEqualsDeclaration as any)(
         undefined,
         undefined,
         IMPORT_PREFIX + index,
         ts.createExternalModuleReference(ts.createLiteral(path)),
-      ),
-    );
+      );
+    });
     return ts.updateSourceFileNode(sourceFile, [
       ...importDeclarations,
       ...sourceFile.statements,
     ]);
+  }
+
+  createDescriptionPropertyAssigment(
+    node: ts.PropertyDeclaration | ts.PropertySignature,
+    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
+    options: PluginOptions = {},
+    sourceFile?: ts.SourceFile,
+  ): ts.PropertyAssignment {
+    if (!options.introspectComments || !sourceFile) {
+      return;
+    }
+    const description = getDescriptionOfNode(node, sourceFile);
+
+    const keyOfComment = 'description';
+    if (!hasPropertyKey(keyOfComment, existingProperties) && description) {
+      const descriptionPropertyAssignment = ts.createPropertyAssignment(
+        keyOfComment,
+        ts.createLiteral(description),
+      );
+      return descriptionPropertyAssignment;
+    }
   }
 }

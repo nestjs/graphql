@@ -4,4 +4,9 @@ type Cat {
 
 type Mutation {
   createCat(name: String): Cat
+  returnsQuery: Query
+}
+
+type Query {
+  query: Int
 }

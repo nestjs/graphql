@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import 'reflect-metadata';
 import { Resolver } from '../enums/resolver.enum';
+import { Complexity } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
 import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
 import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error';
@@ -27,6 +28,10 @@ export interface MutationOptions extends BaseTypeOptions {
    * Mutation deprecation reason (if deprecated).
    */
   deprecationReason?: string;
+  /**
+   * Mutation complexity options.
+   */
+  complexity?: Complexity;
 }
 
 /**
@@ -78,6 +83,7 @@ export function Mutation(
         returnTypeOptions: typeOptions,
         description: options.description,
         deprecationReason: options.deprecationReason,
+        complexity: options.complexity,
       };
       TypeMetadataStorage.addMutationMetadata(metadata);
     });

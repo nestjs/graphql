@@ -16,6 +16,7 @@ import {
 import { DirectionsResolver } from '../code-first/directions/directions.resolver';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
 import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
+import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
 import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
 import {
@@ -45,7 +46,12 @@ describe('Code-first - schema factory', () => {
 
     beforeAll(async () => {
       schema = await schemaFactory.create(
-        [RecipesResolver, DirectionsResolver, AbstractResolver],
+        [
+          RecipesResolver,
+          DirectionsResolver,
+          AbstractResolver,
+          IRecipesResolver,
+        ],
         { orphanedTypes: [SampleOrphanedType] },
       );
       introspectionSchema = await (
@@ -60,7 +66,7 @@ describe('Code-first - schema factory', () => {
         printedSchemaSnapshot,
       );
     });
-    it('should define 4 queries', async () => {
+    it('should define 5 queries', async () => {
       const type = getQuery(introspectionSchema);
 
       expect(type.fields.length).toEqual(5);
@@ -113,7 +119,7 @@ describe('Code-first - schema factory', () => {
           enumValues: [
             {
               deprecationReason: null,
-              description: null,
+              description: 'The primary direction',
               isDeprecated: false,
               name: 'Up',
             },
@@ -134,6 +140,12 @@ describe('Code-first - schema factory', () => {
               description: null,
               isDeprecated: false,
               name: 'Right',
+            },
+            {
+              deprecationReason: 'Replaced with Left or Right',
+              description: null,
+              isDeprecated: true,
+              name: 'Sideways',
             },
           ],
         }),
@@ -241,6 +253,29 @@ describe('Code-first - schema factory', () => {
               },
             },
             {
+              args: [
+                {
+                  defaultValue: null,
+                  description: null,
+                  name: 'arg',
+                  type: { kind: 'SCALAR', name: 'Float', ofType: null },
+                },
+              ],
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'interfaceResolver',
+              type: {
+                kind: TypeKind.NON_NULL,
+                name: null,
+                ofType: {
+                  kind: TypeKind.SCALAR,
+                  name: 'Boolean',
+                  ofType: null,
+                },
+              },
+            },
+            {
               args: [],
               deprecationReason: null,
               description: null,
@@ -279,7 +314,7 @@ describe('Code-first - schema factory', () => {
             {
               args: [],
               deprecationReason: null,
-              description: null,
+              description: 'last rate description',
               isDeprecated: false,
               name: 'lastRate',
               type: { kind: TypeKind.SCALAR, name: 'Float', ofType: null },
@@ -487,6 +522,29 @@ describe('Code-first - schema factory', () => {
                 kind: TypeKind.NON_NULL,
                 name: null,
                 ofType: { kind: TypeKind.SCALAR, name: 'String', ofType: null },
+              },
+            },
+            {
+              args: [
+                {
+                  defaultValue: null,
+                  description: null,
+                  name: 'arg',
+                  type: { kind: 'SCALAR', name: 'Float', ofType: null },
+                },
+              ],
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'interfaceResolver',
+              type: {
+                kind: TypeKind.NON_NULL,
+                name: null,
+                ofType: {
+                  kind: TypeKind.SCALAR,
+                  name: 'Boolean',
+                  ofType: null,
+                },
               },
             },
           ],

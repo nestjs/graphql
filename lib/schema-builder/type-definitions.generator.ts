@@ -29,7 +29,7 @@ export class TypeDefinitionsGenerator {
 
   private generateInputTypeDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getInputTypesMetadata();
-    const inputTypeDefs = metadata.map(metadata =>
+    const inputTypeDefs = metadata.map((metadata) =>
       this.inputTypeDefinitionFactory.create(metadata, options),
     );
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
@@ -37,7 +37,7 @@ export class TypeDefinitionsGenerator {
 
   private generateObjectTypeDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getObjectTypesMetadata();
-    const objectTypeDefs = metadata.map(metadata =>
+    const objectTypeDefs = metadata.map((metadata) =>
       this.objectTypeDefinitionFactory.create(metadata, options),
     );
     this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
@@ -45,7 +45,7 @@ export class TypeDefinitionsGenerator {
 
   private generateInterfaceDefs(options: BuildSchemaOptions) {
     const metadata = TypeMetadataStorage.getInterfacesMetadata();
-    const interfaceDefs = metadata.map(metadata =>
+    const interfaceDefs = metadata.map((metadata) =>
       this.interfaceDefinitionFactory.create(metadata, options),
     );
     this.typeDefinitionsStorage.addInterfaces(interfaceDefs);
@@ -53,7 +53,7 @@ export class TypeDefinitionsGenerator {
 
   private generateEnumDefs() {
     const metadata = TypeMetadataStorage.getEnumsMetadata();
-    const enumDefs = metadata.map(metadata =>
+    const enumDefs = metadata.map((metadata) =>
       this.enumDefinitionFactory.create(metadata),
     );
     this.typeDefinitionsStorage.addEnums(enumDefs);
@@ -61,7 +61,7 @@ export class TypeDefinitionsGenerator {
 
   private generateUnionDefs() {
     const metadata = TypeMetadataStorage.getUnionsMetadata();
-    const unionDefs = metadata.map(metadata =>
+    const unionDefs = metadata.map((metadata) =>
       this.unionDefinitionFactory.create(metadata),
     );
     this.typeDefinitionsStorage.addUnions(unionDefs);

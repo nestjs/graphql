@@ -1,5 +1,5 @@
 import { head } from 'lodash';
-import { dirname, posix } from 'path';
+import { posix } from 'path';
 import * as ts from 'typescript';
 import {
   getDecoratorName,
@@ -17,7 +17,7 @@ export function getDecoratorOrUndefinedByNames(
   names: string[],
   decorators: ts.NodeArray<ts.Decorator>,
 ): ts.Decorator | undefined {
-  return (decorators || ts.createNodeArray()).find(item =>
+  return (decorators || ts.createNodeArray()).find((item) =>
     names.includes(getDecoratorName(item)),
   );
 }
@@ -61,6 +61,9 @@ export function getTypeReferenceAsString(
     const text = getText(type, typeChecker);
     if (text === Date.name) {
       return text;
+    }
+    if (isOptionalBoolean(text)) {
+      return Boolean.name;
     }
     if (isEnum(type)) {
       return getText(type, typeChecker);
@@ -109,8 +112,8 @@ export function hasPropertyKey(
   properties: ts.NodeArray<ts.PropertyAssignment>,
 ): boolean {
   return properties
-    .filter(item => !isDynamicallyAdded(item))
-    .some(item => item.name.getText() === key);
+    .filter((item) => !isDynamicallyAdded(item))
+    .some((item) => item.name.getText() === key);
 }
 
 export function replaceImportPath(typeReference: string, fileName: string) {
@@ -121,9 +124,10 @@ export function replaceImportPath(typeReference: string, fileName: string) {
   if (!importPath) {
     return undefined;
   }
+  importPath = convertPath(importPath);
   importPath = importPath.slice(2, importPath.length - 1);
 
-  let relativePath = posix.relative(dirname(fileName), importPath);
+  let relativePath = posix.relative(posix.dirname(fileName), importPath);
   relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
 
   const nodeModulesText = 'node_modules';
@@ -245,4 +249,23 @@ export function extractTypeArgumentIfArray(type: ts.Type) {
     type,
     isArray: false,
   };
+}
+
+/**
+ * when "strict" mode enabled, TypeScript transform optional boolean properties to "boolean | undefined"
+ * @param text
+ */
+function isOptionalBoolean(text: string) {
+  return typeof text === 'string' && text === 'boolean | undefined';
+}
+
+/**
+ * Converts Windows specific file paths to posix
+ * @param windowsPath
+ */
+function convertPath(windowsPath: string) {
+  return windowsPath
+    .replace(/^\\\\\?\\/, '')
+    .replace(/\\/g, '/')
+    .replace(/\/\/+/g, '/');
 }

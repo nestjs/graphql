@@ -28,6 +28,10 @@ export interface InterfaceTypeOptions {
    * Custom implementation of the "resolveType" function.
    */
   resolveType?: ResolveTypeFn<any, any>;
+  /**
+   * Interfaces implemented by this interface.
+   */
+  implements?: Function | Function[] | (() => Function | Function[]);
 }
 
 /**
@@ -53,14 +57,21 @@ export function InterfaceType(
     : [undefined, nameOrOptions];
 
   return (target) => {
-    const metadata = {
-      name: name || target.name,
-      target,
-      ...options,
+    const addInterfaceMetadata = () => {
+      const metadata = {
+        name: name || target.name,
+        target,
+        ...options,
+        interfaces: options.implements,
+      };
+      TypeMetadataStorage.addInterfaceMetadata(metadata);
     };
-    LazyMetadataStorage.store(() =>
-      TypeMetadataStorage.addInterfaceMetadata(metadata),
-    );
+
+    // This function must be called eagerly to allow resolvers
+    // accessing the "name" property
+    addInterfaceMetadata();
+
+    LazyMetadataStorage.store(() => addInterfaceMetadata());
 
     addClassTypeMetadata(target, ClassType.INTERFACE);
   };

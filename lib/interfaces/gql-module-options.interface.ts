@@ -1,6 +1,7 @@
+import { IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { Config } from 'apollo-server-core';
+import { Config, GraphQLExecutor } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
@@ -11,14 +12,6 @@ export interface ServerRegistration {
   bodyParserConfig?: any | boolean;
   onHealthCheck?: (req: any) => Promise<any>;
   disableHealthCheck?: boolean;
-}
-
-export interface IResolverValidationOptions {
-  requireResolversForArgs?: boolean;
-  requireResolversForNonScalar?: boolean;
-  requireResolversForAllFields?: boolean;
-  requireResolversForResolveType?: boolean;
-  allowResolversNotInSchema?: boolean;
 }
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
@@ -39,6 +32,9 @@ export interface GqlModuleOptions
   typeDefs?: string | string[];
   typePaths?: string[];
   include?: Function[];
+  executorFactory?: (
+    schema: GraphQLSchema,
+  ) => GraphQLExecutor | Promise<GraphQLExecutor>;
   installSubscriptionHandlers?: boolean;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;
@@ -62,6 +58,14 @@ export interface GqlModuleOptions
    * Enable/disable enhancers for @ResolveField()
    */
   fieldResolverEnhancers?: Enhancer[];
+  /**
+   * Sort the schema lexicographically
+   */
+  sortSchema?: boolean;
+  /**
+   * Apply `transformSchema` to the `autoSchemaFile`
+   */
+  transformAutoSchemaFile?: boolean;
 }
 
 export interface GqlOptionsFactory {

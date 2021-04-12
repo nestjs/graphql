@@ -1,6 +1,6 @@
 import { Expose, Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
-import { Field, ObjectType } from '../../lib/decorators';
+import { Directive, Extensions, Field, ObjectType } from '../../lib/decorators';
 import { getFieldsAndDecoratorForType } from '../../lib/schema-builder/utils/get-fields-and-decorator.util';
 import { PartialType } from '../../lib/type-helpers';
 
@@ -8,6 +8,8 @@ describe('PartialType', () => {
   @ObjectType({ isAbstract: true })
   abstract class BaseType {
     @Field()
+    @Directive('@upper')
+    @Extensions({ extension: true })
     id: string;
 
     @Field()
@@ -32,9 +34,8 @@ describe('PartialType', () => {
   class UpdateUserDto extends PartialType(CreateUserDto) {}
 
   it('should inherit all fields and set "nullable" to true', () => {
-    const { fields } = getFieldsAndDecoratorForType(
-      Object.getPrototypeOf(UpdateUserDto),
-    );
+    const prototype = Object.getPrototypeOf(UpdateUserDto);
+    const { fields } = getFieldsAndDecoratorForType(prototype);
 
     expect(fields.length).toEqual(5);
     expect(fields).toEqual(
@@ -61,5 +62,14 @@ describe('PartialType', () => {
         }),
       ]),
     );
+    expect(fields[0].directives.length).toEqual(1);
+    expect(fields[0].directives).toContainEqual({
+      fieldName: 'id',
+      sdl: '@upper',
+      target: prototype,
+    });
+    expect(fields[0].extensions).toEqual({
+      extension: true,
+    });
   });
 });

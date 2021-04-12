@@ -6,10 +6,14 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
+import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util';
+import { PropertyMetadata } from '../metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
+import { TypeMetadataStorage } from '../storages';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util';
 import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
@@ -38,15 +42,15 @@ export class ObjectTypeDefinitionFactory {
   ): ObjectTypeDefinition {
     const prototype = Object.getPrototypeOf(metadata.target);
     const getParentType = () => {
-      const parentTypeDefinition = this.typeDefinitionsStorage.getObjectTypeByTarget(
-        prototype,
-      );
+      const parentTypeDefinition =
+        this.typeDefinitionsStorage.getObjectTypeByTarget(prototype) ||
+        this.typeDefinitionsStorage.getInterfaceByTarget(prototype);
       return parentTypeDefinition ? parentTypeDefinition.type : undefined;
     };
     return {
       target: metadata.target,
       isAbstract: metadata.isAbstract || false,
-      interfaces: metadata.interfaces || [],
+      interfaces: getInterfacesArray(metadata.interfaces),
       type: new GraphQLObjectType({
         name: metadata.name,
         description: metadata.description,
@@ -67,20 +71,23 @@ export class ObjectTypeDefinitionFactory {
 
   private generateInterfaces(
     metadata: ObjectTypeMetadata,
-    getParentType: () => GraphQLObjectType,
+    getParentType: () => GraphQLObjectType | GraphQLInterfaceType,
   ) {
     const prototype = Object.getPrototypeOf(metadata.target);
 
     return () => {
-      const interfaces = (metadata.interfaces || []).map<GraphQLInterfaceType>(
-        (item) => this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
+      const interfaces: GraphQLInterfaceType[] = getInterfacesArray(
+        metadata.interfaces,
+      ).map(
+        (item: Function) =>
+          this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
       );
       if (!isUndefined(prototype)) {
         const parentClass = getParentType();
         if (!parentClass) {
           return interfaces;
         }
-        const parentInterfaces = parentClass.getInterfaces();
+        const parentInterfaces = parentClass.getInterfaces?.() ?? [];
         return Array.from(new Set([...interfaces, ...parentInterfaces]));
       }
       return interfaces;
@@ -90,7 +97,7 @@ export class ObjectTypeDefinitionFactory {
   private generateFields(
     metadata: ObjectTypeMetadata,
     options: BuildSchemaOptions,
-    getParentType: () => GraphQLObjectType,
+    getParentType: () => GraphQLObjectType | GraphQLInterfaceType,
   ): () => GraphQLFieldConfigMap<any, any> {
     const prototype = Object.getPrototypeOf(metadata.target);
     metadata.properties.forEach(({ typeFn }) =>
@@ -99,22 +106,34 @@ export class ObjectTypeDefinitionFactory {
 
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
-      metadata.properties.forEach((field) => {
+
+      let properties = [];
+      if (metadata.interfaces) {
+        const implementedInterfaces = TypeMetadataStorage.getInterfacesMetadata()
+          .filter((it) =>
+            getInterfacesArray(metadata.interfaces).includes(it.target),
+          )
+          .map((it) => it.properties);
+
+        implementedInterfaces.forEach((fields) =>
+          properties.push(...(fields || [])),
+        );
+      }
+      properties = properties.concat(metadata.properties);
+
+      properties.forEach((field: PropertyMetadata) => {
         const type = this.outputTypeFactory.create(
           field.name,
           field.typeFn(),
           options,
           field.options,
         );
+        const resolve = this.createFieldResolver(field, options);
+
         fields[field.schemaName] = {
           type,
           args: this.argsFactory.create(field.methodArgs, options),
-          resolve: (root: object) => {
-            const value = root[field.name];
-            return typeof value === 'undefined'
-              ? field.options.defaultValue
-              : value;
-          },
+          resolve,
           description: field.description,
           deprecationReason: field.deprecationReason,
           /**
@@ -144,26 +163,35 @@ export class ObjectTypeDefinitionFactory {
           };
         }
       }
-      if (metadata.interfaces) {
-        let interfaceFields: GraphQLFieldConfigMap<any, any> = {};
-        metadata.interfaces.forEach((item) => {
-          const interfaceType = this.typeDefinitionsStorage.getInterfaceByTarget(
-            item,
-          ).type;
-          const fieldMetadata = this.typeFieldsAccessor.extractFromInterfaceOrObjectType(
-            interfaceType,
-          );
-          interfaceFields = {
-            ...interfaceFields,
-            ...fieldMetadata,
-          };
-        });
-        fields = {
-          ...interfaceFields,
-          ...fields,
-        };
-      }
+
       return fields;
     };
+  }
+
+  private createFieldResolver<
+    TSource extends object = any,
+    TContext = {},
+    TArgs = { [argName: string]: any },
+    TOutput = any
+  >(field: PropertyMetadata, options: BuildSchemaOptions) {
+    const rootFieldResolver = (root: object) => {
+      const value = root[field.name];
+      return typeof value === 'undefined' ? field.options.defaultValue : value;
+    };
+    const middlewareFunctions = (options.fieldMiddleware || []).concat(
+      field.middleware || [],
+    );
+    if (middlewareFunctions?.length === 0) {
+      return rootFieldResolver;
+    }
+    const rootResolveFnFactory = (root: TSource) => () =>
+      rootFieldResolver(root);
+
+    return decorateFieldResolverWithMiddleware<
+      TSource,
+      TContext,
+      TArgs,
+      TOutput
+    >(rootResolveFnFactory, middlewareFunctions);
   }
 }

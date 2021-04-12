@@ -26,17 +26,31 @@ export class GraphQLTypesLoader {
   }
 
   private async getTypesFromPaths(paths: string | string[]): Promise<string[]> {
-    paths = util.isArray(paths)
+    const includeNodeModules = this.includeNodeModules(paths);
+
+    paths = Array.isArray(paths)
       ? paths.map((path) => normalize(path))
       : normalize(paths);
 
     const filePaths = await glob(paths, {
-      ignore: ['node_modules'],
+      ignore: includeNodeModules ? [] : ['node_modules'],
     });
+    if (filePaths.length === 0) {
+      throw new Error(
+        `No type definitions were found with the specified file name patterns: "${paths}". Please make sure there is at least one file that matches the given patterns.`,
+      );
+    }
     const fileContentsPromises = filePaths.sort().map((filePath) => {
       return readFile(filePath.toString(), 'utf8');
     });
 
     return Promise.all(fileContentsPromises);
+  }
+
+  private includeNodeModules(pathOrPaths: string | string[]): boolean {
+    if (Array.isArray(pathOrPaths)) {
+      return pathOrPaths.some((path) => path.includes('node_modules'));
+    }
+    return pathOrPaths.includes('node_modules');
   }
 }

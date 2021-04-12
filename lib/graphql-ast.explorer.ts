@@ -2,17 +2,24 @@ import { Injectable } from '@nestjs/common';
 import {
   DocumentNode,
   EnumTypeDefinitionNode,
+  EnumTypeExtensionNode,
   FieldDefinitionNode,
   InputObjectTypeDefinitionNode,
+  InputObjectTypeExtensionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
+  InterfaceTypeExtensionNode,
   NamedTypeNode,
   ObjectTypeDefinitionNode,
+  ObjectTypeExtensionNode,
   OperationTypeDefinitionNode,
   ScalarTypeDefinitionNode,
+  ScalarTypeExtensionNode,
   TypeNode,
   TypeSystemDefinitionNode,
+  TypeSystemExtensionNode,
   UnionTypeDefinitionNode,
+  UnionTypeExtensionNode,
 } from 'graphql';
 import { get, map, sortBy, upperFirst } from 'lodash';
 import {
@@ -39,6 +46,25 @@ export interface DefinitionsGeneratorOptions {
    * @default false
    */
   skipResolverArgs?: boolean;
+
+  /**
+   * If provided, specifies a default generated TypeScript type for custom scalars.
+   * @default 'any'
+   */
+  defaultScalarType?: string;
+
+  /**
+   * If provided, specifies a mapping of types to use for custom scalars
+   * @default undefined
+   */
+  customScalarTypeMapping?: Record<string, string | { name: string }>;
+
+  /**
+   * If provided, specifies a custom header to add after the
+   * to the output file (eg. for custom type imports or comments)
+   * @default undefined
+   */
+  additionalHeader?: string;
 }
 
 @Injectable()
@@ -79,12 +105,15 @@ export class GraphQLAstExplorer {
       ),
     );
 
-    tsFile.insertText(0, DEFINITIONS_FILE_HEADER);
+    const header = options.additionalHeader
+      ? `${DEFINITIONS_FILE_HEADER}\n${options.additionalHeader}\n\n`
+      : DEFINITIONS_FILE_HEADER;
+    tsFile.insertText(0, header);
     return tsFile;
   }
 
   lookupDefinition(
-    item: Readonly<TypeSystemDefinitionNode>,
+    item: Readonly<TypeSystemDefinitionNode | TypeSystemExtensionNode>,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
@@ -97,15 +126,21 @@ export class GraphQLAstExplorer {
           mode,
         );
       case 'ObjectTypeDefinition':
+      case 'ObjectTypeExtension':
       case 'InputObjectTypeDefinition':
+      case 'InputObjectTypeExtension':
         return this.addObjectTypeDefinition(item, tsFile, mode, options);
       case 'InterfaceTypeDefinition':
+      case 'InterfaceTypeExtension':
         return this.addObjectTypeDefinition(item, tsFile, 'interface', options);
       case 'ScalarTypeDefinition':
-        return this.addScalarDefinition(item, tsFile);
+      case 'ScalarTypeExtension':
+        return this.addScalarDefinition(item, tsFile, options);
       case 'EnumTypeDefinition':
+      case 'EnumTypeExtension':
         return this.addEnumDefinition(item, tsFile);
       case 'UnionTypeDefinition':
+      case 'UnionTypeExtension':
         return this.addUnionDefinition(item, tsFile);
     }
   }
@@ -146,8 +181,11 @@ export class GraphQLAstExplorer {
   addObjectTypeDefinition(
     item:
       | ObjectTypeDefinitionNode
+      | ObjectTypeExtensionNode
       | InputObjectTypeDefinitionNode
-      | InterfaceTypeDefinitionNode,
+      | InputObjectTypeExtensionNode
+      | InterfaceTypeDefinitionNode
+      | InterfaceTypeExtensionNode,
     tsFile: SourceFile,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
@@ -236,14 +274,16 @@ export class GraphQLAstExplorer {
     if (options.skipResolverArgs) {
       (parentRef as ClassDeclaration).addProperty({
         name: propertyName,
-        type,
+        type: this.addSymbolIfRoot(type),
         hasQuestionToken: !required,
       });
     } else {
       (parentRef as ClassDeclaration).addMethod({
         isAbstract: mode === 'class',
         name: propertyName,
-        returnType: `${type} | Promise<${type}>`,
+        returnType: `${this.addSymbolIfRoot(
+          type,
+        )} | Promise<${this.addSymbolIfRoot(type)}>`,
         parameters: this.getFunctionParameters(
           (item as FieldDefinitionNode).arguments,
         ),
@@ -327,14 +367,23 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addScalarDefinition(item: ScalarTypeDefinitionNode, tsFile: SourceFile) {
+  addScalarDefinition(
+    item: ScalarTypeDefinitionNode | ScalarTypeExtensionNode,
+    tsFile: SourceFile,
+    options: DefinitionsGeneratorOptions,
+  ) {
     const name = get(item, 'name.value');
     if (!name || name === 'Date') {
       return;
     }
+
+    const typeMapping = options.customScalarTypeMapping?.[name];
+    const mappedTypeName =
+      typeof typeMapping === 'string' ? typeMapping : typeMapping?.name;
+
     tsFile.addTypeAlias({
       name,
-      type: 'any',
+      type: mappedTypeName ?? options.defaultScalarType ?? 'any',
       isExported: true,
     });
   }
@@ -369,7 +418,10 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addEnumDefinition(item: EnumTypeDefinitionNode, tsFile: SourceFile) {
+  addEnumDefinition(
+    item: EnumTypeDefinitionNode | EnumTypeExtensionNode,
+    tsFile: SourceFile,
+  ) {
     const name = get(item, 'name.value');
     if (!name) {
       return;
@@ -385,7 +437,10 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addUnionDefinition(item: UnionTypeDefinitionNode, tsFile: SourceFile) {
+  addUnionDefinition(
+    item: UnionTypeDefinitionNode | UnionTypeExtensionNode,
+    tsFile: SourceFile,
+  ) {
     const name = get(item, 'name.value');
     if (!name) {
       return;
