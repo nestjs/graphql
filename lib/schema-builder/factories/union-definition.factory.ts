@@ -42,6 +42,9 @@ export class UnionDefinitionFactory {
             .find(Type => instance instanceof Type);
 
           if (!target) {
+            if (Reflect.has(instance, '__typename')) {
+              return instance.__typename;
+            }
             throw new ReturnTypeCannotBeResolvedError(metadata.name);
           }
           const objectDef = this.typeDefinitionsStorage.getObjectTypeByTarget(
