@@ -87,6 +87,9 @@ export class InterfaceDefinitionFactory {
             (Type) => instance instanceof Type,
           );
           if (!target) {
+            if (Reflect.has(instance, '__typename')) {
+              return instance.__typename;
+            }
             throw new ReturnTypeCannotBeResolvedError(metadata.name);
           }
           return this.typeDefinitionsStorage.getObjectTypeByTarget(target).type;
