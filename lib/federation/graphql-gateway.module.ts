@@ -149,7 +149,7 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
     const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
 
     if (adapterName === 'ExpressAdapter') {
-      this.registerExpress(apolloOptions);
+      await this.registerExpress(apolloOptions);
     } else if (adapterName === 'FastifyAdapter') {
       await this.registerFastify(apolloOptions);
     } else {
@@ -157,7 +157,7 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private registerExpress(apolloOptions: GqlModuleOptions) {
+  private async registerExpress(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage(
       'apollo-server-express',
       'GraphQLModule',
@@ -173,6 +173,7 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
     const path = this.getNormalizedPath(apolloOptions);
 
     const apolloServer = new ApolloServer(apolloOptions);
+    await apolloServer.start();
     apolloServer.applyMiddleware({
       app,
       path,
@@ -196,6 +197,7 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
     const path = this.getNormalizedPath(apolloOptions);
 
     const apolloServer = new ApolloServer(apolloOptions);
+    await apolloServer.start();
     const {
       disableHealthCheck,
       onHealthCheck,
