@@ -63,9 +63,8 @@ export interface DefinitionsGeneratorOptions {
    * If provided, specifies a mapping of default scalar types (Int, Boolean, ID, Float, String).
    * @default undefined
    */
-  defaultTypeMapping?: Record<
-    'ID' | 'Boolean' | 'Float' | 'String' | 'Int',
-    string
+  defaultTypeMapping?: Partial<
+    Record<'ID' | 'Boolean' | 'Float' | 'String' | 'Int', string>
   >;
 
   /**
