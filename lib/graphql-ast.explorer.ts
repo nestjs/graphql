@@ -60,6 +60,14 @@ export interface DefinitionsGeneratorOptions {
   customScalarTypeMapping?: Record<string, string | { name: string }>;
 
   /**
+   * If provided, specifies a mapping of default scalar types (Int, Boolean, ID, Float, String).
+   * @default undefined
+   */
+  defaultTypeMapping?: Partial<
+    Record<'ID' | 'Boolean' | 'Float' | 'String' | 'Int', string>
+  >;
+
+  /**
    * If provided, specifies a custom header to add after the
    * to the output file (eg. for custom type imports or comments)
    * @default undefined
@@ -262,7 +270,10 @@ export class GraphQLAstExplorer {
       return;
     }
 
-    const { name: type, required } = this.getFieldTypeDefinition(item.type);
+    const { name: type, required } = this.getFieldTypeDefinition(
+      item.type,
+      options,
+    );
     if (!this.isRoot(parentRef.getName())) {
       (parentRef as InterfaceDeclaration).addProperty({
         name: propertyName,
@@ -286,6 +297,7 @@ export class GraphQLAstExplorer {
         )} | Promise<${this.addSymbolIfRoot(type)}>`,
         parameters: this.getFunctionParameters(
           (item as FieldDefinitionNode).arguments,
+          options,
         ),
       });
     }
@@ -293,6 +305,7 @@ export class GraphQLAstExplorer {
 
   getFieldTypeDefinition(
     type: TypeNode,
+    options: DefinitionsGeneratorOptions,
   ): {
     name: string;
     required: boolean;
@@ -307,13 +320,13 @@ export class GraphQLAstExplorer {
 
       const typeName = get(type, 'name.value');
       return {
-        name: this.getType(typeName) + '[]',
+        name: this.getType(typeName, options) + '[]',
         required,
       };
     }
     const typeName = get(type, 'name.value');
     return {
-      name: this.getType(typeName),
+      name: this.getType(typeName, options),
       required,
     };
   }
@@ -334,30 +347,36 @@ export class GraphQLAstExplorer {
     return { type, required: false };
   }
 
-  getType(typeName: string): string {
-    const defaults = this.getDefaultTypes();
+  getType(typeName: string, options: DefinitionsGeneratorOptions): string {
+    const defaults = this.getDefaultTypes(options);
     const isDefault = defaults[typeName];
     return isDefault ? defaults[typeName] : typeName;
   }
 
-  getDefaultTypes(): { [type: string]: string } {
+  getDefaultTypes(
+    options: DefinitionsGeneratorOptions,
+  ): { [type: string]: string } {
     return {
-      String: 'string',
-      Int: 'number',
-      Boolean: 'boolean',
-      ID: 'string',
-      Float: 'number',
+      String: options.defaultTypeMapping?.String ?? 'string',
+      Int: options.defaultTypeMapping?.Int ?? 'number',
+      Boolean: options.defaultTypeMapping?.Boolean ?? 'boolean',
+      ID: options.defaultTypeMapping?.ID ?? 'string',
+      Float: options.defaultTypeMapping?.Float ?? 'number',
     };
   }
 
   getFunctionParameters(
     inputs: ReadonlyArray<InputValueDefinitionNode>,
+    options: DefinitionsGeneratorOptions,
   ): ParameterDeclarationStructure[] {
     if (!inputs) {
       return [];
     }
     return inputs.map((element) => {
-      const { name, required } = this.getFieldTypeDefinition(element.type);
+      const { name, required } = this.getFieldTypeDefinition(
+        element.type,
+        options,
+      );
       return {
         name: get(element, 'name.value'),
         type: name,

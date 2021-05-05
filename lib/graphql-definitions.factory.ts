@@ -38,6 +38,7 @@ export class GraphQLDefinitionsFactory {
       defaultScalarType: options.defaultScalarType,
       customScalarTypeMapping: options.customScalarTypeMapping,
       additionalHeader: options.additionalHeader,
+      defaultTypeMapping: options.defaultTypeMapping,
     };
 
     if (options.watch) {
