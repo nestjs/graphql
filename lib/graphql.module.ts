@@ -219,6 +219,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     const path = this.getNormalizedPath(apolloOptions);
 
     const apolloServer = new ApolloServer(apolloOptions as any);
+    await apolloServer.start();
     const {
       disableHealthCheck,
       onHealthCheck,
