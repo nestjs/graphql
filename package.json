@@ -78,7 +78,7 @@
   "optionalDependencies": {
     "@apollo/gateway": "^0.26.0",
     "apollo-server-testing": "^2.21.1",
-    "ts-morph": "^10.0.1"
+    "ts-morph": "^11.0.0"
   },
   "lint-staged": {
     "*.ts": [
