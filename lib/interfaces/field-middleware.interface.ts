@@ -2,7 +2,7 @@ import { GraphQLResolveInfo } from 'graphql';
 
 export interface MiddlewareContext<
   TSource = any,
-  TContext = {},
+  TContext = any,
   TArgs = { [argName: string]: any }
 > {
   source: TSource;
@@ -15,7 +15,7 @@ export type NextFn<T = any> = () => Promise<T>;
 
 export interface FieldMiddleware<
   TSource = any,
-  TContext = {},
+  TContext = any,
   TArgs = { [argName: string]: any },
   TOutput = any
 > {
