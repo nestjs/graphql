@@ -254,6 +254,7 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     }
 
     const apolloServer = new ApolloServer(apolloOptions as any);
+    await apolloServer.start();
     const {
       disableHealthCheck,
       onHealthCheck,
