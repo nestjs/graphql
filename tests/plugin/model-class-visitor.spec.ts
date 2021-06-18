@@ -14,7 +14,7 @@ import {
 } from './fixtures/es5-class.dto';
 import {
   nullableDtoText,
-  nullableDtoTextTranspiled
+  nullableDtoTextTranspiled,
 } from './fixtures/nullable.dto';
 
 describe('API model properties', () => {
@@ -91,11 +91,11 @@ describe('API model properties', () => {
 
   it('should support & understand nullable type unions', () => {
     const options: ts.CompilerOptions = {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
-      strict: true
+      strict: true,
     };
     const filename = 'nullable.input.ts';
     const fakeProgram = ts.createProgram([filename], options);
