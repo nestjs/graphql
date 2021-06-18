@@ -293,6 +293,25 @@ describe('Generated Definitions', () => {
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 
+  it('should generate for a federated graph with typeDef', async () => {
+    const outputFile = generatedDefinitions('federation-typedef.test-definitions.ts');
+    const factory = new GraphQLDefinitionsFactory();
+    await factory.generate({
+      typePaths: [generatedDefinitions('federation-typedef.graphql')],
+      typeDefs: `enum Animal {
+        DOG
+        CAT
+      }`,
+      path: outputFile,
+      outputAs: 'class',
+      federation: true,
+    });
+
+    expect(
+      await readFile(generatedDefinitions('federation-typedef.fixture.ts'), 'utf8'),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
   it('should generate with __typename field for each object type', async () => {
     const typeDefs = await readFile(
       generatedDefinitions('typename.graphql'),
