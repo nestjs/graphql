@@ -31,6 +31,7 @@ import {
 } from '../services';
 import { extend } from '../utils';
 import { transformSchema } from '../utils/transform-schema.util';
+import { GraphQLSchemaHost } from '../graphql-schema.host';
 
 @Injectable()
 export class GraphQLFederationFactory {
@@ -39,6 +40,7 @@ export class GraphQLFederationFactory {
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly pluginsExplorerService: PluginsExplorerService,
     private readonly gqlSchemaBuilder: GraphQLSchemaBuilder,
+    private readonly gqlSchemaHost: GraphQLSchemaHost,
   ) {}
 
   async mergeOptions(
@@ -60,6 +62,8 @@ export class GraphQLFederationFactory {
     } else {
       schema = this.buildSchemaFromTypeDefs(options);
     }
+
+    this.gqlSchemaHost.schema = schema;
 
     return {
       ...options,
