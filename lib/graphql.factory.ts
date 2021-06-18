@@ -10,12 +10,12 @@ import {
   GraphQLSchema,
   GraphQLSchemaConfig,
   lexicographicSortSchema,
-  printSchema,
+  printSchema
 } from 'graphql';
 import { forEach, isEmpty } from 'lodash';
 import {
   DefinitionsGeneratorOptions,
-  GraphQLAstExplorer,
+  GraphQLAstExplorer
 } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
@@ -23,7 +23,7 @@ import { GqlModuleOptions } from './interfaces';
 import {
   PluginsExplorerService,
   ResolversExplorerService,
-  ScalarsExplorerService,
+  ScalarsExplorerService
 } from './services';
 import { extend, removeTempField } from './utils';
 
@@ -237,6 +237,8 @@ export class GraphQLFactory {
       defaultScalarType: options.definitions.defaultScalarType,
       customScalarTypeMapping: options.definitions.customScalarTypeMapping,
       additionalHeader: options.definitions.additionalHeader,
+      defaultTypeMapping: options.definitions.defaultTypeMapping,
+      enumsAsTypes: options.definitions.enumsAsTypes,
     };
     const tsFile = await this.graphqlAstExplorer.explore(
       gql`

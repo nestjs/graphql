@@ -6,12 +6,12 @@ import {
   IntrospectionField,
   IntrospectionSchema,
   printSchema,
-  TypeKind,
+  TypeKind
 } from 'graphql';
 import { GRAPHQL_SDL_FILE_HEADER } from '../../lib/graphql.constants';
 import {
   GraphQLSchemaBuilderModule,
-  GraphQLSchemaFactory,
+  GraphQLSchemaFactory
 } from '../../lib/schema-builder';
 import { DirectionsResolver } from '../code-first/directions/directions.resolver';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
@@ -25,7 +25,7 @@ import {
   getQuery,
   getQueryByName,
   getSubscription,
-  getSubscriptionByName,
+  getSubscriptionByName
 } from '../utils/introspection-schema.utils';
 import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 
@@ -71,7 +71,7 @@ describe('Code-first - schema factory', () => {
 
       expect(type.fields.length).toEqual(5);
       expect(type.fields.map((item) => item.name)).toEqual(
-        jasmine.arrayContaining([
+        expect.arrayContaining([
           'recipes',
           'search',
           'categories',
@@ -86,7 +86,7 @@ describe('Code-first - schema factory', () => {
 
       expect(type.fields.length).toEqual(2);
       expect(type.fields.map((item) => item.name)).toEqual(
-        jasmine.arrayContaining(['addRecipe', 'removeRecipe']),
+        expect.arrayContaining(['addRecipe', 'removeRecipe']),
       );
     });
 
@@ -95,7 +95,7 @@ describe('Code-first - schema factory', () => {
 
       expect(type.fields.length).toEqual(1);
       expect(type.fields.map((item) => item.name)).toEqual(
-        jasmine.arrayContaining(['recipeAdded']),
+        expect.arrayContaining(['recipeAdded']),
       );
     });
 
@@ -112,7 +112,7 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'Direction',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           kind: TypeKind.ENUM,
           name: 'Direction',
           description: 'The basic directions',
@@ -157,7 +157,7 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'SearchResultUnion',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           description: 'Search result description',
           kind: TypeKind.UNION,
           name: 'SearchResultUnion',
@@ -182,10 +182,10 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'Ingredient',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'Ingredient',
           kind: TypeKind.OBJECT,
-          fields: jasmine.arrayContaining([
+          fields: expect.arrayContaining([
             {
               args: [],
               deprecationReason: null,
@@ -220,7 +220,7 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'Recipe',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: Recipe.name,
           kind: TypeKind.OBJECT,
           description: 'recipe object type',
@@ -414,7 +414,7 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'SampleOrphanedType',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           description: 'orphaned type',
           enumValues: null,
           fields: [
@@ -492,7 +492,7 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'IRecipe',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'IRecipe',
           kind: TypeKind.INTERFACE,
           description: 'example interface',
@@ -557,7 +557,7 @@ describe('Code-first - schema factory', () => {
         ({ name }) => name === 'NewRecipeInput',
       );
       expect(type).toEqual(
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'NewRecipeInput',
           kind: TypeKind.INPUT_OBJECT,
           description: 'new recipe input',
@@ -627,7 +627,7 @@ describe('Code-first - schema factory', () => {
       it('should take "id" as an input argument', () => {
         expect(recipeQuery.args.length).toEqual(1);
         expect(recipeQuery.args).toEqual(
-          jasmine.arrayContaining([
+          expect.arrayContaining([
             {
               defaultValue: '"1"',
               description: 'recipe id',
@@ -704,7 +704,7 @@ describe('Code-first - schema factory', () => {
       it('should take 2 input arguments', () => {
         expect(recipesQuery.args.length).toEqual(2);
         expect(recipesQuery.args).toEqual(
-          jasmine.arrayContaining([
+          expect.arrayContaining([
             {
               defaultValue: '0',
               description: 'number of items to skip',

@@ -139,7 +139,9 @@ export class ResolversExplorerService extends BaseExplorerService {
 
     const fieldResolverEnhancers = this.gqlOptions.fieldResolverEnhancers || [];
     const contextOptions =
-      isPropertyResolver && resolver.methodName !== FIELD_TYPENAME
+      resolver.methodName === FIELD_TYPENAME
+        ? { guards: false, filters: false, interceptors: false }
+        : isPropertyResolver
         ? {
             guards: fieldResolverEnhancers.includes('guards'),
             filters: fieldResolverEnhancers.includes('filters'),

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { GraphQLFieldConfigMap, GraphQLInterfaceType } from 'graphql';
+import {
+  GraphQLFieldConfigMap,
+  GraphQLInterfaceType,
+  GraphQLObjectType,
+} from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
 import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error';
 import { InterfaceMetadata } from '../metadata/interface.metadata';
@@ -10,6 +14,7 @@ import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage';
 import { getInterfacesArray } from '../utils/get-interfaces-array.util';
 import { ArgsFactory } from './args.factory';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
 import { ResolveTypeFactory } from './resolve-type.factory';
 
@@ -17,6 +22,7 @@ export interface InterfaceTypeDefinition {
   target: Function;
   type: GraphQLInterfaceType;
   isAbstract: boolean;
+  interfaces: Function[];
 }
 
 @Injectable()
@@ -28,21 +34,39 @@ export class InterfaceDefinitionFactory {
     private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
     private readonly typeFieldsAccessor: TypeFieldsAccessor,
     private readonly argsFactory: ArgsFactory,
+    private readonly astDefinitionNodeFactory: AstDefinitionNodeFactory,
   ) {}
 
   public create(
     metadata: InterfaceMetadata,
     options: BuildSchemaOptions,
   ): InterfaceTypeDefinition {
+    const prototype = Object.getPrototypeOf(metadata.target);
+    const getParentType = () => {
+      const parentTypeDefinition =
+        this.typeDefinitionsStorage.getObjectTypeByTarget(prototype) ||
+        this.typeDefinitionsStorage.getInterfaceByTarget(prototype);
+      return parentTypeDefinition ? parentTypeDefinition.type : undefined;
+    };
     const resolveType = this.createResolveTypeFn(metadata);
     return {
       target: metadata.target,
       isAbstract: metadata.isAbstract || false,
+      interfaces: getInterfacesArray(metadata.interfaces),
       type: new GraphQLInterfaceType({
         name: metadata.name,
         description: metadata.description,
         fields: this.generateFields(metadata, options),
+        interfaces: this.generateInterfaces(metadata, getParentType),
         resolveType,
+        /**
+         * AST node has to be manually created in order to define directives
+         * (more on this topic here: https://github.com/graphql/graphql-js/issues/1343)
+         */
+        astNode: this.astDefinitionNodeFactory.createInterfaceTypeNode(
+          metadata.name,
+          metadata.directives,
+        ),
       }),
     };
   }
@@ -87,14 +111,15 @@ export class InterfaceDefinitionFactory {
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
       metadata.properties.forEach((field) => {
+        const type = this.outputTypeFactory.create(
+          field.name,
+          field.typeFn(),
+          options,
+          field.options,
+        );
         fields[field.schemaName] = {
           description: field.description,
-          type: this.outputTypeFactory.create(
-            field.name,
-            field.typeFn(),
-            options,
-            field.options,
-          ),
+          type,
           args: this.argsFactory.create(field.methodArgs, options),
           resolve: (root: object) => {
             const value = root[field.name];
@@ -103,6 +128,15 @@ export class InterfaceDefinitionFactory {
               : value;
           },
           deprecationReason: field.deprecationReason,
+          /**
+           * AST node has to be manually created in order to define directives
+           * (more on this topic here: https://github.com/graphql/graphql-js/issues/1343)
+           */
+          astNode: this.astDefinitionNodeFactory.createFieldNode(
+            field.name,
+            type,
+            field.directives,
+          ),
           extensions: {
             complexity: field.complexity,
             ...field.extensions,
@@ -123,6 +157,31 @@ export class InterfaceDefinitionFactory {
         }
       }
       return fields;
+    };
+  }
+
+  private generateInterfaces(
+    metadata: InterfaceMetadata,
+    getParentType: () => GraphQLObjectType | GraphQLInterfaceType,
+  ) {
+    const prototype = Object.getPrototypeOf(metadata.target);
+
+    return () => {
+      const interfaces: GraphQLInterfaceType[] = getInterfacesArray(
+        metadata.interfaces,
+      ).map(
+        (item: Function) =>
+          this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
+      );
+      if (!isUndefined(prototype)) {
+        const parentClass = getParentType();
+        if (!parentClass) {
+          return interfaces;
+        }
+        const parentInterfaces = parentClass.getInterfaces?.() ?? [];
+        return Array.from(new Set([...interfaces, ...parentInterfaces]));
+      }
+      return interfaces;
     };
   }
 }

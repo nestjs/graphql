@@ -38,6 +38,8 @@ export class GraphQLDefinitionsFactory {
       defaultScalarType: options.defaultScalarType,
       customScalarTypeMapping: options.customScalarTypeMapping,
       additionalHeader: options.additionalHeader,
+      defaultTypeMapping: options.defaultTypeMapping,
+      enumsAsTypes: options.enumsAsTypes,
     };
 
     if (options.watch) {

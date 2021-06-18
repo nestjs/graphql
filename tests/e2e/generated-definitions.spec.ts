@@ -165,6 +165,26 @@ describe('Generated Definitions', () => {
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 
+  it('should generate enums as types', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('enum-as-type.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions('enum-as-type.test-definitions.ts');
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        enumsAsTypes: true,
+      },
+    });
+
+    expect(
+      await readFile(generatedDefinitions('enum-as-type.fixture.ts'), 'utf8'),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
+
+
   it('should generate custom scalars', async () => {
     const typeDefs = await readFile(
       generatedDefinitions('custom-scalar.graphql'),

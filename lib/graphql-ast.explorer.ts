@@ -60,11 +60,25 @@ export interface DefinitionsGeneratorOptions {
   customScalarTypeMapping?: Record<string, string | { name: string }>;
 
   /**
+   * If provided, specifies a mapping of default scalar types (Int, Boolean, ID, Float, String).
+   * @default undefined
+   */
+  defaultTypeMapping?: Partial<
+    Record<'ID' | 'Boolean' | 'Float' | 'String' | 'Int', string>
+  >;
+
+  /**
    * If provided, specifies a custom header to add after the
    * to the output file (eg. for custom type imports or comments)
    * @default undefined
    */
   additionalHeader?: string;
+
+  /**
+   * If true, enums are generated as string literal union types.
+   * @default false
+   */
+  enumsAsTypes?: boolean;
 }
 
 @Injectable()
@@ -149,7 +163,7 @@ export class GraphQLAstExplorer {
         return this.addScalarDefinition(item, tsFile, options);
       case 'EnumTypeDefinition':
       case 'EnumTypeExtension':
-        return this.addEnumDefinition(item, tsFile);
+        return this.addEnumDefinition(item, tsFile, options);
       case 'UnionTypeDefinition':
       case 'UnionTypeExtension':
         return this.addUnionDefinition(item, tsFile);
@@ -273,8 +287,10 @@ export class GraphQLAstExplorer {
       return;
     }
 
-    const { name: type, required } = this.getFieldTypeDefinition(item.type);
-
+    const { name: type, required } = this.getFieldTypeDefinition(
+      item.type,
+      options,
+    );
     if (!this.isRoot(parentRef.getName())) {
       (parentRef as InterfaceDeclaration).addProperty({
         name: propertyName,
@@ -297,6 +313,7 @@ export class GraphQLAstExplorer {
         returnType: `${type} | Promise<${type}>`,
         parameters: this.getFunctionParameters(
           (item as FieldDefinitionNode).arguments,
+          options,
         ),
       });
     }
@@ -304,6 +321,7 @@ export class GraphQLAstExplorer {
 
   getFieldTypeDefinition(
     typeNode: TypeNode,
+    options: DefinitionsGeneratorOptions,
   ): {
     name: string;
     required: boolean;
@@ -319,8 +337,8 @@ export class GraphQLAstExplorer {
 
       const typeName = this.addSymbolIfRoot(get(arrayType, 'name.value'));
       const name = arrayTypeRequired
-        ? this.getType(typeName)
-        : `Nullable<${this.getType(typeName)}>`;
+        ? this.getType(typeName, options)
+        : `Nullable<${this.getType(typeName, options)}>`;
 
       return {
         name: required ? name + '[]' : `Nullable<${name}[]>`,
@@ -332,8 +350,8 @@ export class GraphQLAstExplorer {
 
     return {
       name: required
-        ? this.getType(typeName)
-        : `Nullable<${this.getType(typeName)}>`,
+        ? this.getType(typeName, options)
+        : `Nullable<${this.getType(typeName, options)}>`,
       required,
     };
   }
@@ -354,30 +372,36 @@ export class GraphQLAstExplorer {
     return { type, required: false };
   }
 
-  getType(typeName: string): string {
-    const defaults = this.getDefaultTypes();
+  getType(typeName: string, options: DefinitionsGeneratorOptions): string {
+    const defaults = this.getDefaultTypes(options);
     const isDefault = defaults[typeName];
     return isDefault ? defaults[typeName] : typeName;
   }
 
-  getDefaultTypes(): { [type: string]: string } {
+  getDefaultTypes(
+    options: DefinitionsGeneratorOptions,
+  ): { [type: string]: string } {
     return {
-      String: 'string',
-      Int: 'number',
-      Boolean: 'boolean',
-      ID: 'string',
-      Float: 'number',
+      String: options.defaultTypeMapping?.String ?? 'string',
+      Int: options.defaultTypeMapping?.Int ?? 'number',
+      Boolean: options.defaultTypeMapping?.Boolean ?? 'boolean',
+      ID: options.defaultTypeMapping?.ID ?? 'string',
+      Float: options.defaultTypeMapping?.Float ?? 'number',
     };
   }
 
   getFunctionParameters(
     inputs: ReadonlyArray<InputValueDefinitionNode>,
+    options: DefinitionsGeneratorOptions,
   ): ParameterDeclarationStructure[] {
     if (!inputs) {
       return [];
     }
     return inputs.map((element) => {
-      const { name, required } = this.getFieldTypeDefinition(element.type);
+      const { name, required } = this.getFieldTypeDefinition(
+        element.type,
+        options,
+      );
       return {
         name: get(element, 'name.value'),
         type: name,
@@ -441,10 +465,21 @@ export class GraphQLAstExplorer {
   addEnumDefinition(
     item: EnumTypeDefinitionNode | EnumTypeExtensionNode,
     tsFile: SourceFile,
+    options: DefinitionsGeneratorOptions,
   ) {
     const name = get(item, 'name.value');
     if (!name) {
       return;
+    }
+    if (options.enumsAsTypes) {
+      const values = item.values.map(
+        (value) => `"${get(value, 'name.value')}"`,
+      );
+      return tsFile.addTypeAlias({
+        name,
+        type: values.join(' | '),
+        isExported: true,
+      });
     }
     const members = map(item.values, (value) => ({
       name: get(value, 'name.value'),

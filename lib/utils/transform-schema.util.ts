@@ -2,31 +2,30 @@
 // The changed lines are 31-40 and 85-87 and the original file can be found here:
 // https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo-graphql/src/schema/transformSchema.ts
 
+import { GraphQLReferenceResolver } from '@apollo/federation/src/types';
 import {
-  GraphQLSchema,
-  GraphQLNamedType,
-  isIntrospectionType,
-  isObjectType,
-  GraphQLObjectType,
-  GraphQLType,
-  isListType,
-  GraphQLList,
-  isNonNullType,
-  GraphQLNonNull,
-  GraphQLFieldConfigMap,
   GraphQLFieldConfigArgumentMap,
-  GraphQLOutputType,
+  GraphQLFieldConfigMap,
+  GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
   GraphQLInputType,
-  isInterfaceType,
   GraphQLInterfaceType,
-  isUnionType,
+  GraphQLList,
+  GraphQLNamedType,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLOutputType,
+  GraphQLSchema,
+  GraphQLType,
   GraphQLUnionType,
   isInputObjectType,
-  GraphQLInputObjectType,
-  GraphQLInputFieldConfigMap,
+  isInterfaceType,
+  isIntrospectionType,
+  isListType,
+  isNonNullType,
+  isObjectType,
+  isUnionType,
 } from 'graphql';
-import { GraphQLReferenceResolver } from '@apollo/federation/src/types';
-import { mapValues } from 'apollo-env';
 
 // Definitions taken from here: https://github.com/apollographql/apollo-server/blob/main/packages/apollo-federation/src/types.ts#L62
 declare module 'graphql/type/definition' {
@@ -167,4 +166,15 @@ export function transformSchema(
       type: replaceType(arg.type),
     }));
   }
+}
+
+function mapValues<T, U = T>(
+  object: Record<string, T>,
+  callback: (value: T) => U,
+): Record<string, U> {
+  const result: Record<string, U> = Object.create(null);
+  for (const [key, value] of Object.entries(object)) {
+    result[key] = callback(value);
+  }
+  return result;
 }

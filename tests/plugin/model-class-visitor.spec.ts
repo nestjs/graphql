@@ -16,8 +16,8 @@ import {
 describe('API model properties', () => {
   it('should add the metadata factory when no decorators exist', () => {
     const options: ts.CompilerOptions = {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
@@ -37,8 +37,8 @@ describe('API model properties', () => {
 
   it('should add partial metadata factory when some decorators exist', () => {
     const options: ts.CompilerOptions = {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
