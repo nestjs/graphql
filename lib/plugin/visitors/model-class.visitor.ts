@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import { HideField } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
-import { getDescriptionOfNode } from '../utils/ast-utils';
+import { findNullableTypeFromUnion, getDescriptionOfNode, isNull, isUndefined } from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
@@ -131,17 +131,18 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
     hostFilename = '',
-    sourceFile: ts.SourceFile,
-    pluginOptions: PluginOptions,
+    sourceFile?: ts.SourceFile,
+    pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
-    const isRequired = !node.questionToken;
+    const type = typeChecker.getTypeAtLocation(node);
+    const isNullable = !!node.questionToken || isNull(type) || isUndefined(type);
 
     const properties = [
       ...existingProperties,
-      !hasPropertyKey('nullable', existingProperties) &&
-        ts.createPropertyAssignment('nullable', ts.createLiteral(!isRequired)),
+      !hasPropertyKey('nullable', existingProperties) && isNullable &&
+        ts.createPropertyAssignment('nullable', ts.createLiteral(isNullable)),
       this.createTypePropertyAssignment(
-        node,
+        node.type,
         typeChecker,
         existingProperties,
         hostFilename,
@@ -160,50 +161,69 @@ export class ModelClassVisitor {
   }
 
   createTypePropertyAssignment(
-    node: ts.PropertyDeclaration | ts.PropertySignature,
+    node: ts.TypeNode,
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename: string,
-    sourceFile: ts.SourceFile,
-    pluginOptions: PluginOptions,
-  ) {
+    sourceFile?: ts.SourceFile,
+    pluginOptions?: PluginOptions
+  ): ts.PropertyAssignment {
     const key = 'type';
     if (hasPropertyKey(key, existingProperties)) {
       return undefined;
     }
+
+    if (node) {
+      if (ts.isTypeLiteralNode(node)) {
+        const propertyAssignments = Array.from(node.members || []).map(
+          (member) => {
+            const literalExpr = this.createDecoratorObjectLiteralExpr(
+              member as ts.PropertySignature,
+              typeChecker,
+              existingProperties,
+              hostFilename,
+              sourceFile,
+              pluginOptions,
+            );
+            return ts.createPropertyAssignment(
+              ts.createIdentifier(member.name.getText()),
+              literalExpr,
+            );
+          },
+        );
+        return ts.createPropertyAssignment(
+          key,
+          ts.createArrowFunction(
+            undefined,
+            undefined,
+            [],
+            undefined,
+            undefined,
+            ts.createParen(ts.createObjectLiteral(propertyAssignments)),
+          ),
+        );
+      } else if (ts.isUnionTypeNode(node)) {
+        const nullableType = findNullableTypeFromUnion(node, typeChecker);
+        const remainingTypes = node.types.filter(
+          (item) => item !== nullableType
+        );
+
+        if (remainingTypes.length === 1) {
+          return this.createTypePropertyAssignment(
+            remainingTypes[0],
+            typeChecker,
+            existingProperties,
+            hostFilename,
+          );
+        }
+      }
+    }
+
     const type = typeChecker.getTypeAtLocation(node);
     if (!type) {
       return undefined;
     }
-    if (node.type && ts.isTypeLiteralNode(node.type)) {
-      const propertyAssignments = Array.from(node.type.members || []).map(
-        (member) => {
-          const literalExpr = this.createDecoratorObjectLiteralExpr(
-            member as ts.PropertySignature,
-            typeChecker,
-            existingProperties,
-            hostFilename,
-            sourceFile,
-            pluginOptions,
-          );
-          return ts.createPropertyAssignment(
-            ts.createIdentifier(member.name.getText()),
-            literalExpr,
-          );
-        },
-      );
-      return ts.createPropertyAssignment(
-        key,
-        ts.createArrowFunction(
-          undefined,
-          undefined,
-          [],
-          undefined,
-          undefined,
-          ts.createParen(ts.createObjectLiteral(propertyAssignments)),
-        ),
-      );
-    }
+    
     let typeReference = getTypeReferenceAsString(type, typeChecker);
     if (!typeReference) {
       return undefined;
@@ -221,6 +241,7 @@ export class ModelClassVisitor {
         importsToAdd.add(importPath.slice(2, importPath.length - 1));
       }
     }
+
     return ts.createPropertyAssignment(
       key,
       ts.createArrowFunction(
