@@ -73,6 +73,12 @@ export interface DefinitionsGeneratorOptions {
    * @default undefined
    */
   additionalHeader?: string;
+
+  /**
+   * If true, enums are generated as string literal union types.
+   * @default false
+   */
+  enumsAsTypes?: boolean;
 }
 
 @Injectable()
@@ -146,7 +152,7 @@ export class GraphQLAstExplorer {
         return this.addScalarDefinition(item, tsFile, options);
       case 'EnumTypeDefinition':
       case 'EnumTypeExtension':
-        return this.addEnumDefinition(item, tsFile);
+        return this.addEnumDefinition(item, tsFile, options);
       case 'UnionTypeDefinition':
       case 'UnionTypeExtension':
         return this.addUnionDefinition(item, tsFile);
@@ -440,10 +446,19 @@ export class GraphQLAstExplorer {
   addEnumDefinition(
     item: EnumTypeDefinitionNode | EnumTypeExtensionNode,
     tsFile: SourceFile,
+    options: DefinitionsGeneratorOptions,
   ) {
     const name = get(item, 'name.value');
     if (!name) {
       return;
+    }
+    if (options.enumsAsTypes) {
+      const values = item.values.map((value) => `"${get(value, 'name.value')}"`)
+      return tsFile.addTypeAlias({
+        name,
+        type: values.join(' | '),
+        isExported: true,
+      })
     }
     const members = map(item.values, (value) => ({
       name: get(value, 'name.value'),
