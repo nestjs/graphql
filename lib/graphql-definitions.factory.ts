@@ -154,7 +154,7 @@ export class GraphQLDefinitionsFactory {
     typeDefs?: string | string[]
   ) {
     const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths  || []);
-    const mergedTypeDefs = extend(typePathDefs, typeDefs || '');
+    const mergedTypeDefs = extend(typePathDefs, typeDefs);
     if (!mergedTypeDefs) {
       throw new Error(`"typeDefs" property cannot be null.`);
     }
