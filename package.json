@@ -60,7 +60,7 @@
     "@graphql-tools/utils": "7.7.3",
     "@nestjs/mapped-types": "0.4.1",
     "apollo-env": "0.6.6",
-    "chokidar": "3.5.1",
+    "chokidar": "3.5.2",
     "fast-glob": "3.2.5",
     "iterall": "1.3.0",
     "lodash": "4.17.21",
