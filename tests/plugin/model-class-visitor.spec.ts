@@ -12,12 +12,16 @@ import {
   es5CreateCatDtoText,
   es5CreateCatDtoTextTranspiled,
 } from './fixtures/es5-class.dto';
+import {
+  nullableDtoText,
+  nullableDtoTextTranspiled,
+} from './fixtures/nullable.dto';
 
 describe('API model properties', () => {
   it('should add the metadata factory when no decorators exist', () => {
     const options: ts.CompilerOptions = {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
@@ -37,8 +41,8 @@ describe('API model properties', () => {
 
   it('should add partial metadata factory when some decorators exist', () => {
     const options: ts.CompilerOptions = {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ESNext,
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
@@ -83,5 +87,26 @@ describe('API model properties', () => {
       },
     });
     expect(result.outputText).toEqual(es5CreateCatDtoTextTranspiled);
+  });
+
+  it('should support & understand nullable type unions', () => {
+    const options: ts.CompilerOptions = {
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
+      newLine: ts.NewLineKind.LineFeed,
+      noEmitHelpers: true,
+      strict: true,
+    };
+    const filename = 'nullable.input.ts';
+    const fakeProgram = ts.createProgram([filename], options);
+
+    const result = ts.transpileModule(nullableDtoText, {
+      compilerOptions: options,
+      fileName: filename,
+      transformers: {
+        before: [before({}, fakeProgram)],
+      },
+    });
+    expect(result.outputText).toEqual(nullableDtoTextTranspiled);
   });
 });

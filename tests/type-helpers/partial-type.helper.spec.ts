@@ -39,24 +39,24 @@ describe('PartialType', () => {
 
     expect(fields.length).toEqual(5);
     expect(fields).toEqual(
-      jasmine.arrayContaining([
-        jasmine.objectContaining({
+      expect.arrayContaining([
+        expect.objectContaining({
           name: 'id',
           options: { nullable: true },
         }),
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'createdAt',
           options: { nullable: true },
         }),
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'updatedAt',
           options: { nullable: true },
         }),
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'login',
           options: { nullable: true },
         }),
-        jasmine.objectContaining({
+        expect.objectContaining({
           name: 'password',
           options: { nullable: true },
         }),

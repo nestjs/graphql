@@ -4,6 +4,7 @@ import { GqlExceptionFilter } from '../../../../lib';
 @Catch(UnauthorizedException)
 export class UnauthorizedFilter implements GqlExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
-    return new Error('Unauthorized error');
+    exception.message = 'Unauthorized error';
+    return exception;
   }
 }

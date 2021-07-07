@@ -1,6 +1,6 @@
 
 /*
- * ------------------------------------------------------
+ * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
  */
@@ -10,3 +10,4 @@
 export type List = string[];
 export type Point = [number, number];
 export type DateTime = Date;
+type Nullable<T> = T | null;

@@ -42,10 +42,11 @@ export class LazyMetadataStorageHost {
   ) {
     types = this.concatPrototypes(types);
 
-    let loadersToExecute = types
-      .map((target) => this.lazyMetadataByTarget.get(target as Type<unknown>))
-      .filter((metadata) => metadata)
-      .flat();
+    let loadersToExecute = flatten(
+      types
+        .map((target) => this.lazyMetadataByTarget.get(target as Type<unknown>))
+        .filter((metadata) => metadata),
+    );
 
     loadersToExecute = loadersToExecute.concat(
       ...(this.lazyMetadataByTarget.get(NO_TARGET_METADATA) || []),

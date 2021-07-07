@@ -123,6 +123,17 @@ export class GraphQLAstExplorer {
       ? `${DEFINITIONS_FILE_HEADER}\n${options.additionalHeader}\n\n`
       : DEFINITIONS_FILE_HEADER;
     tsFile.insertText(0, header);
+    tsFile.addTypeAlias({
+      name: 'Nullable',
+      isExported: false,
+      type: 'T | null',
+      typeParameters: [
+        {
+          name: 'T',
+        },
+      ],
+    });
+
     return tsFile;
   }
 
@@ -288,6 +299,7 @@ export class GraphQLAstExplorer {
       });
       return;
     }
+
     if (options.skipResolverArgs) {
       (parentRef as ClassDeclaration).addProperty({
         name: propertyName,
@@ -298,9 +310,7 @@ export class GraphQLAstExplorer {
       (parentRef as ClassDeclaration).addMethod({
         isAbstract: mode === 'class',
         name: propertyName,
-        returnType: `${this.addSymbolIfRoot(
-          type,
-        )} | Promise<${this.addSymbolIfRoot(type)}>`,
+        returnType: `${type} | Promise<${type}>`,
         parameters: this.getFunctionParameters(
           (item as FieldDefinitionNode).arguments,
           options,
@@ -310,29 +320,38 @@ export class GraphQLAstExplorer {
   }
 
   getFieldTypeDefinition(
-    type: TypeNode,
+    typeNode: TypeNode,
     options: DefinitionsGeneratorOptions,
   ): {
     name: string;
     required: boolean;
   } {
-    const { required, type: nestedType } = this.getNestedType(type);
-    type = nestedType;
+    const { required, type } = this.getNestedType(typeNode);
 
     const isArray = type.kind === 'ListType';
     if (isArray) {
-      const { type: nestedType } = this.getNestedType(get(type, 'type'));
-      type = nestedType;
+      const {
+        type: arrayType,
+        required: arrayTypeRequired,
+      } = this.getNestedType(get(type, 'type'));
 
-      const typeName = get(type, 'name.value');
+      const typeName = this.addSymbolIfRoot(get(arrayType, 'name.value'));
+      const name = arrayTypeRequired
+        ? this.getType(typeName, options)
+        : `Nullable<${this.getType(typeName, options)}>`;
+
       return {
-        name: this.getType(typeName, options) + '[]',
+        name: required ? name + '[]' : `Nullable<${name}[]>`,
         required,
       };
     }
-    const typeName = get(type, 'name.value');
+
+    const typeName = this.addSymbolIfRoot(get(type, 'name.value'));
+
     return {
-      name: this.getType(typeName, options),
+      name: required
+        ? this.getType(typeName, options)
+        : `Nullable<${this.getType(typeName, options)}>`,
       required,
     };
   }
@@ -453,12 +472,14 @@ export class GraphQLAstExplorer {
       return;
     }
     if (options.enumsAsTypes) {
-      const values = item.values.map((value) => `"${get(value, 'name.value')}"`)
+      const values = item.values.map(
+        (value) => `"${get(value, 'name.value')}"`,
+      );
       return tsFile.addTypeAlias({
         name,
         type: values.join(' | '),
         isExported: true,
-      })
+      });
     }
     const members = map(item.values, (value) => ({
       name: get(value, 'name.value'),

@@ -7,6 +7,11 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export enum Animal {
+    DOG = "DOG",
+    CAT = "CAT"
+}
+
 export enum Category {
     POST = "POST"
 }

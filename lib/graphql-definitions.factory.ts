@@ -9,7 +9,7 @@ import {
   GraphQLAstExplorer,
 } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
-import { removeTempField } from './utils';
+import { extend, removeTempField } from './utils';
 
 export class GraphQLDefinitionsFactory {
   private readonly gqlAstExplorer = new GraphQLAstExplorer();
@@ -23,6 +23,7 @@ export class GraphQLDefinitionsFactory {
       watch?: boolean;
       debug?: boolean;
       federation?: boolean;
+      typeDefs?: string | string[];
     } & DefinitionsGeneratorOptions,
   ) {
     const isDebugEnabled = !(options && options.debug === false);
@@ -60,6 +61,7 @@ export class GraphQLDefinitionsFactory {
           isFederation,
           isDebugEnabled,
           definitionsGeneratorOptions,
+          options.typeDefs
         );
       });
     }
@@ -70,6 +72,7 @@ export class GraphQLDefinitionsFactory {
       isFederation,
       isDebugEnabled,
       definitionsGeneratorOptions,
+      options.typeDefs
     );
   }
 
@@ -80,6 +83,7 @@ export class GraphQLDefinitionsFactory {
     isFederation: boolean,
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions = {},
+    typeDefs?: string | string[]
   ) {
     if (isFederation) {
       return this.exploreAndEmitFederation(
@@ -88,6 +92,7 @@ export class GraphQLDefinitionsFactory {
         outputAs,
         isDebugEnabled,
         definitionsGeneratorOptions,
+        typeDefs
       );
     }
     return this.exploreAndEmitRegular(
@@ -96,6 +101,7 @@ export class GraphQLDefinitionsFactory {
       outputAs,
       isDebugEnabled,
       definitionsGeneratorOptions,
+      typeDefs
     );
   }
 
@@ -105,8 +111,10 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions,
+    typeDefs?: string | string[]
   ) {
-    const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
+    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
+    const mergedTypeDefs = extend(typePathDefs, typeDefs);
 
     const {
       buildFederatedSchema,
@@ -118,7 +126,7 @@ export class GraphQLDefinitionsFactory {
     const schema = buildFederatedSchema([
       {
         typeDefs: gql`
-          ${typeDefs}
+          ${mergedTypeDefs}
         `,
         resolvers: {},
       },
@@ -144,15 +152,15 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions,
+    typeDefs?: string | string[]
   ) {
-    const typeDefs = await this.gqlTypesLoader.mergeTypesByPaths(
-      typePaths || [],
-    );
-    if (!typeDefs) {
+    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths  || []);
+    const mergedTypeDefs = extend(typePathDefs, typeDefs);
+    if (!mergedTypeDefs) {
       throw new Error(`"typeDefs" property cannot be null.`);
     }
     let schema = makeExecutableSchema({
-      typeDefs,
+      typeDefs: mergedTypeDefs,
       resolverValidationOptions: { requireResolversToMatchSchema: 'ignore' },
     });
     schema = removeTempField(schema);
