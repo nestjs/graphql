@@ -81,7 +81,7 @@
     "apollo-server-testing": "^2.21.1",
     "graphql": "^14.1.1 || ^15.0.0",
     "reflect-metadata": "^0.1.12",
-    "ts-morph": "^10.0.1"
+    "ts-morph": "^10.0.1 || ^11.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/gateway": {
