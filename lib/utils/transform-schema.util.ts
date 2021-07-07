@@ -2,7 +2,7 @@
 // The changed lines are 31-40 and 85-87 and the original file can be found here:
 // https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo-graphql/src/schema/transformSchema.ts
 
-import { GraphQLReferenceResolver } from '@apollo/federation/src/types';
+import { GraphQLReferenceResolver } from '@apollo/federation/dist/types';
 import {
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
