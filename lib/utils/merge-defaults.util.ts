@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
   ApolloError,
+  ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
   ForbiddenError,
   UserInputError,
@@ -19,6 +20,16 @@ export function mergeDefaults(
   options: GqlModuleOptions,
   defaults: GqlModuleOptions = defaultOptions,
 ): GqlModuleOptions {
+  if (options.playground !== false && process.env.NODE_ENV === 'production') {
+    const playgroundOptions =
+      typeof options.playground === 'object' ? options.playground : undefined;
+    defaults = {
+      ...defaults,
+      plugins: [
+        ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
+      ],
+    };
+  }
   const moduleOptions = {
     ...defaults,
     ...options,

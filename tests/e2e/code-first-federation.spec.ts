@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'apollo-server-express';
-import { ApolloServerTestClient } from 'apollo-server-testing';
+import { getApolloServer } from '../../lib';
 import { ApplicationModule } from '../code-first-federation/app.module';
-import { createTestClient } from '../utils/create-test-client';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerTestClient;
+  let apolloClient: ApolloServerBase;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -16,11 +16,11 @@ describe('Code-first - Federation', () => {
 
     app = module.createNestApplication();
     await app.init();
-    apolloClient = createTestClient(module);
+    apolloClient = getApolloServer(module);
   });
 
   it(`should return query result`, async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
         {
           _service {
@@ -31,14 +31,13 @@ describe('Code-first - Federation', () => {
     });
     expect(response.data).toEqual({
       _service: {
-        sdl:
-          '"""Search result description"""\nunion FederationSearchResultUnion = Post | User\n\ninterface IRecipe {\n  id: ID!\n  title: String!\n  externalField: String! @external\n}\n\ntype Post @key(fields: "id") {\n  id: ID!\n  title: String!\n  authorId: Int!\n}\n\ntype Query {\n  findPost(id: Float!): Post!\n  getPosts: [Post!]!\n  search: [FederationSearchResultUnion!]! @deprecated(reason: "test")\n  recipe: IRecipe!\n}\n\ntype Recipe implements IRecipe {\n  id: ID!\n  title: String!\n  externalField: String! @external\n  description: String!\n}\n\ntype User @extends @key(fields: "id") {\n  id: ID! @external\n  posts: [Post!]!\n}\n',
+        sdl: '"""Search result description"""\nunion FederationSearchResultUnion = Post | User\n\ninterface IRecipe {\n  id: ID!\n  title: String!\n  externalField: String! @external\n}\n\ntype Post @key(fields: "id") {\n  id: ID!\n  title: String!\n  authorId: Int!\n}\n\ntype Query {\n  findPost(id: Float!): Post!\n  getPosts: [Post!]!\n  search: [FederationSearchResultUnion!]! @deprecated(reason: "test")\n  recipe: IRecipe!\n}\n\ntype Recipe implements IRecipe {\n  id: ID!\n  title: String!\n  externalField: String! @external\n  description: String!\n}\n\ntype User @extends @key(fields: "id") {\n  id: ID! @external\n  posts: [Post!]!\n}\n',
       },
     });
   });
 
   it('should return the search result', async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
         {
           search {
@@ -68,26 +67,25 @@ describe('Code-first - Federation', () => {
   });
 
   it(`should return query result`, async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
-          {
-              recipe {
-                  id
-                  title
-                  ... on Recipe {
-                    description
-                  }
-              }
+        {
+          recipe {
+            id
+            title
+            ... on Recipe {
+              description
+            }
           }
+        }
       `,
     });
     expect(response.data).toEqual({
-      recipe:
-        {
-          id: '1',
-          title: 'Recipe',
-          description: 'Interface description',
-        },
+      recipe: {
+        id: '1',
+        title: 'Recipe',
+        description: 'Interface description',
+      },
     });
   });
 

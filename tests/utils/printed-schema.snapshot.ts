@@ -40,17 +40,17 @@ type SampleOrphanedType {
   averageRating: Float!
 }
 
+type Category {
+  name: String!
+  description: String!
+  tags: [String!]!
+}
+
 type Ingredient {
   id: ID!
 
   """ingredient name"""
   name: String @deprecated(reason: "is deprecated")
-}
-
-type Category {
-  name: String!
-  description: String!
-  tags: [String!]!
 }
 
 type Query {

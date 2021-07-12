@@ -3,9 +3,9 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import {
   GraphQLSchema,
+  lexicographicSortSchema,
   printSchema,
   specifiedDirectives,
-  lexicographicSortSchema,
 } from 'graphql';
 import { resolve } from 'path';
 import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
@@ -38,6 +38,7 @@ export class GraphQLSchemaBuilder {
           ...buildSchemaOptions,
           scalarsMap,
           schemaDirectives: options.schemaDirectives,
+          schemaTransforms: options.schemaTransforms,
         },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
@@ -114,10 +115,10 @@ export class GraphQLSchemaBuilder {
   }
 
   private loadFederationDirectives() {
-    const {
-      federationDirectives,
-    } = loadPackage('@apollo/federation/dist/directives', 'SchemaBuilder', () =>
-      require('@apollo/federation/dist/directives'),
+    const { federationDirectives } = loadPackage(
+      '@apollo/federation/dist/directives',
+      'SchemaBuilder',
+      () => require('@apollo/federation/dist/directives'),
     );
     return federationDirectives;
   }

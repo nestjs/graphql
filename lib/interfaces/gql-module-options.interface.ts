@@ -1,8 +1,16 @@
+import { ExecutableSchemaTransformation } from '@graphql-tools/schema';
 import { IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import { Config, GraphQLExecutor } from 'apollo-server-core';
+import {
+  ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
+  Config,
+  GraphQLExecutor,
+} from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
+import { ServerOptions } from 'graphql-ws';
+import { IncomingMessage } from 'http';
+import * as ws from 'ws';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -16,19 +24,26 @@ export interface ServerRegistration {
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
+type WebSocket = typeof ws.prototype;
+
+export type GraphQLWsContextExtra = {
+  readonly socket: WebSocket;
+  readonly request: IncomingMessage;
+};
+
+export type GraphQLWsSubscriptionsConfig = Partial<
+  Pick<
+    ServerOptions<GraphQLWsContextExtra>,
+    'connectionInitWaitTimeout' | 'onConnect' | 'onDisconnect' | 'onClose'
+  >
+> & {
+  keepAlive?: number;
+};
+
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 export interface GqlModuleOptions
-  extends Omit<Config, 'typeDefs'>,
-    Partial<
-      Pick<
-        ServerRegistration,
-        | 'onHealthCheck'
-        | 'disableHealthCheck'
-        | 'path'
-        | 'cors'
-        | 'bodyParserConfig'
-      >
-    > {
+  extends Omit<Config, 'typeDefs' | 'subscriptions'>,
+    Partial<ServerRegistration> {
   typeDefs?: string | string[];
   typePaths?: string[];
   include?: Function[];
@@ -36,12 +51,15 @@ export interface GqlModuleOptions
     schema: GraphQLSchema,
   ) => GraphQLExecutor | Promise<GraphQLExecutor>;
   installSubscriptionHandlers?: boolean;
+  subscriptions?: GraphQLWsSubscriptionsConfig | boolean;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;
   schemaDirectives?: Record<string, any>;
+  schemaTransforms?: ExecutableSchemaTransformation[];
   transformSchema?: (
     schema: GraphQLSchema,
   ) => GraphQLSchema | Promise<GraphQLSchema>;
+  playground?: boolean | ApolloServerPluginLandingPageGraphQLPlaygroundOptions;
   definitions?: {
     path?: string;
     outputAs?: 'class' | 'interface';
