@@ -163,12 +163,8 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
       'GraphQLModule',
       () => require('apollo-server-express'),
     );
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = apolloOptions;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      apolloOptions;
     const app = this.httpAdapterHost.httpAdapter.getInstance();
     const path = this.getNormalizedPath(apolloOptions);
 
@@ -198,12 +194,8 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
 
     const apolloServer = new ApolloServer(apolloOptions);
     await apolloServer.start();
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = apolloOptions;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      apolloOptions;
 
     await app.register(
       apolloServer.createHandler({

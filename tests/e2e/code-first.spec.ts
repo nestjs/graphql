@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'apollo-server-express';
-import { ApolloServerTestClient } from 'apollo-server-testing';
+import { getApolloServer } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
-import { createTestClient } from '../utils/create-test-client';
 
 describe('Code-first', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerTestClient;
+  let apolloClient: ApolloServerBase;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -16,11 +16,11 @@ describe('Code-first', () => {
 
     app = module.createNestApplication();
     await app.init();
-    apolloClient = createTestClient(module);
+    apolloClient = getApolloServer(module);
   });
 
   it('should return the categories result', async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
         {
           categories {
@@ -43,7 +43,7 @@ describe('Code-first', () => {
   });
 
   it('should return the search result', async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
         {
           search {
@@ -70,7 +70,7 @@ describe('Code-first', () => {
   });
 
   it(`should return query result`, async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
         {
           recipes {
@@ -117,7 +117,7 @@ describe('Code-first', () => {
   });
 
   it(`should return query result`, async () => {
-    const response = await apolloClient.query({
+    const response = await apolloClient.executeOperation({
       query: gql`
         {
           recipes {

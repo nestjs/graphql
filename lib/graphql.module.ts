@@ -14,12 +14,14 @@ import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GraphQLTypesLoader } from './graphql-types.loader';
+import { GraphQLWsSubscriptionService } from './graphql-ws/graphql-ws-subscription.service';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
+  GraphQLWsSubscriptionsConfig,
 } from './interfaces/gql-module-options.interface';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import {
@@ -51,6 +53,7 @@ import {
 })
 export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   private _apolloServer: ApolloServerBase;
+  private _graphQlWsServer?: GraphQLWsSubscriptionService;
 
   get apolloServer(): ApolloServerBase {
     return this._apolloServer;
@@ -153,14 +156,27 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     }
 
     await this.registerGqlServer(apolloOptions);
-    if (this.options.installSubscriptionHandlers) {
-      this._apolloServer.installSubscriptionHandlers(
+    if (
+      this.options.subscriptions ||
+      this.options.installSubscriptionHandlers
+    ) {
+      const subscriptionsOptions = this.options
+        .subscriptions as GraphQLWsSubscriptionsConfig;
+      this._graphQlWsServer = new GraphQLWsSubscriptionService(
+        {
+          schema: apolloOptions.schema,
+          keepAlive: subscriptionsOptions?.keepAlive,
+          context: this.options.context,
+          onConnect: subscriptionsOptions?.onConnect,
+          onDisconnect: subscriptionsOptions?.onDisconnect,
+        },
         httpAdapter.getHttpServer(),
       );
     }
   }
 
   async onModuleDestroy() {
+    await this._graphQlWsServer?.stop();
     await this._apolloServer?.stop();
   }
 
@@ -184,12 +200,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       () => require('apollo-server-express'),
     );
     const path = this.getNormalizedPath(apolloOptions);
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      this.options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
@@ -221,12 +233,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
     const apolloServer = new ApolloServer(apolloOptions as any);
     await apolloServer.start();
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      this.options;
 
     await app.register(
       apolloServer.createHandler({

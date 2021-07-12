@@ -1,3 +1,4 @@
+import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import {
   DynamicModule,
   Inject,
@@ -167,7 +168,10 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
 
     await this.registerGqlServer(apolloOptions);
 
-    if (this.options.installSubscriptionHandlers) {
+    if (
+      this.options.installSubscriptionHandlers ||
+      this.options.subscriptions
+    ) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
       throw new Error(
         'No support for subscriptions yet when using Apollo Federation',
@@ -187,7 +191,7 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     const platformName = httpAdapter.getType();
 
     if (platformName === 'express') {
-      this.registerExpress(apolloOptions);
+      await this.registerExpress(apolloOptions);
     } else if (platformName === 'fastify') {
       await this.registerFastify(apolloOptions);
     } else {
@@ -195,19 +199,14 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private registerExpress(apolloOptions: GqlModuleOptions) {
-    const {
-      ApolloServer,
-      SchemaDirectiveVisitor,
-    } = loadPackage('apollo-server-express', 'GraphQLModule', () =>
-      require('apollo-server-express'),
+  private async registerExpress(apolloOptions: GqlModuleOptions) {
+    const { ApolloServer } = loadPackage(
+      'apollo-server-express',
+      'GraphQLModule',
+      () => require('apollo-server-express'),
     );
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      this.options;
     const app = this.httpAdapterHost.httpAdapter.getInstance();
     const path = this.getNormalizedPath(apolloOptions);
 
@@ -221,6 +220,7 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     }
 
     const apolloServer = new ApolloServer(apolloOptions as any);
+    await apolloServer.start();
     apolloServer.applyMiddleware({
       app,
       path,
@@ -233,11 +233,10 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
   }
 
   private async registerFastify(apolloOptions: GqlModuleOptions) {
-    const {
-      ApolloServer,
-      SchemaDirectiveVisitor,
-    } = loadPackage('apollo-server-fastify', 'GraphQLModule', () =>
-      require('apollo-server-fastify'),
+    const { ApolloServer } = loadPackage(
+      'apollo-server-fastify',
+      'GraphQLModule',
+      () => require('apollo-server-fastify'),
     );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
@@ -255,12 +254,8 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
 
     const apolloServer = new ApolloServer(apolloOptions as any);
     await apolloServer.start();
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      this.options;
     await app.register(
       apolloServer.createHandler({
         disableHealthCheck,
