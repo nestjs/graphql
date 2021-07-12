@@ -169,7 +169,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     const platformName = httpAdapter.getType();
 
     if (platformName === 'express') {
-      this.registerExpress(apolloOptions);
+      await this.registerExpress(apolloOptions);
     } else if (platformName === 'fastify') {
       await this.registerFastify(apolloOptions);
     } else {
@@ -177,7 +177,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private registerExpress(apolloOptions: GqlModuleOptions) {
+  private async registerExpress(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage(
       'apollo-server-express',
       'GraphQLModule',
@@ -194,6 +194,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
     const apolloServer = new ApolloServer(apolloOptions as any);
+    await apolloServer.start();
 
     apolloServer.applyMiddleware({
       app,
