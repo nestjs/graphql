@@ -165,10 +165,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       this._graphQlWsServer = new GraphQLWsSubscriptionService(
         {
           schema: apolloOptions.schema,
-          keepAlive: subscriptionsOptions?.keepAlive,
           context: this.options.context,
-          onConnect: subscriptionsOptions?.onConnect,
-          onDisconnect: subscriptionsOptions?.onDisconnect,
+          ...subscriptionsOptions,
         },
         httpAdapter.getHttpServer(),
       );

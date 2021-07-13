@@ -9,8 +9,6 @@ import {
 } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { ServerOptions } from 'graphql-ws';
-import { IncomingMessage } from 'http';
-import * as ws from 'ws';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -24,21 +22,17 @@ export interface ServerRegistration {
 
 export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
-type WebSocket = typeof ws.prototype;
-
-export type GraphQLWsContextExtra = {
-  readonly socket: WebSocket;
-  readonly request: IncomingMessage;
-};
-
 export type GraphQLWsSubscriptionsConfig = Partial<
   Pick<
-    ServerOptions<GraphQLWsContextExtra>,
-    'connectionInitWaitTimeout' | 'onConnect' | 'onDisconnect' | 'onClose'
+    ServerOptions,
+    | 'connectionInitWaitTimeout'
+    | 'onConnect'
+    | 'onDisconnect'
+    | 'onClose'
+    | 'onSubscribe'
+    | 'onNext'
   >
-> & {
-  keepAlive?: number;
-};
+>;
 
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 export interface GqlModuleOptions

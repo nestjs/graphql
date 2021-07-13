@@ -1,23 +1,17 @@
 import { execute, GraphQLSchema, subscribe } from 'graphql';
 import { GRAPHQL_TRANSPORT_WS_PROTOCOL, ServerOptions } from 'graphql-ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { IncomingMessage } from 'http';
 import { GRAPHQL_WS, SubscriptionServer } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
-
-export type WebSocket = typeof ws.prototype;
 
 export interface GraphQLWsSubscriptionServiceOptions {
   schema: ServerOptions['schema'];
   onConnect?: ServerOptions['onConnect'];
   onDisconnect?: ServerOptions['onDisconnect'];
+  onNext?: ServerOptions['onNext'];
+  onSubscribe?: ServerOptions['onSubscribe'];
   context?: ServerOptions['context'];
-  keepAlive?: number;
-}
-
-export interface Extra {
-  readonly socket: WebSocket;
-  readonly request: IncomingMessage;
+  connectionInitWaitTimeout?: ServerOptions['connectionInitWaitTimeout'];
 }
 
 export class GraphQLWsSubscriptionService {

@@ -1,7 +1,5 @@
-import { GraphQLWsException } from '../../../lib/graphql-ws/graphql-ws.exception';
-
-export class MissingAuthorizationException extends GraphQLWsException {
+export class MissingAuthorizationException extends Error {
   constructor() {
-    super('Missing authorization', 4100);
+    super('Missing authorization');
   }
 }

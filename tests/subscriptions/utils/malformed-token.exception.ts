@@ -1,7 +1,5 @@
-import { GraphQLWsException } from '../../../lib/graphql-ws/graphql-ws.exception';
-
-export class MalformedTokenException extends GraphQLWsException {
+export class MalformedTokenException extends Error {
   constructor() {
-    super('Malformed token', 4101);
+    super('Malformed token');
   }
 }

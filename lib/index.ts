@@ -4,7 +4,6 @@ export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
 export * from './graphql-schema.host';
 export * from './graphql-types.loader';
-export { GraphQLWsException as GraphqlWsException } from './graphql-ws/graphql-ws.exception';
 export * from './graphql.factory';
 export * from './graphql.module';
 export * from './interfaces';
