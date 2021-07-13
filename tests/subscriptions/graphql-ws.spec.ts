@@ -67,7 +67,7 @@ describe('graphql-ws protocol', () => {
     });
 
     wsClient.on('closed', (ev: ws.CloseEvent) => {
-      expect(ev.code).toEqual(4100);
+      expect(ev.code).toEqual(1011);
       expect(ev.reason).toEqual('Missing authorization');
       done();
     });
@@ -102,7 +102,7 @@ describe('graphql-ws protocol', () => {
     });
 
     wsClient.on('closed', (ev: ws.CloseEvent) => {
-      expect(ev.code).toEqual(4101);
+      expect(ev.code).toEqual(1011);
       expect(ev.reason).toEqual('Malformed token');
       done();
     });

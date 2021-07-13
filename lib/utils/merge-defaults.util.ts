@@ -2,6 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
   ApolloError,
+  ApolloServerPluginLandingPageDisabled,
   ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
   ForbiddenError,
@@ -20,7 +21,7 @@ export function mergeDefaults(
   options: GqlModuleOptions,
   defaults: GqlModuleOptions = defaultOptions,
 ): GqlModuleOptions {
-  if (options.playground !== false && process.env.NODE_ENV === 'production') {
+  if (options.playground !== false && process.env.NODE_ENV !== 'production') {
     const playgroundOptions =
       typeof options.playground === 'object' ? options.playground : undefined;
     defaults = {
@@ -28,6 +29,11 @@ export function mergeDefaults(
       plugins: [
         ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
       ],
+    };
+  } else {
+    defaults = {
+      ...defaults,
+      plugins: [ApolloServerPluginLandingPageDisabled()],
     };
   }
   const moduleOptions = {
