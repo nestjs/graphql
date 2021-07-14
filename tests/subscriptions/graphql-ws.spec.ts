@@ -9,7 +9,6 @@ import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
 import { GraphQLWsLink } from './utils/graphql-ws.link';
 import { MalformedTokenException } from './utils/malformed-token.exception';
-import { MissingAuthorizationException } from './utils/missing-authorization.exception';
 
 const subscriptionQuery = gql`
   subscription TestSubscription($id: String!) {
@@ -37,9 +36,12 @@ describe('graphql-ws protocol', () => {
             }
           },
           subscriptions: {
-            onConnect: (context: Context) => {
+            onConnect: (context: Context<any>) => {
               if (!context.connectionParams.authorization) {
-                throw new MissingAuthorizationException();
+                return context.extra.socket.close(
+                  4000,
+                  'Missing authorization',
+                );
               }
               const authorization = context.connectionParams
                 .authorization as string;
@@ -67,7 +69,7 @@ describe('graphql-ws protocol', () => {
     });
 
     wsClient.on('closed', (ev: any) => {
-      expect(ev.code).toEqual(1011);
+      expect(ev.code).toEqual(4000);
       expect(ev.reason).toEqual('Missing authorization');
       done();
     });
