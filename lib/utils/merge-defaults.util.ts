@@ -1,12 +1,9 @@
-import { HttpStatus } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
   ApolloError,
   ApolloServerPluginLandingPageDisabled,
   ApolloServerPluginLandingPageGraphQLPlayground,
-  AuthenticationError,
-  ForbiddenError,
-  UserInputError,
+  PluginDefinition,
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
@@ -27,13 +24,17 @@ export function mergeDefaults(
     defaults = {
       ...defaults,
       plugins: [
-        ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
-      ],
+        ApolloServerPluginLandingPageGraphQLPlayground(
+          playgroundOptions,
+        ) as PluginDefinition,
+      ].concat(options.plugins || []),
     };
-  } else {
+  } else if (process.env.NODE_ENV === 'production') {
     defaults = {
       ...defaults,
-      plugins: [ApolloServerPluginLandingPageDisabled()],
+      plugins: [
+        ApolloServerPluginLandingPageDisabled() as PluginDefinition,
+      ].concat(options.plugins || []),
     };
   }
   const moduleOptions = {
@@ -83,14 +84,6 @@ function assignReqProperty(
   ctx.req = req;
   return ctx;
 }
-
-const apolloPredefinedExceptions: Partial<
-  Record<HttpStatus, typeof ApolloError | typeof UserInputError>
-> = {
-  [HttpStatus.BAD_REQUEST]: UserInputError,
-  [HttpStatus.UNAUTHORIZED]: AuthenticationError,
-  [HttpStatus.FORBIDDEN]: ForbiddenError,
-};
 
 function wrapFormatErrorFn(options: GqlModuleOptions) {
   if (options.autoTransformHttpErrors === false) {
