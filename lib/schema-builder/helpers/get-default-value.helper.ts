@@ -1,5 +1,5 @@
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash';
 import { TypeOptions } from '../../interfaces/type-options.interface';
 import { DefaultValuesConflictError } from '../errors/default-values-conflict.error';
 
