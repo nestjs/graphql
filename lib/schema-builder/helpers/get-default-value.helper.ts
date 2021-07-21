@@ -1,4 +1,5 @@
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isEqual } from 'lodash';
 import { TypeOptions } from '../../interfaces/type-options.interface';
 import { DefaultValuesConflictError } from '../errors/default-values-conflict.error';
 
@@ -13,7 +14,7 @@ export function getDefaultValue<T = any>(
     return initializerValue;
   }
   if (
-    options.defaultValue !== initializerValue &&
+    !isEqual(options.defaultValue, initializerValue) &&
     !isUndefined(initializerValue)
   ) {
     throw new DefaultValuesConflictError(
