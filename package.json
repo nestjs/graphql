@@ -52,7 +52,7 @@
     "reflect-metadata": "0.1.13",
     "release-it": "14.10.1",
     "rimraf": "3.0.2",
-    "rxjs": "7.2.0",
+    "rxjs": "7.3.0",
     "supertest": "6.1.4",
     "ts-jest": "27.0.4",
     "ts-morph": "11.0.3",
