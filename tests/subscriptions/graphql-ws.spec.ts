@@ -36,19 +36,21 @@ describe('graphql-ws protocol', () => {
             }
           },
           subscriptions: {
-            onConnect: (context: Context<any>) => {
-              if (!context.connectionParams.authorization) {
-                return context.extra.socket.close(
-                  4000,
-                  'Missing authorization',
-                );
-              }
-              const authorization = context.connectionParams
-                .authorization as string;
-              if (!authorization.startsWith('Bearer ')) {
-                throw new MalformedTokenException();
-              }
-              return true;
+            'graphql-ws': {
+              onConnect: (context: Context<any>) => {
+                if (!context.connectionParams.authorization) {
+                  return context.extra.socket.close(
+                    4000,
+                    'Missing authorization',
+                  );
+                }
+                const authorization = context.connectionParams
+                  .authorization as string;
+                if (!authorization.startsWith('Bearer ')) {
+                  throw new MalformedTokenException();
+                }
+                return true;
+              },
             },
           },
         }),

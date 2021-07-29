@@ -9,6 +9,7 @@ import {
 } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
 import { ServerOptions } from 'graphql-ws';
+import { ServerOptions as SubscriptionTransportWsServerOptions } from 'subscriptions-transport-ws';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -34,6 +35,18 @@ export type GraphQLWsSubscriptionsConfig = Partial<
   >
 >;
 
+export type GraphQLSubscriptionTransportWsConfig = Partial<
+  Pick<
+    SubscriptionTransportWsServerOptions,
+    'onConnect' | 'onDisconnect' | 'keepAlive'
+  >
+>;
+
+export type SubscriptionConfig = {
+  'graphql-ws'?: GraphQLWsSubscriptionsConfig;
+  'subscription-transport-ws'?: GraphQLSubscriptionTransportWsConfig;
+};
+
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 export interface GqlModuleOptions
   extends Omit<Config, 'typeDefs' | 'subscriptions'>,
@@ -45,7 +58,7 @@ export interface GqlModuleOptions
     schema: GraphQLSchema,
   ) => GraphQLExecutor | Promise<GraphQLExecutor>;
   installSubscriptionHandlers?: boolean;
-  subscriptions?: GraphQLWsSubscriptionsConfig | boolean;
+  subscriptions?: SubscriptionConfig;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;
   schemaDirectives?: Record<string, any>;

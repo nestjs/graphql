@@ -20,7 +20,6 @@ export class AppModule {
           debug: false,
           context: options?.context,
           autoSchemaFile: true,
-          installSubscriptionHandlers: true,
           subscriptions: options?.subscriptions,
         }),
       ],

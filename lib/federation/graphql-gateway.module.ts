@@ -126,7 +126,7 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
     await this.registerGqlServer({
       ...serverOpts,
       gateway,
-      subscriptions: false,
+      subscriptions: undefined,
     });
 
     if (serverOpts.installSubscriptionHandlers) {

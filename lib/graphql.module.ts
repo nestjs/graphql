@@ -14,14 +14,14 @@ import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GraphQLTypesLoader } from './graphql-types.loader';
-import { GraphQLWsSubscriptionService } from './graphql-ws/graphql-ws-subscription.service';
+import { GraphQLSubscriptionService } from './graphql-ws/graphql-subscription.service';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
-  GraphQLWsSubscriptionsConfig,
+  SubscriptionConfig,
 } from './interfaces/gql-module-options.interface';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import {
@@ -53,7 +53,7 @@ import {
 })
 export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   private _apolloServer: ApolloServerBase;
-  private _graphQlWsServer?: GraphQLWsSubscriptionService;
+  private _subscriptionService?: GraphQLSubscriptionService;
 
   get apolloServer(): ApolloServerBase {
     return this._apolloServer;
@@ -157,14 +157,15 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
     await this.registerGqlServer(apolloOptions);
     if (
-      this.options.subscriptions ||
-      this.options.installSubscriptionHandlers
+      this.options.installSubscriptionHandlers ||
+      this.options.subscriptions
     ) {
-      const subscriptionsOptions = this.options
-        .subscriptions as GraphQLWsSubscriptionsConfig;
-      this._graphQlWsServer = new GraphQLWsSubscriptionService(
+      const subscriptionsOptions: SubscriptionConfig = this.options
+        .subscriptions || { 'subscription-transport-ws': {} };
+      this._subscriptionService = new GraphQLSubscriptionService(
         {
           schema: apolloOptions.schema,
+          path: this.options.path,
           context: this.options.context,
           ...subscriptionsOptions,
         },
@@ -174,7 +175,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this._graphQlWsServer?.stop();
+    await this._subscriptionService?.stop();
     await this._apolloServer?.stop();
   }
 
