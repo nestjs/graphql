@@ -22,24 +22,27 @@ export function mergeDefaults(
   options: GqlModuleOptions,
   defaults: GqlModuleOptions = defaultOptions,
 ): GqlModuleOptions {
-  if (options.playground !== false && process.env.NODE_ENV !== 'production') {
-    const playgroundOptions =
-      typeof options.playground === 'object' ? options.playground : undefined;
-    defaults = {
-      ...defaults,
-      plugins: [
-        ApolloServerPluginLandingPageGraphQLPlayground(
-          playgroundOptions,
-        ) as PluginDefinition,
-      ].concat(options.plugins || []),
-    };
-  } else if (process.env.NODE_ENV === 'production') {
-    defaults = {
-      ...defaults,
-      plugins: [
-        ApolloServerPluginLandingPageDisabled() as PluginDefinition,
-      ].concat(options.plugins || []),
-    };
+  if (options.playground !== undefined) {
+    // Preserve backward compatibility
+    if (options.playground !== false && process.env.NODE_ENV !== 'production') {
+      const playgroundOptions =
+        typeof options.playground === 'object' ? options.playground : undefined;
+      defaults = {
+        ...defaults,
+        plugins: [
+          ApolloServerPluginLandingPageGraphQLPlayground(
+            playgroundOptions,
+          ) as PluginDefinition,
+        ].concat(options.plugins || []),
+      };
+    } else if (process.env.NODE_ENV === 'production') {
+      defaults = {
+        ...defaults,
+        plugins: [
+          ApolloServerPluginLandingPageDisabled() as PluginDefinition,
+        ].concat(options.plugins || []),
+      };
+    }
   }
   const moduleOptions = {
     ...defaults,
