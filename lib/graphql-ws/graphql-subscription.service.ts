@@ -5,8 +5,7 @@ import { GRAPHQL_WS, SubscriptionServer } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
 import { SubscriptionConfig } from '../interfaces/gql-module-options.interface';
 
-export interface GraphQLSubscriptionServiceOptions
-  extends SubscriptionConfig {
+export interface GraphQLSubscriptionServiceOptions extends SubscriptionConfig {
   schema: GraphQLSchema;
   path?: string;
   context?: ServerOptions['context'];
@@ -48,26 +47,31 @@ export class GraphQLSubscriptionService {
       );
     }
 
-    if ('subscription-transport-ws' in this.options) {
+    if ('subscriptions-transport-ws' in this.options) {
       supportedProtocols.push(GRAPHQL_WS);
       SubscriptionServer.create(
         {
           schema: this.options.schema,
           execute,
           subscribe,
-          ...this.options['subscription-transport-ws'],
+          ...this.options['subscriptions-transport-ws'],
         },
         this.subTransWs,
       );
     }
 
     this.httpServer.on('upgrade', (req, socket, head) => {
-      const protocol = req.headers['sec-websocket-protocol'] as string | string[] | undefined;
+      const protocol = req.headers['sec-websocket-protocol'] as
+        | string
+        | string[]
+        | undefined;
       let protocols = Array.isArray(protocol)
         ? protocol
         : protocol?.split(',').map((p) => p.trim());
 
-      protocols = protocols.filter(protocol => supportedProtocols.includes(protocol));
+      protocols = protocols.filter((protocol) =>
+        supportedProtocols.includes(protocol),
+      );
 
       const wss =
         protocols?.includes(GRAPHQL_WS) && // subscriptions-transport-ws subprotocol

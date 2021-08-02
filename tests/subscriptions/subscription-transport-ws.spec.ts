@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AppModule } from './app/app.module';
-import { pubSub } from './app/notification.resolver';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient, { ApolloError } from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
 import { gql } from 'apollo-server-express';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
+import { AppModule } from './app/app.module';
+import { pubSub } from './app/notification.resolver';
 
 const subscriptionQuery = gql`
   subscription TestSubscription($id: String!) {
@@ -30,7 +30,7 @@ describe('subscriptions-transport-ws protocol', () => {
             return connection?.context ?? {};
           },
           subscriptions: {
-            'subscription-transport-ws': {
+            'subscriptions-transport-ws': {
               onConnect: (connectionParams) => {
                 if (!connectionParams.authorization) {
                   throw new Error('Missing authorization header');
@@ -41,7 +41,7 @@ describe('subscriptions-transport-ws protocol', () => {
                 }
                 return { user: authorization.split('Bearer ')[1] };
               },
-            }
+            },
           },
         }),
       ],
@@ -57,7 +57,7 @@ describe('subscriptions-transport-ws protocol', () => {
       'ws://localhost:3001/graphql',
       {
         connectionCallback: (errors) => {
-          const error = (errors as unknown) as Error;
+          const error = errors as unknown as Error;
           expect(error.message).toEqual('Missing authorization header');
           done();
         },
@@ -90,7 +90,7 @@ describe('subscriptions-transport-ws protocol', () => {
       'ws://localhost:3001/graphql',
       {
         connectionCallback: (errors) => {
-          const error = (errors as unknown) as Error;
+          const error = errors as unknown as Error;
           expect(error.message).toEqual('Malformed authorization token');
           done();
         },
@@ -189,7 +189,7 @@ describe('subscriptions-transport-ws protocol', () => {
         newNotification: {
           id: '1',
           recipient: 'test',
-          message: 'Hello subscription-transport-ws',
+          message: 'Hello subscriptions-transport-ws',
         },
       });
     });
@@ -210,7 +210,7 @@ describe('subscriptions-transport-ws protocol', () => {
         next(value: any) {
           expect(value.data.newNotification.id).toEqual('1');
           expect(value.data.newNotification.message).toEqual(
-            'Hello subscription-transport-ws',
+            'Hello subscriptions-transport-ws',
           );
           done();
         },

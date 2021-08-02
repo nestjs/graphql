@@ -2,14 +2,14 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
+import { WebSocketLink } from 'apollo-link-ws';
 import { gql } from 'apollo-server-express';
 import { Client, createClient } from 'graphql-ws';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
 import { GraphQLWsLink } from './utils/graphql-ws.link';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
-import { WebSocketLink } from 'apollo-link-ws';
 
 const subscriptionQuery = gql`
   subscription TestSubscription($id: String!) {
@@ -20,7 +20,7 @@ const subscriptionQuery = gql`
   }
 `;
 
-describe('Use graphql-ws + subscription-transport-ws', () => {
+describe('Use graphql-ws + subscriptions-transport-ws', () => {
   let app: INestApplication;
   let wsClient: Client;
   let subWsClient: SubscriptionClient;
@@ -44,9 +44,9 @@ describe('Use graphql-ws + subscription-transport-ws', () => {
             'graphql-ws': {
               onConnect: gqlWsOnConnect,
             },
-            'subscription-transport-ws': {
+            'subscriptions-transport-ws': {
               onConnect: subTransWsOnConnect,
-            }
+            },
           },
         }),
       ],
@@ -111,7 +111,7 @@ describe('Use graphql-ws + subscription-transport-ws', () => {
       });
   });
 
-  it('subscription-transport-ws receives subscriptions', (done) => {
+  it('subscriptions-transport-ws receives subscriptions', (done) => {
     subTransWsOnConnect.mockReturnValue({
       user: 'test',
     });
@@ -131,7 +131,7 @@ describe('Use graphql-ws + subscription-transport-ws', () => {
         newNotification: {
           id: '1',
           recipient: 'test',
-          message: 'Hello subscription-transport-ws',
+          message: 'Hello subscriptions-transport-ws',
         },
       });
     });
@@ -152,7 +152,7 @@ describe('Use graphql-ws + subscription-transport-ws', () => {
         next(value: any) {
           expect(value.data.newNotification.id).toEqual('1');
           expect(value.data.newNotification.message).toEqual(
-            'Hello subscription-transport-ws',
+            'Hello subscriptions-transport-ws',
           );
           expect(subTransWsOnConnect).toHaveBeenCalledTimes(1);
           expect(gqlWsOnConnect).not.toHaveBeenCalled();
@@ -164,7 +164,6 @@ describe('Use graphql-ws + subscription-transport-ws', () => {
         },
       });
   });
-
 
   afterEach(async () => {
     try {

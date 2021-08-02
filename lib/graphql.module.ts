@@ -3,7 +3,7 @@ import {
   DynamicModule,
   OnModuleDestroy,
   OnModuleInit,
-  Provider,
+  Provider
 } from '@nestjs/common/interfaces';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
@@ -21,19 +21,19 @@ import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
-  SubscriptionConfig,
+  SubscriptionConfig
 } from './interfaces/gql-module-options.interface';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import {
   PluginsExplorerService,
   ResolversExplorerService,
-  ScalarsExplorerService,
+  ScalarsExplorerService
 } from './services';
 import {
   extend,
   generateString,
   mergeDefaults,
-  normalizeRoutePath,
+  normalizeRoutePath
 } from './utils';
 
 @Module({
@@ -161,7 +161,7 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       this.options.subscriptions
     ) {
       const subscriptionsOptions: SubscriptionConfig = this.options
-        .subscriptions || { 'subscription-transport-ws': {} };
+        .subscriptions || { 'subscriptions-transport-ws': {} };
       this._subscriptionService = new GraphQLSubscriptionService(
         {
           schema: apolloOptions.schema,
