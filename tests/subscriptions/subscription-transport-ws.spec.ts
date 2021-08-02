@@ -8,6 +8,8 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
+import { MalformedTokenException } from './utils/malformed-token.exception';
+import { MissingAuthorizationException } from './utils/missing-authorization.exception';
 
 const subscriptionQuery = gql`
   subscription TestSubscription($id: String!) {
@@ -33,11 +35,11 @@ describe('subscriptions-transport-ws protocol', () => {
             'subscriptions-transport-ws': {
               onConnect: (connectionParams) => {
                 if (!connectionParams.authorization) {
-                  throw new Error('Missing authorization header');
+                  throw new MissingAuthorizationException();
                 }
                 const { authorization } = connectionParams;
                 if (!authorization.startsWith('Bearer ')) {
-                  throw new Error('Malformed authorization token');
+                  throw new MalformedTokenException();
                 }
                 return { user: authorization.split('Bearer ')[1] };
               },
@@ -58,7 +60,7 @@ describe('subscriptions-transport-ws protocol', () => {
       {
         connectionCallback: (errors) => {
           const error = errors as unknown as Error;
-          expect(error.message).toEqual('Missing authorization header');
+          expect(error.message).toEqual('Missing authorization');
           done();
         },
         connectionParams: {},
@@ -91,7 +93,7 @@ describe('subscriptions-transport-ws protocol', () => {
       {
         connectionCallback: (errors) => {
           const error = errors as unknown as Error;
-          expect(error.message).toEqual('Malformed authorization token');
+          expect(error.message).toEqual('Malformed token');
           done();
         },
         connectionParams: {

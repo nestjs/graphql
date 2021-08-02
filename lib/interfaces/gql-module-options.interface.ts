@@ -33,6 +33,7 @@ export type GraphQLWsSubscriptionsConfig = Partial<
     | 'onNext'
   >
 > & {
+  keepAlive?: number;
   path?: string;
 };
 
