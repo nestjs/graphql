@@ -10,7 +10,6 @@ import {
   UserInputError,
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
-import { merge } from 'lodash';
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 
 const defaultOptions: GqlModuleOptions = {
@@ -34,18 +33,22 @@ export function mergeDefaults(
           ApolloServerPluginLandingPageGraphQLPlayground(
             playgroundOptions,
           ) as PluginDefinition,
-        ].concat(options.plugins || []),
+        ],
       };
     } else if (process.env.NODE_ENV === 'production') {
       defaults = {
         ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageDisabled() as PluginDefinition,
-        ].concat(options.plugins || []),
+        plugins: [ApolloServerPluginLandingPageDisabled() as PluginDefinition],
       };
     }
   }
-  const moduleOptions = merge(defaults, options);
+  const moduleOptions = {
+    ...defaults,
+    ...options,
+  };
+  moduleOptions.plugins = (moduleOptions.plugins || []).concat(
+    defaults.plugins || [],
+  );
   wrapContextResolver(moduleOptions, options);
   wrapFormatErrorFn(moduleOptions);
   return moduleOptions;
