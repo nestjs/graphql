@@ -10,6 +10,7 @@ import {
   UserInputError,
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { merge } from 'lodash';
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 
 const defaultOptions: GqlModuleOptions = {
@@ -44,10 +45,7 @@ export function mergeDefaults(
       };
     }
   }
-  const moduleOptions = {
-    ...defaults,
-    ...options,
-  };
+  const moduleOptions = merge(defaults, options);
   wrapContextResolver(moduleOptions, options);
   wrapFormatErrorFn(moduleOptions);
   return moduleOptions;
