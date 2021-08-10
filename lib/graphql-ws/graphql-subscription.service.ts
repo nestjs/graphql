@@ -20,11 +20,12 @@ export class GraphQLSubscriptionService {
     private readonly httpServer: any,
   ) {
     this.wss = new ws.Server({
-      path: this.options.path,
+      path: this.options['graphql-ws']?.path ?? this.options.path,
       noServer: true,
     });
     this.subTransWs = new ws.Server({
-      path: this.options.path,
+      path:
+        this.options['subscriptions-transport-ws']?.path ?? this.options.path,
       noServer: true,
     });
     this.initialize();

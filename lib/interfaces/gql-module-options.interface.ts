@@ -33,14 +33,18 @@ export type GraphQLWsSubscriptionsConfig = Partial<
     | 'onSubscribe'
     | 'onNext'
   >
->;
+> & {
+  path?: string;
+};
 
 export type GraphQLSubscriptionTransportWsConfig = Partial<
   Pick<
     SubscriptionTransportWsServerOptions,
     'onConnect' | 'onDisconnect' | 'keepAlive'
   >
->;
+> & {
+  path?: string;
+};
 
 export type SubscriptionConfig = {
   'graphql-ws'?: GraphQLWsSubscriptionsConfig;
