@@ -2,8 +2,11 @@ import { HttpStatus } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
   ApolloError,
+  ApolloServerPluginLandingPageDisabled,
+  ApolloServerPluginLandingPageGraphQLPlayground,
   AuthenticationError,
   ForbiddenError,
+  PluginDefinition,
   UserInputError,
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
@@ -19,10 +22,33 @@ export function mergeDefaults(
   options: GqlModuleOptions,
   defaults: GqlModuleOptions = defaultOptions,
 ): GqlModuleOptions {
+  if (options.playground !== undefined) {
+    // Preserve backward compatibility
+    if (options.playground !== false && process.env.NODE_ENV !== 'production') {
+      const playgroundOptions =
+        typeof options.playground === 'object' ? options.playground : undefined;
+      defaults = {
+        ...defaults,
+        plugins: [
+          ApolloServerPluginLandingPageGraphQLPlayground(
+            playgroundOptions,
+          ) as PluginDefinition,
+        ],
+      };
+    } else if (process.env.NODE_ENV === 'production') {
+      defaults = {
+        ...defaults,
+        plugins: [ApolloServerPluginLandingPageDisabled() as PluginDefinition],
+      };
+    }
+  }
   const moduleOptions = {
     ...defaults,
     ...options,
   };
+  moduleOptions.plugins = (moduleOptions.plugins || []).concat(
+    defaults.plugins || [],
+  );
   wrapContextResolver(moduleOptions, options);
   wrapFormatErrorFn(moduleOptions);
   return moduleOptions;

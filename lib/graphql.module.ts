@@ -3,7 +3,7 @@ import {
   DynamicModule,
   OnModuleDestroy,
   OnModuleInit,
-  Provider,
+  Provider
 } from '@nestjs/common/interfaces';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
@@ -14,24 +14,26 @@ import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GraphQLTypesLoader } from './graphql-types.loader';
+import { GraphQLSubscriptionService } from './graphql-ws/graphql-subscription.service';
 import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
 import { GraphQLFactory } from './graphql.factory';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
+  SubscriptionConfig
 } from './interfaces/gql-module-options.interface';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import {
   PluginsExplorerService,
   ResolversExplorerService,
-  ScalarsExplorerService,
+  ScalarsExplorerService
 } from './services';
 import {
   extend,
   generateString,
   mergeDefaults,
-  normalizeRoutePath,
+  normalizeRoutePath
 } from './utils';
 
 @Module({
@@ -51,6 +53,7 @@ import {
 })
 export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
   private _apolloServer: ApolloServerBase;
+  private _subscriptionService?: GraphQLSubscriptionService;
 
   get apolloServer(): ApolloServerBase {
     return this._apolloServer;
@@ -153,14 +156,26 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     }
 
     await this.registerGqlServer(apolloOptions);
-    if (this.options.installSubscriptionHandlers) {
-      this._apolloServer.installSubscriptionHandlers(
+    if (
+      this.options.installSubscriptionHandlers ||
+      this.options.subscriptions
+    ) {
+      const subscriptionsOptions: SubscriptionConfig = this.options
+        .subscriptions || { 'subscriptions-transport-ws': {} };
+      this._subscriptionService = new GraphQLSubscriptionService(
+        {
+          schema: apolloOptions.schema,
+          path: this.options.path,
+          context: this.options.context,
+          ...subscriptionsOptions,
+        },
         httpAdapter.getHttpServer(),
       );
     }
   }
 
   async onModuleDestroy() {
+    await this._subscriptionService?.stop();
     await this._apolloServer?.stop();
   }
 
@@ -184,12 +199,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       () => require('apollo-server-express'),
     );
     const path = this.getNormalizedPath(apolloOptions);
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      this.options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
@@ -221,12 +232,8 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
     const apolloServer = new ApolloServer(apolloOptions as any);
     await apolloServer.start();
-    const {
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    } = this.options;
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+      this.options;
 
     await app.register(
       apolloServer.createHandler({

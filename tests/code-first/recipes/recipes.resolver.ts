@@ -1,5 +1,5 @@
 import { NotFoundException, UseGuards } from '@nestjs/common';
-import { PubSub } from 'apollo-server-express';
+import { PubSub } from 'graphql-subscriptions';
 import {
   Args,
   Mutation,
@@ -13,11 +13,11 @@ import { AuthGuard } from '../common/guards/auth.guard';
 import { FilterRecipesCountArgs } from './dto/filter-recipes-count.args';
 import { NewRecipeInput } from './dto/new-recipe.input';
 import { RecipesArgs } from './dto/recipes.args';
+import { Category } from './models/category';
 import { Ingredient } from './models/ingredient';
 import { IRecipe, Recipe } from './models/recipe';
 import { RecipesService } from './recipes.service';
 import { SearchResultUnion } from './unions/search-result.union';
-import { Category } from './models/category';
 
 const pubSub = new PubSub();
 
