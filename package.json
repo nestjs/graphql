@@ -64,9 +64,9 @@
     "typescript": "4.3.5"
   },
   "dependencies": {
-    "@graphql-tools/merge": "8.0.0",
-    "@graphql-tools/schema": "8.1.0",
-    "@graphql-tools/utils": "8.1.0",
+    "@graphql-tools/merge": "6.2.14",
+    "@graphql-tools/schema": "7.1.5",
+    "@graphql-tools/utils": "7.10.0",
     "@nestjs/mapped-types": "1.0.0",
     "chokidar": "3.5.2",
     "fast-glob": "3.2.7",
