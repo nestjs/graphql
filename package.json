@@ -85,9 +85,8 @@
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "apollo-server-core": "^3.0.0",
-    "apollo-server-express": "^2.21.1",
-    "apollo-server-fastify": "^2.25.2",
-    "apollo-server-testing": "^2.21.1",
+    "apollo-server-express": "^3.1.2",
+    "apollo-server-fastify": "^3.1.2",
     "graphql": "^15.5.1",
     "reflect-metadata": "^0.1.13",
     "ts-morph": "^11.0.3"
@@ -100,9 +99,6 @@
       "optional": true
     },
     "apollo-server-fastify": {
-      "optional": true
-    },
-    "apollo-server-testing": {
       "optional": true
     },
     "ts-morph": {
