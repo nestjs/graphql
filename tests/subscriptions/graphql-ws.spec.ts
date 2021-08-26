@@ -106,7 +106,7 @@ describe('graphql-ws protocol', () => {
     });
 
     wsClient.on('closed', (ev: any) => {
-      expect(ev.code).toEqual(1011);
+      expect(ev.code).toEqual(4500);
       expect(ev.reason).toEqual('Malformed token');
       done();
     });
