@@ -47,8 +47,8 @@ export type GraphQLSubscriptionTransportWsConfig = Partial<
 };
 
 export type SubscriptionConfig = {
-  'graphql-ws'?: GraphQLWsSubscriptionsConfig;
-  'subscriptions-transport-ws'?: GraphQLSubscriptionTransportWsConfig;
+  'graphql-ws'?: GraphQLWsSubscriptionsConfig | boolean;
+  'subscriptions-transport-ws'?: GraphQLSubscriptionTransportWsConfig | boolean;
 };
 
 export type Enhancer = 'guards' | 'interceptors' | 'filters';

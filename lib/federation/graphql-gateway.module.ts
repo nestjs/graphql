@@ -134,9 +134,6 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
       throw new Error(
         'No support for subscriptions yet when using Apollo Federation',
       );
-      /*this.apolloServer.installSubscriptionHandlers(
-        httpAdapter.getHttpServer(),
-      );*/
     }
   }
 

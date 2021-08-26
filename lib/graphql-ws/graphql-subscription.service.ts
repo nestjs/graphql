@@ -3,7 +3,11 @@ import { GRAPHQL_TRANSPORT_WS_PROTOCOL, ServerOptions } from 'graphql-ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { GRAPHQL_WS, SubscriptionServer } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
-import { SubscriptionConfig } from '../interfaces/gql-module-options.interface';
+import {
+  GraphQLSubscriptionTransportWsConfig,
+  GraphQLWsSubscriptionsConfig,
+  SubscriptionConfig,
+} from '../interfaces/gql-module-options.interface';
 
 export interface GraphQLSubscriptionServiceOptions extends SubscriptionConfig {
   schema: GraphQLSchema;
@@ -20,12 +24,18 @@ export class GraphQLSubscriptionService {
     private readonly httpServer: any,
   ) {
     this.wss = new ws.Server({
-      path: this.options['graphql-ws']?.path ?? this.options.path,
+      path:
+        (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig)?.path ??
+        this.options.path,
       noServer: true,
     });
     this.subTransWs = new ws.Server({
       path:
-        this.options['subscriptions-transport-ws']?.path ?? this.options.path,
+        (
+          this.options[
+            'subscriptions-transport-ws'
+          ] as GraphQLSubscriptionTransportWsConfig
+        )?.path ?? this.options.path,
       noServer: true,
     });
     this.initialize();
@@ -35,6 +45,8 @@ export class GraphQLSubscriptionService {
     const supportedProtocols = [];
 
     if ('graphql-ws' in this.options) {
+      const graphqlWsOptions =
+        this.options['graphql-ws'] === true ? {} : this.options['graphql-ws'];
       supportedProtocols.push(GRAPHQL_TRANSPORT_WS_PROTOCOL);
       useServer(
         {
@@ -42,20 +54,25 @@ export class GraphQLSubscriptionService {
           execute,
           subscribe,
           context: this.options.context,
-          ...this.options['graphql-ws'],
+          ...graphqlWsOptions,
         },
         this.wss,
       );
     }
 
     if ('subscriptions-transport-ws' in this.options) {
+      const subscriptionsWsOptions =
+        this.options['subscriptions-transport-ws'] === true
+          ? {}
+          : this.options['subscriptions-transport-ws'];
+
       supportedProtocols.push(GRAPHQL_WS);
       SubscriptionServer.create(
         {
           schema: this.options.schema,
           execute,
           subscribe,
-          ...this.options['subscriptions-transport-ws'],
+          ...subscriptionsWsOptions,
         },
         this.subTransWs,
       );
