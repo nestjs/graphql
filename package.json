@@ -59,7 +59,7 @@
     "rxjs": "7.3.0",
     "supertest": "6.1.6",
     "ts-jest": "27.0.4",
-    "ts-morph": "11.0.3",
+    "ts-morph": "12.0.0",
     "ts-node": "10.2.1",
     "typescript": "4.4.2"
   },
@@ -89,7 +89,7 @@
     "apollo-server-fastify": "^3.1.2",
     "graphql": "^15.5.1",
     "reflect-metadata": "^0.1.13",
-    "ts-morph": "^11.0.3"
+    "ts-morph": "^11.0.3 || ^12.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/federation": {
