@@ -14,9 +14,8 @@ export function IntersectionType<A, B>(
   classBRef: Type<B>,
   decorator?: ClassDecoratorFactory,
 ): Type<A & B> {
-  const { decoratorFactory, fields: fieldsA } = getFieldsAndDecoratorForType(
-    classARef,
-  );
+  const { decoratorFactory, fields: fieldsA } =
+    getFieldsAndDecoratorForType(classARef);
   const { fields: fieldsB } = getFieldsAndDecoratorForType(classBRef);
   const fields = [...fieldsA, ...fieldsB];
 

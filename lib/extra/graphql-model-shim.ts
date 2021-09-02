@@ -81,5 +81,6 @@ export function dummyFn() {
   return;
 }
 
-export const createUnionType: typeof typeFactories.createUnionType = dummyFn as any;
+export const createUnionType: typeof typeFactories.createUnionType =
+  dummyFn as any;
 export const registerEnumType: typeof typeFactories.registerEnumType = dummyFn;

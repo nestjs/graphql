@@ -184,7 +184,6 @@ describe('Generated Definitions', () => {
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 
-
   it('should generate custom scalars', async () => {
     const typeDefs = await readFile(
       generatedDefinitions('custom-scalar.graphql'),
@@ -294,7 +293,9 @@ describe('Generated Definitions', () => {
   });
 
   it('should generate for a federated graph with typeDef', async () => {
-    const outputFile = generatedDefinitions('federation-typedef.test-definitions.ts');
+    const outputFile = generatedDefinitions(
+      'federation-typedef.test-definitions.ts',
+    );
     const factory = new GraphQLDefinitionsFactory();
     await factory.generate({
       typePaths: [generatedDefinitions('federation-typedef.graphql')],
@@ -308,7 +309,10 @@ describe('Generated Definitions', () => {
     });
 
     expect(
-      await readFile(generatedDefinitions('federation-typedef.fixture.ts'), 'utf8'),
+      await readFile(
+        generatedDefinitions('federation-typedef.fixture.ts'),
+        'utf8',
+      ),
     ).toBe(await readFile(outputFile, 'utf8'));
   });
 

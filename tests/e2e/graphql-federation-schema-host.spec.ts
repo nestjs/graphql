@@ -17,9 +17,9 @@ describe('GraphQL federation GraphQLSchemaHost using', () => {
   });
 
   it(`GraphQLSchemaHost should contain schema`, () => {
-      const schemaHost = app.get(GraphQLSchemaHost)
+    const schemaHost = app.get(GraphQLSchemaHost);
 
-      expect(schemaHost.schema).toBeInstanceOf(GraphQLSchema)
+    expect(schemaHost.schema).toBeInstanceOf(GraphQLSchema);
   });
 
   afterEach(async () => {

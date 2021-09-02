@@ -32,9 +32,8 @@ export interface UnionOptions<T extends Type<unknown>[] = any[]> {
   types: () => T;
 }
 
-export type ArrayElement<
-  ArrayType extends readonly unknown[]
-> = ArrayType[number];
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType[number];
 export type Union<T extends any[]> = InstanceType<ArrayElement<T>>;
 
 /**

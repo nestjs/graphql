@@ -97,8 +97,7 @@ describe('GraphQL Gateway', () => {
               {
                 id: '1',
                 title: 'HELLO WORLD',
-                body:
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               },
             ],
           },

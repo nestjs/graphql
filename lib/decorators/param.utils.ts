@@ -31,16 +31,17 @@ function assignMetadata(
 }
 
 export const createGqlParamDecorator = (paramtype: GqlParamtype) => {
-  return (data?: ParamData): ParameterDecorator => (target, key, index) => {
-    const args =
-      Reflect.getMetadata(PARAM_ARGS_METADATA, target.constructor, key) || {};
-    Reflect.defineMetadata(
-      PARAM_ARGS_METADATA,
-      assignMetadata(args, paramtype, index, data),
-      target.constructor,
-      key,
-    );
-  };
+  return (data?: ParamData): ParameterDecorator =>
+    (target, key, index) => {
+      const args =
+        Reflect.getMetadata(PARAM_ARGS_METADATA, target.constructor, key) || {};
+      Reflect.defineMetadata(
+        PARAM_ARGS_METADATA,
+        assignMetadata(args, paramtype, index, data),
+        target.constructor,
+        key,
+      );
+    };
 };
 
 export const addPipesMetadata = (
@@ -65,9 +66,12 @@ export const addPipesMetadata = (
   );
 };
 
-export const createGqlPipesParamDecorator = (paramtype: GqlParamtype) => (
-  data?: any,
-  ...pipes: (Type<PipeTransform> | PipeTransform)[]
-): ParameterDecorator => (target, key, index) => {
-  addPipesMetadata(paramtype, data, pipes, target, key, index);
-};
+export const createGqlPipesParamDecorator =
+  (paramtype: GqlParamtype) =>
+  (
+    data?: any,
+    ...pipes: (Type<PipeTransform> | PipeTransform)[]
+  ): ParameterDecorator =>
+  (target, key, index) => {
+    addPipesMetadata(paramtype, data, pipes, target, key, index);
+  };

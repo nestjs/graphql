@@ -6,12 +6,12 @@ import {
   IntrospectionField,
   IntrospectionSchema,
   printSchema,
-  TypeKind
+  TypeKind,
 } from 'graphql';
 import { GRAPHQL_SDL_FILE_HEADER } from '../../lib/graphql.constants';
 import {
   GraphQLSchemaBuilderModule,
-  GraphQLSchemaFactory
+  GraphQLSchemaFactory,
 } from '../../lib/schema-builder';
 import { DirectionsResolver } from '../code-first/directions/directions.resolver';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
@@ -25,7 +25,7 @@ import {
   getQuery,
   getQueryByName,
   getSubscription,
-  getSubscriptionByName
+  getSubscriptionByName,
 } from '../utils/introspection-schema.utils';
 import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 
