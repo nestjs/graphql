@@ -87,7 +87,7 @@ export class GraphQLSubscriptionService {
         ? protocol
         : protocol?.split(',').map((p) => p.trim());
 
-      protocols = protocols.filter((protocol) =>
+      protocols = protocols?.filter((protocol) =>
         supportedProtocols.includes(protocol),
       );
 
