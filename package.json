@@ -31,7 +31,7 @@
     "@types/graphql": "14.5.0",
     "@types/jest": "26.0.24",
     "@types/node": "16.6.1",
-    "@types/node-fetch": "2.5.12",
+    "@types/node-fetch": "3.0.2",
     "@types/normalize-path": "3.0.0",
     "@types/ws": "7.4.7",
     "@typescript-eslint/eslint-plugin": "4.30.0",
