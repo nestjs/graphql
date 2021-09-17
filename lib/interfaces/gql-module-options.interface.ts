@@ -62,7 +62,7 @@ export interface GqlModuleOptions
     schema: GraphQLSchema,
   ) => GraphQLExecutor | Promise<GraphQLExecutor>;
   installSubscriptionHandlers?: boolean;
-  subscriptions?: SubscriptionConfig;
+  subscriptions?: boolean | SubscriptionConfig;
   resolverValidationOptions?: IResolverValidationOptions;
   directiveResolvers?: any;
   schemaDirectives?: Record<string, any>;
