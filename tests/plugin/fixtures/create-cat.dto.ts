@@ -12,7 +12,11 @@ interface Node {
     id: number;
 }
 
+@ObjectType()
 export class CreateCatDto {
+/**
+* description
+*/
   name: string;
   age: number = 3;
   tags: string[];
@@ -22,11 +26,25 @@ export class CreateCatDto {
   readonly breed?: string;
   nodes: Node[];
   date: Date;
+  
+  booleanProp: boolean;
+  stringUnion: 'foo' | 'bar' | 'baz';
 
   @HideField()
   hidden: number;
 
+  @ResolveField((type) => Float)
+  static explicitDecorated: number;
+
+  private privateField: string;
   static staticProperty: string;
+  
+ 
+  /**
+    * Testing deprecated tag parsing
+    * @deprecated this message should go to decorator factory
+    */
+  deprecatedField: string;
 }
 `;
 

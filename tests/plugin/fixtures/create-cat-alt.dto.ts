@@ -13,6 +13,7 @@ type AliasedType = {
 };
 type NumberAlias = number;
 
+@ObjectType()
 export class CreateCatDto2 {
   /**
   * name description

@@ -1,140 +1,12 @@
-import {
-  CallExpression,
-  Decorator,
-  Identifier,
-  LeftHandSideExpression,
-  Node,
-  ObjectFlags,
-  ObjectType,
-  PropertyAccessExpression,
-  SyntaxKind,
-  Type,
-  TypeChecker,
-  TypeFlags,
-  TypeFormatFlags,
-  SourceFile,
-  CommentRange,
-  getLeadingCommentRanges,
-  getTrailingCommentRanges,
-  UnionTypeNode,
-  TypeNode,
-} from 'typescript';
-import { isDynamicallyAdded } from './plugin-utils';
+import * as ts from 'typescript';
+import { CallExpression, Decorator, LeftHandSideExpression, PropertyAccessExpression, SyntaxKind } from 'typescript';
 
-export function isArray(type: Type) {
-  const symbol = type.getSymbol();
-  if (!symbol) {
-    return false;
-  }
-  return symbol.getName() === 'Array' && getTypeArguments(type).length === 1;
-}
-
-export function getTypeArguments(type: Type) {
-  return (type as any).typeArguments || [];
-}
-
-export function isBoolean(type: Type) {
-  return hasFlag(type, TypeFlags.Boolean);
-}
-
-export function isString(type: Type) {
-  return hasFlag(type, TypeFlags.String);
-}
-
-export function isNumber(type: Type) {
-  return hasFlag(type, TypeFlags.Number);
-}
-
-export function isInterface(type: Type) {
-  return hasObjectFlag(type, ObjectFlags.Interface);
-}
-
-export function isEnum(type: Type) {
-  const hasEnumFlag = hasFlag(type, TypeFlags.Enum);
-  if (hasEnumFlag) {
-    return true;
-  }
-  if (isEnumLiteral(type)) {
-    return false;
-  }
-  const symbol = type.getSymbol();
-  if (!symbol) {
-    return false;
-  }
-  const valueDeclaration = symbol.valueDeclaration;
-  if (!valueDeclaration) {
-    return false;
-  }
-  return valueDeclaration.kind === SyntaxKind.EnumDeclaration;
-}
-
-export function isEnumLiteral(type: Type) {
-  return hasFlag(type, TypeFlags.EnumLiteral) && !type.isUnion();
-}
-
-export function isNull(type: Type) {
-  if (type.isUnion()) {
-    return Boolean(type.types.find((t) => hasFlag(t, TypeFlags.Null)));
-  } else {
-    return hasFlag(type, TypeFlags.Null);
-  }
-}
-
-export function isUndefined(type: Type) {
-  if (type.isUnion()) {
-    return Boolean(type.types.find((t) => hasFlag(t, TypeFlags.Undefined)));
-  } else {
-    return hasFlag(type, TypeFlags.Undefined);
-  }
-}
-
-export function hasFlag(type: Type, flag: TypeFlags) {
-  return (type.flags & flag) === flag;
-}
-
-export function hasObjectFlag(type: Type, flag: ObjectFlags) {
-  return ((type as ObjectType).objectFlags & flag) === flag;
-}
-
-export function getText(
-  type: Type,
-  typeChecker: TypeChecker,
-  enclosingNode?: Node,
-  typeFormatFlags?: TypeFormatFlags,
-) {
-  if (!typeFormatFlags) {
-    typeFormatFlags = getDefaultTypeFormatFlags(enclosingNode);
-  }
-  const compilerNode = !enclosingNode ? undefined : enclosingNode;
-  return typeChecker.typeToString(type, compilerNode, typeFormatFlags);
-}
-
-export function getDefaultTypeFormatFlags(enclosingNode: Node) {
-  let formatFlags =
-    TypeFormatFlags.UseTypeOfFunction |
-    TypeFormatFlags.NoTruncation |
-    TypeFormatFlags.UseFullyQualifiedType |
-    TypeFormatFlags.WriteTypeArgumentsOfSignature;
-  if (enclosingNode && enclosingNode.kind === SyntaxKind.TypeAliasDeclaration)
-    formatFlags |= TypeFormatFlags.InTypeAlias;
-  return formatFlags;
-}
-
-export function getDecoratorArguments(decorator: Decorator) {
-  const callExpression = decorator.expression;
-  return (callExpression && (callExpression as CallExpression).arguments) || [];
-}
 
 export function getDecoratorName(decorator: Decorator) {
   const isDecoratorFactory =
     decorator.expression.kind === SyntaxKind.CallExpression;
   if (isDecoratorFactory) {
     const callExpression = decorator.expression;
-    const identifier = (callExpression as CallExpression)
-      .expression as Identifier;
-    if (isDynamicallyAdded(identifier)) {
-      return undefined;
-    }
     return getIdentifierFromName(
       (callExpression as CallExpression).expression,
     ).getText();
@@ -157,43 +29,41 @@ function getNameFromExpression(expression: LeftHandSideExpression) {
   return expression;
 }
 
-export function getDescriptionOfNode(
-  node: Node,
-  sourceFile: SourceFile,
-): string {
-  const sourceText = sourceFile.getFullText();
-  // in case we decide to include "// comments"
-  const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/\/+.*|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
-  //const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
-
-  const description = [];
-  const introspectCommentsAndExamples = (comments?: CommentRange[]) =>
-    comments?.forEach((comment) => {
-      const commentSource = sourceText.substring(comment.pos, comment.end);
-      const oneComment = commentSource.replace(replaceRegex, '').trim();
-      if (oneComment) {
-        description.push(oneComment);
-      }
-    });
-
-  const leadingCommentRanges = getLeadingCommentRanges(
-    sourceText,
-    node.getFullStart(),
-  );
-  introspectCommentsAndExamples(leadingCommentRanges);
-  if (!description.length) {
-    const trailingCommentRanges = getTrailingCommentRanges(
-      sourceText,
-      node.getFullStart(),
-    );
-    introspectCommentsAndExamples(trailingCommentRanges);
+export function hasModifiers(modifiers: ts.ModifiersArray, toCheck: SyntaxKind[]): boolean {
+  if (!modifiers) {
+    return false;
   }
-  return description.join('\n');
+  return modifiers.some((modifier) => toCheck.includes(modifier.kind));
 }
 
-export function findNullableTypeFromUnion(typeNode: UnionTypeNode, typeChecker: TypeChecker) {
-  return typeNode.types.find(
-    (tNode: TypeNode) =>
-      hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null)
-  );
+export function hasDecorators(decorators: ts.NodeArray<ts.Decorator>, toCheck: string[]): boolean {
+  if (!decorators) {
+    return false;
+  }
+
+  return decorators.some((decorator) => {
+    return toCheck.includes(getDecoratorName(decorator));
+  });
+}
+
+export function createBoolean(f: ts.NodeFactory, boolean: Boolean) {
+  return boolean ? f.createTrue() : f.createFalse();
+}
+
+export function getJSDocDescription(node: ts.Node): string {
+  const jsDoc: ts.JSDoc[] = (node as any).jsDoc;
+
+  if (!jsDoc) {
+    return undefined;
+  }
+
+  return ts.getTextOfJSDocComment(jsDoc[0].comment);
+}
+
+export function getJsDocDeprecation(node: ts.Node): string | boolean {
+  const deprecatedTag = ts.getJSDocDeprecatedTag(node);
+  if (!deprecatedTag) {
+    return undefined;
+  }
+  return ts.getTextOfJSDocComment(deprecatedTag.comment) || !!deprecatedTag;
 }

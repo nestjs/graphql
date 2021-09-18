@@ -1,10 +1,11 @@
 export const es5CreateCatDtoText = `
-import { Status } from './status';
+import { ImportedStatus } from './status';
 import { CONSTANT_STRING, CONSTANT_OBJECT } from './constants';
 
+@ObjectType()
 export class CreateCatDtoEs5 {
   name: string = CONSTANT_STRING;
-  status: Status = Status.ENABLED;
+  status = ImportedStatus.ENABLED;
   obj = CONSTANT_OBJECT;
 }
 `;

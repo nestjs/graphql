@@ -4,6 +4,7 @@ enum Status {
     DISABLED
 }
 
+@ObjectType()
 export class NullableDto {
   name: string | null;
   age: number = 3;

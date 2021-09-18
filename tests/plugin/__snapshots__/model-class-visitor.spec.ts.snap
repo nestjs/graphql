@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`API model properties should add partial metadata factory when some decorators exist 1`] = `
+"var Status;
+(function (Status) {
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+let CreateCatDto2 = class CreateCatDto2 {
+    constructor() {
+        this.age = 3;
+        this.status = Status.ENABLED;
+    }
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {
+            name: { type: () => String, description: \\"name description\\" },
+            age: { type: () => Number, description: \\"test on age\\" },
+            tags: { type: () => [String] },
+            status: { type: () => Status },
+            breed: { type: () => String, nullable: true },
+            nodes: { type: () => [Object] },
+            alias: { type: () => Object },
+            numberAlias: { type: () => Number },
+            union: { type: () => Object },
+            intersection: { type: () => Object },
+            optionalBoolean: { type: () => Boolean, nullable: true },
+            nested: { type: () => Object },
+            prop: { type: () => Object },
+            tuple: { type: () => Object }
+        };
+    }
+};
+CreateCatDto2 = __decorate([
+    ObjectType()
+], CreateCatDto2);
+export { CreateCatDto2 };
+"
+`;
+
+exports[`API model properties should add the metadata factory when no decorators exist 1`] = `
+"var Status;
+(function (Status) {
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+var OneValueEnum;
+(function (OneValueEnum) {
+    OneValueEnum[OneValueEnum[\\"ONE\\"] = 0] = \\"ONE\\";
+})(OneValueEnum || (OneValueEnum = {}));
+let CreateCatDto = class CreateCatDto {
+    constructor() {
+        this.age = 3;
+        this.status = Status.ENABLED;
+    }
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {
+            name: { type: () => String, description: \\"description\\" },
+            age: { type: () => Number },
+            tags: { type: () => [String] },
+            status: { type: () => Status },
+            status2: { type: () => Status, nullable: true },
+            statusArr: { type: () => [Status], nullable: true },
+            breed: { type: () => String, nullable: true },
+            nodes: { type: () => [Object] },
+            date: { type: () => Date },
+            booleanProp: { type: () => Boolean },
+            stringUnion: { type: () => Object },
+            deprecatedField: { type: () => String, description: \\"Testing deprecated tag parsing\\", deprecationReason: \\"this message should go to decorator factory\\" }
+        };
+    }
+};
+__decorate([
+    HideField()
+], CreateCatDto.prototype, \\"hidden\\", void 0);
+__decorate([
+    ResolveField((type) => Float)
+], CreateCatDto, \\"explicitDecorated\\", void 0);
+CreateCatDto = __decorate([
+    ObjectType()
+], CreateCatDto);
+export { CreateCatDto };
+"
+`;
+
+exports[`API model properties should manage imports statements when code "downleveled" 1`] = `
+"\\"use strict\\";
+Object.defineProperty(exports, \\"__esModule\\", { value: true });
+exports.CreateCatDtoEs5 = void 0;
+var status_1 = require(\\"./status\\");
+var constants_1 = require(\\"./constants\\");
+var CreateCatDtoEs5 = /** @class */ (function () {
+    function CreateCatDtoEs5() {
+        this.name = constants_1.CONSTANT_STRING;
+        this.status = status_1.ImportedStatus.ENABLED;
+        this.obj = constants_1.CONSTANT_OBJECT;
+    }
+    CreateCatDtoEs5._GRAPHQL_METADATA_FACTORY = function () {
+        return {
+            name: { type: function () { return String; } },
+            status: { type: function () { return Object; } },
+            obj: { type: function () { return Object; } }
+        };
+    };
+    CreateCatDtoEs5 = __decorate([
+        ObjectType()
+    ], CreateCatDtoEs5);
+    return CreateCatDtoEs5;
+}());
+exports.CreateCatDtoEs5 = CreateCatDtoEs5;
+"
+`;
+
+exports[`API model properties should support & understand nullable type unions 1`] = `
+"var Status;
+(function (Status) {
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+let NullableDto = class NullableDto {
+    constructor() {
+        this.age = 3;
+        this.status = Status.ENABLED;
+    }
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {
+            name: { type: () => Object },
+            age: { type: () => Number },
+            tags: { type: () => [String] },
+            status: { type: () => Status },
+            status2: { type: () => Object, nullable: true },
+            statusArr: { type: () => [Status], nullable: true },
+            breed: { type: () => String, nullable: true },
+            nodes: { type: () => [Object] },
+            date: { type: () => Date }
+        };
+    }
+};
+NullableDto = __decorate([
+    ObjectType()
+], NullableDto);
+export { NullableDto };
+"
+`;

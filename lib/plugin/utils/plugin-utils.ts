@@ -1,52 +1,124 @@
-import { head } from 'lodash';
-import { posix } from 'path';
 import * as ts from 'typescript';
-import {
-  getDecoratorName,
-  getText,
-  getTypeArguments,
-  isArray,
-  isBoolean,
-  isEnum,
-  isInterface,
-  isNumber,
-  isString,
-} from './ast-utils';
+import { Type, TypeFlags, ObjectFlags, TypeFormatFlags, Node, SyntaxKind, TypeChecker, ObjectType } from 'typescript';
+import { MetadataTypeDef } from '../visitors/model-class.visitor';
 
-export function getDecoratorOrUndefinedByNames(
-  names: string[],
-  decorators: ts.NodeArray<ts.Decorator>,
-): ts.Decorator | undefined {
-  return (decorators || ts.createNodeArray()).find((item) =>
-    names.includes(getDecoratorName(item)),
-  );
+export function getDefaultTypeFormatFlags(enclosingNode: Node) {
+  let formatFlags =
+    TypeFormatFlags.UseTypeOfFunction |
+    TypeFormatFlags.NoTruncation |
+    TypeFormatFlags.UseFullyQualifiedType |
+    TypeFormatFlags.WriteTypeArgumentsOfSignature;
+  if (enclosingNode && enclosingNode.kind === SyntaxKind.TypeAliasDeclaration)
+    formatFlags |= TypeFormatFlags.InTypeAlias;
+  return formatFlags;
 }
 
-export function getTypeReferenceAsString(
+
+export function getText(
+  type: Type,
+  typeChecker: TypeChecker,
+  enclosingNode?: Node,
+  typeFormatFlags?: TypeFormatFlags,
+) {
+  if (!typeFormatFlags) {
+    typeFormatFlags = getDefaultTypeFormatFlags(enclosingNode);
+  }
+  const compilerNode = !enclosingNode ? undefined : enclosingNode;
+  return typeChecker.typeToString(type, compilerNode, typeFormatFlags);
+}
+
+export function hasFlag(type: Type, flag: TypeFlags) {
+  return (type.flags & flag) === flag;
+}
+export function hasObjectFlag(type: Type, flag: ObjectFlags) {
+  return ((type as ObjectType).objectFlags & flag) === flag;
+}
+export function isArray(type: Type) {
+  const symbol = type.getSymbol();
+  if (!symbol) {
+    return false;
+  }
+  return symbol.getName() === 'Array' && getTypeArguments(type).length === 1;
+}
+
+export function getTypeArguments(type: Type) {
+  return (type as any).typeArguments || [];
+}
+
+export function isBoolean(type: Type) {
+  return hasFlag(type, TypeFlags.Boolean);
+}
+
+export function isString(type: Type) {
+  return hasFlag(type, TypeFlags.String);
+}
+
+export function isNumber(type: Type) {
+  return hasFlag(type, TypeFlags.Number);
+}
+
+export function isInterface(type: Type) {
+  return hasObjectFlag(type, ObjectFlags.Interface);
+}
+
+export function isEnum(type: Type) {
+  const hasEnumFlag = hasFlag(type, TypeFlags.Enum);
+  if (hasEnumFlag) {
+    return true;
+  }
+  if (isEnumLiteral(type)) {
+    return false;
+  }
+  const symbol = type.getSymbol();
+  if (!symbol) {
+    return false;
+  }
+  const valueDeclaration = symbol.valueDeclaration;
+  if (!valueDeclaration) {
+    return false;
+  }
+  return valueDeclaration.kind === SyntaxKind.EnumDeclaration;
+}
+
+export function isEnumLiteral(type: Type) {
+  return hasFlag(type, TypeFlags.EnumLiteral) && !type.isUnion();
+}
+
+
+export function getMemberTypeFromTypeChecker(node: ts.Node, typeChecker: ts.TypeChecker): MetadataTypeDef {
+  const type =  typeChecker.getTypeAtLocation(node)
+
+  return getTypeReference(type, typeChecker);
+}
+
+function getTypeReference(
   type: ts.Type,
   typeChecker: ts.TypeChecker,
-): string {
+): MetadataTypeDef {
+  const res = {arrayType: false, typeName: '' };
+
   if (isArray(type)) {
     const arrayType = getTypeArguments(type)[0];
-    const elementType = getTypeReferenceAsString(arrayType, typeChecker);
+    const elementType = getTypeReference(arrayType, typeChecker);
     if (!elementType) {
       return undefined;
     }
-    return `[${elementType}]`;
+
+    return {...elementType, arrayType: true};
   }
   if (isBoolean(type)) {
-    return Boolean.name;
+    return {...res, typeName: Boolean.name};
   }
   if (isNumber(type)) {
-    return Number.name;
+    return {...res, typeName: Number.name};
   }
   if (isString(type)) {
-    return String.name;
+    return {...res, typeName: String.name};
   }
   if (isPromiseOrObservable(getText(type, typeChecker))) {
     const typeArguments = getTypeArguments(type);
-    const elementType = getTypeReferenceAsString(
-      head(typeArguments),
+    const elementType = getTypeReference(
+      typeArguments[0],
       typeChecker,
     );
     if (!elementType) {
@@ -55,19 +127,20 @@ export function getTypeReferenceAsString(
     return elementType;
   }
   if (type.isClass()) {
-    return getText(type, typeChecker);
+    return {...res, typeName: getText(type, typeChecker)};
   }
   try {
     const text = getText(type, typeChecker);
     if (text === Date.name) {
-      return text;
+      return {...res, typeName: Date.name};
     }
     if (isOptionalBoolean(text)) {
-      return Boolean.name;
+      return {...res, typeName: Boolean.name}
     }
     if (isEnum(type)) {
-      return text;
+      return {...res, typeName: text};
     }
+
     const isEnumMember =
       type.symbol && type.symbol.flags === ts.SymbolFlags.EnumMember;
 
@@ -76,15 +149,20 @@ export function getTypeReferenceAsString(
       if (!type) {
         return undefined;
       }
-      return text;
+      return {...res, typeName: text};
     }
-    if (
-      isAutoGeneratedTypeUnion(type) ||
-      isAutoGeneratedEnumUnion(type, typeChecker)
-    ) {
+
+    const autoEnumUnion = isAutoGeneratedEnumUnion(type, typeChecker);
+
+    if (autoEnumUnion) {
+      return getTypeReference(autoEnumUnion, typeChecker)
+    }
+
+    if (isAutoGeneratedTypeUnion(type)) {
       const types = (type as ts.UnionOrIntersectionType).types;
-      return getTypeReferenceAsString(types[types.length - 1], typeChecker);
+      return getTypeReference(types[types.length - 1], typeChecker);
     }
+
     if (
       text === 'any' ||
       text === 'unknown' ||
@@ -92,14 +170,14 @@ export function getTypeReferenceAsString(
       isInterface(type) ||
       (type.isUnionOrIntersection() && !isEnum(type))
     ) {
-      return 'Object';
+      return {...res, typeName: 'Object'};
     }
     if (type.aliasSymbol) {
-      return 'Object';
+      return {...res, typeName: 'Object'};
     }
-    return 'Object';
+    return {...res, typeName: 'Object'};
   } catch {
-    return 'Object';
+    return {...res, typeName: 'Object'};
   }
 }
 
@@ -107,64 +185,10 @@ export function isPromiseOrObservable(type: string) {
   return type.includes('Promise') || type.includes('Observable');
 }
 
-export function hasPropertyKey(
-  key: string,
-  properties: ts.NodeArray<ts.PropertyAssignment>,
-): boolean {
-  return properties
-    .filter((item) => !isDynamicallyAdded(item))
-    .some((item) => item.name.getText() === key);
-}
-
-export function replaceImportPath(typeReference: string, fileName: string) {
-  if (!typeReference.includes('import')) {
-    return typeReference;
-  }
-  let importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
-  if (!importPath) {
-    return undefined;
-  }
-  importPath = convertPath(importPath);
-  importPath = importPath.slice(2, importPath.length - 1);
-
-  let relativePath = posix.relative(posix.dirname(fileName), importPath);
-  relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
-
-  const nodeModulesText = 'node_modules';
-  const nodeModulePos = relativePath.indexOf(nodeModulesText);
-  if (nodeModulePos >= 0) {
-    relativePath = relativePath.slice(
-      nodeModulePos + nodeModulesText.length + 1, // slash
-    );
-
-    const typesText = '@types';
-    const typesPos = relativePath.indexOf(typesText);
-    if (typesPos >= 0) {
-      relativePath = relativePath.slice(
-        typesPos + typesText.length + 1, //slash
-      );
-    }
-
-    const indexText = '/index';
-    const indexPos = relativePath.indexOf(indexText);
-    if (indexPos >= 0) {
-      relativePath = relativePath.slice(0, indexPos);
-    }
-  }
-
-  typeReference = typeReference.replace(importPath, relativePath);
-  return typeReference.replace('import', 'require');
-}
-
-export function isDynamicallyAdded(identifier: ts.Node) {
-  return identifier && !identifier.parent && identifier.pos === -1;
-}
 
 /**
  * when "strict" mode enabled, TypeScript transform the enum type to a union composed of
  * the enum values and the undefined type. Hence, we have to lookup all the union types to get the original type
- * @param type
- * @param typeChecker
  */
 export function isAutoGeneratedEnumUnion(
   type: ts.Type,
@@ -234,22 +258,6 @@ export function isAutoGeneratedTypeUnion(type: ts.Type): boolean {
   return false;
 }
 
-export function extractTypeArgumentIfArray(type: ts.Type) {
-  if (isArray(type)) {
-    type = getTypeArguments(type)[0];
-    if (!type) {
-      return undefined;
-    }
-    return {
-      type,
-      isArray: true,
-    };
-  }
-  return {
-    type,
-    isArray: false,
-  };
-}
 
 /**
  * when "strict" mode enabled, TypeScript transform optional boolean properties to "boolean | undefined"
@@ -257,15 +265,4 @@ export function extractTypeArgumentIfArray(type: ts.Type) {
  */
 function isOptionalBoolean(text: string) {
   return typeof text === 'string' && text === 'boolean | undefined';
-}
-
-/**
- * Converts Windows specific file paths to posix
- * @param windowsPath
- */
-function convertPath(windowsPath: string) {
-  return windowsPath
-    .replace(/^\\\\\?\\/, '')
-    .replace(/\\/g, '/')
-    .replace(/\/\/+/g, '/');
 }
