@@ -17,7 +17,10 @@ export function getDecoratorOrUndefinedByNames(
   names: string[],
   decorators: ts.NodeArray<ts.Decorator>,
 ): ts.Decorator | undefined {
-  return (decorators || ts.createNodeArray()).find((item) =>
+  if (!decorators) {
+    return undefined;
+  }
+  return (decorators).find((item) =>
     names.includes(getDecoratorName(item)),
   );
 }

@@ -22,13 +22,14 @@ export class ModelClassVisitor {
     pluginOptions: PluginOptions,
   ) {
     const typeChecker = program.getTypeChecker();
+    const factory = ctx.factory;
 
     const visitNode = (node: ts.Node): ts.Node => {
       if (ts.isClassDeclaration(node)) {
         this.clearMetadataOnRestart(node);
 
         node = ts.visitEachChild(node, visitNode, ctx);
-        return this.addMetadataFactory(node as ts.ClassDeclaration);
+        return this.addMetadataFactory(factory, node as ts.ClassDeclaration);
       } else if (ts.isPropertyDeclaration(node)) {
         const decorators = node.decorators;
         const hideField = getDecoratorOrUndefinedByNames(
@@ -46,6 +47,7 @@ export class ModelClassVisitor {
         }
         try {
           this.inspectPropertyDeclaration(
+            factory,
             node,
             typeChecker,
             sourceFile.fileName,
@@ -62,7 +64,7 @@ export class ModelClassVisitor {
         if (!importsToAdd) {
           return visitedNode;
         }
-        return this.updateImports(visitedNode, Array.from(importsToAdd));
+        return this.updateImports(factory, visitedNode, Array.from(importsToAdd));
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
@@ -76,39 +78,39 @@ export class ModelClassVisitor {
     }
   }
 
-  addMetadataFactory(node: ts.ClassDeclaration) {
-    const classMutableNode = ts.getMutableClone(node);
+  addMetadataFactory(f: ts.NodeFactory, node: ts.ClassDeclaration) {
     const classMetadata = this.getClassMetadata(node as ts.ClassDeclaration);
     const returnValue = classMetadata
-      ? ts.createObjectLiteral(
+      ? f.createObjectLiteralExpression(
           Object.keys(classMetadata).map((key) =>
-            ts.createPropertyAssignment(
-              ts.createIdentifier(key),
+            f.createPropertyAssignment(
+              f.createIdentifier(key),
               classMetadata[key],
             ),
           ),
         )
-      : ts.createObjectLiteral([], false);
+      : f.createObjectLiteralExpression([], false);
 
-    const method = ts.createMethod(
+    const method = f.createMethodDeclaration(
       undefined,
-      [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
+      [f.createModifier(ts.SyntaxKind.StaticKeyword)],
       undefined,
-      ts.createIdentifier(METADATA_FACTORY_NAME),
+      f.createIdentifier(METADATA_FACTORY_NAME),
       undefined,
       undefined,
       [],
       undefined,
-      ts.createBlock([ts.createReturn(returnValue)], true),
+      f.createBlock([f.createReturnStatement(returnValue)], true),
     );
-    (classMutableNode as any).members = ts.createNodeArray([
-      ...(classMutableNode as ts.ClassDeclaration).members,
+
+    return f.createClassDeclaration(node.decorators, node.modifiers, node.name, node.typeParameters, node.heritageClauses, [
+      ...node.members,
       method,
     ]);
-    return classMutableNode;
   }
 
   inspectPropertyDeclaration(
+    f: ts.NodeFactory,
     compilerNode: ts.PropertyDeclaration,
     typeChecker: ts.TypeChecker,
     hostFilename: string,
@@ -116,9 +118,10 @@ export class ModelClassVisitor {
     pluginOptions: PluginOptions,
   ) {
     const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
+      f,
       compilerNode,
       typeChecker,
-      ts.createNodeArray(),
+      f.createNodeArray(),
       hostFilename,
       sourceFile,
       pluginOptions,
@@ -127,9 +130,10 @@ export class ModelClassVisitor {
   }
 
   createDecoratorObjectLiteralExpr(
+    f: ts.NodeFactory,
     node: ts.PropertyDeclaration | ts.PropertySignature,
     typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
+    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename = '',
     sourceFile?: ts.SourceFile,
     pluginOptions?: PluginOptions,
@@ -140,8 +144,9 @@ export class ModelClassVisitor {
     const properties = [
       ...existingProperties,
       !hasPropertyKey('nullable', existingProperties) && isNullable &&
-        ts.createPropertyAssignment('nullable', ts.createLiteral(isNullable)),
+        f.createPropertyAssignment('nullable', isNullable ? f.createTrue() : f.createFalse()),
       this.createTypePropertyAssignment(
+        f,
         node.type,
         typeChecker,
         existingProperties,
@@ -150,17 +155,19 @@ export class ModelClassVisitor {
         pluginOptions,
       ),
       this.createDescriptionPropertyAssigment(
+        f,
         node,
         existingProperties,
         pluginOptions,
         sourceFile,
       ),
     ];
-    const objectLiteral = ts.createObjectLiteral(compact(flatten(properties)));
+    const objectLiteral = f.createObjectLiteralExpression(compact(flatten(properties)));
     return objectLiteral;
   }
 
   createTypePropertyAssignment(
+    f: ts.NodeFactory,
     node: ts.TypeNode,
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
@@ -178,6 +185,7 @@ export class ModelClassVisitor {
         const propertyAssignments = Array.from(node.members || []).map(
           (member) => {
             const literalExpr = this.createDecoratorObjectLiteralExpr(
+              f,
               member as ts.PropertySignature,
               typeChecker,
               existingProperties,
@@ -185,21 +193,21 @@ export class ModelClassVisitor {
               sourceFile,
               pluginOptions,
             );
-            return ts.createPropertyAssignment(
-              ts.createIdentifier(member.name.getText()),
+            return f.createPropertyAssignment(
+              f.createIdentifier(member.name.getText()),
               literalExpr,
             );
           },
         );
-        return ts.createPropertyAssignment(
+        return f.createPropertyAssignment(
           key,
-          ts.createArrowFunction(
+          f.createArrowFunction(
             undefined,
             undefined,
             [],
             undefined,
             undefined,
-            ts.createParen(ts.createObjectLiteral(propertyAssignments)),
+            f.createParenthesizedExpression(f.createObjectLiteralExpression(propertyAssignments)),
           ),
         );
       } else if (ts.isUnionTypeNode(node)) {
@@ -210,6 +218,7 @@ export class ModelClassVisitor {
 
         if (remainingTypes.length === 1) {
           return this.createTypePropertyAssignment(
+            f,
             remainingTypes[0],
             typeChecker,
             existingProperties,
@@ -223,7 +232,7 @@ export class ModelClassVisitor {
     if (!type) {
       return undefined;
     }
-    
+
     let typeReference = getTypeReferenceAsString(type, typeChecker);
     if (!typeReference) {
       return undefined;
@@ -242,15 +251,15 @@ export class ModelClassVisitor {
       }
     }
 
-    return ts.createPropertyAssignment(
+    return f.createPropertyAssignment(
       key,
-      ts.createArrowFunction(
+      f.createArrowFunction(
         undefined,
         undefined,
         [],
         undefined,
         undefined,
-        ts.createIdentifier(typeReference),
+        f.createIdentifier(typeReference),
       ),
     );
   }
@@ -287,6 +296,7 @@ export class ModelClassVisitor {
   }
 
   updateImports(
+    f: ts.NodeFactory,
     sourceFile: ts.SourceFile,
     pathsToImport: string[],
   ): ts.SourceFile {
@@ -295,30 +305,32 @@ export class ModelClassVisitor {
     const importDeclarations = pathsToImport.map((path, index) => {
       if (major == 4 && minor >= 2) {
         // support TS v4.2+
-        return (ts.createImportEqualsDeclaration as any)(
+        return (f.createImportEqualsDeclaration as any)(
           undefined,
           undefined,
           false,
           IMPORT_PREFIX + index,
-          ts.createExternalModuleReference(ts.createLiteral(path)),
+          f.createExternalModuleReference(f.createStringLiteral(path)),
         );
       }
-      return (ts.createImportEqualsDeclaration as any)(
+      return (f.createImportEqualsDeclaration as any)(
         undefined,
         undefined,
         IMPORT_PREFIX + index,
-        ts.createExternalModuleReference(ts.createLiteral(path)),
+        f.createExternalModuleReference(f.createStringLiteral(path)),
       );
     });
-    return ts.updateSourceFileNode(sourceFile, [
+
+    return f.updateSourceFile(sourceFile, [
       ...importDeclarations,
       ...sourceFile.statements,
     ]);
   }
 
   createDescriptionPropertyAssigment(
+    f: ts.NodeFactory,
     node: ts.PropertyDeclaration | ts.PropertySignature,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
+    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     options: PluginOptions = {},
     sourceFile?: ts.SourceFile,
   ): ts.PropertyAssignment {
@@ -329,9 +341,9 @@ export class ModelClassVisitor {
 
     const keyOfComment = 'description';
     if (!hasPropertyKey(keyOfComment, existingProperties) && description) {
-      const descriptionPropertyAssignment = ts.createPropertyAssignment(
+      const descriptionPropertyAssignment = f.createPropertyAssignment(
         keyOfComment,
-        ts.createLiteral(description),
+        f.createStringLiteral(description),
       );
       return descriptionPropertyAssignment;
     }
