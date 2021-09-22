@@ -16,6 +16,10 @@ import {
   nullableDtoText,
   nullableDtoTextTranspiled,
 } from './fixtures/nullable.dto';
+import {
+  deprecationDtoText,
+  deprecationDtoTranspiled,
+} from './fixtures/deprecation.dto';
 
 describe('API model properties', () => {
   it('should add the metadata factory when no decorators exist', () => {
@@ -108,5 +112,26 @@ describe('API model properties', () => {
       },
     });
     expect(result.outputText).toEqual(nullableDtoTextTranspiled);
+  });
+
+  it('should respect @deprecation tag from JsDoc', () => {
+    const options: ts.CompilerOptions = {
+      module: ts.ModuleKind.ES2020,
+      target: ts.ScriptTarget.ES2020,
+      newLine: ts.NewLineKind.LineFeed,
+      noEmitHelpers: true,
+      strict: true,
+    };
+    const filename = 'deprecation.input.ts';
+    const fakeProgram = ts.createProgram([filename], options);
+
+    const result = ts.transpileModule(deprecationDtoText, {
+      compilerOptions: options,
+      fileName: filename,
+      transformers: {
+        before: [before({ introspectComments: true }, fakeProgram)],
+      },
+    });
+    expect(result.outputText).toEqual(deprecationDtoTranspiled);
   });
 });

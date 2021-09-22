@@ -12,12 +12,11 @@ import {
   TypeChecker,
   TypeFlags,
   TypeFormatFlags,
-  SourceFile,
-  CommentRange,
-  getLeadingCommentRanges,
-  getTrailingCommentRanges,
   UnionTypeNode,
   TypeNode,
+  JSDoc,
+  getTextOfJSDocComment,
+  getJSDocDeprecatedTag,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
 
@@ -157,43 +156,29 @@ function getNameFromExpression(expression: LeftHandSideExpression) {
   return expression;
 }
 
-export function getDescriptionOfNode(
-  node: Node,
-  sourceFile: SourceFile,
-): string {
-  const sourceText = sourceFile.getFullText();
-  // in case we decide to include "// comments"
-  const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/\/+.*|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
-  //const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
+export function getJSDocDescription(node: Node): string {
+  const jsDoc: JSDoc[] = (node as any).jsDoc;
 
-  const description = [];
-  const introspectCommentsAndExamples = (comments?: CommentRange[]) =>
-    comments?.forEach((comment) => {
-      const commentSource = sourceText.substring(comment.pos, comment.end);
-      const oneComment = commentSource.replace(replaceRegex, '').trim();
-      if (oneComment) {
-        description.push(oneComment);
-      }
-    });
-
-  const leadingCommentRanges = getLeadingCommentRanges(
-    sourceText,
-    node.getFullStart(),
-  );
-  introspectCommentsAndExamples(leadingCommentRanges);
-  if (!description.length) {
-    const trailingCommentRanges = getTrailingCommentRanges(
-      sourceText,
-      node.getFullStart(),
-    );
-    introspectCommentsAndExamples(trailingCommentRanges);
+  if (!jsDoc) {
+    return undefined;
   }
-  return description.join('\n');
+
+  return getTextOfJSDocComment(jsDoc[0].comment);
 }
 
-export function findNullableTypeFromUnion(typeNode: UnionTypeNode, typeChecker: TypeChecker) {
-  return typeNode.types.find(
-    (tNode: TypeNode) =>
-      hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null)
+export function getJsDocDeprecation(node: Node): string {
+  const deprecatedTag = getJSDocDeprecatedTag(node);
+  if (!deprecatedTag) {
+    return undefined;
+  }
+  return getTextOfJSDocComment(deprecatedTag.comment) || 'deprecated';
+}
+
+export function findNullableTypeFromUnion(
+  typeNode: UnionTypeNode,
+  typeChecker: TypeChecker,
+) {
+  return typeNode.types.find((tNode: TypeNode) =>
+    hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null),
   );
 }

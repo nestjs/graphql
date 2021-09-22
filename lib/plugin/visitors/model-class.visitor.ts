@@ -3,7 +3,13 @@ import * as ts from 'typescript';
 import { HideField } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
-import { findNullableTypeFromUnion, getDescriptionOfNode, isNull, isUndefined } from '../utils/ast-utils';
+import {
+  findNullableTypeFromUnion,
+  isNull,
+  isUndefined,
+  getJSDocDescription,
+  getJsDocDeprecation,
+} from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
@@ -51,7 +57,6 @@ export class ModelClassVisitor {
             node,
             typeChecker,
             sourceFile.fileName,
-            sourceFile,
             pluginOptions,
           );
         } catch (err) {
@@ -64,7 +69,11 @@ export class ModelClassVisitor {
         if (!importsToAdd) {
           return visitedNode;
         }
-        return this.updateImports(factory, visitedNode, Array.from(importsToAdd));
+        return this.updateImports(
+          factory,
+          visitedNode,
+          Array.from(importsToAdd),
+        );
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
@@ -103,10 +112,14 @@ export class ModelClassVisitor {
       f.createBlock([f.createReturnStatement(returnValue)], true),
     );
 
-    return f.createClassDeclaration(node.decorators, node.modifiers, node.name, node.typeParameters, node.heritageClauses, [
-      ...node.members,
-      method,
-    ]);
+    return f.createClassDeclaration(
+      node.decorators,
+      node.modifiers,
+      node.name,
+      node.typeParameters,
+      node.heritageClauses,
+      [...node.members, method],
+    );
   }
 
   inspectPropertyDeclaration(
@@ -114,7 +127,6 @@ export class ModelClassVisitor {
     compilerNode: ts.PropertyDeclaration,
     typeChecker: ts.TypeChecker,
     hostFilename: string,
-    sourceFile: ts.SourceFile,
     pluginOptions: PluginOptions,
   ) {
     const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
@@ -123,10 +135,9 @@ export class ModelClassVisitor {
       typeChecker,
       f.createNodeArray(),
       hostFilename,
-      sourceFile,
       pluginOptions,
     );
-    this.addClassMetadata(compilerNode, objectLiteralExpr, sourceFile);
+    this.addClassMetadata(compilerNode, objectLiteralExpr);
   }
 
   createDecoratorObjectLiteralExpr(
@@ -135,23 +146,28 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename = '',
-    sourceFile?: ts.SourceFile,
     pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const type = typeChecker.getTypeAtLocation(node);
-    const isNullable = !!node.questionToken || isNull(type) || isUndefined(type);
+    const isNullable =
+      !!node.questionToken || isNull(type) || isUndefined(type);
 
     const properties = [
       ...existingProperties,
-      !hasPropertyKey('nullable', existingProperties) && isNullable &&
-        f.createPropertyAssignment('nullable', isNullable ? f.createTrue() : f.createFalse()),
+      isNullable
+        ? this.createScalarPropertyAssigment(
+            f,
+            'nullable',
+            isNullable,
+            existingProperties,
+          )
+        : undefined,
       this.createTypePropertyAssignment(
         f,
         node.type,
         typeChecker,
         existingProperties,
         hostFilename,
-        sourceFile,
         pluginOptions,
       ),
       this.createDescriptionPropertyAssigment(
@@ -159,10 +175,17 @@ export class ModelClassVisitor {
         node,
         existingProperties,
         pluginOptions,
-        sourceFile,
+      ),
+      this.createDeprecationReasonPropertyAssigment(
+        f,
+        node,
+        existingProperties,
+        pluginOptions,
       ),
     ];
-    const objectLiteral = f.createObjectLiteralExpression(compact(flatten(properties)));
+    const objectLiteral = f.createObjectLiteralExpression(
+      compact(flatten(properties)),
+    );
     return objectLiteral;
   }
 
@@ -172,8 +195,7 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename: string,
-    sourceFile?: ts.SourceFile,
-    pluginOptions?: PluginOptions
+    pluginOptions?: PluginOptions,
   ): ts.PropertyAssignment {
     const key = 'type';
     if (hasPropertyKey(key, existingProperties)) {
@@ -190,7 +212,6 @@ export class ModelClassVisitor {
               typeChecker,
               existingProperties,
               hostFilename,
-              sourceFile,
               pluginOptions,
             );
             return f.createPropertyAssignment(
@@ -207,13 +228,15 @@ export class ModelClassVisitor {
             [],
             undefined,
             undefined,
-            f.createParenthesizedExpression(f.createObjectLiteralExpression(propertyAssignments)),
+            f.createParenthesizedExpression(
+              f.createObjectLiteralExpression(propertyAssignments),
+            ),
           ),
         );
       } else if (ts.isUnionTypeNode(node)) {
         const nullableType = findNullableTypeFromUnion(node, typeChecker);
         const remainingTypes = node.types.filter(
-          (item) => item !== nullableType
+          (item) => item !== nullableType,
         );
 
         if (remainingTypes.length === 1) {
@@ -267,7 +290,6 @@ export class ModelClassVisitor {
   addClassMetadata(
     node: ts.PropertyDeclaration,
     objectLiteral: ts.ObjectLiteralExpression,
-    sourceFile: ts.SourceFile,
   ) {
     const hostClass = node.parent;
     const className = hostClass.name && hostClass.name.getText();
@@ -275,7 +297,7 @@ export class ModelClassVisitor {
       return;
     }
     const existingMetadata = metadataHostMap.get(className) || {};
-    const propertyName = node.name && node.name.getText(sourceFile);
+    const propertyName = node.name && node.name.getText();
     if (
       !propertyName ||
       (node.name && node.name.kind === ts.SyntaxKind.ComputedPropertyName)
@@ -327,25 +349,63 @@ export class ModelClassVisitor {
     ]);
   }
 
+  createScalarPropertyAssigment(
+    f: ts.NodeFactory,
+    name: string,
+    value: undefined | string | boolean,
+    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
+  ): ts.PropertyAssignment {
+    if (value === undefined || hasPropertyKey(name, existingProperties)) {
+      return undefined;
+    }
+
+    let initializer: ts.Expression;
+    if (typeof value === 'string') {
+      initializer = f.createStringLiteral(value);
+    } else if (typeof value === 'boolean') {
+      initializer = value ? f.createTrue() : f.createFalse();
+    }
+
+    return f.createPropertyAssignment(name, initializer);
+  }
+
   createDescriptionPropertyAssigment(
     f: ts.NodeFactory,
     node: ts.PropertyDeclaration | ts.PropertySignature,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     options: PluginOptions = {},
-    sourceFile?: ts.SourceFile,
   ): ts.PropertyAssignment {
-    if (!options.introspectComments || !sourceFile) {
+    if (!options.introspectComments) {
       return;
     }
-    const description = getDescriptionOfNode(node, sourceFile);
 
-    const keyOfComment = 'description';
-    if (!hasPropertyKey(keyOfComment, existingProperties) && description) {
-      const descriptionPropertyAssignment = f.createPropertyAssignment(
-        keyOfComment,
-        f.createStringLiteral(description),
-      );
-      return descriptionPropertyAssignment;
+    const description = getJSDocDescription(node);
+
+    return this.createScalarPropertyAssigment(
+      f,
+      'description',
+      description,
+      existingProperties,
+    );
+  }
+
+  createDeprecationReasonPropertyAssigment(
+    f: ts.NodeFactory,
+    node: ts.PropertyDeclaration | ts.PropertySignature,
+    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
+    options: PluginOptions = {},
+  ): ts.PropertyAssignment {
+    if (!options.introspectComments) {
+      return;
     }
+
+    const deprecation = getJsDocDeprecation(node);
+
+    return this.createScalarPropertyAssigment(
+      f,
+      'deprecationReason',
+      deprecation,
+      existingProperties,
+    );
   }
 }
