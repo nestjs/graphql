@@ -19,8 +19,8 @@
     "release": "release-it"
   },
   "devDependencies": {
-    "@apollo/federation": "0.29.0",
-    "@apollo/gateway": "0.38.0",
+    "@apollo/federation": "0.33.0",
+    "@apollo/gateway": "0.42.0",
     "@commitlint/cli": "13.2.0",
     "@commitlint/config-angular": "13.2.0",
     "@nestjs/common": "8.0.7",
@@ -80,8 +80,8 @@
     "ws": "8.2.0"
   },
   "peerDependencies": {
-    "@apollo/federation": "^0.26.0 || ^0.27.0 || ^0.29.0",
-    "@apollo/gateway": "^0.29.0 || ^0.32.0 || ^0.33.0 || ^0.35.0 || ^0.38.0",
+    "@apollo/federation": "^0.26.0 || ^0.27.0 || ^0.29.0 || ^0.33.0",
+    "@apollo/gateway": "^0.29.0 || ^0.32.0 || ^0.33.0 || ^0.35.0 || ^0.38.0 || ^0.42.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "apollo-server-core": "^3.0.0",
