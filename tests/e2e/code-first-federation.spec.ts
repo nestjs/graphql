@@ -31,7 +31,40 @@ describe('Code-first - Federation', () => {
     });
     expect(response.data).toEqual({
       _service: {
-        sdl: '"""Search result description"""\nunion FederationSearchResultUnion = Post | User\n\ninterface IRecipe {\n  id: ID!\n  title: String!\n  externalField: String! @external\n}\n\ntype Post @key(fields: "id") {\n  id: ID!\n  title: String!\n  authorId: Int!\n}\n\ntype Query {\n  findPost(id: Float!): Post!\n  getPosts: [Post!]!\n  search: [FederationSearchResultUnion!]! @deprecated(reason: "test")\n  recipe: IRecipe!\n}\n\ntype Recipe implements IRecipe {\n  id: ID!\n  title: String!\n  externalField: String! @external\n  description: String!\n}\n\ntype User @extends @key(fields: "id") {\n  id: ID! @external\n  posts: [Post!]!\n}\n',
+        sdl: `interface IRecipe {
+  id: ID!
+  title: String!
+  externalField: String! @external
+}
+
+type Post @key(fields: \"id\") {
+  id: ID!
+  title: String!
+  authorId: Int!
+}
+
+type User @extends @key(fields: \"id\") {
+  id: ID! @external
+  posts: [Post!]!
+}
+
+type Recipe implements IRecipe {
+  id: ID!
+  title: String!
+  externalField: String! @external
+  description: String!
+}
+
+type Query {
+  findPost(id: Float!): Post!
+  getPosts: [Post!]!
+  search: [FederationSearchResultUnion!]! @deprecated(reason: \"test\")
+  recipe: IRecipe!
+}
+
+\"\"\"Search result description\"\"\"
+union FederationSearchResultUnion = Post | User
+`,
       },
     });
   });
