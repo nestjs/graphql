@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { printSchema, GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql';
+import { printSchema } from '@apollo/federation';
 import { SortSchemaModule } from '../graphql/sort-schema.module';
 import { GRAPHQL_SDL_FILE_HEADER } from '../../lib/graphql.constants';
 import { GraphQLSchemaHost } from '../../lib';

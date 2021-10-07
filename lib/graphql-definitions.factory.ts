@@ -3,7 +3,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import { gql } from 'apollo-server-core';
 import * as chokidar from 'chokidar';
-import { printSchema } from 'graphql';
+import { printSchema } from '@apollo/federation';
 import {
   DefinitionsGeneratorOptions,
   GraphQLAstExplorer,

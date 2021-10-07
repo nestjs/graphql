@@ -5,9 +5,9 @@ import {
   GraphQLSchema,
   IntrospectionField,
   IntrospectionSchema,
-  printSchema,
   TypeKind
 } from 'graphql';
+import { printSchema } from '@apollo/federation';
 import { GRAPHQL_SDL_FILE_HEADER } from '../../lib/graphql.constants';
 import {
   GraphQLSchemaBuilderModule,

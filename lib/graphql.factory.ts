@@ -10,8 +10,8 @@ import {
   GraphQLSchema,
   GraphQLSchemaConfig,
   lexicographicSortSchema,
-  printSchema,
 } from 'graphql';
+import { printSchema } from '@apollo/federation';
 import { forEach, isEmpty } from 'lodash';
 import {
   DefinitionsGeneratorOptions,
