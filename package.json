@@ -21,7 +21,7 @@
   "devDependencies": {
     "@apollo/federation": "0.33.0",
     "@apollo/gateway": "0.42.0",
-    "@commitlint/cli": "13.2.0",
+    "@commitlint/cli": "13.2.1",
     "@commitlint/config-angular": "13.2.0",
     "@nestjs/common": "8.0.11",
     "@nestjs/core": "8.0.11",
