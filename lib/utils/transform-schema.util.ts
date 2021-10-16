@@ -2,7 +2,7 @@
 // The changed lines are 31-40 and 85-87 and the original file can be found here:
 // https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo-graphql/src/schema/transformSchema.ts
 
-import { GraphQLReferenceResolver } from '@apollo/federation/dist/types';
+import '@apollo/subgraph/dist/schemaExtensions';
 import {
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
@@ -26,17 +26,6 @@ import {
   isObjectType,
   isUnionType,
 } from 'graphql';
-
-// Definitions taken from here: https://github.com/apollographql/apollo-server/blob/main/packages/apollo-federation/src/types.ts#L62
-declare module 'graphql/type/definition' {
-  interface GraphQLObjectType {
-    resolveReference?: GraphQLReferenceResolver<any>;
-  }
-
-  interface GraphQLObjectTypeConfig<TSource, TContext> {
-    resolveReference?: GraphQLReferenceResolver<TContext>;
-  }
-}
 
 type TypeTransformer = (
   type: GraphQLNamedType,
