@@ -142,10 +142,10 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     if (!this.httpAdapterHost || !this.httpAdapterHost.httpAdapter) {
       return;
     }
-    const { printSchema } = loadPackage(
-      '@apollo/federation',
+    const { printSubgraphSchema } = loadPackage(
+      '@apollo/subgraph',
       'ApolloFederation',
-      () => require('@apollo/federation'),
+      () => require('@apollo/subgraph'),
     );
 
     const { typePaths } = this.options;
@@ -161,7 +161,7 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
 
     if (this.options.definitions && this.options.definitions.path) {
       await this.graphqlFactory.generateDefinitions(
-        printSchema(apolloOptions.schema),
+        printSubgraphSchema(apolloOptions.schema),
         this.options,
       );
     }
