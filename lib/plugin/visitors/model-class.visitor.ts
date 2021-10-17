@@ -77,6 +77,10 @@ export class ModelClassVisitor {
         if (isCallExpressionOf('registerEnumType', node)) {
           return this.amendRegisterEnumTypeCall(factory, node);
         }
+
+        if (isCallExpressionOf('createUnionType', node)) {
+          return this.amendCreateUnionTypeCall(factory, node);
+        }
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
@@ -102,6 +106,24 @@ export class ModelClassVisitor {
       return ts.visitEachChild(node, visitNode, ctx);
     };
     return ts.visitNode(sourceFile, visitNode);
+  }
+
+  private amendCreateUnionTypeCall(f: ts.NodeFactory, node: ts.CallExpression) {
+    if (!ts.isVariableDeclaration(node.parent) || node.arguments.length != 1) {
+      return node;
+    }
+
+    const unionName = (node.parent.name as ts.Identifier).text;
+
+    return f.updateCallExpression(node, node.expression, node.typeArguments, [
+      safelyMergeObjects(
+        f,
+        serializePrimitiveObjectToAst(f, {
+          name: unionName,
+        }),
+        node.arguments[0],
+      ),
+    ]);
   }
 
   private amendRegisterEnumTypeCall(

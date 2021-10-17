@@ -359,4 +359,19 @@ registerEnumType(Type, { name: 'AnotherName' });
 "
 `);
   });
+
+  it('Should infer name for union type from variable name', () => {
+    const source = `
+const MyAwesomeUnion = createUnionType({types: [Foo, Bar, Baz]});
+const MyAwesomeUnion = createUnionType({types: [Foo, Bar, Baz], name: 'JustUnion'});
+`;
+
+    const actual = transpile(source, {});
+    expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+const MyAwesomeUnion = createUnionType({ name: \\"MyAwesomeUnion\\", types: [Foo, Bar, Baz] });
+const MyAwesomeUnion = createUnionType({ name: 'JustUnion', types: [Foo, Bar, Baz] });
+"
+`);
+  });
 });

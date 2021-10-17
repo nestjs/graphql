@@ -17,7 +17,7 @@ export interface UnionOptions<T extends Type<unknown>[] = any[]> {
   /**
    * Name of the union.
    */
-  name: string;
+  name?: string;
   /**
    * Description of the union.
    */
