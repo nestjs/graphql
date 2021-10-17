@@ -19,6 +19,7 @@ import {
   getJSDocDeprecatedTag,
   ModifiersArray,
   NodeArray,
+  getJSDocTags,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
 import * as ts from 'typescript';
@@ -169,6 +170,12 @@ export function getJSDocDescription(node: Node): string {
   return getTextOfJSDocComment(jsDoc[0].comment);
 }
 
+export function hasJSDocTags(node: Node, tagName: string[]): boolean {
+  const tags = getJSDocTags(node);
+  return tags.some((tag) => tagName.includes(tag.tagName.text));
+  // return jsDoc;
+}
+
 export function getJsDocDeprecation(node: Node): string {
   const deprecatedTag = getJSDocDeprecatedTag(node);
   if (!deprecatedTag) {
@@ -234,20 +241,30 @@ export function isCallExpressionOf(name: string, node: ts.CallExpression) {
   return ts.isIdentifier(node.expression) && node.expression.text === name;
 }
 
+export type PrimitiveObject = {
+  [key: string]: string | boolean | PrimitiveObject;
+};
+
 export function serializePrimitiveObjectToAst(
   f: ts.NodeFactory,
-  object: { [key: string]: string | boolean },
+  object: PrimitiveObject,
 ): ts.ObjectLiteralExpression {
   const properties = [];
 
-  Object.keys(object).map((key) => {
+  Object.keys(object).forEach((key) => {
     const value = object[key];
+
+    if (value === undefined) {
+      return;
+    }
 
     let initializer: ts.Expression;
     if (typeof value === 'string') {
       initializer = f.createStringLiteral(value);
     } else if (typeof value === 'boolean') {
       initializer = value ? f.createTrue() : f.createFalse();
+    } else if (typeof value === 'object') {
+      initializer = serializePrimitiveObjectToAst(f, value);
     }
 
     properties.push(f.createPropertyAssignment(key, initializer));

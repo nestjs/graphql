@@ -21,12 +21,16 @@ import {
   isCallExpressionOf,
   serializePrimitiveObjectToAst,
   safelyMergeObjects,
+  hasJSDocTags,
+  PrimitiveObject,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
   hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
+import { EnumMetadataValuesMapOptions } from '../../schema-builder/metadata';
+import { EnumOptions } from '../../type-factories';
 
 const importsToAddPerFile = new Map<string, Set<string>>();
 
@@ -36,12 +40,19 @@ const ALLOWED_DECORATORS = [
   InputType.name,
 ];
 
+type EnumMetadata = {
+  name: string;
+  description: string;
+  properties: { [name: string]: EnumMetadataValuesMapOptions };
+};
+
 function capitalizeFirstLetter(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
 export class ModelClassVisitor {
   inlineEnumsMap: { name: string; values: { [name: string]: string } }[];
+  enumsMetadata: Map<ts.EnumDeclaration, EnumMetadata>;
 
   visit(
     sourceFile: ts.SourceFile,
@@ -50,6 +61,7 @@ export class ModelClassVisitor {
     pluginOptions: PluginOptions,
   ) {
     this.inlineEnumsMap = [];
+    this.enumsMetadata = new Map();
 
     const typeChecker = program.getTypeChecker();
     const factory = ctx.factory;
@@ -73,6 +85,16 @@ export class ModelClassVisitor {
           metadata,
           pluginOptions,
         );
+      } else if (
+        ts.isEnumDeclaration(node) &&
+        !hasJSDocTags(node, ['private', 'HideEnum']) &&
+        pluginOptions.autoRegisterEnums
+      ) {
+        this.enumsMetadata.set(
+          node,
+          this.collectMetadataFromEnum(node, pluginOptions),
+        );
+        return node;
       } else if (ts.isCallExpression(node)) {
         if (isCallExpressionOf('registerEnumType', node)) {
           return this.amendRegisterEnumTypeCall(factory, node);
@@ -84,28 +106,95 @@ export class ModelClassVisitor {
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
-        const importStatements = this.createEagerImports(
+        const importStatements: ts.Statement[] = this.createEagerImports(
           factory,
           node.fileName,
         );
 
         const implicitEnumsStatements = this.createImplicitEnums(factory);
 
-        if (implicitEnumsStatements.length) {
+        if (implicitEnumsStatements.length || this.enumsMetadata.size) {
           importStatements.push(
             createNamedImport(factory, ['registerEnumType'], '@nestjs/graphql'),
           );
         }
 
+        const existingStatements = Array.from(visitedNode.statements);
+
+        this.enumsMetadata.forEach((metadata, enumDeclaration) => {
+          const registration = this.createEnumRegistration(factory, metadata);
+          const enumIndex = existingStatements.indexOf(enumDeclaration);
+          existingStatements.splice(enumIndex + 1, 0, registration);
+        });
+
         return factory.updateSourceFile(visitedNode, [
           ...importStatements,
           ...implicitEnumsStatements,
-          ...visitedNode.statements,
+          ...existingStatements,
         ]);
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
     return ts.visitNode(sourceFile, visitNode);
+  }
+
+  private collectMetadataFromEnum(
+    node: ts.EnumDeclaration,
+    pluginOptions: PluginOptions,
+  ): EnumMetadata {
+    let properties: EnumMetadata['properties'] = {};
+    let description: string;
+
+    if (pluginOptions.introspectComments) {
+      properties = node.members.reduce<EnumMetadata['properties']>(
+        (acc, member) => {
+          const deprecationReason = getJsDocDeprecation(member);
+          const description = getJSDocDescription(member);
+
+          if (deprecationReason || description) {
+            acc[(member.name as ts.Identifier).text] = {
+              deprecationReason: getJsDocDeprecation(member),
+              description: getJSDocDescription(member),
+            };
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+      description = getJSDocDescription(node);
+    }
+
+    return {
+      name: node.name.text,
+      description,
+      properties,
+    };
+  }
+
+  private createEnumRegistration(f: ts.NodeFactory, metadata: EnumMetadata) {
+    const registerEnumTypeOptions: EnumOptions = {
+      name: metadata.name,
+      description: metadata.description,
+      valuesMap: metadata.properties,
+    };
+
+    return f.createExpressionStatement(
+      f.createCallExpression(
+        f.createIdentifier('registerEnumType'),
+        undefined,
+        [
+          // create enum itself as object literal
+          f.createIdentifier(metadata.name),
+          // create an options with name of enum
+          serializePrimitiveObjectToAst(
+            f,
+            registerEnumTypeOptions as unknown as PrimitiveObject,
+          ),
+        ],
+      ),
+    );
   }
 
   private amendCreateUnionTypeCall(f: ts.NodeFactory, node: ts.CallExpression) {
@@ -239,25 +328,19 @@ export class ModelClassVisitor {
     return values;
   }
 
-  private createImplicitEnums(f: ts.NodeFactory): ts.Expression[] {
+  private createImplicitEnums(f: ts.NodeFactory): ts.ExpressionStatement[] {
     return this.inlineEnumsMap.map(({ name, values }) => {
-      const enumObjectLiteral = f.createObjectLiteralExpression(
-        Object.keys(values).map((propName) => {
-          return f.createPropertyAssignment(
-            propName,
-            f.createStringLiteral(values[propName]),
-          );
-        }),
-      );
-
-      const registrationOptionsObjectLiteral = f.createObjectLiteralExpression([
-        f.createPropertyAssignment('name', f.createStringLiteral(name)),
-      ]);
-
-      return f.createCallExpression(
-        f.createIdentifier('registerEnumType'),
-        undefined,
-        [enumObjectLiteral, registrationOptionsObjectLiteral],
+      return f.createExpressionStatement(
+        f.createCallExpression(
+          f.createIdentifier('registerEnumType'),
+          undefined,
+          [
+            // create enum itself as object literal
+            serializePrimitiveObjectToAst(f, values),
+            // create an options with name of enum
+            serializePrimitiveObjectToAst(f, { name }),
+          ],
+        ),
       );
     });
   }
@@ -520,7 +603,10 @@ export class ModelClassVisitor {
     );
   }
 
-  private createEagerImports(f: ts.NodeFactory, fileName: string) {
+  private createEagerImports(
+    f: ts.NodeFactory,
+    fileName: string,
+  ): ts.ImportEqualsDeclaration[] {
     const importsToAdd = importsToAddPerFile.get(fileName);
 
     if (!importsToAdd) {

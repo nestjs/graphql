@@ -328,9 +328,9 @@ class ObjectTypeModel {
     expect(actual).toMatchInlineSnapshot(`
 "\\"use strict\\";
 import { registerEnumType } from \\"@nestjs/graphql\\";
-registerEnumType({ aaa: \\"aaa\\", bbb: \\"bbb\\", ccc: \\"ccc\\" }, { name: \\"ObjectTypeModelTestEnum\\" })
-registerEnumType({ foo: \\"foo\\", bar: \\"bar\\", baz: \\"baz\\" }, { name: \\"ObjectTypeModelWithNullEnum\\" })
-registerEnumType({ with_space: \\"with space\\", bar: \\"bar\\" }, { name: \\"ObjectTypeModelWithSpaceEnum\\" })
+registerEnumType({ aaa: \\"aaa\\", bbb: \\"bbb\\", ccc: \\"ccc\\" }, { name: \\"ObjectTypeModelTestEnum\\" });
+registerEnumType({ foo: \\"foo\\", bar: \\"bar\\", baz: \\"baz\\" }, { name: \\"ObjectTypeModelWithNullEnum\\" });
+registerEnumType({ with_space: \\"with space\\", bar: \\"bar\\" }, { name: \\"ObjectTypeModelWithSpaceEnum\\" });
 let ObjectTypeModel = class ObjectTypeModel {
     static _GRAPHQL_METADATA_FACTORY() {
         return { test: { type: () => ObjectTypeModelTestEnum }, withNull: { nullable: true, type: () => ObjectTypeModelWithNullEnum }, withSpace: { type: () => ObjectTypeModelWithSpaceEnum }, test3: { type: () => String } };
@@ -373,5 +373,92 @@ const MyAwesomeUnion = createUnionType({ name: \\"MyAwesomeUnion\\", types: [Foo
 const MyAwesomeUnion = createUnionType({ name: 'JustUnion', types: [Foo, Bar, Baz] });
 "
 `);
+  });
+
+  describe('Enum Discovering', () => {
+    it('Should ignore union with @private ang @HideEnum tag', () => {
+      const source = `
+/**
+* @private
+*/
+enum Status {
+    ENABLED,
+    DISABLED
+}
+
+/**
+* @HideEnum
+*/
+enum Status2 {
+    ENABLED,
+    DISABLED
+}
+`;
+
+      const actual = transpile(source, { autoRegisterEnums: true });
+      expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+/**
+* @private
+*/
+var Status;
+(function (Status) {
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+/**
+* @HideEnum
+*/
+var Status2;
+(function (Status2) {
+    Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status2 || (Status2 = {}));
+"
+`);
+    });
+
+    it('Should introspect comments for enums', () => {
+      const source = `
+/**
+* Description for Enum
+*/
+enum Status {
+    /**
+    * @deprecated this one is deprecated
+    */
+    ENABLED,
+    /**
+    * This is a enum field!
+    */
+    DISABLED
+}
+`;
+
+      const actual = transpile(source, {
+        autoRegisterEnums: true,
+        introspectComments: true,
+      });
+      expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+import { registerEnumType } from \\"@nestjs/graphql\\";
+/**
+* Description for Enum
+*/
+var Status;
+(function (Status) {
+    /**
+    * @deprecated this one is deprecated
+    */
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    /**
+    * This is a enum field!
+    */
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+registerEnumType(Status, { name: \\"Status\\", description: \\"Description for Enum\\", valuesMap: { ENABLED: { deprecationReason: \\"this one is deprecated\\" }, DISABLED: { description: \\"This is a enum field!\\" } } });
+"
+`);
+    });
   });
 });
