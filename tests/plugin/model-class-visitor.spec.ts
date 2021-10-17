@@ -312,4 +312,34 @@ Test2 = __decorate([
 `);
     });
   });
+
+  it('Should recognize inline string unions and register them using registerEnumType()', () => {
+    const source = `
+@ObjectType()
+class ObjectTypeModel {
+  test: 'aaa' | 'bbb' | 'ccc'; 
+  withNull: 'foo' | 'bar' | 'baz' | null; 
+  withSpace: 'with space' | 'bar'; 
+  test3: string; 
+}
+`;
+
+    const actual = transpile(source, {});
+    expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+import { registerEnumType } from \\"@nestjs/graphql\\";
+registerEnumType({ aaa: \\"aaa\\", bbb: \\"bbb\\", ccc: \\"ccc\\" }, { name: \\"ObjectTypeModelTestEnum\\" })
+registerEnumType({ foo: \\"foo\\", bar: \\"bar\\", baz: \\"baz\\" }, { name: \\"ObjectTypeModelWithNullEnum\\" })
+registerEnumType({ with_space: \\"with space\\", bar: \\"bar\\" }, { name: \\"ObjectTypeModelWithSpaceEnum\\" })
+let ObjectTypeModel = class ObjectTypeModel {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return { test: { type: () => ObjectTypeModelTestEnum }, withNull: { nullable: true, type: () => ObjectTypeModelWithNullEnum }, withSpace: { type: () => ObjectTypeModelWithSpaceEnum }, test3: { type: () => String } };
+    }
+};
+ObjectTypeModel = __decorate([
+    ObjectType()
+], ObjectTypeModel);
+"
+`);
+  });
 });

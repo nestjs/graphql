@@ -21,6 +21,7 @@ import {
   NodeArray,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
+import * as ts from 'typescript';
 
 export function isArray(type: Type) {
   const symbol = type.getSymbol();
@@ -206,4 +207,25 @@ export function hasDecorators(
   return decorators.some((decorator) => {
     return toCheck.includes(getDecoratorName(decorator));
   });
+}
+
+export function createNamedImport(
+  f: ts.NodeFactory,
+  what: string[],
+  from: string,
+) {
+  return f.createImportDeclaration(
+    undefined,
+    undefined,
+    f.createImportClause(
+      false,
+      undefined,
+      f.createNamedImports(
+        what.map((name) =>
+          f.createImportSpecifier(undefined, f.createIdentifier(name)),
+        ),
+      ),
+    ),
+    f.createStringLiteral(from),
+  );
 }

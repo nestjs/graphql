@@ -17,6 +17,7 @@ import {
   hasDecorators,
   hasModifiers,
   getDecoratorName,
+  createNamedImport,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
@@ -32,13 +33,21 @@ const ALLOWED_DECORATORS = [
   InputType.name,
 ];
 
+function capitalizeFirstLetter(word: string) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
 export class ModelClassVisitor {
+  inlineEnumsMap: { name: string; values: { [name: string]: string } }[];
+
   visit(
     sourceFile: ts.SourceFile,
     ctx: ts.TransformationContext,
     program: ts.Program,
     pluginOptions: PluginOptions,
   ) {
+    this.inlineEnumsMap = [];
+
     const typeChecker = program.getTypeChecker();
     const factory = ctx.factory;
 
@@ -63,15 +72,25 @@ export class ModelClassVisitor {
         );
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
-        const importsToAdd = importsToAddPerFile.get(node.fileName);
-        if (!importsToAdd) {
-          return visitedNode;
-        }
-        return this.updateImports(
+
+        const importStatements = this.createEagerImports(
           factory,
-          visitedNode,
-          Array.from(importsToAdd),
+          node.fileName,
         );
+
+        const implicitEnumsStatements = this.createImplicitEnums(factory);
+
+        if (implicitEnumsStatements.length) {
+          importStatements.push(
+            createNamedImport(factory, ['registerEnumType'], '@nestjs/graphql'),
+          );
+        }
+
+        return factory.updateSourceFile(visitedNode, [
+          ...importStatements,
+          ...implicitEnumsStatements,
+          ...visitedNode.statements,
+        ]);
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
@@ -138,6 +157,56 @@ export class ModelClassVisitor {
     });
   }
 
+  private isMemberHasInlineStringEnum(
+    member: ts.PropertyDeclaration,
+  ): false | { [name: string]: string } {
+    if (!member.type || !ts.isUnionTypeNode(member.type)) {
+      return false;
+    }
+
+    const values: { [name: string]: string } = {};
+
+    for (const type of member.type.types) {
+      if (!ts.isLiteralTypeNode(type)) {
+        return false;
+      }
+
+      if (type.literal.kind === ts.SyntaxKind.StringLiteral) {
+        values[type.literal.text.replace(/\s/g, '_')] = type.literal.text;
+        continue;
+      }
+
+      if (type.literal.kind !== ts.SyntaxKind.NullKeyword) {
+        return false;
+      }
+    }
+
+    return values;
+  }
+
+  private createImplicitEnums(f: ts.NodeFactory): ts.Expression[] {
+    return this.inlineEnumsMap.map(({ name, values }) => {
+      const enumObjectLiteral = f.createObjectLiteralExpression(
+        Object.keys(values).map((propName) => {
+          return f.createPropertyAssignment(
+            propName,
+            f.createStringLiteral(values[propName]),
+          );
+        }),
+      );
+
+      const registrationOptionsObjectLiteral = f.createObjectLiteralExpression([
+        f.createPropertyAssignment('name', f.createStringLiteral(name)),
+      ]);
+
+      return f.createCallExpression(
+        f.createIdentifier('registerEnumType'),
+        undefined,
+        [enumObjectLiteral, registrationOptionsObjectLiteral],
+      );
+    });
+  }
+
   private collectMetadataFromClassMembers(
     f: ts.NodeFactory,
     members: ts.NodeArray<ts.ClassElement>,
@@ -156,19 +225,38 @@ export class ModelClassVisitor {
         ]) &&
         !hasDecorators(member.decorators, [HideField.name])
       ) {
+        let inlineEnumName: string;
+        const memberName = member.name.getText();
+
+        const membersStringEnumValues =
+          this.isMemberHasInlineStringEnum(member);
+
+        if (membersStringEnumValues) {
+          inlineEnumName =
+            member.parent.name.getText() +
+            capitalizeFirstLetter(memberName) +
+            'Enum';
+
+          this.inlineEnumsMap.push({
+            name: inlineEnumName,
+            values: membersStringEnumValues,
+          });
+        }
+
         try {
           const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
             f,
             member,
             typeChecker,
             f.createNodeArray(),
+            inlineEnumName,
             hostFilename,
             pluginOptions,
           );
 
           properties.push(
             f.createPropertyAssignment(
-              f.createIdentifier(member.name.getText()),
+              f.createIdentifier(memberName),
               objectLiteralExpr,
             ),
           );
@@ -219,12 +307,34 @@ export class ModelClassVisitor {
     node: ts.PropertyDeclaration | ts.PropertySignature,
     typeChecker: ts.TypeChecker,
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
+    overrideType?: string,
     hostFilename = '',
     pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const type = typeChecker.getTypeAtLocation(node);
     const isNullable =
       !!node.questionToken || isNull(type) || isUndefined(type);
+
+    const typePropertyAssigment = overrideType
+      ? f.createPropertyAssignment(
+          'type',
+          f.createArrowFunction(
+            undefined,
+            undefined,
+            [],
+            undefined,
+            undefined,
+            f.createIdentifier(overrideType),
+          ),
+        )
+      : this.createTypePropertyAssignment(
+          f,
+          node.type,
+          typeChecker,
+          existingProperties,
+          hostFilename,
+          pluginOptions,
+        );
 
     const properties = [
       ...existingProperties,
@@ -236,14 +346,7 @@ export class ModelClassVisitor {
             existingProperties,
           )
         : undefined,
-      this.createTypePropertyAssignment(
-        f,
-        node.type,
-        typeChecker,
-        existingProperties,
-        hostFilename,
-        pluginOptions,
-      ),
+      typePropertyAssigment,
       this.createDescriptionPropertyAssigment(
         f,
         node,
@@ -285,6 +388,7 @@ export class ModelClassVisitor {
               member as ts.PropertySignature,
               typeChecker,
               existingProperties,
+              undefined,
               hostFilename,
               pluginOptions,
             );
@@ -361,17 +465,20 @@ export class ModelClassVisitor {
     );
   }
 
-  private updateImports(
-    f: ts.NodeFactory,
-    sourceFile: ts.SourceFile,
-    pathsToImport: string[],
-  ): ts.SourceFile {
+  private createEagerImports(f: ts.NodeFactory, fileName: string) {
+    const importsToAdd = importsToAddPerFile.get(fileName);
+
+    if (!importsToAdd) {
+      return [];
+    }
+
     const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
     const IMPORT_PREFIX = 'eager_import_';
-    const importDeclarations = pathsToImport.map((path, index) => {
+
+    return Array.from(importsToAdd).map((path, index) => {
       if (major == 4 && minor >= 2) {
         // support TS v4.2+
-        return (f.createImportEqualsDeclaration as any)(
+        return f.createImportEqualsDeclaration(
           undefined,
           undefined,
           false,
@@ -386,11 +493,6 @@ export class ModelClassVisitor {
         f.createExternalModuleReference(f.createStringLiteral(path)),
       );
     });
-
-    return f.updateSourceFile(sourceFile, [
-      ...importDeclarations,
-      ...sourceFile.statements,
-    ]);
   }
 
   private createScalarPropertyAssigment(
