@@ -218,4 +218,98 @@ class NotAModel {
 "
 `);
   });
+
+  describe('Should add description from JSDoc to decorators argument', () => {
+    it('when there are no arguments on decorator', () => {
+      const source = `
+/** Test Description */
+@ObjectType()
+class ObjectTypeModel {}
+`;
+      const actual = transpile(source, { introspectComments: true });
+      expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+/** Test Description */
+let ObjectTypeModel = class ObjectTypeModel {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {};
+    }
+};
+ObjectTypeModel = __decorate([
+    ObjectType({ description: \\"Test Description\\" })
+], ObjectTypeModel);
+"
+`);
+    });
+
+    it('when there are arguments on decorator', () => {
+      const source = `
+/** Test1 Description */
+@ObjectType({isAbstract: true})
+class Test1Model {}
+
+/** Test2 Description */
+@ObjectType('name', {isAbstract: true})
+class Test2Model {}
+`;
+      const actual = transpile(source, { introspectComments: true });
+      expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+/** Test1 Description */
+let Test1Model = class Test1Model {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {};
+    }
+};
+Test1Model = __decorate([
+    ObjectType({ ...{ description: \\"Test1 Description\\" }, ...{ isAbstract: true } })
+], Test1Model);
+/** Test2 Description */
+let Test2Model = class Test2Model {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {};
+    }
+};
+Test2Model = __decorate([
+    ObjectType('name', { ...{ description: \\"Test2 Description\\" }, ...{ isAbstract: true } })
+], Test2Model);
+"
+`);
+    });
+
+    it('should work if parameters passed as variable reference or function', () => {
+      const source = `
+/** test1 description */
+@ObjectType('name', getOptions())
+class Test1 {}
+
+/** test2 description */
+@ObjectType('name', options)
+class Test2 {}
+`;
+      const actual = transpile(source, { introspectComments: true });
+      expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+/** test1 description */
+let Test1 = class Test1 {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {};
+    }
+};
+Test1 = __decorate([
+    ObjectType('name', { ...{ description: \\"test1 description\\" }, ...getOptions() })
+], Test1);
+/** test2 description */
+let Test2 = class Test2 {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return {};
+    }
+};
+Test2 = __decorate([
+    ObjectType('name', { ...{ description: \\"test2 description\\" }, ...options })
+], Test2);
+"
+`);
+    });
+  });
 });

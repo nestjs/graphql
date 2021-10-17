@@ -16,6 +16,7 @@ import {
   getJsDocDeprecation,
   hasDecorators,
   hasModifiers,
+  getDecoratorName,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
@@ -54,7 +55,12 @@ export class ModelClassVisitor {
           typeChecker,
         );
 
-        return this.addMetadataFactory(factory, node, metadata);
+        return this.updateClassDeclaration(
+          factory,
+          node,
+          metadata,
+          pluginOptions,
+        );
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
         const importsToAdd = importsToAddPerFile.get(node.fileName);
@@ -70,6 +76,66 @@ export class ModelClassVisitor {
       return ts.visitEachChild(node, visitNode, ctx);
     };
     return ts.visitNode(sourceFile, visitNode);
+  }
+
+  private addDescriptionToClassDecorators(
+    f: ts.NodeFactory,
+    node: ts.ClassDeclaration,
+  ) {
+    const description = getJSDocDescription(node);
+
+    if (!description) {
+      return node.decorators;
+    }
+
+    // get one of allowed decorators from list
+    return node.decorators.map((decorator) => {
+      if (!ALLOWED_DECORATORS.includes(getDecoratorName(decorator))) {
+        return decorator;
+      }
+
+      const decoratorExpression = decorator.expression as ts.CallExpression;
+      const objectLiteralExpression = f.createObjectLiteralExpression([
+        f.createPropertyAssignment(
+          'description',
+          f.createStringLiteral(description),
+        ),
+      ]);
+
+      let newArgumentsArray: ts.Expression[] = [];
+
+      if (decoratorExpression.arguments.length === 0) {
+        newArgumentsArray = [objectLiteralExpression];
+      } else {
+        // Options always a last parameter:
+        // @ObjectType('name', {description: ''});
+        // @ObjectType({description: ''});
+
+        newArgumentsArray = decoratorExpression.arguments.map(
+          (argument, index) => {
+            if (index + 1 != decoratorExpression.arguments.length) {
+              return argument;
+            }
+
+            // merge existing props with new props
+            return f.createObjectLiteralExpression([
+              f.createSpreadAssignment(objectLiteralExpression),
+              f.createSpreadAssignment(argument),
+            ]);
+          },
+        );
+      }
+
+      return f.updateDecorator(
+        decorator,
+        f.updateCallExpression(
+          decoratorExpression,
+          decoratorExpression.expression,
+          decoratorExpression.typeArguments,
+          newArgumentsArray,
+        ),
+      );
+    });
   }
 
   private collectMetadataFromClassMembers(
@@ -115,10 +181,11 @@ export class ModelClassVisitor {
     return f.createObjectLiteralExpression(properties);
   }
 
-  private addMetadataFactory(
+  private updateClassDeclaration(
     f: ts.NodeFactory,
     node: ts.ClassDeclaration,
     propsMetadata: ts.ObjectLiteralExpression,
+    pluginOptions: PluginOptions,
   ) {
     const method = f.createMethodDeclaration(
       undefined,
@@ -132,8 +199,13 @@ export class ModelClassVisitor {
       f.createBlock([f.createReturnStatement(propsMetadata)], true),
     );
 
-    return f.createClassDeclaration(
-      node.decorators,
+    const decorators = pluginOptions.introspectComments
+      ? this.addDescriptionToClassDecorators(f, node)
+      : node.decorators;
+
+    return f.updateClassDeclaration(
+      node,
+      decorators,
       node.modifiers,
       node.name,
       node.typeParameters,
