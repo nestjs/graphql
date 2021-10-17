@@ -2,7 +2,6 @@ import { head } from 'lodash';
 import { posix } from 'path';
 import * as ts from 'typescript';
 import {
-  getDecoratorName,
   getText,
   getTypeArguments,
   isArray,
@@ -12,18 +11,6 @@ import {
   isNumber,
   isString,
 } from './ast-utils';
-
-export function getDecoratorOrUndefinedByNames(
-  names: string[],
-  decorators: ts.NodeArray<ts.Decorator>,
-): ts.Decorator | undefined {
-  if (!decorators) {
-    return undefined;
-  }
-  return (decorators).find((item) =>
-    names.includes(getDecoratorName(item)),
-  );
-}
 
 export function getTypeReferenceAsString(
   type: ts.Type,

@@ -13,6 +13,7 @@ type AliasedType = {
 };
 type NumberAlias = number;
 
+@ObjectType()
 export class CreateCatDto2 {
   /**
   * name description
@@ -56,10 +57,10 @@ export class CreateCatDto2 {
 
 export const createCatDtoTextAltTranspiled = `var Status;
 (function (Status) {
-    Status[Status[\"ENABLED\"] = 0] = \"ENABLED\";
-    Status[Status[\"DISABLED\"] = 1] = \"DISABLED\";
+    Status[Status["ENABLED"] = 0] = "ENABLED";
+    Status[Status["DISABLED"] = 1] = "DISABLED";
 })(Status || (Status = {}));
-export class CreateCatDto2 {
+let CreateCatDto2 = class CreateCatDto2 {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -67,5 +68,9 @@ export class CreateCatDto2 {
     static _GRAPHQL_METADATA_FACTORY() {
         return { name: { type: () => String, description: "name description" }, age: { type: () => Number, description: "test on age" }, tags: { type: () => [String] }, status: { type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, alias: { type: () => Object }, numberAlias: { type: () => Number }, union: { type: () => Object }, intersection: { type: () => Object }, optionalBoolean: { nullable: true, type: () => Boolean }, nested: { type: () => ({ first: { type: () => String }, second: { type: () => Number }, status: { type: () => Status }, tags: { type: () => [String] }, nodes: { type: () => [Object] }, alias: { type: () => Object }, numberAlias: { type: () => Number } }) }, tuple: { type: () => Object } };
     }
-}
+};
+CreateCatDto2 = __decorate([
+    ObjectType()
+], CreateCatDto2);
+export { CreateCatDto2 };
 `;

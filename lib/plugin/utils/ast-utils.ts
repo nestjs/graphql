@@ -17,6 +17,8 @@ import {
   JSDoc,
   getTextOfJSDocComment,
   getJSDocDeprecatedTag,
+  ModifiersArray,
+  NodeArray,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
 
@@ -181,4 +183,27 @@ export function findNullableTypeFromUnion(
   return typeNode.types.find((tNode: TypeNode) =>
     hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null),
   );
+}
+
+export function hasModifiers(
+  modifiers: ModifiersArray,
+  toCheck: SyntaxKind[],
+): boolean {
+  if (!modifiers) {
+    return false;
+  }
+  return modifiers.some((modifier) => toCheck.includes(modifier.kind));
+}
+
+export function hasDecorators(
+  decorators: NodeArray<Decorator>,
+  toCheck: string[],
+): boolean {
+  if (!decorators) {
+    return false;
+  }
+
+  return decorators.some((decorator) => {
+    return toCheck.includes(getDecoratorName(decorator));
+  });
 }
