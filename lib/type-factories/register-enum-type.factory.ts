@@ -33,7 +33,7 @@ export interface EnumOptions<T extends object = any> {
  */
 export function registerEnumType<T extends object = any>(
   enumRef: T,
-  options: EnumOptions<T>,
+  options?: EnumOptions<T>,
 ) {
   LazyMetadataStorage.store(() =>
     TypeMetadataStorage.addEnumMetadata({

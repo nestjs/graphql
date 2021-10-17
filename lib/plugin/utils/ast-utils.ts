@@ -229,3 +229,55 @@ export function createNamedImport(
     f.createStringLiteral(from),
   );
 }
+
+export function isCallExpressionOf(name: string, node: ts.CallExpression) {
+  return ts.isIdentifier(node.expression) && node.expression.text === name;
+}
+
+export function serializePrimitiveObjectToAst(
+  f: ts.NodeFactory,
+  object: { [key: string]: string | boolean },
+): ts.ObjectLiteralExpression {
+  const properties = [];
+
+  Object.keys(object).map((key) => {
+    const value = object[key];
+
+    let initializer: ts.Expression;
+    if (typeof value === 'string') {
+      initializer = f.createStringLiteral(value);
+    } else if (typeof value === 'boolean') {
+      initializer = value ? f.createTrue() : f.createFalse();
+    }
+
+    properties.push(f.createPropertyAssignment(key, initializer));
+  });
+
+  return f.createObjectLiteralExpression(properties);
+}
+
+export function safelyMergeObjects(
+  f: ts.NodeFactory,
+  a: ts.Expression,
+  b: ts.Expression,
+) {
+  // if both of objects are ObjectLiterals, so merge property by property in compile time
+  // if one or both of expressions not an object literal, produce rest spread and merge in runtime
+  if (ts.isObjectLiteralExpression(a) && ts.isObjectLiteralExpression(b)) {
+    const aMap = a.properties.reduce((acc, prop) => {
+      acc[(prop.name as ts.Identifier).text] = prop;
+      return acc;
+    }, {} as { [propName: string]: ts.ObjectLiteralElementLike });
+
+    b.properties.forEach((prop) => {
+      aMap[(prop.name as ts.Identifier).text] = prop;
+    }, {});
+
+    return f.createObjectLiteralExpression(Object.values(aMap));
+  } else {
+    return f.createObjectLiteralExpression([
+      f.createSpreadAssignment(a),
+      f.createSpreadAssignment(b),
+    ]);
+  }
+}

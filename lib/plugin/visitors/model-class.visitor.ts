@@ -18,6 +18,9 @@ import {
   hasModifiers,
   getDecoratorName,
   createNamedImport,
+  isCallExpressionOf,
+  serializePrimitiveObjectToAst,
+  safelyMergeObjects,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
@@ -70,6 +73,10 @@ export class ModelClassVisitor {
           metadata,
           pluginOptions,
         );
+      } else if (ts.isCallExpression(node)) {
+        if (isCallExpressionOf('registerEnumType', node)) {
+          return this.amendRegisterEnumTypeCall(factory, node);
+        }
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
@@ -97,6 +104,38 @@ export class ModelClassVisitor {
     return ts.visitNode(sourceFile, visitNode);
   }
 
+  private amendRegisterEnumTypeCall(
+    f: ts.NodeFactory,
+    node: ts.CallExpression,
+  ) {
+    if (node.arguments.length === 0 || !ts.isIdentifier(node.arguments[0])) {
+      return node;
+    }
+
+    const enumName = node.arguments[0].text;
+    const objectLiteralExpression = serializePrimitiveObjectToAst(f, {
+      name: enumName,
+    });
+
+    let newArgumentsArray: ts.Expression[];
+
+    if (node.arguments.length === 1) {
+      newArgumentsArray = [node.arguments[0], objectLiteralExpression];
+    } else {
+      newArgumentsArray = [
+        node.arguments[0],
+        safelyMergeObjects(f, objectLiteralExpression, node.arguments[1]),
+      ];
+    }
+
+    return f.updateCallExpression(
+      node,
+      node.expression,
+      node.typeArguments,
+      newArgumentsArray,
+    );
+  }
+
   private addDescriptionToClassDecorators(
     f: ts.NodeFactory,
     node: ts.ClassDeclaration,
@@ -114,12 +153,9 @@ export class ModelClassVisitor {
       }
 
       const decoratorExpression = decorator.expression as ts.CallExpression;
-      const objectLiteralExpression = f.createObjectLiteralExpression([
-        f.createPropertyAssignment(
-          'description',
-          f.createStringLiteral(description),
-        ),
-      ]);
+      const objectLiteralExpression = serializePrimitiveObjectToAst(f, {
+        description,
+      });
 
       let newArgumentsArray: ts.Expression[] = [];
 
@@ -137,10 +173,7 @@ export class ModelClassVisitor {
             }
 
             // merge existing props with new props
-            return f.createObjectLiteralExpression([
-              f.createSpreadAssignment(objectLiteralExpression),
-              f.createSpreadAssignment(argument),
-            ]);
+            return safelyMergeObjects(f, objectLiteralExpression, argument);
           },
         );
       }

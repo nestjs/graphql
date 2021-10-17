@@ -262,7 +262,7 @@ let Test1Model = class Test1Model {
     }
 };
 Test1Model = __decorate([
-    ObjectType({ ...{ description: \\"Test1 Description\\" }, ...{ isAbstract: true } })
+    ObjectType({ description: \\"Test1 Description\\", isAbstract: true })
 ], Test1Model);
 /** Test2 Description */
 let Test2Model = class Test2Model {
@@ -271,7 +271,7 @@ let Test2Model = class Test2Model {
     }
 };
 Test2Model = __decorate([
-    ObjectType('name', { ...{ description: \\"Test2 Description\\" }, ...{ isAbstract: true } })
+    ObjectType('name', { description: \\"Test2 Description\\", isAbstract: true })
 ], Test2Model);
 "
 `);
@@ -339,6 +339,23 @@ let ObjectTypeModel = class ObjectTypeModel {
 ObjectTypeModel = __decorate([
     ObjectType()
 ], ObjectTypeModel);
+"
+`);
+  });
+
+  it('Should add enum name if it not specified in registerEnumType call', () => {
+    const source = `
+registerEnumType(Type);
+registerEnumType(Type, {description: 'description'});
+registerEnumType(Type, {name: 'AnotherName'});
+`;
+
+    const actual = transpile(source, {});
+    expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+registerEnumType(Type, { name: \\"Type\\" });
+registerEnumType(Type, { name: \\"Type\\", description: 'description' });
+registerEnumType(Type, { name: 'AnotherName' });
 "
 `);
   });
