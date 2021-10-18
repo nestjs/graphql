@@ -111,8 +111,10 @@ export class GraphQLSchemaBuilder {
         );
 
       try {
+        // Attempt to resolve prettier module, will throw and catch if prettier is not installed
         const prettier = require('prettier');
 
+        // Resolve config and format output string
         const config = await prettier.resolveConfig(filename);
         const formattedContent = await prettier.format(fileContent, {
           ...config,
