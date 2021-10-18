@@ -116,7 +116,7 @@ export class GraphQLSchemaBuilder {
 
         // Resolve config and format output string
         const config = await prettier.resolveConfig(filename);
-        const formattedContent = await prettier.format(fileContent, {
+        const formattedContent = prettier.format(fileContent, {
           ...config,
           parser: 'graphql',
         });
