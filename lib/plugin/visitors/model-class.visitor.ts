@@ -1,4 +1,3 @@
-import { compact, flatten } from 'lodash';
 import * as ts from 'typescript';
 import {
   HideField,
@@ -26,7 +25,6 @@ import {
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
-  hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
 import { EnumMetadataValuesMapOptions } from '../../schema-builder/metadata';
@@ -386,7 +384,6 @@ export class ModelClassVisitor {
             f,
             member,
             typeChecker,
-            f.createNodeArray(),
             inlineEnumName,
             hostFilename,
             pluginOptions,
@@ -444,7 +441,6 @@ export class ModelClassVisitor {
     f: ts.NodeFactory,
     node: ts.PropertyDeclaration | ts.PropertySignature,
     typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     overrideType?: string,
     hostFilename = '',
     pluginOptions?: PluginOptions,
@@ -453,54 +449,38 @@ export class ModelClassVisitor {
     const isNullable =
       !!node.questionToken || isNull(type) || isUndefined(type);
 
-    const typePropertyAssigment = overrideType
-      ? f.createPropertyAssignment(
-          'type',
-          f.createArrowFunction(
-            undefined,
-            undefined,
-            [],
-            undefined,
-            undefined,
-            f.createIdentifier(overrideType),
-          ),
-        )
-      : this.createTypePropertyAssignment(
-          f,
-          node.type,
-          typeChecker,
-          existingProperties,
-          hostFilename,
-          pluginOptions,
-        );
-
-    const properties = [
-      ...existingProperties,
-      isNullable
-        ? this.createScalarPropertyAssigment(
+    const typeArrowFunction = f.createArrowFunction(
+      undefined,
+      undefined,
+      [],
+      undefined,
+      undefined,
+      overrideType
+        ? f.createIdentifier(overrideType)
+        : this.createTypePropertyAssignment(
             f,
-            'nullable',
-            isNullable,
-            existingProperties,
-          )
-        : undefined,
-      typePropertyAssigment,
-      this.createDescriptionPropertyAssigment(
-        f,
-        node,
-        existingProperties,
-        pluginOptions,
-      ),
-      this.createDeprecationReasonPropertyAssigment(
-        f,
-        node,
-        existingProperties,
-        pluginOptions,
-      ),
-    ];
-    const objectLiteral = f.createObjectLiteralExpression(
-      compact(flatten(properties)),
+            node.type,
+            typeChecker,
+            hostFilename,
+            pluginOptions,
+          ),
     );
+
+    const description = pluginOptions.introspectComments
+      ? getJSDocDescription(node)
+      : undefined;
+
+    const deprecationReason = pluginOptions.introspectComments
+      ? getJsDocDeprecation(node)
+      : undefined;
+
+    const objectLiteral = serializePrimitiveObjectToAst(f, {
+      nullable: isNullable || undefined,
+      type: typeArrowFunction,
+      description,
+      deprecationReason,
+    });
+
     return objectLiteral;
   }
 
@@ -508,15 +488,9 @@ export class ModelClassVisitor {
     f: ts.NodeFactory,
     node: ts.TypeNode,
     typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename: string,
     pluginOptions?: PluginOptions,
-  ): ts.PropertyAssignment {
-    const key = 'type';
-    if (hasPropertyKey(key, existingProperties)) {
-      return undefined;
-    }
-
+  ) {
     if (node) {
       if (ts.isTypeLiteralNode(node)) {
         const propertyAssignments = Array.from(node.members || []).map(
@@ -525,7 +499,6 @@ export class ModelClassVisitor {
               f,
               member as ts.PropertySignature,
               typeChecker,
-              existingProperties,
               undefined,
               hostFilename,
               pluginOptions,
@@ -536,18 +509,8 @@ export class ModelClassVisitor {
             );
           },
         );
-        return f.createPropertyAssignment(
-          key,
-          f.createArrowFunction(
-            undefined,
-            undefined,
-            [],
-            undefined,
-            undefined,
-            f.createParenthesizedExpression(
-              f.createObjectLiteralExpression(propertyAssignments),
-            ),
-          ),
+        return f.createParenthesizedExpression(
+          f.createObjectLiteralExpression(propertyAssignments),
         );
       } else if (ts.isUnionTypeNode(node)) {
         const nullableType = findNullableTypeFromUnion(node, typeChecker);
@@ -560,7 +523,6 @@ export class ModelClassVisitor {
             f,
             remainingTypes[0],
             typeChecker,
-            existingProperties,
             hostFilename,
           );
         }
@@ -590,17 +552,7 @@ export class ModelClassVisitor {
       }
     }
 
-    return f.createPropertyAssignment(
-      key,
-      f.createArrowFunction(
-        undefined,
-        undefined,
-        [],
-        undefined,
-        undefined,
-        f.createIdentifier(typeReference),
-      ),
-    );
+    return f.createIdentifier(typeReference);
   }
 
   private createEagerImports(
@@ -634,65 +586,5 @@ export class ModelClassVisitor {
         f.createExternalModuleReference(f.createStringLiteral(path)),
       );
     });
-  }
-
-  private createScalarPropertyAssigment(
-    f: ts.NodeFactory,
-    name: string,
-    value: undefined | string | boolean,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
-  ): ts.PropertyAssignment {
-    if (value === undefined || hasPropertyKey(name, existingProperties)) {
-      return undefined;
-    }
-
-    let initializer: ts.Expression;
-    if (typeof value === 'string') {
-      initializer = f.createStringLiteral(value);
-    } else if (typeof value === 'boolean') {
-      initializer = value ? f.createTrue() : f.createFalse();
-    }
-
-    return f.createPropertyAssignment(name, initializer);
-  }
-
-  private createDescriptionPropertyAssigment(
-    f: ts.NodeFactory,
-    node: ts.PropertyDeclaration | ts.PropertySignature,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
-    options: PluginOptions = {},
-  ): ts.PropertyAssignment {
-    if (!options.introspectComments) {
-      return;
-    }
-
-    const description = getJSDocDescription(node);
-
-    return this.createScalarPropertyAssigment(
-      f,
-      'description',
-      description,
-      existingProperties,
-    );
-  }
-
-  private createDeprecationReasonPropertyAssigment(
-    f: ts.NodeFactory,
-    node: ts.PropertyDeclaration | ts.PropertySignature,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
-    options: PluginOptions = {},
-  ): ts.PropertyAssignment {
-    if (!options.introspectComments) {
-      return;
-    }
-
-    const deprecation = getJsDocDeprecation(node);
-
-    return this.createScalarPropertyAssigment(
-      f,
-      'deprecationReason',
-      deprecation,
-      existingProperties,
-    );
   }
 }

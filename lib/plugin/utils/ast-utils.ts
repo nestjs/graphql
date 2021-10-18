@@ -242,9 +242,12 @@ export function isCallExpressionOf(name: string, node: ts.CallExpression) {
 }
 
 export type PrimitiveObject = {
-  [key: string]: string | boolean | PrimitiveObject;
+  [key: string]: string | boolean | ts.Node | PrimitiveObject;
 };
 
+function isNode(value: any): value is ts.Node {
+  return typeof value === 'object' && value.constructor.name === 'NodeObject';
+}
 export function serializePrimitiveObjectToAst(
   f: ts.NodeFactory,
   object: PrimitiveObject,
@@ -259,7 +262,9 @@ export function serializePrimitiveObjectToAst(
     }
 
     let initializer: ts.Expression;
-    if (typeof value === 'string') {
+    if (isNode(value)) {
+      initializer = value as ts.Expression;
+    } else if (typeof value === 'string') {
       initializer = f.createStringLiteral(value);
     } else if (typeof value === 'boolean') {
       initializer = value ? f.createTrue() : f.createFalse();
