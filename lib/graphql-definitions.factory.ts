@@ -116,19 +116,16 @@ export class GraphQLDefinitionsFactory {
     const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
 
-    const { buildFederatedSchema } = loadPackage(
-      '@apollo/federation',
-      'ApolloFederation',
-      () => require('@apollo/federation'),
-    );
-
-    const { printSubgraphSchema } = loadPackage(
+    const {
+      buildSubgraphSchema,
+      printSubgraphSchema,
+    }: typeof import('@apollo/subgraph') = loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
       () => require('@apollo/subgraph'),
     );
 
-    const schema = buildFederatedSchema([
+    const schema = buildSubgraphSchema([
       {
         typeDefs: gql`
           ${mergedTypeDefs}

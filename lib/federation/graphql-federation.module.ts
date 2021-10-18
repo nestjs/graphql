@@ -142,11 +142,10 @@ export class GraphQLFederationModule implements OnModuleInit, OnModuleDestroy {
     if (!this.httpAdapterHost || !this.httpAdapterHost.httpAdapter) {
       return;
     }
-    const { printSubgraphSchema } = loadPackage(
-      '@apollo/subgraph',
-      'ApolloFederation',
-      () => require('@apollo/subgraph'),
-    );
+    const { printSubgraphSchema }: typeof import('@apollo/subgraph') =
+      loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
+        require('@apollo/subgraph'),
+      );
 
     const { typePaths } = this.options;
     const typeDefs =

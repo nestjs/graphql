@@ -115,7 +115,9 @@ export class GraphQLSchemaBuilder {
   }
 
   private loadFederationDirectives() {
-    const { federationDirectives } = loadPackage(
+    const {
+      federationDirectives,
+    }: typeof import('@apollo/subgraph/dist/directives') = loadPackage(
       '@apollo/subgraph/dist/directives',
       'SchemaBuilder',
       () => require('@apollo/subgraph/dist/directives'),
