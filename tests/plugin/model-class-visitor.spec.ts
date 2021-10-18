@@ -345,6 +345,8 @@ ObjectTypeModel = __decorate([
 
   it('Should add enum name if it not specified in registerEnumType call', () => {
     const source = `
+import {registerEnumType} from '@nestjs/graphql';
+
 registerEnumType(Type);
 registerEnumType(Type, {description: 'description'});
 registerEnumType(Type, {name: 'AnotherName'});
@@ -352,7 +354,7 @@ registerEnumType(Type, {name: 'AnotherName'});
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
+"import { registerEnumType } from '@nestjs/graphql';
 registerEnumType(Type, { name: \\"Type\\" });
 registerEnumType(Type, { name: \\"Type\\", description: 'description' });
 registerEnumType(Type, { name: 'AnotherName' });
@@ -362,13 +364,15 @@ registerEnumType(Type, { name: 'AnotherName' });
 
   it('Should infer name for union type from variable name', () => {
     const source = `
+import {createUnionType} from '@nestjs/graphql';
+
 const MyAwesomeUnion = createUnionType({types: [Foo, Bar, Baz]});
 const MyAwesomeUnion = createUnionType({types: [Foo, Bar, Baz], name: 'JustUnion'});
 `;
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
+"import { createUnionType } from '@nestjs/graphql';
 const MyAwesomeUnion = createUnionType({ name: \\"MyAwesomeUnion\\", types: [Foo, Bar, Baz] });
 const MyAwesomeUnion = createUnionType({ name: 'JustUnion', types: [Foo, Bar, Baz] });
 "
@@ -457,6 +461,50 @@ var Status;
     Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
 })(Status || (Status = {}));
 registerEnumType(Status, { name: \\"Status\\", description: \\"Description for Enum\\", valuesMap: { ENABLED: { deprecationReason: \\"this one is deprecated\\" }, DISABLED: { description: \\"This is a enum field!\\" } } });
+"
+`);
+    });
+
+    it('Should not add additional import if there is one', () => {
+      const source = `
+import { registerEnumType, otherPackage } from '@nestjs/graphql';
+
+enum Status {
+    ENABLED,
+    DISABLED
+}
+
+/**
+* @private
+*/
+enum Status2 {
+    ENABLED,
+    DISABLED
+}
+
+otherPackage();
+registerEnumType(Status2, {name: 'Status2'});
+`;
+
+      const actual = transpile(source, { autoRegisterEnums: true });
+      expect(actual).toMatchInlineSnapshot(`
+"import { registerEnumType, otherPackage } from '@nestjs/graphql';
+var Status;
+(function (Status) {
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+registerEnumType(Status, { name: \\"Status\\", valuesMap: {} });
+/**
+* @private
+*/
+var Status2;
+(function (Status2) {
+    Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status2 || (Status2 = {}));
+otherPackage();
+registerEnumType(Status2, { name: 'Status2' });
 "
 `);
     });

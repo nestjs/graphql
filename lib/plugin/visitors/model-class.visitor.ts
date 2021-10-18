@@ -22,6 +22,7 @@ import {
   safelyMergeObjects,
   hasJSDocTags,
   PrimitiveObject,
+  hasImport,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
@@ -111,7 +112,10 @@ export class ModelClassVisitor {
 
         const implicitEnumsStatements = this.createImplicitEnums(factory);
 
-        if (implicitEnumsStatements.length || this.enumsMetadata.size) {
+        if (
+          (implicitEnumsStatements.length || this.enumsMetadata.size) &&
+          !hasImport(sourceFile, 'registerEnumType')
+        ) {
           importStatements.push(
             createNamedImport(factory, ['registerEnumType'], '@nestjs/graphql'),
           );
@@ -509,6 +513,7 @@ export class ModelClassVisitor {
             );
           },
         );
+
         return f.createParenthesizedExpression(
           f.createObjectLiteralExpression(propertyAssignments),
         );

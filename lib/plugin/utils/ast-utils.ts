@@ -216,6 +216,24 @@ export function hasDecorators(
   });
 }
 
+export function hasImport(sf: ts.SourceFile, what: string): boolean {
+  for (const statement of sf.statements) {
+    if (
+      ts.isImportDeclaration(statement) &&
+      ts.isNamedImports(statement.importClause.namedBindings)
+    ) {
+      const bindings = statement.importClause.namedBindings.elements;
+
+      for (const namedBinding of bindings) {
+        if (namedBinding.name.text === what) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 export function createNamedImport(
   f: ts.NodeFactory,
   what: string[],
