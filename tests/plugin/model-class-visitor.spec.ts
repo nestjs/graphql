@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import { ModuleKind } from 'typescript';
 import { before } from '../../lib/plugin/compiler-plugin';
 import {
   createCatDtoAltText,
@@ -465,7 +466,7 @@ registerEnumType(Status, { name: \\"Status\\", description: \\"Description for E
 `);
     });
 
-    it('Should not add additional import if there is one', () => {
+    it('Should not add additional import if there is one in ES Modules', () => {
       const source = `
 import { registerEnumType, otherPackage } from '@nestjs/graphql';
 
@@ -486,7 +487,11 @@ otherPackage();
 registerEnumType(Status2, {name: 'Status2'});
 `;
 
-      const actual = transpile(source, { autoRegisterEnums: true });
+      const actual = transpile(
+        source,
+        { autoRegisterEnums: true },
+        { module: ModuleKind.ES2015 },
+      );
       expect(actual).toMatchInlineSnapshot(`
 "import { registerEnumType, otherPackage } from '@nestjs/graphql';
 var Status;
@@ -505,6 +510,57 @@ var Status2;
 })(Status2 || (Status2 = {}));
 otherPackage();
 registerEnumType(Status2, { name: 'Status2' });
+"
+`);
+    });
+
+    it('Should create eager namespaced import and call registerEnumType from this import in CommonJs', () => {
+      const source = `
+import { registerEnumType, otherPackage } from '@nestjs/graphql';
+
+enum Status {
+    ENABLED,
+    DISABLED
+}
+
+/**
+* @private
+*/
+enum Status2 {
+    ENABLED,
+    DISABLED
+}
+
+otherPackage();
+registerEnumType(Status2, {name: 'Status2'});
+`;
+
+      const actual = transpile(
+        source,
+        { autoRegisterEnums: true },
+        { module: ModuleKind.CommonJS },
+      );
+      expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+Object.defineProperty(exports, \\"__esModule\\", { value: true });
+var nestjs_graphql_1 = require(\\"@nestjs/graphql\\");
+var graphql_1 = require(\\"@nestjs/graphql\\");
+var Status;
+(function (Status) {
+    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status || (Status = {}));
+nestjs_graphql_1.registerEnumType(Status, { name: \\"Status\\", valuesMap: {} });
+/**
+* @private
+*/
+var Status2;
+(function (Status2) {
+    Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+    Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+})(Status2 || (Status2 = {}));
+(0, graphql_1.otherPackage)();
+(0, graphql_1.registerEnumType)(Status2, { name: 'Status2' });
 "
 `);
     });

@@ -234,6 +234,31 @@ export function hasImport(sf: ts.SourceFile, what: string): boolean {
   return false;
 }
 
+export function createImportEquals(
+  f: ts.NodeFactory,
+  identifier: ts.Identifier | string,
+  from: string,
+): ts.ImportEqualsDeclaration {
+  const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
+
+  if (major == 4 && minor >= 2) {
+    // support TS v4.2+
+    return f.createImportEqualsDeclaration(
+      undefined,
+      undefined,
+      false,
+      identifier,
+      f.createExternalModuleReference(f.createStringLiteral(from)),
+    );
+  }
+  return (f.createImportEqualsDeclaration as any)(
+    undefined,
+    undefined,
+    identifier,
+    f.createExternalModuleReference(f.createStringLiteral(from)),
+  );
+}
+
 export function createNamedImport(
   f: ts.NodeFactory,
   what: string[],

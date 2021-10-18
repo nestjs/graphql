@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import { ModuleKind } from 'typescript';
 import {
   HideField,
   ObjectType,
@@ -16,13 +17,14 @@ import {
   hasDecorators,
   hasModifiers,
   getDecoratorName,
-  createNamedImport,
   isCallExpressionOf,
   serializePrimitiveObjectToAst,
   safelyMergeObjects,
   hasJSDocTags,
   PrimitiveObject,
+  createImportEquals,
   hasImport,
+  createNamedImport,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
@@ -52,6 +54,8 @@ function capitalizeFirstLetter(word: string) {
 export class ModelClassVisitor {
   inlineEnumsMap: { name: string; values: { [name: string]: string } }[];
   enumsMetadata: Map<ts.EnumDeclaration, EnumMetadata>;
+  packageVarIdentifier: ts.Identifier;
+  isCommonJs: boolean;
 
   visit(
     sourceFile: ts.SourceFile,
@@ -62,8 +66,12 @@ export class ModelClassVisitor {
     this.inlineEnumsMap = [];
     this.enumsMetadata = new Map();
 
+    this.isCommonJs = ctx.getCompilerOptions().module === ModuleKind.CommonJS;
+
     const typeChecker = program.getTypeChecker();
     const factory = ctx.factory;
+
+    this.packageVarIdentifier = factory.createUniqueName('nestjs_graphql');
 
     const visitNode = (node: ts.Node): ts.Node => {
       if (
@@ -112,13 +120,24 @@ export class ModelClassVisitor {
 
         const implicitEnumsStatements = this.createImplicitEnums(factory);
 
-        if (
-          (implicitEnumsStatements.length || this.enumsMetadata.size) &&
-          !hasImport(sourceFile, 'registerEnumType')
-        ) {
-          importStatements.push(
-            createNamedImport(factory, ['registerEnumType'], '@nestjs/graphql'),
-          );
+        if (implicitEnumsStatements.length || this.enumsMetadata.size) {
+          if (this.isCommonJs) {
+            importStatements.push(
+              createImportEquals(
+                factory,
+                this.packageVarIdentifier,
+                '@nestjs/graphql',
+              ),
+            );
+          } else if (!hasImport(sourceFile, 'registerEnumType')) {
+            importStatements.push(
+              createNamedImport(
+                factory,
+                ['registerEnumType'],
+                '@nestjs/graphql',
+              ),
+            );
+          }
         }
 
         const existingStatements = Array.from(visitedNode.statements);
@@ -182,21 +201,15 @@ export class ModelClassVisitor {
       valuesMap: metadata.properties,
     };
 
-    return f.createExpressionStatement(
-      f.createCallExpression(
-        f.createIdentifier('registerEnumType'),
-        undefined,
-        [
-          // create enum itself as object literal
-          f.createIdentifier(metadata.name),
-          // create an options with name of enum
-          serializePrimitiveObjectToAst(
-            f,
-            registerEnumTypeOptions as unknown as PrimitiveObject,
-          ),
-        ],
+    return this.createRegisterEnumTypeFnCall(f, [
+      // create enum itself as object literal
+      f.createIdentifier(metadata.name),
+      // create an options with name of enum
+      serializePrimitiveObjectToAst(
+        f,
+        registerEnumTypeOptions as unknown as PrimitiveObject,
       ),
-    );
+    ]);
   }
 
   private amendCreateUnionTypeCall(f: ts.NodeFactory, node: ts.CallExpression) {
@@ -330,20 +343,36 @@ export class ModelClassVisitor {
     return values;
   }
 
+  private createRegisterEnumTypeFnCall(
+    f: ts.NodeFactory,
+    argumentsArray: ts.Expression[],
+  ) {
+    const FN_NAME = 'registerEnumType';
+    let callee: ts.Expression;
+
+    // https://stackoverflow.com/questions/69617562/adding-a-function-call-in-typescript-transform-compiler-api
+    if (this.isCommonJs) {
+      callee = f.createPropertyAccessExpression(
+        this.packageVarIdentifier,
+        FN_NAME,
+      );
+    } else {
+      callee = f.createIdentifier(FN_NAME);
+    }
+
+    return f.createExpressionStatement(
+      f.createCallExpression(callee, undefined, argumentsArray),
+    );
+  }
+
   private createImplicitEnums(f: ts.NodeFactory): ts.ExpressionStatement[] {
     return this.inlineEnumsMap.map(({ name, values }) => {
-      return f.createExpressionStatement(
-        f.createCallExpression(
-          f.createIdentifier('registerEnumType'),
-          undefined,
-          [
-            // create enum itself as object literal
-            serializePrimitiveObjectToAst(f, values),
-            // create an options with name of enum
-            serializePrimitiveObjectToAst(f, { name }),
-          ],
-        ),
-      );
+      return this.createRegisterEnumTypeFnCall(f, [
+        // create enum itself as object literal
+        serializePrimitiveObjectToAst(f, values),
+        // create an options with name of enum
+        serializePrimitiveObjectToAst(f, { name }),
+      ]);
     });
   }
 
@@ -570,26 +599,8 @@ export class ModelClassVisitor {
       return [];
     }
 
-    const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
-    const IMPORT_PREFIX = 'eager_import_';
-
     return Array.from(importsToAdd).map((path, index) => {
-      if (major == 4 && minor >= 2) {
-        // support TS v4.2+
-        return f.createImportEqualsDeclaration(
-          undefined,
-          undefined,
-          false,
-          IMPORT_PREFIX + index,
-          f.createExternalModuleReference(f.createStringLiteral(path)),
-        );
-      }
-      return (f.createImportEqualsDeclaration as any)(
-        undefined,
-        undefined,
-        IMPORT_PREFIX + index,
-        f.createExternalModuleReference(f.createStringLiteral(path)),
-      );
+      return createImportEquals(f, 'eager_import_' + index, path);
     });
   }
 }
