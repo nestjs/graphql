@@ -109,7 +109,20 @@ export class GraphQLSchemaBuilder {
             ? lexicographicSortSchema(transformedSchema)
             : transformedSchema,
         );
-      await this.fileSystemHelper.writeFile(filename, fileContent);
+
+      try {
+        const prettier = require('prettier');
+
+        const config = await prettier.resolveConfig(filename);
+        const formattedContent = await prettier.format(fileContent, {
+          ...config,
+          parser: 'graphql',
+        });
+
+        await this.fileSystemHelper.writeFile(filename, formattedContent);
+      } catch (e) {
+        await this.fileSystemHelper.writeFile(filename, fileContent);
+      }
     }
     return schema;
   }
