@@ -33,8 +33,6 @@ import {
 import { EnumMetadataValuesMapOptions } from '../../schema-builder/metadata';
 import { EnumOptions } from '../../type-factories';
 
-const importsToAddPerFile = new Map<string, Set<string>>();
-
 const ALLOWED_DECORATORS = [
   ObjectType.name,
   InterfaceType.name,
@@ -52,6 +50,8 @@ function capitalizeFirstLetter(word: string) {
 }
 
 export class ModelClassVisitor {
+  importsToAdd: Set<string>;
+
   inlineEnumsMap: { name: string; values: { [name: string]: string } }[];
   enumsMetadata: Map<ts.EnumDeclaration, EnumMetadata>;
   packageVarIdentifier: ts.Identifier;
@@ -65,7 +65,7 @@ export class ModelClassVisitor {
   ) {
     this.inlineEnumsMap = [];
     this.enumsMetadata = new Map();
-
+    this.importsToAdd = new Set<string>();
     this.isCommonJs = ctx.getCompilerOptions().module === ModuleKind.CommonJS;
 
     const typeChecker = program.getTypeChecker();
@@ -113,10 +113,8 @@ export class ModelClassVisitor {
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
-        const importStatements: ts.Statement[] = this.createEagerImports(
-          factory,
-          node.fileName,
-        );
+        const importStatements: ts.Statement[] =
+          this.createEagerImports(factory);
 
         const implicitEnumsStatements = this.createImplicitEnums(factory);
 
@@ -490,13 +488,7 @@ export class ModelClassVisitor {
       undefined,
       overrideType
         ? f.createIdentifier(overrideType)
-        : this.createTypePropertyAssignment(
-            f,
-            node.type,
-            typeChecker,
-            hostFilename,
-            pluginOptions,
-          ),
+        : this.getTypeUsingTypeChecker(f, node.type, typeChecker, hostFilename),
     );
 
     const description = pluginOptions.introspectComments
@@ -517,49 +509,23 @@ export class ModelClassVisitor {
     return objectLiteral;
   }
 
-  private createTypePropertyAssignment(
+  private getTypeUsingTypeChecker(
     f: ts.NodeFactory,
     node: ts.TypeNode,
     typeChecker: ts.TypeChecker,
     hostFilename: string,
-    pluginOptions?: PluginOptions,
   ) {
-    if (node) {
-      if (ts.isTypeLiteralNode(node)) {
-        const propertyAssignments = Array.from(node.members || []).map(
-          (member) => {
-            const literalExpr = this.createDecoratorObjectLiteralExpr(
-              f,
-              member as ts.PropertySignature,
-              typeChecker,
-              undefined,
-              hostFilename,
-              pluginOptions,
-            );
-            return f.createPropertyAssignment(
-              f.createIdentifier(member.name.getText()),
-              literalExpr,
-            );
-          },
-        );
+    if (node && ts.isUnionTypeNode(node)) {
+      const nullableType = findNullableTypeFromUnion(node, typeChecker);
+      const remainingTypes = node.types.filter((item) => item !== nullableType);
 
-        return f.createParenthesizedExpression(
-          f.createObjectLiteralExpression(propertyAssignments),
+      if (remainingTypes.length === 1) {
+        return this.getTypeUsingTypeChecker(
+          f,
+          remainingTypes[0],
+          typeChecker,
+          hostFilename,
         );
-      } else if (ts.isUnionTypeNode(node)) {
-        const nullableType = findNullableTypeFromUnion(node, typeChecker);
-        const remainingTypes = node.types.filter(
-          (item) => item !== nullableType,
-        );
-
-        if (remainingTypes.length === 1) {
-          return this.createTypePropertyAssignment(
-            f,
-            remainingTypes[0],
-            typeChecker,
-            hostFilename,
-          );
-        }
       }
     }
 
@@ -568,38 +534,31 @@ export class ModelClassVisitor {
       return undefined;
     }
 
-    let typeReference = getTypeReferenceAsString(type, typeChecker);
-    if (!typeReference) {
+    const _typeReference = getTypeReferenceAsString(type, typeChecker);
+
+    if (!_typeReference) {
       return undefined;
     }
-    typeReference = replaceImportPath(typeReference, hostFilename);
-    if (typeReference && typeReference.includes('require')) {
+
+    const { typeReference, importPath } = replaceImportPath(
+      _typeReference,
+      hostFilename,
+    );
+
+    if (importPath) {
       // add top-level import to eagarly load class metadata
-      const importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
-      if (importPath) {
-        let importsToAdd = importsToAddPerFile.get(hostFilename);
-        if (!importsToAdd) {
-          importsToAdd = new Set();
-          importsToAddPerFile.set(hostFilename, importsToAdd);
-        }
-        importsToAdd.add(importPath.slice(2, importPath.length - 1));
-      }
+      this.importsToAdd.add(importPath);
     }
 
     return f.createIdentifier(typeReference);
   }
 
-  private createEagerImports(
-    f: ts.NodeFactory,
-    fileName: string,
-  ): ts.ImportEqualsDeclaration[] {
-    const importsToAdd = importsToAddPerFile.get(fileName);
-
-    if (!importsToAdd) {
+  private createEagerImports(f: ts.NodeFactory): ts.ImportEqualsDeclaration[] {
+    if (!this.importsToAdd.size) {
       return [];
     }
 
-    return Array.from(importsToAdd).map((path, index) => {
+    return Array.from(this.importsToAdd).map((path, index) => {
       return createImportEquals(f, 'eager_import_' + index, path);
     });
   }

@@ -99,11 +99,11 @@ export function isPromiseOrObservable(type: string) {
 
 export function replaceImportPath(typeReference: string, fileName: string) {
   if (!typeReference.includes('import')) {
-    return typeReference;
+    return { typeReference, importPath: null };
   }
-  let importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
+  let importPath = /\("([^)]).+(")/.exec(typeReference)[0];
   if (!importPath) {
-    return undefined;
+    return { typeReference: undefined, importPath: null };
   }
   importPath = convertPath(importPath);
   importPath = importPath.slice(2, importPath.length - 1);
@@ -134,7 +134,9 @@ export function replaceImportPath(typeReference: string, fileName: string) {
   }
 
   typeReference = typeReference.replace(importPath, relativePath);
-  return typeReference.replace('import', 'require');
+  typeReference = typeReference.replace('import', 'require');
+
+  return { typeReference, importPath: relativePath };
 }
 
 export function isDynamicallyAdded(identifier: ts.Node) {
