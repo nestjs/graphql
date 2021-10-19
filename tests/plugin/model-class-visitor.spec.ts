@@ -584,4 +584,38 @@ var Status2;
 `);
     });
   });
+
+  it('Should not introspect type for field if user explicitly wrote a type', () => {
+    const source = `
+import { ID } from '@nestjs/graphql';
+
+@ObjectType()
+class Model {
+   /**
+   * Description
+   */
+   @Field(() => ID)
+   field: string;
+   
+   name: string;
+}
+`;
+
+    const actual = transpile(source, {});
+    expect(actual).toMatchInlineSnapshot(`
+"import { ID } from '@nestjs/graphql';
+let Model = class Model {
+    static _GRAPHQL_METADATA_FACTORY() {
+        return { field: {}, name: { type: () => String } };
+    }
+};
+__decorate([
+    Field(() => ID)
+], Model.prototype, \\"field\\", void 0);
+Model = __decorate([
+    ObjectType()
+], Model);
+"
+`);
+  });
 });

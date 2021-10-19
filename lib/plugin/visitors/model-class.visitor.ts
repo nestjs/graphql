@@ -5,6 +5,7 @@ import {
   ObjectType,
   InterfaceType,
   InputType,
+  Field,
 } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
@@ -374,6 +375,30 @@ export class ModelClassVisitor {
     });
   }
 
+  private getInlineStringEnumTypeOrUndefined(
+    member: ts.PropertyDeclaration,
+  ): string {
+    let inlineEnumName: string;
+
+    const membersStringEnumValues = this.isMemberHasInlineStringEnum(member);
+
+    if (membersStringEnumValues) {
+      const memberName = member.name.getText();
+
+      inlineEnumName =
+        member.parent.name.getText() +
+        capitalizeFirstLetter(memberName) +
+        'Enum';
+
+      this.inlineEnumsMap.push({
+        name: inlineEnumName,
+        values: membersStringEnumValues,
+      });
+    }
+
+    return inlineEnumName;
+  }
+
   private collectMetadataFromClassMembers(
     f: ts.NodeFactory,
     members: ts.NodeArray<ts.ClassElement>,
@@ -392,37 +417,18 @@ export class ModelClassVisitor {
         ]) &&
         !hasDecorators(member.decorators, [HideField.name])
       ) {
-        let inlineEnumName: string;
-        const memberName = member.name.getText();
-
-        const membersStringEnumValues =
-          this.isMemberHasInlineStringEnum(member);
-
-        if (membersStringEnumValues) {
-          inlineEnumName =
-            member.parent.name.getText() +
-            capitalizeFirstLetter(memberName) +
-            'Enum';
-
-          this.inlineEnumsMap.push({
-            name: inlineEnumName,
-            values: membersStringEnumValues,
-          });
-        }
-
         try {
           const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
             f,
             member,
             typeChecker,
-            inlineEnumName,
             hostFilename,
             pluginOptions,
           );
 
           properties.push(
             f.createPropertyAssignment(
-              f.createIdentifier(memberName),
+              f.createIdentifier(member.name.getText()),
               objectLiteralExpr,
             ),
           );
@@ -468,11 +474,26 @@ export class ModelClassVisitor {
     );
   }
 
+  private hasExplicitTypeInDecorator(member: ts.PropertyDeclaration) {
+    const fieldDecorator = member.decorators?.find(
+      (decorator) => getDecoratorName(decorator) === Field.name,
+    );
+
+    if (!fieldDecorator) {
+      return false;
+    }
+
+    const expression = fieldDecorator.expression as ts.CallExpression;
+    return (
+      expression.arguments.length > 0 &&
+      ts.isArrowFunction(expression.arguments[0])
+    );
+  }
+
   private createDecoratorObjectLiteralExpr(
     f: ts.NodeFactory,
-    node: ts.PropertyDeclaration | ts.PropertySignature,
+    node: ts.PropertyDeclaration,
     typeChecker: ts.TypeChecker,
-    overrideType?: string,
     hostFilename = '',
     pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
@@ -480,16 +501,28 @@ export class ModelClassVisitor {
     const isNullable =
       !!node.questionToken || isNull(type) || isUndefined(type);
 
-    const typeArrowFunction = f.createArrowFunction(
-      undefined,
-      undefined,
-      [],
-      undefined,
-      undefined,
-      overrideType
-        ? f.createIdentifier(overrideType)
-        : this.getTypeUsingTypeChecker(f, node.type, typeChecker, hostFilename),
-    );
+    let typeArrowFunction: ts.ArrowFunction;
+    const t = this.hasExplicitTypeInDecorator(node);
+    if (!t) {
+      const inlineStringEnumTypeName =
+        this.getInlineStringEnumTypeOrUndefined(node);
+
+      typeArrowFunction = f.createArrowFunction(
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined,
+        inlineStringEnumTypeName
+          ? f.createIdentifier(inlineStringEnumTypeName)
+          : this.getTypeUsingTypeChecker(
+              f,
+              node.type,
+              typeChecker,
+              hostFilename,
+            ),
+      );
+    }
 
     const description = pluginOptions.introspectComments
       ? getJSDocDescription(node)
