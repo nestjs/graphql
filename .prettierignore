@@ -1,1 +1,3 @@
 tests/generated-definitions/*.ts
+tests/plugin/cases/**/actual
+tests/plugin/cases/**/expected

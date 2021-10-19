@@ -1,4 +1,5 @@
 import * as ts from 'typescript';
+import * as fs from 'fs';
 import { ModuleKind } from 'typescript';
 import { before } from '../../lib/plugin/compiler-plugin';
 import {
@@ -9,10 +10,6 @@ import {
   createCatDtoText,
   createCatDtoTextTranspiled,
 } from './fixtures/create-cat.dto';
-import {
-  es5CreateCatDtoText,
-  es5CreateCatDtoTextTranspiled,
-} from './fixtures/es5-class.dto';
 import {
   nullableDtoText,
   nullableDtoTextTranspiled,
@@ -49,6 +46,33 @@ function transpile(
   });
 
   return result.outputText;
+}
+
+function compileFiles(
+  rootDir: string,
+  file: string,
+  pluginOptions: PluginOptions = {},
+  compilerOptions = defaultCompilerOptions,
+) {
+  const caseDir = __dirname + rootDir;
+
+  const options: ts.CompilerOptions = {
+    ...compilerOptions,
+    rootDir: caseDir,
+    outDir: caseDir + '/actual',
+  };
+
+  const program = ts.createProgram([caseDir + '/' + file], options);
+
+  program.emit(undefined, undefined, undefined, undefined, {
+    before: [before(pluginOptions, program)],
+  });
+
+  const jsFile = file.replace(/\.ts$/, '.js');
+  const actual = fs.readFileSync(caseDir + '/actual/' + jsFile).toString();
+  const expected = fs.readFileSync(caseDir + '/expected/' + jsFile).toString();
+
+  return { actual, expected };
 }
 
 describe('API model properties', () => {
@@ -103,24 +127,19 @@ describe('API model properties', () => {
   });
 
   it('should manage imports statements when code "downleveled"', () => {
-    const options: ts.CompilerOptions = {
+    const compilerOptions: ts.CompilerOptions = {
+      ...defaultCompilerOptions,
       module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES5,
-      newLine: ts.NewLineKind.LineFeed,
-      noEmitHelpers: true,
-      strict: true,
     };
-    const filename = 'es5-class.input.ts';
-    const fakeProgram = ts.createProgram([filename], options);
 
-    const result = ts.transpileModule(es5CreateCatDtoText, {
-      compilerOptions: options,
-      fileName: filename,
-      transformers: {
-        before: [before({}, fakeProgram)],
-      },
-    });
-    expect(result.outputText).toEqual(es5CreateCatDtoTextTranspiled);
+    const { actual, expected } = compileFiles(
+      '/cases/es5-eager-imports',
+      'post.model.ts',
+      {},
+      compilerOptions,
+    );
+
+    expect(actual).toEqual(expected);
   });
 
   it('should support & understand nullable type unions', () => {
