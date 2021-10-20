@@ -116,11 +116,16 @@ export class GraphQLDefinitionsFactory {
     const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
 
-    const {
-      buildFederatedSchema,
-      printSchema,
-    } = loadPackage('@apollo/federation', 'ApolloFederation', () =>
-      require('@apollo/federation'),
+    const { buildFederatedSchema } = loadPackage(
+      '@apollo/federation',
+      'ApolloFederation',
+      () => require('@apollo/federation'),
+    );
+
+    const { printSubgraphSchema } = loadPackage(
+      '@apollo/subgraph',
+      'ApolloFederation',
+      () => require('@apollo/subgraph'),
     );
 
     const schema = buildFederatedSchema([
@@ -133,7 +138,7 @@ export class GraphQLDefinitionsFactory {
     ]);
     const tsFile = await this.gqlAstExplorer.explore(
       gql`
-        ${printSchema(schema)}
+        ${printSubgraphSchema(schema)}
       `,
       path,
       outputAs,
