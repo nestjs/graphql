@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { REQUEST } from '@nestjs/core';
 import { createContextId } from '@nestjs/core/helpers/context-id-factory';
@@ -37,6 +37,7 @@ import { GqlContextType } from './gql-execution-context';
 
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
+  private readonly logger = new Logger(ResolversExplorerService.name);
   private readonly gqlParamsFactory = new GqlParamsFactory();
   private readonly injector = new Injector();
 
@@ -103,6 +104,13 @@ export class ResolversExplorerService extends BaseExplorerService {
             transform,
           );
         if (resolver.type === SUBSCRIPTION_TYPE) {
+          if (!wrapper.isDependencyTreeStatic()) {
+            // Note: We don't throw an exception here for backward
+            // compatibility reasons.
+            this.logger.error(
+              `"${wrapper.metatype.name}" resolver is request or transient-scoped. Resolvers that register subscriptions with the "@Subscription()" decorator must be static (singleton).`,
+            );
+          }
           const subscriptionOptions = Reflect.getMetadata(
             SUBSCRIPTION_OPTIONS_METADATA,
             instance[resolver.methodName],
@@ -299,7 +307,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     TSource extends object = any,
     TContext = {},
     TArgs = { [argName: string]: any },
-    TOutput = any
+    TOutput = any,
   >(resolverFn: Function, instance: object, methodKey: string) {
     const fieldMiddleware = Reflect.getMetadata(
       FIELD_RESOLVER_MIDDLEWARE_METADATA,
@@ -314,9 +322,10 @@ export class ResolversExplorerService extends BaseExplorerService {
       return resolverFn;
     }
 
-    const originalResolveFnFactory = (
-      ...args: [TSource, TArgs, TContext, GraphQLResolveInfo]
-    ) => () => resolverFn(...args);
+    const originalResolveFnFactory =
+      (...args: [TSource, TArgs, TContext, GraphQLResolveInfo]) =>
+      () =>
+        resolverFn(...args);
 
     return decorateFieldResolverWithMiddleware<
       TSource,
