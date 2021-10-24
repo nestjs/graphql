@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { NewRecipeInput } from './dto/new-recipe.input';
 import { RecipesArgs } from './dto/recipes.args';
 import { Recipe } from './models/recipe';
@@ -12,6 +12,12 @@ export class RecipesService {
    */
 
   async create(data: NewRecipeInput): Promise<Recipe> {
+    if (data.title === 'unallowed-title') {
+      throw new BadRequestException({
+        message: 'Unallowed title',
+        mutation: 'addRecipe',
+      });
+    }
     return {
       id: 3,
       ...data,

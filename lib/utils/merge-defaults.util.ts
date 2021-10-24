@@ -128,10 +128,16 @@ function createTransformHttpErrorFn() {
   return (originalError: any): GraphQLFormattedError => {
     const exceptionRef = originalError?.extensions?.exception;
     const isHttpException =
-      exceptionRef?.response?.statusCode && exceptionRef?.status;
-
+      exceptionRef?.response?.statusCode || exceptionRef?.status;
     if (!isHttpException) {
       return originalError as GraphQLFormattedError;
+    }
+    if (
+      exceptionRef?.response &&
+      !exceptionRef?.response?.statusCode &&
+      exceptionRef?.status
+    ) {
+      exceptionRef.response.statusCode = exceptionRef?.status;
     }
     let error: ApolloError;
 
