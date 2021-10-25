@@ -71,7 +71,7 @@
     "@nestjs/mapped-types": "1.0.0",
     "chokidar": "3.5.2",
     "fast-glob": "3.2.7",
-    "graphql-ws": "5.5.1",
+    "graphql-ws": "5.5.3",
     "iterall": "1.3.0",
     "lodash": "4.17.21",
     "normalize-path": "3.0.0",
