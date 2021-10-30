@@ -212,7 +212,7 @@ export class TypeMetadataStorageHost {
     this.params.push(metadata);
   }
 
-  compile(orphanedTypes: Function[] = []) {
+  compile(orphanedTypes: (Function | object)[] = []) {
     this.classDirectives.reverse();
     this.classExtensions.reverse();
     this.fieldDirectives.reverse();
@@ -237,8 +237,7 @@ export class TypeMetadataStorageHost {
     this.compileExtendedResolversMetadata();
 
     orphanedTypes
-      .filter((type) => type && type.prototype)
-      .forEach((type) => this.applyPluginMetadata(type.prototype));
+      .forEach((type) => 'prototype' in type && this.applyPluginMetadata(type.prototype));
   }
 
   loadClassPluginMetadata(metadata: ClassMetadata[]) {
