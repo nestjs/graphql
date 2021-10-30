@@ -6,15 +6,16 @@ import {
   IntrospectionField,
   IntrospectionSchema,
   printSchema,
-  TypeKind
+  TypeKind,
 } from 'graphql';
 import { GRAPHQL_SDL_FILE_HEADER } from '../../lib/graphql.constants';
 import {
   GraphQLSchemaBuilderModule,
-  GraphQLSchemaFactory
+  GraphQLSchemaFactory,
 } from '../../lib/schema-builder';
 import { DirectionsResolver } from '../code-first/directions/directions.resolver';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
+import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
 import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
 import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
@@ -25,7 +26,7 @@ import {
   getQuery,
   getQueryByName,
   getSubscription,
-  getSubscriptionByName
+  getSubscriptionByName,
 } from '../utils/introspection-schema.utils';
 import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 
@@ -52,8 +53,9 @@ describe('Code-first - schema factory', () => {
           AbstractResolver,
           IRecipesResolver,
         ],
-        { orphanedTypes: [SampleOrphanedType] },
+        { orphanedTypes: [SampleOrphanedType, SampleOrphanedEnum] },
       );
+
       introspectionSchema = await (
         await graphql(schema, getIntrospectionQuery())
       ).data.__schema;
@@ -487,6 +489,46 @@ describe('Code-first - schema factory', () => {
         }),
       );
     });
+
+    it('should define "SampleOrphanedEnum" orphaned type', () => {
+      const type = introspectionSchema.types.find(
+        ({ name }) => name === 'SampleOrphanedEnum',
+      );
+      expect(type).toEqual(
+        expect.objectContaining({
+          kind: TypeKind.ENUM,
+          name: 'SampleOrphanedEnum',
+          description: 'orphaned enum',
+          enumValues: [
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'Red',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'Blue',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'Black',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'White',
+            },
+          ],
+        }),
+      );
+    });
+
     it('should define "IRecipe" interface', () => {
       const type = introspectionSchema.types.find(
         ({ name }) => name === 'IRecipe',
