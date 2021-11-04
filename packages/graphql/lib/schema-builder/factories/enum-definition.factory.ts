@@ -1,6 +1,10 @@
+import { upperCase } from 'lodash';
 import { Injectable } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
 import { EnumMetadata } from '../metadata';
+
+export const mapToUppercase = (value: string): string =>
+  upperCase(value).replace(' ', '_');
 
 export interface EnumDefinition {
   enumRef: object;
@@ -19,7 +23,13 @@ export class EnumDefinitionFactory {
         description: metadata.description,
         values: Object.keys(enumValues).reduce((prevValue, key) => {
           const valueMap = metadata.valuesMap[key];
-          prevValue[key] = {
+
+          let graphqlKey = key;
+          if (metadata.mapToUppercase) {
+            graphqlKey = mapToUppercase(key);
+          }
+
+          prevValue[graphqlKey] = {
             value: enumValues[key],
             description: valueMap?.description,
             deprecationReason: valueMap?.deprecationReason,
