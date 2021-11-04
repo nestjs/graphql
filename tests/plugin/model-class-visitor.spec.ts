@@ -239,6 +239,30 @@ class NotAModel {
 `);
   });
 
+  it('should process fields declared as getters ', () => {
+    const source = `
+@ObjectType()
+class ObjectTypeModel {
+  get prop(): string {}
+}
+`;
+
+    const actual = transpile(source, {});
+    expect(actual).toMatchInlineSnapshot(`
+"\\"use strict\\";
+let ObjectTypeModel = class ObjectTypeModel {
+    get prop() { }
+    static _GRAPHQL_METADATA_FACTORY() {
+        return { prop: { type: () => String } };
+    }
+};
+ObjectTypeModel = __decorate([
+    ObjectType()
+], ObjectTypeModel);
+"
+`);
+  });
+
   describe('Should add description from JSDoc to decorators argument', () => {
     it('when there are no arguments on decorator', () => {
       const source = `

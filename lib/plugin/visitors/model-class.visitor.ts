@@ -316,7 +316,7 @@ export class ModelClassVisitor {
   }
 
   private isMemberHasInlineStringEnum(
-    member: ts.PropertyDeclaration,
+    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
   ): false | { [name: string]: string } {
     if (!member.type || !ts.isUnionTypeNode(member.type)) {
       return false;
@@ -376,7 +376,7 @@ export class ModelClassVisitor {
   }
 
   private getInlineStringEnumTypeOrUndefined(
-    member: ts.PropertyDeclaration,
+    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
   ): string {
     let inlineEnumName: string;
 
@@ -386,7 +386,7 @@ export class ModelClassVisitor {
       const memberName = member.name.getText();
 
       inlineEnumName =
-        member.parent.name.getText() +
+        (member.parent as ts.ClassLikeDeclaration).name.getText() +
         capitalizeFirstLetter(memberName) +
         'Enum';
 
@@ -410,7 +410,7 @@ export class ModelClassVisitor {
 
     members.forEach((member) => {
       if (
-        ts.isPropertyDeclaration(member) &&
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
         !hasModifiers(member.modifiers, [
           ts.SyntaxKind.StaticKeyword,
           ts.SyntaxKind.PrivateKeyword,
@@ -474,7 +474,9 @@ export class ModelClassVisitor {
     );
   }
 
-  private hasExplicitTypeInDecorator(member: ts.PropertyDeclaration) {
+  private hasExplicitTypeInDecorator(
+    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
+  ) {
     const fieldDecorator = member.decorators?.find(
       (decorator) => getDecoratorName(decorator) === Field.name,
     );
@@ -492,7 +494,7 @@ export class ModelClassVisitor {
 
   private createDecoratorObjectLiteralExpr(
     f: ts.NodeFactory,
-    node: ts.PropertyDeclaration,
+    node: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
     typeChecker: ts.TypeChecker,
     hostFilename = '',
     pluginOptions?: PluginOptions,
