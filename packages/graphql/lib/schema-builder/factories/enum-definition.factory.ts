@@ -24,12 +24,12 @@ export class EnumDefinitionFactory {
         values: Object.keys(enumValues).reduce((prevValue, key) => {
           const valueMap = metadata.valuesMap[key];
 
-          let graphqlKey = key;
+          let enumKey = key;
           if (metadata.mapToUppercase) {
-            graphqlKey = mapToUppercase(key);
+            enumKey = mapToUppercase(key);
           }
 
-          prevValue[graphqlKey] = {
+          prevValue[enumKey] = {
             value: enumValues[key],
             description: valueMap?.description,
             deprecationReason: valueMap?.deprecationReason,
