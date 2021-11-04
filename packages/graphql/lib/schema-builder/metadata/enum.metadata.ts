@@ -12,4 +12,5 @@ export interface EnumMetadata<T extends object = any> {
   name: string;
   description?: string;
   valuesMap?: EnumMetadataValuesMap<T>;
+  mapToUppercase?: boolean;
 }
