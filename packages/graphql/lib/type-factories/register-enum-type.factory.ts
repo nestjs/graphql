@@ -25,6 +25,12 @@ export interface EnumOptions<T extends object = any> {
    * A map of options for the values of the enum.
    */
   valuesMap?: EnumMetadataValuesMap<T>;
+
+  /**
+   * Automatically map enum to UPPER_CASE in the schema.
+   * Defaults to `false`
+   */
+  mapToUppercase?: boolean;
 }
 
 /**
@@ -41,6 +47,7 @@ export function registerEnumType<T extends object = any>(
       name: options.name,
       description: options.description,
       valuesMap: options.valuesMap || {},
+      mapToUppercase: options.mapToUppercase || false,
     }),
   );
 }
