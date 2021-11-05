@@ -11,10 +11,15 @@
     "target": "es2018",
     "sourceMap": false,
     "outDir": "./dist",
-    "rootDir": "./lib",
+    "rootDir": ".",
+    "baseUrl": ".",
     "lib": ["es2018"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@nestjs/graphql": ["../graphql/lib"],
+      "@nestjs/graphql/*": ["../graphql/lib/*"],
+    }
   },
-  "include": ["lib/**/*"],
+  "include": ["packages/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }
