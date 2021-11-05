@@ -1,1 +1,1 @@
-export * from './abstract-graphql-driver.adapter';
+export * from './abstract-graphql.adapter';

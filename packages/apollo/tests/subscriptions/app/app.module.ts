@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DynamicModule } from '@nestjs/common/interfaces';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { GqlModuleOptions } from '@nestjs/graphql-experimental/interfaces/gql-module-options.interface';
-import { ApolloGraphQLDriverAdapter } from '../../../lib/adapters';
+import { ApolloGraphQLAdapter } from '../../../lib/adapters';
 import { NotificationModule } from './notification.module';
 
 export type AppModuleConfig = {
@@ -18,7 +18,7 @@ export class AppModule {
       imports: [
         NotificationModule,
         GraphQLModule.forRoot({
-          adapter: ApolloGraphQLDriverAdapter,
+          adapter: ApolloGraphQLAdapter,
           debug: false,
           context: options?.context,
           autoSchemaFile: true,

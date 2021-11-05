@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { AbstractGraphQLDriverAdapter } from '@nestjs/graphql-experimental/adapters/abstract-graphql-driver.adapter';
+import { AbstractGraphQLAdapter } from '@nestjs/graphql-experimental/adapters/abstract-graphql.adapter';
 import { GqlModuleOptions } from '@nestjs/graphql-experimental/interfaces';
 import { normalizeRoutePath } from '@nestjs/graphql-experimental/utils';
 import { ApolloServerBase } from 'apollo-server-core';
 
 @Injectable()
-export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter<
+export class ApolloGraphQLAdapter extends AbstractGraphQLAdapter<
   ApolloServerBase,
   GqlModuleOptions
 > {

@@ -1,7 +1,7 @@
 import { DynamicModule, Inject, Module, Provider, Scope } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { join } from 'path';
-import { ApolloGraphQLDriverAdapter } from '../../../lib/adapters';
+import { ApolloGraphQLAdapter } from '../../../lib/adapters';
 import { HelloResolver } from './hello.resolver';
 import { HelloService } from './hello.service';
 import { UsersService } from './users/users.service';
@@ -9,7 +9,7 @@ import { UsersService } from './users/users.service';
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      adapter: ApolloGraphQLDriverAdapter,
+      adapter: ApolloGraphQLAdapter,
       typePaths: [join(__dirname, '*.graphql')],
     }),
   ],

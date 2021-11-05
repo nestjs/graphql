@@ -3,7 +3,7 @@ import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { GRAPHQL_MODULE_OPTIONS } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces';
 
-export abstract class AbstractGraphQLDriverAdapter<
+export abstract class AbstractGraphQLAdapter<
   TDriver = unknown,
   TOptions extends GqlModuleOptions = GqlModuleOptions,
 > {

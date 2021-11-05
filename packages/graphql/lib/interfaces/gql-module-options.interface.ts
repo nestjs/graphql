@@ -10,7 +10,7 @@ import {
 import { GraphQLSchema } from 'graphql';
 import { ServerOptions } from 'graphql-ws';
 import { ServerOptions as SubscriptionTransportWsServerOptions } from 'subscriptions-transport-ws';
-import { AbstractGraphQLDriverAdapter } from '..';
+import { AbstractGraphQLAdapter } from '..';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -105,7 +105,7 @@ export interface GqlModuleOptions
   /**
    * GraphQL server adapter
    */
-  adapter?: Type<AbstractGraphQLDriverAdapter>;
+  adapter?: Type<AbstractGraphQLAdapter>;
 }
 
 export interface GqlOptionsFactory {
@@ -118,7 +118,7 @@ export interface GqlModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   /**
    * GraphQL server adapter
    */
-  adapter?: Type<AbstractGraphQLDriverAdapter>;
+  adapter?: Type<AbstractGraphQLAdapter>;
 
   useExisting?: Type<GqlOptionsFactory>;
   useClass?: Type<GqlOptionsFactory>;

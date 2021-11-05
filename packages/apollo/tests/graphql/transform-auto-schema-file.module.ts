@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { GraphQLSchema, lexicographicSortSchema } from 'graphql';
-import { ApolloGraphQLDriverAdapter } from '../../lib/adapters';
+import { ApolloGraphQLAdapter } from '../../lib/adapters';
 import { DirectionsModule } from '../code-first/directions/directions.module';
 import { RecipesModule } from '../code-first/recipes/recipes.module';
 
@@ -10,7 +10,7 @@ import { RecipesModule } from '../code-first/recipes/recipes.module';
     RecipesModule,
     DirectionsModule,
     GraphQLModule.forRoot({
-      adapter: ApolloGraphQLDriverAdapter,
+      adapter: ApolloGraphQLAdapter,
       autoSchemaFile: 'schema.graphql',
       transformSchema: (schema: GraphQLSchema) =>
         lexicographicSortSchema(schema),

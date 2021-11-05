@@ -8,7 +8,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { printSchema } from 'graphql';
-import { AbstractGraphQLDriverAdapter } from '.';
+import { AbstractGraphQLAdapter } from '.';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
@@ -48,7 +48,7 @@ import { extend, generateString, mergeDefaults } from './utils';
 export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
   private _subscriptionService?: GraphQLSubscriptionService;
 
-  get graphQlAdapter(): AbstractGraphQLDriverAdapter<T> {
+  get graphQlAdapter(): AbstractGraphQLAdapter<T> {
     return this._graphQlAdapter;
   }
 
@@ -57,7 +57,7 @@ export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
     private readonly graphQlFactory: GraphQLFactory,
     private readonly graphQlTypesLoader: GraphQLTypesLoader,
-    private readonly _graphQlAdapter: AbstractGraphQLDriverAdapter<T>,
+    private readonly _graphQlAdapter: AbstractGraphQLAdapter<T>,
   ) {}
 
   static forRoot(options: GqlModuleOptions = {}): DynamicModule {
@@ -70,9 +70,9 @@ export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
           useValue: options,
         },
         {
-          provide: AbstractGraphQLDriverAdapter,
+          provide: AbstractGraphQLAdapter,
           // @todo
-          useClass: options.adapter || (AbstractGraphQLDriverAdapter as any),
+          useClass: options.adapter || (AbstractGraphQLAdapter as any),
         },
       ],
     };
@@ -89,9 +89,9 @@ export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
           useValue: generateString(),
         },
         {
-          provide: AbstractGraphQLDriverAdapter,
+          provide: AbstractGraphQLAdapter,
           // @todo
-          useClass: options?.adapter || (AbstractGraphQLDriverAdapter as any),
+          useClass: options?.adapter || (AbstractGraphQLAdapter as any),
         },
       ],
     };

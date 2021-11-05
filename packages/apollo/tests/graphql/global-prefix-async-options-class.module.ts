@@ -5,7 +5,7 @@ import {
   GraphQLModule,
 } from '@nestjs/graphql-experimental';
 import { join } from 'path';
-import { ApolloGraphQLDriverAdapter } from '../../lib/adapters';
+import { ApolloGraphQLAdapter } from '../../lib/adapters';
 import { CatsModule } from './cats/cats.module';
 
 class ConfigService implements GqlOptionsFactory {
@@ -21,7 +21,7 @@ class ConfigService implements GqlOptionsFactory {
   imports: [
     CatsModule,
     GraphQLModule.forRootAsync({
-      adapter: ApolloGraphQLDriverAdapter,
+      adapter: ApolloGraphQLAdapter,
       useClass: ConfigService,
     }),
   ],

@@ -1,1 +1,1 @@
-export * from './apollo-graphql-driver.adapter';
+export * from './apollo-graphql.adapter';
