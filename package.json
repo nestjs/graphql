@@ -9,7 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "lerna run --parallel build",
+    "build": "tsc -b -v packages",
+    "clean": "tsc -b --clean packages",
     "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
     "lint": "eslint 'lib/**/*.ts' --fix",
     "prepublish:npm": "npm run build",

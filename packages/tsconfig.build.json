@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "commonjs",
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": false,
+    "importHelpers": true,
+    "removeComments": false,
+    "noLib": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2018",
+    "sourceMap": false,
+    "skipLibCheck": true
+  },
+}

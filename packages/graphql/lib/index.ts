@@ -1,3 +1,4 @@
+export * from './adapters';
 export * from './decorators';
 export * from './federation';
 export * from './graphql-ast.explorer';

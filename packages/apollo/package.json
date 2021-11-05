@@ -1,0 +1,24 @@
+{
+  "name": "@nestjs/apollo-experimental",
+  "version": "9.1.1",
+  "description": "Nest - modern, fast, powerful node.js web framework (@apollo)",
+  "author": "Kamil Mysliwiec",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/nestjs/graphql#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nestjs/graphql.git"
+  },
+  "scripts": {
+    "test:e2e": "echo 'Not yet'",
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
+  },
+  "bugs": {
+    "url": "https://github.com/nestjs/graphql/issues"
+  }
+}

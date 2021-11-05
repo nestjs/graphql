@@ -17,7 +17,7 @@ export function getApolloServer(
   } catch (error) {}
   try {
     const graphqlModule = app.get(GraphQLModule);
-    return graphqlModule.apolloServer;
+    return (graphqlModule as any).apolloServer;
   } catch (error) {}
   throw new Error(
     'Nest could not find either the GraphQLFederationModule or GraphQLModule. Neither module is registered in the given application.',

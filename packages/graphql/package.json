@@ -1,5 +1,5 @@
 {
-  "name": "@nestjs/graphql-exp",
+  "name": "@nestjs/graphql-experimental",
   "version": "9.1.1",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
@@ -13,8 +13,6 @@
     "access": "public"
   },
   "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc -p tsconfig.build.json",
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
   },

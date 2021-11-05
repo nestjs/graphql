@@ -2,6 +2,10 @@
   "extends": "../tsconfig.build.json",
   "compilerOptions": {
     "types": ["node"],
+    "paths": {
+      "@nestjs/graphql-experimental": ["../graphql/lib"],
+      "@nestjs/graphql-experimental/*": ["../graphql/lib/*"],
+    }
   },
   "files": [],
   "include": [],
