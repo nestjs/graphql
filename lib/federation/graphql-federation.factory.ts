@@ -2,7 +2,6 @@ import { mergeSchemas } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isString } from '@nestjs/common/utils/shared.utils';
-import { gql } from 'apollo-server-core';
 import {
   GraphQLAbstractType,
   GraphQLField,
@@ -21,6 +20,7 @@ import {
   isScalarType,
   isUnionType,
 } from 'graphql';
+import { gql } from 'graphql-tag';
 import { forEach, isEmpty } from 'lodash';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GraphQLSchemaHost } from '../graphql-schema.host';

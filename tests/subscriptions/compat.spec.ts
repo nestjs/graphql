@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { Client, createClient } from 'graphql-ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import * as ws from 'ws';

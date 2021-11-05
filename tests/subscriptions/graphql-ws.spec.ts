@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient, { ApolloError } from 'apollo-client';
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { Client, Context, createClient } from 'graphql-ws';
 import * as ws from 'ws';
 import { AppModule } from './app/app.module';

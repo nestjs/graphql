@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ApolloServerBase } from 'apollo-server-core';
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { getApolloServer } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
 

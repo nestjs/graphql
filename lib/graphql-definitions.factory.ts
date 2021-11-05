@@ -1,9 +1,9 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
-import { gql } from 'apollo-server-core';
 import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
+import { gql } from 'graphql-tag';
 import {
   DefinitionsGeneratorOptions,
   GraphQLAstExplorer,
@@ -61,7 +61,7 @@ export class GraphQLDefinitionsFactory {
           isFederation,
           isDebugEnabled,
           definitionsGeneratorOptions,
-          options.typeDefs
+          options.typeDefs,
         );
       });
     }
@@ -72,7 +72,7 @@ export class GraphQLDefinitionsFactory {
       isFederation,
       isDebugEnabled,
       definitionsGeneratorOptions,
-      options.typeDefs
+      options.typeDefs,
     );
   }
 
@@ -83,7 +83,7 @@ export class GraphQLDefinitionsFactory {
     isFederation: boolean,
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions = {},
-    typeDefs?: string | string[]
+    typeDefs?: string | string[],
   ) {
     if (isFederation) {
       return this.exploreAndEmitFederation(
@@ -92,7 +92,7 @@ export class GraphQLDefinitionsFactory {
         outputAs,
         isDebugEnabled,
         definitionsGeneratorOptions,
-        typeDefs
+        typeDefs,
       );
     }
     return this.exploreAndEmitRegular(
@@ -101,7 +101,7 @@ export class GraphQLDefinitionsFactory {
       outputAs,
       isDebugEnabled,
       definitionsGeneratorOptions,
-      typeDefs
+      typeDefs,
     );
   }
 
@@ -111,7 +111,7 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions,
-    typeDefs?: string | string[]
+    typeDefs?: string | string[],
   ) {
     const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
@@ -157,9 +157,11 @@ export class GraphQLDefinitionsFactory {
     outputAs: 'class' | 'interface',
     isDebugEnabled: boolean,
     definitionsGeneratorOptions: DefinitionsGeneratorOptions,
-    typeDefs?: string | string[]
+    typeDefs?: string | string[],
   ) {
-    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths  || []);
+    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(
+      typePaths || [],
+    );
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
     if (!mergedTypeDefs) {
       throw new Error(`"typeDefs" property cannot be null.`);
