@@ -10,6 +10,7 @@ import {
 import { GraphQLSchema } from 'graphql';
 import { ServerOptions } from 'graphql-ws';
 import { ServerOptions as SubscriptionTransportWsServerOptions } from 'subscriptions-transport-ws';
+import { AbstractGraphQLDriverAdapter } from '..';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -101,15 +102,30 @@ export interface GqlModuleOptions
    * @default true
    */
   autoTransformHttpErrors?: boolean;
+  /**
+   * GraphQL server adapter
+   */
+  adapter?: Type<AbstractGraphQLDriverAdapter>;
 }
 
 export interface GqlOptionsFactory {
-  createGqlOptions(): Promise<GqlModuleOptions> | GqlModuleOptions;
+  createGqlOptions():
+    | Promise<Omit<GqlModuleOptions, 'adapter'>>
+    | Omit<GqlModuleOptions, 'adapter'>;
 }
 
 export interface GqlModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+  /**
+   * GraphQL server adapter
+   */
+  adapter?: Type<AbstractGraphQLDriverAdapter>;
+
   useExisting?: Type<GqlOptionsFactory>;
   useClass?: Type<GqlOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<GqlModuleOptions> | GqlModuleOptions;
+  useFactory?: (
+    ...args: any[]
+  ) =>
+    | Promise<Omit<GqlModuleOptions, 'adapter'>>
+    | Omit<GqlModuleOptions, 'adapter'>;
   inject?: any[];
 }

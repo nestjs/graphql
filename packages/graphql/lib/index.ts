@@ -15,4 +15,3 @@ export * from './services/gql-execution-context';
 export * from './tokens';
 export * from './type-factories';
 export * from './type-helpers';
-export { getApolloServer } from './utils';

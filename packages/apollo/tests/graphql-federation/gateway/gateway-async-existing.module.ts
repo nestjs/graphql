@@ -1,0 +1,15 @@
+import { Module } from '@nestjs/common';
+import { GraphQLGatewayModule } from '@nestjs/graphql-experimental';
+import { ConfigModule } from './config/config.module';
+import { ConfigService } from './config/config.service';
+
+@Module({
+  imports: [
+    GraphQLGatewayModule.forRootAsync({
+      useExisting: ConfigService,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+    }),
+  ],
+})
+export class AppModule {}

@@ -8,7 +8,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { printSchema } from 'graphql';
-import { ApolloGraphQLDriverAdapter } from './adapters/apollo-graphql-driver.adapter';
+import { AbstractGraphQLDriverAdapter } from '.';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
@@ -42,19 +42,22 @@ import { extend, generateString, mergeDefaults } from './utils';
     GraphQLTypesLoader,
     GraphQLSchemaBuilder,
     GraphQLSchemaHost,
-    ApolloGraphQLDriverAdapter,
   ],
   exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
 })
-export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
+export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
   private _subscriptionService?: GraphQLSubscriptionService;
+
+  get graphQlAdapter(): AbstractGraphQLDriverAdapter<T> {
+    return this._graphQlAdapter;
+  }
 
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
-    private readonly graphqlFactory: GraphQLFactory,
-    private readonly graphqlTypesLoader: GraphQLTypesLoader,
-    private readonly graphQlAdapter: ApolloGraphQLDriverAdapter,
+    private readonly graphQlFactory: GraphQLFactory,
+    private readonly graphQlTypesLoader: GraphQLTypesLoader,
+    private readonly _graphQlAdapter: AbstractGraphQLDriverAdapter<T>,
   ) {}
 
   static forRoot(options: GqlModuleOptions = {}): DynamicModule {
@@ -65,6 +68,11 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
         {
           provide: GRAPHQL_MODULE_OPTIONS,
           useValue: options,
+        },
+        {
+          provide: AbstractGraphQLDriverAdapter,
+          // @todo
+          useClass: options.adapter || (AbstractGraphQLDriverAdapter as any),
         },
       ],
     };
@@ -79,6 +87,11 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
         {
           provide: GRAPHQL_MODULE_ID,
           useValue: generateString(),
+        },
+        {
+          provide: AbstractGraphQLDriverAdapter,
+          // @todo
+          useClass: options?.adapter || (AbstractGraphQLDriverAdapter as any),
         },
       ],
     };
@@ -124,25 +137,25 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       return;
     }
     const typeDefs =
-      (await this.graphqlTypesLoader.mergeTypesByPaths(
+      (await this.graphQlTypesLoader.mergeTypesByPaths(
         this.options.typePaths,
       )) || [];
 
     const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
-    const apolloOptions = await this.graphqlFactory.mergeOptions({
+    const apolloOptions = await this.graphQlFactory.mergeOptions({
       ...this.options,
       typeDefs: mergedTypeDefs,
     });
-    await this.graphQlAdapter.runOptionsHooks(apolloOptions);
+    await this._graphQlAdapter.runPreOptionsHooks(apolloOptions);
 
     if (this.options.definitions && this.options.definitions.path) {
-      await this.graphqlFactory.generateDefinitions(
+      await this.graphQlFactory.generateDefinitions(
         printSchema(apolloOptions.schema),
         this.options,
       );
     }
 
-    await this.graphQlAdapter.start(apolloOptions);
+    await this._graphQlAdapter.start(apolloOptions);
     if (
       this.options.installSubscriptionHandlers ||
       this.options.subscriptions
@@ -163,6 +176,6 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this._subscriptionService?.stop();
-    await this.graphQlAdapter.stop();
+    await this._graphQlAdapter.stop();
   }
 }

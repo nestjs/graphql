@@ -12,6 +12,7 @@
     "experimentalDecorators": true,
     "target": "es2018",
     "sourceMap": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
 }

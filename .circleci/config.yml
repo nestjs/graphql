@@ -36,7 +36,7 @@ jobs:
           name: Build
           command: npm run build    
 
-  integration_tests:
+  e2e_tests:
     working_directory: ~/nest
     docker:
       - image: circleci/node:16
@@ -45,15 +45,15 @@ jobs:
       - *restore-cache
       - *install-deps
       - run:
-          name: Integration tests
-          command: npm run test:integration
+          name: E2E tests
+          command: npm run test:e2e
 
 workflows:
   version: 2
   build-and-test:
     jobs:
       - build
-      - integration_tests:
+      - e2e_tests:
           requires:
             - build
       

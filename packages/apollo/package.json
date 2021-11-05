@@ -15,8 +15,8 @@
     "url": "git+https://github.com/nestjs/graphql.git"
   },
   "scripts": {
-    "test:e2e": "echo 'Not yet'",
-    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
+    "test:e2e": "jest --config ./tests/jest-e2e.ts --runInBand",
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.ts --runInBand --watch"
   },
   "bugs": {
     "url": "https://github.com/nestjs/graphql/issues"

@@ -2,7 +2,6 @@ import { mergeSchemas } from '@graphql-tools/merge';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
-import { gql } from 'apollo-server-core';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import {
   GraphQLField,
@@ -12,6 +11,7 @@ import {
   lexicographicSortSchema,
   printSchema,
 } from 'graphql';
+import { gql } from 'graphql-tag';
 import { forEach, isEmpty } from 'lodash';
 import {
   DefinitionsGeneratorOptions,

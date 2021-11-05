@@ -1,25 +1,19 @@
-import { HttpAdapterHost, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { ApplicationConfig } from '@nestjs/core';
 import { AbstractGraphQLDriverAdapter } from '@nestjs/graphql-experimental/adapters/abstract-graphql-driver.adapter';
-import { GRAPHQL_MODULE_OPTIONS } from '@nestjs/graphql-experimental/graphql.constants';
 import { GqlModuleOptions } from '@nestjs/graphql-experimental/interfaces';
 import { normalizeRoutePath } from '@nestjs/graphql-experimental/utils';
 import { ApolloServerBase } from 'apollo-server-core';
 
-export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter {
+@Injectable()
+export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter<
+  ApolloServerBase,
+  GqlModuleOptions
+> {
   private _apolloServer: ApolloServerBase;
 
-  get apolloServer(): ApolloServerBase {
+  get instance(): ApolloServerBase {
     return this._apolloServer;
-  }
-
-  constructor(
-    private readonly httpAdapterHost: HttpAdapterHost,
-    private readonly applicationConfig: ApplicationConfig,
-    @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
-  ) {
-    super();
   }
 
   public async start(apolloOptions: GqlModuleOptions) {
@@ -35,6 +29,14 @@ export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter {
     }
   }
 
+  public async runPreOptionsHooks(apolloOptions: GqlModuleOptions) {
+    await this.runExecutorFactoryIfPresent(apolloOptions);
+  }
+
+  public stop() {
+    return this._apolloServer?.stop();
+  }
+
   private async registerExpress(apolloOptions: GqlModuleOptions) {
     const { ApolloServer } = loadPackage(
       'apollo-server-express',
@@ -43,7 +45,7 @@ export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter {
     );
     const path = this.getNormalizedPath(apolloOptions);
     const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
-      this.options;
+      this.moduleOptions;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
@@ -76,7 +78,7 @@ export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter {
     const apolloServer = new ApolloServer(apolloOptions as any);
     await apolloServer.start();
     const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
-      this.options;
+      this.moduleOptions;
 
     await app.register(
       apolloServer.createHandler({
@@ -93,19 +95,11 @@ export class ApolloGraphQLDriverAdapter extends AbstractGraphQLDriverAdapter {
 
   private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
     const prefix = this.applicationConfig.getGlobalPrefix();
-    const useGlobalPrefix = prefix && this.options.useGlobalPrefix;
+    const useGlobalPrefix = prefix && this.moduleOptions.useGlobalPrefix;
     const gqlOptionsPath = normalizeRoutePath(apolloOptions.path);
     return useGlobalPrefix
       ? normalizeRoutePath(prefix) + gqlOptionsPath
       : gqlOptionsPath;
-  }
-
-  public async runOptionsHooks(apolloOptions: GqlModuleOptions) {
-    await this.runExecutorFactoryIfPresent(apolloOptions);
-  }
-
-  public stop() {
-    return this._apolloServer?.stop();
   }
 
   private async runExecutorFactoryIfPresent(apolloOptions: GqlModuleOptions) {
