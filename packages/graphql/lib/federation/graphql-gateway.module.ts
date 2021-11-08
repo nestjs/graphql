@@ -8,26 +8,25 @@ import {
   Provider,
 } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { ApolloServerBase } from 'apollo-server-core';
+import { HttpAdapterHost } from '@nestjs/core';
 import { GATEWAY_BUILD_SERVICE } from '.';
-import { GRAPHQL_MODULE_ID } from '../graphql.constants';
+import { AbstractGraphQLAdapter } from '../adapters';
+import {
+  GRAPHQL_MODULE_ID,
+  GRAPHQL_MODULE_OPTIONS,
+} from '../graphql.constants';
 import {
   GatewayBuildService,
   GatewayModuleAsyncOptions,
   GatewayModuleOptions,
   GatewayOptionsFactory,
-  GqlModuleOptions,
 } from '../interfaces';
-import { generateString, normalizeRoutePath } from '../utils';
-import { GRAPHQL_GATEWAY_MODULE_OPTIONS } from './federation.constants';
+import { generateString } from '../utils';
 
 @Module({})
-export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
-  private _apolloServer: ApolloServerBase;
-
-  get apolloServer(): ApolloServerBase {
-    return this._apolloServer;
+export class GraphQLGatewayModule<T> implements OnModuleInit, OnModuleDestroy {
+  get graphQlAdapter(): AbstractGraphQLAdapter<T> {
+    return this._graphQlAdapter;
   }
 
   constructor(
@@ -36,9 +35,9 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
     @Optional()
     @Inject(GATEWAY_BUILD_SERVICE)
     private readonly buildService: GatewayBuildService,
-    @Inject(GRAPHQL_GATEWAY_MODULE_OPTIONS)
+    @Inject(GRAPHQL_MODULE_OPTIONS)
     private readonly options: GatewayModuleOptions,
-    private readonly applicationConfig: ApplicationConfig,
+    private readonly _graphQlAdapter: AbstractGraphQLAdapter<T>,
   ) {}
 
   static forRoot(options: GatewayModuleOptions): DynamicModule {
@@ -46,8 +45,13 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
       module: GraphQLGatewayModule,
       providers: [
         {
-          provide: GRAPHQL_GATEWAY_MODULE_OPTIONS,
+          provide: GRAPHQL_MODULE_OPTIONS,
           useValue: options,
+        },
+        {
+          provide: AbstractGraphQLAdapter,
+          // @todo
+          useClass: options.adapter || (AbstractGraphQLAdapter as any),
         },
       ],
     };
@@ -62,6 +66,11 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
         {
           provide: GRAPHQL_MODULE_ID,
           useValue: generateString(),
+        },
+        {
+          provide: AbstractGraphQLAdapter,
+          // @todo
+          useClass: options.adapter || (AbstractGraphQLAdapter as any),
         },
       ],
     };
@@ -88,14 +97,14 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
   ): Provider {
     if (options.useFactory) {
       return {
-        provide: GRAPHQL_GATEWAY_MODULE_OPTIONS,
+        provide: GRAPHQL_MODULE_OPTIONS,
         useFactory: options.useFactory,
         inject: options.inject || [],
       };
     }
 
     return {
-      provide: GRAPHQL_GATEWAY_MODULE_OPTIONS,
+      provide: GRAPHQL_MODULE_OPTIONS,
       useFactory: (optionsFactory: GatewayOptionsFactory) =>
         optionsFactory.createGatewayOptions(),
       inject: [options.useExisting || options.useClass],
@@ -123,7 +132,7 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
       buildService,
     });
 
-    await this.registerGqlServer({
+    await this._graphQlAdapter.start({
       ...serverOpts,
       gateway,
       subscriptions: undefined,
@@ -138,81 +147,6 @@ export class GraphQLGatewayModule implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this._apolloServer?.stop();
-  }
-
-  private async registerGqlServer(apolloOptions: GqlModuleOptions) {
-    const httpAdapter = this.httpAdapterHost.httpAdapter;
-    const adapterName = httpAdapter.constructor && httpAdapter.constructor.name;
-
-    if (adapterName === 'ExpressAdapter') {
-      await this.registerExpress(apolloOptions);
-    } else if (adapterName === 'FastifyAdapter') {
-      await this.registerFastify(apolloOptions);
-    } else {
-      throw new Error(`No support for current HttpAdapter: ${adapterName}`);
-    }
-  }
-
-  private async registerExpress(apolloOptions: GqlModuleOptions) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-express',
-      'GraphQLModule',
-      () => require('apollo-server-express'),
-    );
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
-      apolloOptions;
-    const app = this.httpAdapterHost.httpAdapter.getInstance();
-    const path = this.getNormalizedPath(apolloOptions);
-
-    const apolloServer = new ApolloServer(apolloOptions);
-    await apolloServer.start();
-    apolloServer.applyMiddleware({
-      app,
-      path,
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
-    });
-    this._apolloServer = apolloServer;
-  }
-
-  private async registerFastify(apolloOptions: GqlModuleOptions) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-fastify',
-      'GraphQLModule',
-      () => require('apollo-server-fastify'),
-    );
-
-    const httpAdapter = this.httpAdapterHost.httpAdapter;
-    const app = httpAdapter.getInstance();
-    const path = this.getNormalizedPath(apolloOptions);
-
-    const apolloServer = new ApolloServer(apolloOptions);
-    await apolloServer.start();
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
-      apolloOptions;
-
-    await app.register(
-      apolloServer.createHandler({
-        disableHealthCheck,
-        onHealthCheck,
-        cors,
-        bodyParserConfig,
-        path,
-      }),
-    );
-
-    this._apolloServer = apolloServer;
-  }
-
-  private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
-    const prefix = this.applicationConfig.getGlobalPrefix();
-    const useGlobalPrefix = prefix && this.options.server?.useGlobalPrefix;
-    const gqlOptionsPath = normalizeRoutePath(apolloOptions.path);
-    return useGlobalPrefix
-      ? normalizeRoutePath(prefix) + gqlOptionsPath
-      : gqlOptionsPath;
+    await this._graphQlAdapter?.stop();
   }
 }

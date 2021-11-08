@@ -22,20 +22,27 @@ export interface GatewayModuleOptions {
     | 'schemaDirectives'
     | 'buildSchemaOptions'
     | 'fieldResolverEnhancers'
+    | 'adapter'
   >;
+  adapter?: GqlModuleOptions['adapter'];
 }
 
 export interface GatewayOptionsFactory {
-  createGatewayOptions(): Promise<GatewayModuleOptions> | GatewayModuleOptions;
+  createGatewayOptions():
+    | Promise<Omit<GatewayModuleOptions, 'adapter'>>
+    | Omit<GatewayModuleOptions, 'adapter'>;
 }
 
 export interface GatewayModuleAsyncOptions
   extends Pick<ModuleMetadata, 'imports'> {
+  adapter?: GqlModuleOptions['adapter'];
   useExisting?: Type<GatewayOptionsFactory>;
   useClass?: Type<GatewayOptionsFactory>;
   useFactory?: (
     ...args: any[]
-  ) => Promise<GatewayModuleOptions> | GatewayModuleOptions;
+  ) =>
+    | Promise<Omit<GatewayModuleOptions, 'adapter'>>
+    | Omit<GatewayModuleOptions, 'adapter'>;
   inject?: any[];
 }
 

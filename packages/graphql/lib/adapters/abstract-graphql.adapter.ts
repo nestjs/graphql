@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { GRAPHQL_MODULE_OPTIONS } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces';
+import { wrapContextResolver } from '../utils';
 
 export abstract class AbstractGraphQLAdapter<
   TDriver = unknown,
@@ -13,12 +13,24 @@ export abstract class AbstractGraphQLAdapter<
   @Inject()
   protected readonly applicationConfig: ApplicationConfig;
 
-  @Inject(GRAPHQL_MODULE_OPTIONS)
-  protected readonly moduleOptions: GqlModuleOptions;
-
   abstract get instance(): TDriver;
 
   public abstract start(options: TOptions): Promise<unknown>;
-  public abstract runPreOptionsHooks?(options: TOptions): Promise<void>;
   public abstract stop(): Promise<void>;
+
+  public async runPreOptionsHooks(options: TOptions): Promise<void> {}
+  public async mergeDefaultOptions(
+    options: TOptions,
+    defaults: Record<string, any> = {
+      path: '/graphql',
+      fieldResolverEnhancers: [],
+    },
+  ): Promise<TOptions> {
+    const clonedOptions = {
+      ...defaults,
+      ...options,
+    };
+    wrapContextResolver(clonedOptions, options);
+    return clonedOptions;
+  }
 }

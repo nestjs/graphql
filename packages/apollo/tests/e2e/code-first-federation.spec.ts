@@ -17,7 +17,7 @@ describe('Code-first - Federation', () => {
     app = module.createNestApplication();
     await app.init();
     const graphqlFederationModule = app.get(GraphQLFederationModule);
-    apolloClient = graphqlFederationModule.apolloServer;
+    apolloClient = graphqlFederationModule.graphQlAdapter?.instance;
   });
 
   it(`should return query result`, async () => {

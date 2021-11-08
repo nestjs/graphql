@@ -28,7 +28,7 @@ import {
   ResolversExplorerService,
   ScalarsExplorerService,
 } from './services';
-import { extend, generateString, mergeDefaults } from './utils';
+import { extend, generateString } from './utils';
 
 @Module({
   imports: [GraphQLSchemaBuilderModule],
@@ -61,7 +61,6 @@ export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   static forRoot(options: GqlModuleOptions = {}): DynamicModule {
-    options = mergeDefaults(options);
     return {
       module: GraphQLModule,
       providers: [
@@ -118,15 +117,14 @@ export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
     if (options.useFactory) {
       return {
         provide: GRAPHQL_MODULE_OPTIONS,
-        useFactory: async (...args: any[]) =>
-          mergeDefaults(await options.useFactory(...args)),
+        useFactory: async (...args: any[]) => await options.useFactory(...args),
         inject: options.inject || [],
       };
     }
     return {
       provide: GRAPHQL_MODULE_OPTIONS,
       useFactory: async (optionsFactory: GqlOptionsFactory) =>
-        mergeDefaults(await optionsFactory.createGqlOptions()),
+        await optionsFactory.createGqlOptions(),
       inject: [options.useExisting || options.useClass],
     };
   }
@@ -136,37 +134,36 @@ export class GraphQLModule<T> implements OnModuleInit, OnModuleDestroy {
     if (!httpAdapter) {
       return;
     }
+    const options = await this._graphQlAdapter.mergeDefaultOptions(
+      this.options,
+    );
     const typeDefs =
-      (await this.graphQlTypesLoader.mergeTypesByPaths(
-        this.options.typePaths,
-      )) || [];
+      (await this.graphQlTypesLoader.mergeTypesByPaths(options.typePaths)) ||
+      [];
 
-    const mergedTypeDefs = extend(typeDefs, this.options.typeDefs);
-    const apolloOptions = await this.graphQlFactory.mergeOptions({
-      ...this.options,
+    const mergedTypeDefs = extend(typeDefs, options.typeDefs);
+    const adapterOptions = await this.graphQlFactory.mergeOptions({
+      ...options,
       typeDefs: mergedTypeDefs,
     });
-    await this._graphQlAdapter.runPreOptionsHooks(apolloOptions);
+    await this._graphQlAdapter.runPreOptionsHooks(adapterOptions);
 
-    if (this.options.definitions && this.options.definitions.path) {
+    if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
-        printSchema(apolloOptions.schema),
-        this.options,
+        printSchema(adapterOptions.schema),
+        options,
       );
     }
 
-    await this._graphQlAdapter.start(apolloOptions);
-    if (
-      this.options.installSubscriptionHandlers ||
-      this.options.subscriptions
-    ) {
-      const subscriptionsOptions: SubscriptionConfig = this.options
-        .subscriptions || { 'subscriptions-transport-ws': {} };
+    await this._graphQlAdapter.start(adapterOptions);
+    if (options.installSubscriptionHandlers || options.subscriptions) {
+      const subscriptionsOptions: SubscriptionConfig =
+        options.subscriptions || { 'subscriptions-transport-ws': {} };
       this._subscriptionService = new GraphQLSubscriptionService(
         {
-          schema: apolloOptions.schema,
-          path: this.options.path,
-          context: this.options.context,
+          schema: adapterOptions.schema,
+          path: options.path,
+          context: options.context,
           ...subscriptionsOptions,
         },
         httpAdapter.getHttpServer(),

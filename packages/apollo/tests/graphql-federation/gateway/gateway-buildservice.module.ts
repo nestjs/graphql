@@ -4,6 +4,7 @@ import {
   GATEWAY_BUILD_SERVICE,
   GraphQLGatewayModule,
 } from '@nestjs/graphql-experimental';
+import { ApolloGatewayGraphQLAdapter } from '../../../lib/adapters';
 
 @Module({
   providers: [
@@ -21,6 +22,7 @@ class BuildServiceModule {}
 @Module({
   imports: [
     GraphQLGatewayModule.forRootAsync({
+      adapter: ApolloGatewayGraphQLAdapter,
       useFactory: async () => ({
         gateway: {
           serviceList: [

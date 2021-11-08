@@ -16,7 +16,7 @@ export function getApolloServer(
 ): ApolloServerBase {
   try {
     const graphqlFederationModule = app.get(GraphQLFederationModule);
-    return graphqlFederationModule.apolloServer;
+    return graphqlFederationModule.graphQlAdapter?.instance;
   } catch (error) {}
   try {
     const graphqlModule = app.get(GraphQLModule);

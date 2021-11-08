@@ -10,18 +10,18 @@
   ],
   "scripts": {
     "build": "tsc -b -v packages",
+    "changelog": "lerna-changelog",
     "clean": "tsc -b --clean packages",
     "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
     "lint": "eslint 'lib/**/*.ts' --fix",
-    "prepublish:npm": "npm run build",
-    "publish:npm": "lerna publish --conventional-commits",
+    "prepublish": "npm run build && npm run changelog | pbcopy",
+    "publish": "lerna publish --conventional-commits",
     "prepublish:next": "npm run build",
     "publish:next": "lerna publish --dist-tag next",
     "test:e2e": "lerna run --parallel test:e2e",
     "test:e2e:dev": "lerna run --parallel test:e2e:dev"
   },
   "devDependencies": {
-    "@apollo/federation": "0.33.3",
     "@apollo/gateway": "0.42.3",
     "@apollo/subgraph": "0.1.2",
     "@commitlint/cli": "13.2.1",
@@ -85,7 +85,6 @@
     "ws": "8.2.3"
   },
   "peerDependencies": {
-    "@apollo/federation": "^0.26.0 || ^0.27.0 || ^0.29.0 || ^0.33.0",
     "@apollo/gateway": "^0.29.0 || ^0.32.0 || ^0.33.0 || ^0.35.0 || ^0.38.0 || ^0.42.0",
     "@apollo/subgraph": "^0.1.2",
     "@nestjs/common": "^8.0.0",
@@ -98,9 +97,6 @@
     "ts-morph": "^11.0.3 || ^12.0.0"
   },
   "peerDependenciesMeta": {
-    "@apollo/federation": {
-      "optional": true
-    },
     "@apollo/gateway": {
       "optional": true
     },
@@ -118,6 +114,15 @@
     },
     "ts-morph": {
       "optional": true
+    }
+  },
+  "changelog": {
+    "labels": {
+      "type: feature :tada:": "Features",
+      "type: bug :sob:": "Bug fixes",
+      "type: enhancement :wolf:": "Enhancements",
+      "type: docs :page_facing_up:": "Docs",
+      "dependencies": "Dependencies"
     }
   },
   "lint-staged": {
