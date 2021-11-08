@@ -24,7 +24,7 @@ const apolloPredefinedExceptions: Partial<
   [HttpStatus.FORBIDDEN]: ForbiddenError,
 };
 
-export class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
+export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
   ApolloServerBase,
   GqlModuleOptions
 > {
