@@ -2,7 +2,7 @@ import { RemoteGraphQLDataSource } from '@apollo/gateway';
 import { Module } from '@nestjs/common';
 import {
   GATEWAY_BUILD_SERVICE,
-  GraphQLGatewayModule,
+  GraphQLModule,
 } from '@nestjs/graphql-experimental';
 import { ApolloGatewayGraphQLAdapter } from '../../../lib/adapters';
 
@@ -21,7 +21,7 @@ class BuildServiceModule {}
 
 @Module({
   imports: [
-    GraphQLGatewayModule.forRootAsync({
+    GraphQLModule.forRootAsync({
       adapter: ApolloGatewayGraphQLAdapter,
       useFactory: async () => ({
         gateway: {

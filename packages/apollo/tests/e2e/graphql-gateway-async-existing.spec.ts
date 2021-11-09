@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-async-existing.module';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
-import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-async-existing.module';
 
 describe('GraphQL gateway async-existing', () => {
   let postsApp: INestApplication;
@@ -16,14 +16,14 @@ describe('GraphQL gateway async-existing', () => {
     }).compile();
 
     usersApp = usersModule.createNestApplication();
-    await usersApp.listenAsync(3001);
+    await usersApp.listen(3001);
 
     const postsModule = await Test.createTestingModule({
       imports: [PostsModule],
     }).compile();
 
     postsApp = postsModule.createNestApplication();
-    await postsApp.listenAsync(3002);
+    await postsApp.listen(3002);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],

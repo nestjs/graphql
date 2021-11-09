@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import {
-  GqlModuleOptions,
-  GqlOptionsFactory,
-} from '@nestjs/graphql-experimental';
 import { join } from 'path';
+import {
+  ApolloAdapterOptions,
+  ApolloAdapterOptionsFactory,
+} from '../../lib/interfaces';
 
 @Injectable()
-export class ConfigService implements GqlOptionsFactory {
-  createGqlOptions(): GqlModuleOptions {
+export class ConfigService implements ApolloAdapterOptionsFactory {
+  createGqlOptions(): ApolloAdapterOptions {
     return {
       typePaths: [join(__dirname, '**', '*.graphql')],
     };

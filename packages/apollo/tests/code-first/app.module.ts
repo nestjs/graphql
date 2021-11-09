@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { ApolloAdapterOptions } from '../../lib';
 import { ApolloGraphQLAdapter } from '../../lib/adapters';
 import { DirectionsModule } from './directions/directions.module';
 import { RecipesModule } from './recipes/recipes.module';
@@ -8,7 +9,7 @@ import { RecipesModule } from './recipes/recipes.module';
   imports: [
     RecipesModule,
     DirectionsModule,
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloAdapterOptions>({
       adapter: ApolloGraphQLAdapter,
       debug: false,
       installSubscriptionHandlers: true,

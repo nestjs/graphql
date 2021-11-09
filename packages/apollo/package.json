@@ -20,5 +20,8 @@
   },
   "bugs": {
     "url": "https://github.com/nestjs/graphql/issues"
+  },
+  "dependencies": {
+    "@graphql-tools/utils": "7"
   }
 }

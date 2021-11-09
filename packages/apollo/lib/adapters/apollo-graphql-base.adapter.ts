@@ -1,6 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { GqlModuleOptions } from '@nestjs/graphql-experimental';
 import { AbstractGraphQLAdapter } from '@nestjs/graphql-experimental/adapters/abstract-graphql.adapter';
 import { normalizeRoutePath } from '@nestjs/graphql-experimental/utils';
 import {
@@ -15,6 +14,7 @@ import {
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { omit } from 'lodash';
+import { ApolloAdapterOptions } from '../interfaces';
 
 const apolloPredefinedExceptions: Partial<
   Record<HttpStatus, typeof ApolloError | typeof UserInputError>
@@ -24,17 +24,16 @@ const apolloPredefinedExceptions: Partial<
   [HttpStatus.FORBIDDEN]: ForbiddenError,
 };
 
-export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
-  ApolloServerBase,
-  GqlModuleOptions
-> {
+export abstract class ApolloGraphQLBaseAdapter<
+  T extends Record<string, any> = ApolloAdapterOptions,
+> extends AbstractGraphQLAdapter<ApolloServerBase, T> {
   protected _apolloServer: ApolloServerBase;
 
   get instance(): ApolloServerBase {
     return this._apolloServer;
   }
 
-  public async start(apolloOptions: GqlModuleOptions) {
+  public async start(apolloOptions: T) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 
@@ -51,10 +50,8 @@ export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
     return this._apolloServer?.stop();
   }
 
-  public async mergeDefaultOptions(
-    options: GqlModuleOptions,
-  ): Promise<GqlModuleOptions> {
-    let defaults: GqlModuleOptions = {
+  public async mergeDefaultOptions(options: T): Promise<T> {
+    let defaults: ApolloAdapterOptions = {
       path: '/graphql',
       fieldResolverEnhancers: [],
       stopOnTerminationSignals: false,
@@ -91,14 +88,16 @@ export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
       omit(defaults, 'plugins'),
     );
 
-    options.plugins = (options.plugins || []).concat(defaults.plugins || []);
+    (options as ApolloAdapterOptions).plugins = (options.plugins || []).concat(
+      defaults.plugins || [],
+    );
 
     this.wrapFormatErrorFn(options);
     return options;
   }
 
   protected async registerExpress(
-    apolloOptions: GqlModuleOptions,
+    apolloOptions: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
     const { ApolloServer } = loadPackage(
@@ -131,7 +130,7 @@ export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
   }
 
   protected async registerFastify(
-    apolloOptions: GqlModuleOptions,
+    apolloOptions: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
     const { ApolloServer } = loadPackage(
@@ -164,7 +163,7 @@ export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
     this._apolloServer = apolloServer;
   }
 
-  private getNormalizedPath(apolloOptions: GqlModuleOptions): string {
+  private getNormalizedPath(apolloOptions: T): string {
     const prefix = this.applicationConfig.getGlobalPrefix();
     const useGlobalPrefix = prefix && apolloOptions.useGlobalPrefix;
     const gqlOptionsPath = normalizeRoutePath(apolloOptions.path);
@@ -173,19 +172,20 @@ export abstract class ApolloGraphQLBaseAdapter extends AbstractGraphQLAdapter<
       : gqlOptionsPath;
   }
 
-  private wrapFormatErrorFn(options: GqlModuleOptions) {
+  private wrapFormatErrorFn(options: T) {
     if (options.autoTransformHttpErrors === false) {
       return;
     }
     if (options.formatError) {
       const origFormatError = options.formatError;
       const transformHttpErrorFn = this.createTransformHttpErrorFn();
-      options.formatError = (err) => {
+      (options as ApolloAdapterOptions).formatError = (err) => {
         err = transformHttpErrorFn(err) as GraphQLError;
         return origFormatError(err);
       };
     } else {
-      options.formatError = this.createTransformHttpErrorFn();
+      (options as ApolloAdapterOptions).formatError =
+        this.createTransformHttpErrorFn();
     }
   }
 

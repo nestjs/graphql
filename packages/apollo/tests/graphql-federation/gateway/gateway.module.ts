@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { GraphQLGatewayModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { ApolloGatewayGraphQLAdapter } from '../../../lib/adapters';
 
 @Module({
   imports: [
-    GraphQLGatewayModule.forRoot({
+    GraphQLModule.forRoot({
       adapter: ApolloGatewayGraphQLAdapter,
       gateway: {
         debug: false,

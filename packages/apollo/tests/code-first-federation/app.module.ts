@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
-import { GraphQLFederationModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
+import { ApolloAdapterOptions } from '../../lib';
 import { ApolloFederationGraphQLAdapter } from '../../lib/adapters';
 import { PostModule } from './post/post.module';
 import { RecipeModule } from './recipe/recipe.module';
@@ -11,13 +13,14 @@ import { UserModule } from './user/user.module';
     UserModule,
     PostModule,
     RecipeModule,
-    GraphQLFederationModule.forRoot({
+    GraphQLModule.forRoot<ApolloAdapterOptions>({
       adapter: ApolloFederationGraphQLAdapter,
       debug: false,
       autoSchemaFile: true,
       buildSchemaOptions: {
         orphanedTypes: [User],
       },
+      plugins: [ApolloServerPluginInlineTraceDisabled()],
     }),
   ],
 })

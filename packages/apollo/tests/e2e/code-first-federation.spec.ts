@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { GraphQLFederationModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { Test } from '@nestjs/testing';
 import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'graphql-tag';
@@ -16,8 +16,8 @@ describe('Code-first - Federation', () => {
 
     app = module.createNestApplication();
     await app.init();
-    const graphqlFederationModule = app.get(GraphQLFederationModule);
-    apolloClient = graphqlFederationModule.graphQlAdapter?.instance;
+    const graphqlModule = app.get(GraphQLModule);
+    apolloClient = graphqlModule.graphQlAdapter?.instance;
   });
 
   it(`should return query result`, async () => {

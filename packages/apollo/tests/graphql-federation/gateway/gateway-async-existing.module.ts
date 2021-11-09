@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { GraphQLGatewayModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { ApolloGatewayAdapterOptions } from '../../../lib';
 import { ApolloGatewayGraphQLAdapter } from '../../../lib/adapters';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 
 @Module({
   imports: [
-    GraphQLGatewayModule.forRootAsync({
+    GraphQLModule.forRootAsync<ApolloGatewayAdapterOptions>({
       adapter: ApolloGatewayGraphQLAdapter,
       useExisting: ConfigService,
       imports: [ConfigModule],

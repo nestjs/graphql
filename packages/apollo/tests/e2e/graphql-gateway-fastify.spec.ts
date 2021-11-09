@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
-import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
 
 describe('GraphQL Gateway with fastify', () => {
   let postsApp: INestApplication;
@@ -17,14 +17,14 @@ describe('GraphQL Gateway with fastify', () => {
     }).compile();
 
     usersApp = usersModule.createNestApplication();
-    await usersApp.listenAsync(3001);
+    await usersApp.listen(3001);
 
     const postsModule = await Test.createTestingModule({
       imports: [PostsModule],
     }).compile();
 
     postsApp = postsModule.createNestApplication();
-    await postsApp.listenAsync(3002);
+    await postsApp.listen(3002);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
@@ -99,8 +99,7 @@ describe('GraphQL Gateway with fastify', () => {
               {
                 id: '1',
                 title: 'HELLO WORLD',
-                body:
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               },
             ],
           },
