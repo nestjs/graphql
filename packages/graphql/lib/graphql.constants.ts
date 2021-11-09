@@ -6,10 +6,12 @@ export const FIELD_RESOLVER_MIDDLEWARE_METADATA =
 export const RESOLVER_DELEGATE_METADATA = 'graphql:delegate_property';
 export const SCALAR_NAME_METADATA = 'graphql:scalar_name';
 export const SCALAR_TYPE_METADATA = 'graphql:scalar_type';
-export const PLUGIN_METADATA = 'graphql:plugin';
 export const PARAM_ARGS_METADATA = '__routeArguments__';
 export const SUBSCRIPTION_OPTIONS_METADATA = 'graphql:subscription_options;';
 export const CLASS_TYPE_METADATA = 'graphql:class_type';
+
+export const RESOLVER_REFERENCE_KEY = '__resolveReference';
+export const RESOLVER_REFERENCE_METADATA = 'graphql:resolve_reference';
 
 export const FIELD_TYPENAME = '__resolveType';
 export const GRAPHQL_MODULE_OPTIONS = 'GqlModuleOptions';

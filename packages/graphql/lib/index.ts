@@ -1,6 +1,5 @@
 export * from './adapters';
 export * from './decorators';
-export * from './federation';
 export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
 export * from './graphql-schema.host';
@@ -12,6 +11,7 @@ export * from './scalars';
 export * from './schema-builder';
 export * from './services/gql-arguments-host';
 export * from './services/gql-execution-context';
+export * from './services/gql-subscription.service';
 export * from './tokens';
 export * from './type-factories';
 export * from './type-helpers';

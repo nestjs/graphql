@@ -1,131 +1,135 @@
 import { ExecutableSchemaTransformation } from '@graphql-tools/schema';
-import { IResolverValidationOptions } from '@graphql-tools/utils';
+import { IResolvers, IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
-import {
-  ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
-  Config,
-  GraphQLExecutor,
-} from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
-import { ServerOptions } from 'graphql-ws';
-import { ServerOptions as SubscriptionTransportWsServerOptions } from 'subscriptions-transport-ws';
-import { AbstractGraphQLAdapter } from '..';
+import { AbstractGraphQLAdapter } from '../adapters/abstract-graphql.adapter';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
-export interface ServerRegistration {
-  path?: string;
-  cors?: any | boolean;
-  bodyParserConfig?: any | boolean;
-  onHealthCheck?: (req: any) => Promise<any>;
-  disableHealthCheck?: boolean;
-}
-
-export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-
-export type GraphQLWsSubscriptionsConfig = Partial<
-  Pick<
-    ServerOptions,
-    | 'connectionInitWaitTimeout'
-    | 'onConnect'
-    | 'onDisconnect'
-    | 'onClose'
-    | 'onSubscribe'
-    | 'onNext'
-  >
-> & {
-  path?: string;
-};
-
-export type GraphQLSubscriptionTransportWsConfig = Partial<
-  Pick<
-    SubscriptionTransportWsServerOptions,
-    'onConnect' | 'onDisconnect' | 'keepAlive'
-  >
-> & {
-  path?: string;
-};
-
-export type SubscriptionConfig = {
-  'graphql-ws'?: GraphQLWsSubscriptionsConfig | boolean;
-  'subscriptions-transport-ws'?: GraphQLSubscriptionTransportWsConfig | boolean;
-};
-
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
-export interface GqlModuleOptions
-  extends Omit<Config, 'typeDefs' | 'subscriptions'>,
-    Partial<ServerRegistration> {
+
+/**
+ * "GraphQLModule" options object.
+ */
+export interface GqlModuleOptions {
+  /**
+   * Type definitions
+   */
   typeDefs?: string | string[];
-  typePaths?: string[];
+
+  /**
+   * GraphQL server adapter
+   */
+  adapter?: Type<AbstractGraphQLAdapter>;
+
+  /**
+   * An array of modules to scan when searching for resolvers
+   */
   include?: Function[];
-  executorFactory?: (
-    schema: GraphQLSchema,
-  ) => GraphQLExecutor | Promise<GraphQLExecutor>;
-  installSubscriptionHandlers?: boolean;
-  subscriptions?: SubscriptionConfig;
-  resolverValidationOptions?: IResolverValidationOptions;
-  directiveResolvers?: any;
+
+  /**
+   * Schema directives mapping
+   */
   schemaDirectives?: Record<string, any>;
+
+  /**
+   * Directive resolvers
+   */
+  directiveResolvers?: any;
+
+  /**
+   * Optional GraphQL schema (to be used or to be merged)
+   */
+  schema?: GraphQLSchema;
+
+  /**
+   * Extra resolvers to be registered.
+   */
+  resolvers?: IResolvers | Array<IResolvers>;
+
+  /**
+   * An array of executable schema transformations
+   */
   schemaTransforms?: ExecutableSchemaTransformation[];
-  transformSchema?: (
-    schema: GraphQLSchema,
-  ) => GraphQLSchema | Promise<GraphQLSchema>;
-  playground?: boolean | ApolloServerPluginLandingPageGraphQLPlaygroundOptions;
+
+  /**
+   * TypeScript definitions generator options
+   */
   definitions?: {
     path?: string;
     outputAs?: 'class' | 'interface';
   } & DefinitionsGeneratorOptions;
+
+  /**
+   * If enabled, GraphQL schema will be generated automatically
+   */
   autoSchemaFile?: string | boolean;
+
+  /**
+   * Sort the schema lexicographically
+   */
+  sortSchema?: boolean;
+
+  /**
+   * Options to be passed to the schema generator
+   * Only applicable if "autoSchemaFile" = true
+   */
   buildSchemaOptions?: BuildSchemaOptions;
+
   /**
    * Prepends the global prefix to the url
    *
    * @see [faq/global-prefix](Global Prefix)
    */
   useGlobalPrefix?: boolean;
+
   /**
    * Enable/disable enhancers for @ResolveField()
    */
   fieldResolverEnhancers?: Enhancer[];
+
   /**
-   * Sort the schema lexicographically
+   * Resolver validation options.
    */
-  sortSchema?: boolean;
+  resolverValidationOptions?: IResolverValidationOptions;
+
+  /**
+   * Function to be applied to the schema letting you register custom transformations.
+   */
+  transformSchema?: (
+    schema: GraphQLSchema,
+  ) => GraphQLSchema | Promise<GraphQLSchema>;
+
   /**
    * Apply `transformSchema` to the `autoSchemaFile`
    */
   transformAutoSchemaFile?: boolean;
+
   /**
-   * If enabled, will register a global interceptor that automatically maps
-   * "HttpException" class instances to corresponding Apollo errors.
-   * @default true
+   * Context function
    */
-  autoTransformHttpErrors?: boolean;
+  context?: any;
+}
+
+export interface GqlOptionsFactory<
+  T extends Record<string, any> = GqlModuleOptions,
+> {
+  createGqlOptions(): Promise<Omit<T, 'adapter'>> | Omit<T, 'adapter'>;
+}
+
+export interface GqlModuleAsyncOptions<
+  TOptions extends Record<string, any> = GqlModuleOptions,
+  TFactory = GqlOptionsFactory,
+> extends Pick<ModuleMetadata, 'imports'> {
   /**
    * GraphQL server adapter
    */
-  adapter?: Type<AbstractGraphQLAdapter>;
-}
-
-export interface GqlOptionsFactory {
-  createGqlOptions():
-    | Promise<Omit<GqlModuleOptions, 'adapter'>>
-    | Omit<GqlModuleOptions, 'adapter'>;
-}
-
-export interface GqlModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
-  /**
-   * GraphQL server adapter
-   */
-  adapter?: Type<AbstractGraphQLAdapter>;
-
-  useExisting?: Type<GqlOptionsFactory>;
-  useClass?: Type<GqlOptionsFactory>;
+  adapter?: TOptions['adapter'];
+  useExisting?: Type<TFactory>;
+  useClass?: Type<TFactory>;
   useFactory?: (
     ...args: any[]
-  ) =>
-    | Promise<Omit<GqlModuleOptions, 'adapter'>>
-    | Omit<GqlModuleOptions, 'adapter'>;
+  ) => Promise<Omit<TOptions, 'adapter'>> | Omit<TOptions, 'adapter'>;
   inject?: any[];
 }

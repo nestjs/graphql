@@ -1,17 +1,25 @@
 import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
+import { GraphQLTypesLoader } from '../graphql-types.loader';
+import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions } from '../interfaces';
 import { wrapContextResolver } from '../utils';
 
 export abstract class AbstractGraphQLAdapter<
   TDriver = unknown,
-  TOptions extends GqlModuleOptions = GqlModuleOptions,
+  TOptions extends Record<string, any> = GqlModuleOptions,
 > {
   @Inject()
   protected readonly httpAdapterHost: HttpAdapterHost;
 
   @Inject()
   protected readonly applicationConfig: ApplicationConfig;
+
+  @Inject()
+  protected readonly graphQlFactory: GraphQLFactory;
+
+  @Inject()
+  protected readonly graphQlTypesLoader: GraphQLTypesLoader;
 
   abstract get instance(): TDriver;
 

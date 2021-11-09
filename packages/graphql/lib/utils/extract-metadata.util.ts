@@ -1,11 +1,9 @@
 import 'reflect-metadata';
 import {
-  RESOLVER_REFERENCE_KEY,
-  RESOLVER_REFERENCE_METADATA,
-} from '../federation/federation.constants';
-import {
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
+  RESOLVER_REFERENCE_KEY,
+  RESOLVER_REFERENCE_METADATA,
   RESOLVER_TYPE_METADATA,
 } from '../graphql.constants';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';

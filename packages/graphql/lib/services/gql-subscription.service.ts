@@ -1,26 +1,53 @@
 import { execute, GraphQLSchema, subscribe } from 'graphql';
 import { GRAPHQL_TRANSPORT_WS_PROTOCOL, ServerOptions } from 'graphql-ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { GRAPHQL_WS, SubscriptionServer } from 'subscriptions-transport-ws';
-import * as ws from 'ws';
 import {
-  GraphQLSubscriptionTransportWsConfig,
-  GraphQLWsSubscriptionsConfig,
-  SubscriptionConfig,
-} from '../interfaces/gql-module-options.interface';
+  GRAPHQL_WS,
+  ServerOptions as SubscriptionTransportWsServerOptions,
+  SubscriptionServer,
+} from 'subscriptions-transport-ws';
+import * as ws from 'ws';
 
-export interface GraphQLSubscriptionServiceOptions extends SubscriptionConfig {
+export type GraphQLWsSubscriptionsConfig = Partial<
+  Pick<
+    ServerOptions,
+    | 'connectionInitWaitTimeout'
+    | 'onConnect'
+    | 'onDisconnect'
+    | 'onClose'
+    | 'onSubscribe'
+    | 'onNext'
+  >
+> & {
+  path?: string;
+};
+
+export type GraphQLSubscriptionTransportWsConfig = Partial<
+  Pick<
+    SubscriptionTransportWsServerOptions,
+    'onConnect' | 'onDisconnect' | 'keepAlive'
+  >
+> & {
+  path?: string;
+};
+
+export type SubscriptionConfig = {
+  'graphql-ws'?: GraphQLWsSubscriptionsConfig | boolean;
+  'subscriptions-transport-ws'?: GraphQLSubscriptionTransportWsConfig | boolean;
+};
+
+export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
   schema: GraphQLSchema;
   path?: string;
   context?: ServerOptions['context'];
 }
 
-export class GraphQLSubscriptionService {
+export class GqlSubscriptionService {
   private readonly wss: ws.Server;
   private readonly subTransWs: ws.Server;
 
   constructor(
-    private readonly options: GraphQLSubscriptionServiceOptions,
+    private readonly options: GqlSubscriptionServiceOptions,
     private readonly httpServer: any,
   ) {
     this.wss = new ws.Server({

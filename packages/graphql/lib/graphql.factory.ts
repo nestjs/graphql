@@ -20,11 +20,7 @@ import {
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
 import { GqlModuleOptions } from './interfaces';
-import {
-  PluginsExplorerService,
-  ResolversExplorerService,
-  ScalarsExplorerService,
-} from './services';
+import { ResolversExplorerService, ScalarsExplorerService } from './services';
 import { extend, removeTempField } from './utils';
 
 @Injectable()
@@ -32,23 +28,18 @@ export class GraphQLFactory {
   constructor(
     private readonly resolversExplorerService: ResolversExplorerService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
-    private readonly pluginsExplorerService: PluginsExplorerService,
     private readonly graphqlAstExplorer: GraphQLAstExplorer,
     private readonly gqlSchemaBuilder: GraphQLSchemaBuilder,
     private readonly gqlSchemaHost: GraphQLSchemaHost,
   ) {}
 
-  async mergeOptions(
-    options: GqlModuleOptions = { typeDefs: [] },
-  ): Promise<GqlModuleOptions> {
+  async mergeOptions<T extends GqlModuleOptions>(
+    options: T = { typeDefs: [] } as T,
+  ): Promise<T> {
     const resolvers = this.resolversExplorerService.explore();
     const typesResolvers = extend(
       this.scalarsExplorerService.explore(),
       resolvers,
-    );
-    options.plugins = extend(
-      options.plugins || [],
-      this.pluginsExplorerService.explore(),
     );
 
     const transformSchema = async (schema: GraphQLSchema) =>

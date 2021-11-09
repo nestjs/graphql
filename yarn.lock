@@ -7,16 +7,6 @@
   resolved "https://registry.yarnpkg.com/@apollo/core-schema/-/core-schema-0.1.1.tgz#5b7ecb69719a0f68e2005830cfaa8ecdbb75add7"
   integrity sha512-6VImC4vO3GjIapSKP84EQTo0KmRP21SKrNatpexKmuGltKe5b62M3wBA6uJgrUfWnGWXsH4SAAgCxsn37k26eg==
 
-"@apollo/federation@0.33.3":
-  version "0.33.3"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.33.3.tgz#07710308c1a097c3aaee53759860751f6fff82e3"
-  integrity sha512-+BRJW1Kf7im86CWPQEdocXQTyPUH132MMoMCXuRvM4F1idb5EldqRkFNM8y9IAYNnbHsthmIWlrqmkuYg+irGQ==
-  dependencies:
-    "@apollo/subgraph" "^0.1.2"
-    apollo-graphql "^0.9.3"
-    apollo-server-types "^3.0.2"
-    lodash.xorby "^4.7.0"
-
 "@apollo/federation@^0.33.3":
   version "0.33.6"
   resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.33.6.tgz#cd9fd983fdc6d007f4a09b085126845368feb525"
@@ -84,7 +74,7 @@
   dependencies:
     apollo-graphql "^0.9.3"
 
-"@apollo/subgraph@^0.1.2", "@apollo/subgraph@^0.1.4":
+"@apollo/subgraph@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-0.1.4.tgz#21ca21ea74f54f39533b5e08e92069704c6b529b"
   integrity sha512-G1N/sXZIHeX27tf+7lefEwVZFNYzdARe+pD597U5opfM1Gs1mYwRySfOdm1QkcItYG+EmTcSOuUJ5bNbvW0IUg==
@@ -650,7 +640,7 @@
     tslib "~2.3.0"
     value-or-promise "1.0.11"
 
-"@graphql-tools/utils@7.10.0", "@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.1.2":
+"@graphql-tools/utils@7", "@graphql-tools/utils@7.10.0", "@graphql-tools/utils@^7.0.0", "@graphql-tools/utils@^7.1.2":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-7.10.0.tgz#07a4cb5d1bec1ff1dc1d47a935919ee6abd38699"
   integrity sha512-d334r6bo9mxdSqZW6zWboEnnOOFRrAPVQJ7LkU8/6grglrbcu6WhwCLzHb90E94JI3TD3ricC3YGbUqIi9Xg0w==
