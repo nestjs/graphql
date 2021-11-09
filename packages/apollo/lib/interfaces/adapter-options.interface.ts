@@ -79,7 +79,5 @@ export interface ApolloAdapterOptions
 
 export type ApolloAdapterOptionsFactory =
   GqlOptionsFactory<ApolloAdapterOptions>;
-export type ApolloAdapterAsyncOptions = GqlModuleAsyncOptions<
-  ApolloAdapterOptions,
-  ApolloAdapterOptionsFactory
->;
+export type ApolloAdapterAsyncOptions =
+  GqlModuleAsyncOptions<ApolloAdapterOptions>;

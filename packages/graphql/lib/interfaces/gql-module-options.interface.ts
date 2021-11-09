@@ -120,7 +120,7 @@ export interface GqlOptionsFactory<
 
 export interface GqlModuleAsyncOptions<
   TOptions extends Record<string, any> = GqlModuleOptions,
-  TFactory = GqlOptionsFactory,
+  TFactory = GqlOptionsFactory<TOptions>,
 > extends Pick<ModuleMetadata, 'imports'> {
   /**
    * GraphQL server adapter

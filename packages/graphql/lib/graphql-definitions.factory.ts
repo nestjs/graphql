@@ -1,5 +1,4 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import * as chokidar from 'chokidar';
 import { printSchema } from 'graphql';
@@ -11,28 +10,26 @@ import {
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { extend, removeTempField } from './utils';
 
-export class GraphQLDefinitionsFactory {
-  private readonly gqlAstExplorer = new GraphQLAstExplorer();
-  private readonly gqlTypesLoader = new GraphQLTypesLoader();
+export type GenerateOptions = DefinitionsGeneratorOptions & {
+  typePaths: string[];
+  path: string;
+  outputAs?: 'class' | 'interface';
+  watch?: boolean;
+  debug?: boolean;
+  typeDefs?: string | string[];
+};
 
-  async generate(
-    options: {
-      typePaths: string[];
-      path: string;
-      outputAs?: 'class' | 'interface';
-      watch?: boolean;
-      debug?: boolean;
-      federation?: boolean;
-      typeDefs?: string | string[];
-    } & DefinitionsGeneratorOptions,
-  ) {
+export class GraphQLDefinitionsFactory {
+  protected readonly gqlAstExplorer = new GraphQLAstExplorer();
+  protected readonly gqlTypesLoader = new GraphQLTypesLoader();
+
+  async generate(options: GenerateOptions) {
     const isDebugEnabled = !(options && options.debug === false);
     const typePathsExists = options.typePaths && !isEmpty(options.typePaths);
     if (!typePathsExists) {
       throw new Error(`"typePaths" property cannot be empty.`);
     }
 
-    const isFederation = options && options.federation;
     const definitionsGeneratorOptions: DefinitionsGeneratorOptions = {
       emitTypenameField: options.emitTypenameField,
       skipResolverArgs: options.skipResolverArgs,
@@ -58,7 +55,6 @@ export class GraphQLDefinitionsFactory {
           options.typePaths,
           options.path,
           options.outputAs,
-          isFederation,
           isDebugEnabled,
           definitionsGeneratorOptions,
           options.typeDefs,
@@ -69,88 +65,13 @@ export class GraphQLDefinitionsFactory {
       options.typePaths,
       options.path,
       options.outputAs,
-      isFederation,
       isDebugEnabled,
       definitionsGeneratorOptions,
       options.typeDefs,
     );
   }
 
-  private async exploreAndEmit(
-    typePaths: string[],
-    path: string,
-    outputAs: 'class' | 'interface',
-    isFederation: boolean,
-    isDebugEnabled: boolean,
-    definitionsGeneratorOptions: DefinitionsGeneratorOptions = {},
-    typeDefs?: string | string[],
-  ) {
-    if (isFederation) {
-      return this.exploreAndEmitFederation(
-        typePaths,
-        path,
-        outputAs,
-        isDebugEnabled,
-        definitionsGeneratorOptions,
-        typeDefs,
-      );
-    }
-    return this.exploreAndEmitRegular(
-      typePaths,
-      path,
-      outputAs,
-      isDebugEnabled,
-      definitionsGeneratorOptions,
-      typeDefs,
-    );
-  }
-
-  private async exploreAndEmitFederation(
-    typePaths: string[],
-    path: string,
-    outputAs: 'class' | 'interface',
-    isDebugEnabled: boolean,
-    definitionsGeneratorOptions: DefinitionsGeneratorOptions,
-    typeDefs?: string | string[],
-  ) {
-    const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
-    const mergedTypeDefs = extend(typePathDefs, typeDefs);
-
-    const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
-      loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
-        require('@apollo/subgraph'),
-      );
-
-    const { printSubgraphSchema } = loadPackage(
-      '@apollo/subgraph',
-      'ApolloFederation',
-      () => require('@apollo/subgraph'),
-    );
-
-    const schema = buildSubgraphSchema([
-      {
-        typeDefs: gql`
-          ${mergedTypeDefs}
-        `,
-        resolvers: {},
-      },
-    ]);
-    const tsFile = await this.gqlAstExplorer.explore(
-      gql`
-        ${printSubgraphSchema(schema)}
-      `,
-      path,
-      outputAs,
-      definitionsGeneratorOptions,
-    );
-    await tsFile.save();
-    this.printMessage(
-      `[${new Date().toLocaleTimeString()}] The definitions have been updated.`,
-      isDebugEnabled,
-    );
-  }
-
-  private async exploreAndEmitRegular(
+  protected async exploreAndEmit(
     typePaths: string[],
     path: string,
     outputAs: 'class' | 'interface',
@@ -185,7 +106,7 @@ export class GraphQLDefinitionsFactory {
     );
   }
 
-  private printMessage(text: string, isEnabled: boolean) {
+  protected printMessage(text: string, isEnabled: boolean) {
     isEnabled && console.log(text);
   }
 }

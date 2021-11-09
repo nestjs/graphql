@@ -1,12 +1,10 @@
 import { INestApplication } from '@nestjs/common';
-import {
-  GraphQLDefinitionsFactory,
-  GraphQLFactory,
-} from '@nestjs/graphql-experimental';
+import { GraphQLFactory } from '@nestjs/graphql-experimental';
 import { Test } from '@nestjs/testing';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
+import { GraphQLFederationDefinitionsFactory } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
 
 const readFile = util.promisify(fs.readFile);
@@ -282,12 +280,11 @@ describe('Generated Definitions', () => {
 
   it('should generate for a federated graph', async () => {
     const outputFile = generatedDefinitions('federation.test-definitions.ts');
-    const factory = new GraphQLDefinitionsFactory();
+    const factory = new GraphQLFederationDefinitionsFactory();
     await factory.generate({
       typePaths: [generatedDefinitions('federation.graphql')],
       path: outputFile,
       outputAs: 'class',
-      federation: true,
     });
 
     expect(
@@ -299,7 +296,7 @@ describe('Generated Definitions', () => {
     const outputFile = generatedDefinitions(
       'federation-typedef.test-definitions.ts',
     );
-    const factory = new GraphQLDefinitionsFactory();
+    const factory = new GraphQLFederationDefinitionsFactory();
     await factory.generate({
       typePaths: [generatedDefinitions('federation-typedef.graphql')],
       typeDefs: `enum Animal {
@@ -308,7 +305,6 @@ describe('Generated Definitions', () => {
       }`,
       path: outputFile,
       outputAs: 'class',
-      federation: true,
     });
 
     expect(
