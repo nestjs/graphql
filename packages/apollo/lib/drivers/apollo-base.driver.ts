@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { AbstractGraphQLAdapter } from '@nestjs/graphql-experimental/adapters/abstract-graphql.adapter';
+import { AbstractGraphQLDriver } from '@nestjs/graphql-experimental/drivers/abstract-graphql.driver';
 import { normalizeRoutePath } from '@nestjs/graphql-experimental/utils';
 import {
   ApolloError,
@@ -14,7 +14,7 @@ import {
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { omit } from 'lodash';
-import { ApolloAdapterOptions } from '../interfaces';
+import { ApolloDriverConfig } from '../interfaces';
 
 const apolloPredefinedExceptions: Partial<
   Record<HttpStatus, typeof ApolloError | typeof UserInputError>
@@ -24,9 +24,9 @@ const apolloPredefinedExceptions: Partial<
   [HttpStatus.FORBIDDEN]: ForbiddenError,
 };
 
-export abstract class ApolloGraphQLBaseAdapter<
-  T extends Record<string, any> = ApolloAdapterOptions,
-> extends AbstractGraphQLAdapter<ApolloServerBase, T> {
+export abstract class ApolloBaseDriver<
+  T extends Record<string, any> = ApolloDriverConfig,
+> extends AbstractGraphQLDriver<ApolloServerBase, T> {
   protected _apolloServer: ApolloServerBase;
 
   get instance(): ApolloServerBase {
@@ -51,7 +51,7 @@ export abstract class ApolloGraphQLBaseAdapter<
   }
 
   public async mergeDefaultOptions(options: T): Promise<T> {
-    let defaults: ApolloAdapterOptions = {
+    let defaults: ApolloDriverConfig = {
       path: '/graphql',
       fieldResolverEnhancers: [],
       stopOnTerminationSignals: false,
@@ -88,7 +88,7 @@ export abstract class ApolloGraphQLBaseAdapter<
       omit(defaults, 'plugins'),
     );
 
-    (options as ApolloAdapterOptions).plugins = (options.plugins || []).concat(
+    (options as ApolloDriverConfig).plugins = (options.plugins || []).concat(
       defaults.plugins || [],
     );
 
@@ -179,12 +179,12 @@ export abstract class ApolloGraphQLBaseAdapter<
     if (options.formatError) {
       const origFormatError = options.formatError;
       const transformHttpErrorFn = this.createTransformHttpErrorFn();
-      (options as ApolloAdapterOptions).formatError = (err) => {
+      (options as ApolloDriverConfig).formatError = (err) => {
         err = transformHttpErrorFn(err) as GraphQLError;
         return origFormatError(err);
       };
     } else {
-      (options as ApolloAdapterOptions).formatError =
+      (options as ApolloDriverConfig).formatError =
         this.createTransformHttpErrorFn();
     }
   }

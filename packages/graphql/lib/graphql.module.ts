@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common/interfaces';
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { AbstractGraphQLAdapter } from '.';
+import { AbstractGraphQLDriver } from '.';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
@@ -38,14 +38,14 @@ import { generateString } from './utils';
   exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
 })
 export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
-  get graphQlAdapter(): AbstractGraphQLAdapter<TAdapter> {
+  get graphQlAdapter(): AbstractGraphQLDriver<TAdapter> {
     return this._graphQlAdapter;
   }
 
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
-    private readonly _graphQlAdapter: AbstractGraphQLAdapter<TAdapter>,
+    private readonly _graphQlAdapter: AbstractGraphQLDriver<TAdapter>,
   ) {}
 
   static forRoot<TOptions extends Record<string, any> = GqlModuleOptions>(
@@ -59,8 +59,8 @@ export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
           useValue: options,
         },
         {
-          provide: AbstractGraphQLAdapter,
-          useClass: options.adapter,
+          provide: AbstractGraphQLDriver,
+          useClass: options.driver,
         },
       ],
     };
@@ -79,8 +79,8 @@ export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
           useValue: generateString(),
         },
         {
-          provide: AbstractGraphQLAdapter,
-          useClass: options.adapter,
+          provide: AbstractGraphQLDriver,
+          useClass: options.driver,
         },
       ],
     };

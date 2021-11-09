@@ -9,13 +9,13 @@ import {
   ScalarsExplorerService,
 } from '@nestjs/graphql-experimental/services';
 import { extend } from '@nestjs/graphql-experimental/utils/extend.util';
-import { ApolloAdapterOptions } from '..';
+import { ApolloDriverConfig } from '..';
 import { GraphQLFederationFactory } from '../factories/graphql-federation.factory';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
-import { ApolloGraphQLBaseAdapter } from './apollo-graphql-base.adapter';
+import { ApolloBaseDriver } from './apollo-base.driver';
 
 @Injectable()
-export class ApolloFederationGraphQLAdapter extends ApolloGraphQLBaseAdapter {
+export class ApolloFederationDriver extends ApolloBaseDriver {
   private readonly graphqlFederationFactory: GraphQLFederationFactory;
 
   constructor(
@@ -36,7 +36,7 @@ export class ApolloFederationGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     );
   }
 
-  public async start(options: ApolloAdapterOptions): Promise<void> {
+  public async start(options: ApolloDriverConfig): Promise<void> {
     const { printSubgraphSchema } = loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
@@ -72,11 +72,11 @@ export class ApolloFederationGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     }
   }
 
-  public async runPreOptionsHooks(apolloOptions: ApolloAdapterOptions) {
+  public async runPreOptionsHooks(apolloOptions: ApolloDriverConfig) {
     await this.runExecutorFactoryIfPresent(apolloOptions);
   }
 
-  protected async registerExpress(apolloOptions: ApolloAdapterOptions) {
+  protected async registerExpress(apolloOptions: ApolloDriverConfig) {
     return super.registerExpress(apolloOptions, {
       preStartHook: () => {
         // If custom directives are provided merge them into schema per Apollo
@@ -91,7 +91,7 @@ export class ApolloFederationGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     });
   }
 
-  protected async registerFastify(apolloOptions: ApolloAdapterOptions) {
+  protected async registerFastify(apolloOptions: ApolloDriverConfig) {
     return super.registerFastify(apolloOptions, {
       preStartHook: () => {
         // If custom directives are provided merge them into schema per Apollo
@@ -106,9 +106,7 @@ export class ApolloFederationGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     });
   }
 
-  private async runExecutorFactoryIfPresent(
-    apolloOptions: ApolloAdapterOptions,
-  ) {
+  private async runExecutorFactoryIfPresent(apolloOptions: ApolloDriverConfig) {
     if (!apolloOptions.executorFactory) {
       return;
     }

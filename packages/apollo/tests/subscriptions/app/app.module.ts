@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { DynamicModule } from '@nestjs/common/interfaces';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { GqlModuleOptions } from '@nestjs/graphql-experimental/interfaces/gql-module-options.interface';
-import { ApolloAdapterOptions } from '../../../lib';
-import { ApolloGraphQLAdapter } from '../../../lib/adapters';
+import { ApolloDriverConfig } from '../../../lib';
+import { ApolloDriver } from '../../../lib/drivers';
 import { NotificationModule } from './notification.module';
 
 export type AppModuleConfig = {
   context?: GqlModuleOptions['context'];
-  subscriptions?: ApolloAdapterOptions['subscriptions'];
+  subscriptions?: ApolloDriverConfig['subscriptions'];
 };
 
 @Module({})
@@ -19,7 +19,7 @@ export class AppModule {
       imports: [
         NotificationModule,
         GraphQLModule.forRoot({
-          adapter: ApolloGraphQLAdapter,
+          driver: ApolloDriver,
           debug: false,
           context: options?.context,
           autoSchemaFile: true,

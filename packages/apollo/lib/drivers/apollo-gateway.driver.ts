@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { ApolloGatewayAdapterOptions } from '..';
-import { ApolloGraphQLBaseAdapter } from './apollo-graphql-base.adapter';
+import { ApolloGatewayDriverConfig } from '..';
+import { ApolloBaseDriver } from './apollo-base.driver';
 
 @Injectable()
-export class ApolloGatewayGraphQLAdapter extends ApolloGraphQLBaseAdapter<ApolloGatewayAdapterOptions> {
-  public async start(options: ApolloGatewayAdapterOptions): Promise<void> {
+export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverConfig> {
+  public async start(options: ApolloGatewayDriverConfig): Promise<void> {
     const { ApolloGateway } = loadPackage(
       '@apollo/gateway',
       'ApolloGateway',

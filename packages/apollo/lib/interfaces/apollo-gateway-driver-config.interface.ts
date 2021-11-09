@@ -5,7 +5,7 @@ import {
   GqlOptionsFactory,
 } from '@nestjs/graphql-experimental';
 
-export interface ApolloGatewayAdapterOptions {
+export interface ApolloGatewayDriverConfig {
   gateway?: GatewayConfig;
   server?: Omit<
     GqlModuleOptions,
@@ -23,11 +23,11 @@ export interface ApolloGatewayAdapterOptions {
     | 'schemaDirectives'
     | 'buildSchemaOptions'
     | 'fieldResolverEnhancers'
-    | 'adapter'
+    | 'driver'
   >;
 }
 
-export type GatewayOptionsFactory =
-  GqlOptionsFactory<ApolloGatewayAdapterOptions>;
-export type GatewayAsyncOptions =
-  GqlModuleAsyncOptions<ApolloGatewayAdapterOptions>;
+export type ApolloGatewayDriverConfigFactory =
+  GqlOptionsFactory<ApolloGatewayDriverConfig>;
+export type ApolloGatewayDriverAsyncConfig =
+  GqlModuleAsyncOptions<ApolloGatewayDriverConfig>;

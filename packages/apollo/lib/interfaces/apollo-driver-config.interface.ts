@@ -38,7 +38,7 @@ export interface ServerRegistration {
   disableHealthCheck?: boolean;
 }
 
-export interface ApolloAdapterOptions
+export interface ApolloDriverConfig
   extends Omit<Config, 'typeDefs'>,
     ServerRegistration,
     Omit<GqlModuleOptions, 'context'> {
@@ -77,7 +77,5 @@ export interface ApolloAdapterOptions
   autoTransformHttpErrors?: boolean;
 }
 
-export type ApolloAdapterOptionsFactory =
-  GqlOptionsFactory<ApolloAdapterOptions>;
-export type ApolloAdapterAsyncOptions =
-  GqlModuleAsyncOptions<ApolloAdapterOptions>;
+export type ApolloDriverConfigFactory = GqlOptionsFactory<ApolloDriverConfig>;
+export type ApolloDriverAsyncConfig = GqlModuleAsyncOptions<ApolloDriverConfig>;

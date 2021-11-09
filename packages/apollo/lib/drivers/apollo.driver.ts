@@ -6,12 +6,12 @@ import {
 } from '@nestjs/graphql-experimental';
 import { extend } from '@nestjs/graphql-experimental/utils';
 import { printSchema } from 'graphql';
-import { ApolloAdapterOptions } from '../interfaces';
+import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
-import { ApolloGraphQLBaseAdapter } from './apollo-graphql-base.adapter';
+import { ApolloBaseDriver } from './apollo-base.driver';
 
 @Injectable()
-export class ApolloGraphQLAdapter extends ApolloGraphQLBaseAdapter {
+export class ApolloDriver extends ApolloBaseDriver {
   private _subscriptionService?: GqlSubscriptionService;
   private readonly pluginsExplorerService: PluginsExplorerService;
 
@@ -20,7 +20,7 @@ export class ApolloGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     this.pluginsExplorerService = new PluginsExplorerService(modulesContainer);
   }
 
-  public async start(apolloOptions: ApolloAdapterOptions) {
+  public async start(apolloOptions: ApolloDriverConfig) {
     const options = await this.mergeDefaultOptions(apolloOptions);
     const typeDefs =
       (await this.graphQlTypesLoader.mergeTypesByPaths(options.typePaths)) ||
@@ -34,7 +34,7 @@ export class ApolloGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     );
 
     const adapterOptions =
-      await this.graphQlFactory.mergeOptions<ApolloAdapterOptions>({
+      await this.graphQlFactory.mergeOptions<ApolloDriverConfig>({
         ...options,
         typeDefs: mergedTypeDefs,
       });
@@ -64,7 +64,7 @@ export class ApolloGraphQLAdapter extends ApolloGraphQLBaseAdapter {
     }
   }
 
-  public async registerServer(apolloOptions: ApolloAdapterOptions) {
+  public async registerServer(apolloOptions: ApolloDriverConfig) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 

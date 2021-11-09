@@ -29,7 +29,7 @@ import {
 } from 'graphql';
 import { gql } from 'graphql-tag';
 import { forEach, isEmpty } from 'lodash';
-import { ApolloAdapterOptions } from '../interfaces';
+import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { transformSchema } from '../utils/transform-schema.util';
 
@@ -43,8 +43,8 @@ export class GraphQLFederationFactory {
   ) {}
 
   async mergeOptions(
-    options: ApolloAdapterOptions = {},
-  ): Promise<ApolloAdapterOptions> {
+    options: ApolloDriverConfig = {},
+  ): Promise<ApolloDriverConfig> {
     const transformSchema = async (schema: GraphQLSchema) =>
       options.transformSchema ? options.transformSchema(schema) : schema;
 
@@ -71,7 +71,7 @@ export class GraphQLFederationFactory {
     };
   }
 
-  private buildSchemaFromTypeDefs(options: ApolloAdapterOptions) {
+  private buildSchemaFromTypeDefs(options: ApolloDriverConfig) {
     const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
       loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
         require('@apollo/subgraph'),
@@ -88,7 +88,7 @@ export class GraphQLFederationFactory {
   }
 
   private async generateSchema(
-    options: ApolloAdapterOptions,
+    options: ApolloDriverConfig,
   ): Promise<GraphQLSchema> {
     const { buildSubgraphSchema, printSubgraphSchema } = loadPackage(
       '@apollo/subgraph',
@@ -272,7 +272,7 @@ export class GraphQLFederationFactory {
 
   async buildFederatedSchema(
     autoSchemaFile: string | boolean,
-    options: ApolloAdapterOptions,
+    options: ApolloDriverConfig,
     resolvers: Function[],
   ) {
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
-  ApolloGatewayAdapterOptions,
-  GatewayOptionsFactory,
+  ApolloGatewayDriverConfig,
+  ApolloGatewayDriverConfigFactory,
 } from '../../../../lib';
 
 @Injectable()
-export class ConfigService implements GatewayOptionsFactory {
-  public createGqlOptions(): Partial<ApolloGatewayAdapterOptions> {
+export class ConfigService implements ApolloGatewayDriverConfigFactory {
+  public createGqlOptions(): Partial<ApolloGatewayDriverConfig> {
     return {
       gateway: {
         serviceList: [

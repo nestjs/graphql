@@ -3,7 +3,7 @@ import { IResolvers, IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { GraphQLSchema } from 'graphql';
-import { AbstractGraphQLAdapter } from '../adapters/abstract-graphql.adapter';
+import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -21,7 +21,7 @@ export interface GqlModuleOptions {
   /**
    * GraphQL server adapter
    */
-  adapter?: Type<AbstractGraphQLAdapter>;
+  driver?: Type<AbstractGraphQLDriver>;
 
   /**
    * An array of modules to scan when searching for resolvers
@@ -115,7 +115,7 @@ export interface GqlModuleOptions {
 export interface GqlOptionsFactory<
   T extends Record<string, any> = GqlModuleOptions,
 > {
-  createGqlOptions(): Promise<Omit<T, 'adapter'>> | Omit<T, 'adapter'>;
+  createGqlOptions(): Promise<Omit<T, 'driver'>> | Omit<T, 'driver'>;
 }
 
 export interface GqlModuleAsyncOptions<
@@ -123,13 +123,13 @@ export interface GqlModuleAsyncOptions<
   TFactory = GqlOptionsFactory<TOptions>,
 > extends Pick<ModuleMetadata, 'imports'> {
   /**
-   * GraphQL server adapter
+   * GraphQL server driver
    */
-  adapter?: TOptions['adapter'];
+  driver?: TOptions['driver'];
   useExisting?: Type<TFactory>;
   useClass?: Type<TFactory>;
   useFactory?: (
     ...args: any[]
-  ) => Promise<Omit<TOptions, 'adapter'>> | Omit<TOptions, 'adapter'>;
+  ) => Promise<Omit<TOptions, 'driver'>> | Omit<TOptions, 'driver'>;
   inject?: any[];
 }

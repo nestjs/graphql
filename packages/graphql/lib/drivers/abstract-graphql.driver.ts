@@ -5,7 +5,7 @@ import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions } from '../interfaces';
 import { wrapContextResolver } from '../utils';
 
-export abstract class AbstractGraphQLAdapter<
+export abstract class AbstractGraphQLDriver<
   TDriver = unknown,
   TOptions extends Record<string, any> = GqlModuleOptions,
 > {

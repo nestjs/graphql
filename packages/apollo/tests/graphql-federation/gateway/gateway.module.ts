@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
-import { ApolloGatewayGraphQLAdapter } from '../../../lib/adapters';
+import { ApolloGatewayDriver } from '../../../lib/drivers';
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      adapter: ApolloGatewayGraphQLAdapter,
+      driver: ApolloGatewayDriver,
       gateway: {
         debug: false,
         serviceList: [
