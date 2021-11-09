@@ -1,5 +1,3 @@
-import { Injectable, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -10,6 +8,13 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
+
+import {
+  Injectable,
+  Type,
+} from '@nestjs/common';
+import { isUndefined } from '@nestjs/common/utils/shared.utils';
+
 import {
   DateScalarMode,
   GqlTypeReference,
@@ -17,9 +22,16 @@ import {
   ScalarsTypeMap,
 } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
-import { GraphQLISODateTime, GraphQLTimestamp } from '../../scalars';
-import { DefaultNullableConflictError } from '../errors/default-nullable-conflict.error';
-import { InvalidNullableOptionError } from '../errors/invalid-nullable-option.error';
+import {
+  GraphQLISODateTime,
+  GraphQLTimestamp,
+} from '../../scalars';
+import {
+  DefaultNullableConflictError,
+} from '../errors/default-nullable-conflict.error';
+import {
+  InvalidNullableOptionError,
+} from '../errors/invalid-nullable-option.error';
 
 @Injectable()
 export class TypeMapperSevice {
@@ -80,7 +92,8 @@ export class TypeMapperSevice {
       isNotNullable = !options.nullable || options.nullable === 'items';
     }
     return isNotNullable
-      ? (new GraphQLNonNull(graphqlType) as T)
+      ? // TODO: fix usage of `any`
+        (new GraphQLNonNull(graphqlType) as any as T)
       : (graphqlType as T);
   }
 
@@ -113,7 +126,8 @@ export class TypeMapperSevice {
       return targetType as GraphQLList<T>;
     }
     return this.mapToGqlList<T>(
-      new GraphQLList(targetTypeNonNull) as T,
+      // TODO: fix usage of `any`
+      new GraphQLList(targetTypeNonNull) as any as T,
       depth - 1,
       nullable,
     );

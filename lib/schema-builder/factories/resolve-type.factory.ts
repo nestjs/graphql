@@ -1,6 +1,8 @@
+import { GraphQLTypeResolver } from 'graphql';
+
 import { Injectable } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
-import { GraphQLTypeResolver } from 'graphql';
+
 import { ResolveTypeFn } from '../../interfaces';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 
@@ -16,12 +18,11 @@ export class ResolveTypeFactory {
     return async (...args) => {
       const resolvedType = await resolveType(...args);
       if (isString(resolvedType)) {
-        return resolvedType;
+        return resolvedType as string;
       }
-      const typeDef = this.typeDefinitionsStorage.getObjectTypeByTarget(
-        resolvedType,
-      );
-      return typeDef?.type;
+      const typeDef =
+        this.typeDefinitionsStorage.getObjectTypeByTarget(resolvedType);
+      return typeDef?.type as any as string;
     };
   }
 }
