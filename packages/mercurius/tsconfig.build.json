@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.build.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./lib",
+    "paths": {
+      "@nestjs/graphql-experimental": ["../graphql/lib"],
+      "@nestjs/graphql-experimental/*": ["../graphql/lib/*"],
+    }
+  },
+  "exclude": ["node_modules", "dist", "tests/**/*", "*.spec.ts"],
+  "references": [
+    {
+      "path": "../graphql/tsconfig.build.json"
+    }
+  ]
+}
