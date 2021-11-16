@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import { GRAPHQL_MODULE_OPTIONS, PLUGIN_METADATA } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
 import { BaseExplorerService } from './base-explorer.service';

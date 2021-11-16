@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { ModulesContainer } from '@nestjs/core/injector/modules-container';
 import {
   GRAPHQL_MODULE_OPTIONS,
   SCALAR_NAME_METADATA,
