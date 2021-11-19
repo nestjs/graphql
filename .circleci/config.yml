@@ -2,7 +2,7 @@ version: 2
 
 aliases:
   - &restore-cache
-    run:
+    restore_cache:
         name: Restore Yarn Package Cache
         keys:
           - yarn-packages-{{ checksum "yarn.lock" }}
@@ -13,9 +13,9 @@ aliases:
   - &build-packages
     run:
         name: Build
-        command: npm run build
+        command: yarn build
   - &save-cache
-    run:
+    save_cache:
         name: Save Yarn Package Cache
         key: yarn-packages-{{ checksum "yarn.lock" }}
         paths:
