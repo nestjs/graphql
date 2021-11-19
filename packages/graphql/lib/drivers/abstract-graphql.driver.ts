@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
-import { normalizeRoutePath, wrapContextResolver } from '../utils';
+import { normalizeRoutePath } from '../utils';
 
 export abstract class AbstractGraphQLDriver<
   TDriver = unknown,
@@ -34,7 +34,6 @@ export abstract class AbstractGraphQLDriver<
       ...defaults,
       ...options,
     };
-    wrapContextResolver(clonedOptions, options);
     return clonedOptions;
   }
 

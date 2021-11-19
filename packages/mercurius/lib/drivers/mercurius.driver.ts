@@ -1,3 +1,4 @@
+import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql/drivers/abstract-graphql.driver';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { printSchema } from 'graphql';
@@ -49,4 +50,51 @@ export class MercuriusDriver extends AbstractGraphQLDriver<
   }
 
   public async stop(): Promise<void> {}
+
+  public async mergeDefaultOptions(
+    options: MercuriusDriverConfig,
+  ): Promise<MercuriusDriverConfig> {
+    options = await super.mergeDefaultOptions(options);
+    this.wrapContextResolver(options);
+    return options;
+  }
+
+  private wrapContextResolver(
+    targetOptions: MercuriusDriverConfig,
+    originalOptions: MercuriusDriverConfig = { ...targetOptions },
+  ) {
+    if (!targetOptions.context) {
+      targetOptions.context = (req: unknown) => ({ req });
+    } else if (isFunction(targetOptions.context)) {
+      targetOptions.context = async (...args: unknown[]) => {
+        const ctx = await (originalOptions.context as Function)(...args);
+        const { req, request } = args[0] as Record<string, unknown>;
+        return this.assignReqProperty(ctx, req ?? request);
+      };
+    } else {
+      targetOptions.context = (req: Record<string, unknown>) => {
+        return this.assignReqProperty(
+          originalOptions.context as Record<string, any>,
+          req,
+        );
+      };
+    }
+  }
+
+  private assignReqProperty(
+    ctx: Record<string, unknown> | undefined,
+    req: unknown,
+  ) {
+    if (!ctx) {
+      return { req };
+    }
+    if (
+      typeof ctx !== 'object' ||
+      (ctx && ctx.req && typeof ctx.req === 'object')
+    ) {
+      return ctx;
+    }
+    ctx.req = req;
+    return ctx;
+  }
 }
