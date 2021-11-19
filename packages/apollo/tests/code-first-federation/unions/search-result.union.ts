@@ -1,4 +1,4 @@
-import { createUnionType } from '@nestjs/graphql-experimental/type-factories';
+import { createUnionType } from '@nestjs/graphql/type-factories';
 import { Post } from '../post/post.entity';
 import { User } from '../user/user.entity';
 

@@ -1,9 +1,4 @@
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveReference,
-} from '@nestjs/graphql-experimental';
+import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 @Resolver('User')
 export class UsersResolvers {

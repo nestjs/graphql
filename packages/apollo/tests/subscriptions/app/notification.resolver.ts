@@ -1,10 +1,5 @@
 import { Logger, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Query,
-  Resolver,
-  Subscription,
-} from '@nestjs/graphql-experimental';
+import { Args, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { AuthGuard } from './auth.guard';
 import { Notification } from './notification';

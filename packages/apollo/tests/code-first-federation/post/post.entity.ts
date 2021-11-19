@@ -1,10 +1,4 @@
-import {
-  Directive,
-  Field,
-  ID,
-  Int,
-  ObjectType,
-} from '@nestjs/graphql-experimental';
+import { Directive, Field, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 @Directive('@key(fields: "id")')

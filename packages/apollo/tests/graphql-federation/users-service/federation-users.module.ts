@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
 import { join } from 'path';
 import { ApolloDriverConfig } from '../../../lib';

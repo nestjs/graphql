@@ -1,5 +1,5 @@
 import { DynamicModule, Inject, Module, Provider, Scope } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { MercuriusDriver } from '../../../lib/drivers';
 import { HelloResolver } from './hello.resolver';

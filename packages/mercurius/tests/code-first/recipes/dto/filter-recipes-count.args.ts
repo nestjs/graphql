@@ -1,4 +1,4 @@
-import { ArgsType, Field } from '@nestjs/graphql-experimental';
+import { ArgsType, Field } from '@nestjs/graphql';
 @ArgsType()
 export class FilterRecipesCountArgs {
   @Field({ nullable: true })

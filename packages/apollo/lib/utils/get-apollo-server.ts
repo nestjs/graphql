@@ -1,5 +1,5 @@
 import { INestApplicationContext } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerBase } from 'apollo-server-core';
 
 /**

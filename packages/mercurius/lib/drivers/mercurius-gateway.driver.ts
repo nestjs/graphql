@@ -1,4 +1,4 @@
-import { AbstractGraphQLDriver } from '@nestjs/graphql-experimental/drivers/abstract-graphql.driver';
+import { AbstractGraphQLDriver } from '@nestjs/graphql/drivers/abstract-graphql.driver';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';

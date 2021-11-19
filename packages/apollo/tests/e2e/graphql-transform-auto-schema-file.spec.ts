@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { FileSystemHelper } from '@nestjs/graphql-experimental/schema-builder/helpers/file-system.helper';
+import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper';
 import { Test } from '@nestjs/testing';
 import { TransformAutoSchemaFileModule } from '../graphql/transform-auto-schema-file.module';
 import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot';

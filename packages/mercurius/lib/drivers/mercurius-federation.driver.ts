@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractGraphQLDriver } from '@nestjs/graphql-experimental/drivers/abstract-graphql.driver';
-import { GraphQLFederationFactory } from '@nestjs/graphql-experimental/federation/graphql-federation.factory';
+import { AbstractGraphQLDriver } from '@nestjs/graphql/drivers/abstract-graphql.driver';
+import { GraphQLFederationFactory } from '@nestjs/graphql/federation/graphql-federation.factory';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';

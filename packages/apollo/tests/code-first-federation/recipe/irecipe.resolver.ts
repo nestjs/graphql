@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql-experimental';
+import { Query, Resolver } from '@nestjs/graphql';
 import { IRecipe } from './recipe';
 
 @Resolver((of) => IRecipe)

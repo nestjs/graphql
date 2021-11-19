@@ -5,7 +5,7 @@ import {
   Query,
   ResolveField,
   Resolver,
-} from '@nestjs/graphql-experimental';
+} from '@nestjs/graphql';
 import { PostType } from './post-type.enum';
 import { Post } from './posts.interfaces';
 import { PostsService } from './posts.service';

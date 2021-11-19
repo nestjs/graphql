@@ -4,8 +4,8 @@
     "outDir": "./dist",
     "rootDir": "./lib",
     "paths": {
-      "@nestjs/graphql-experimental": ["../graphql/lib"],
-      "@nestjs/graphql-experimental/*": ["../graphql/lib/*"],
+      "@nestjs/graphql": ["../graphql/lib"],
+      "@nestjs/graphql/*": ["../graphql/lib/*"],
     }
   },
   "exclude": ["node_modules", "dist", "tests/**/*", "*.spec.ts"],

@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Query, Resolver } from '@nestjs/graphql-experimental';
+import { Query, Resolver } from '@nestjs/graphql';
 import { Guard } from './guards/request-scoped.guard';
 import { HelloService } from './hello.service';
 import { Interceptor } from './interceptors/logging.interceptor';

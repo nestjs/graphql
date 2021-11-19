@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql-experimental';
+import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { join } from 'path';
 import * as request from 'supertest';

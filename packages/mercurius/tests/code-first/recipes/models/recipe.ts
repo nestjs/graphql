@@ -5,8 +5,8 @@ import {
   MiddlewareContext,
   NextFn,
   ObjectType,
-} from '@nestjs/graphql-experimental';
-import { METADATA_FACTORY_NAME } from '@nestjs/graphql-experimental/plugin/plugin-constants';
+} from '@nestjs/graphql';
+import { METADATA_FACTORY_NAME } from '@nestjs/graphql/plugin/plugin-constants';
 @InterfaceType()
 export abstract class Base {
   @Field((type) => ID)

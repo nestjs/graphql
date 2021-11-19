@@ -3,8 +3,8 @@
   "compilerOptions": {
     "types": ["node"],
     "paths": {
-      "@nestjs/graphql-experimental": ["../graphql/lib"],
-      "@nestjs/graphql-experimental/*": ["../graphql/lib/*"],
+      "@nestjs/graphql": ["../graphql/lib"],
+      "@nestjs/graphql/*": ["../graphql/lib/*"],
     }
   },
   "files": [],

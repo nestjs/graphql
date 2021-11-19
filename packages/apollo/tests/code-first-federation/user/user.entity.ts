@@ -1,4 +1,4 @@
-import { Directive, Field, ID, ObjectType } from '@nestjs/graphql-experimental';
+import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
 import { Post } from '../post/post.entity';
 
 @ObjectType()

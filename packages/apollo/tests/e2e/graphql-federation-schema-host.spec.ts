@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { GraphQLSchemaHost } from '@nestjs/graphql-experimental';
+import { GraphQLSchemaHost } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema } from 'graphql';
 import { AppModule } from '../graphql-federation/posts-service/federation-posts.module';

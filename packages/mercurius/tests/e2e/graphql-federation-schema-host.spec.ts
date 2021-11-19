@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { GraphQLSchemaHost } from '@nestjs/graphql-experimental';
+import { GraphQLSchemaHost } from '@nestjs/graphql';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema } from 'graphql';

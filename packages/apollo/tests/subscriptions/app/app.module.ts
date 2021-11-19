@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DynamicModule } from '@nestjs/common/interfaces';
-import { GraphQLModule } from '@nestjs/graphql-experimental';
-import { GqlModuleOptions } from '@nestjs/graphql-experimental/interfaces/gql-module-options.interface';
+import { GraphQLModule } from '@nestjs/graphql';
+import { GqlModuleOptions } from '@nestjs/graphql/interfaces/gql-module-options.interface';
 import { ApolloDriverConfig } from '../../../lib';
 import { ApolloDriver } from '../../../lib/drivers';
 import { NotificationModule } from './notification.module';

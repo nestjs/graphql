@@ -1,8 +1,8 @@
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql-experimental/graphql.constants';
+import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
 import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
-} from '@nestjs/graphql-experimental/schema-builder';
+} from '@nestjs/graphql/schema-builder';
 import { Test } from '@nestjs/testing';
 import {
   getIntrospectionQuery,

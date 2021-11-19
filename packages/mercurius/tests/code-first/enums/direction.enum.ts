@@ -1,4 +1,4 @@
-import { registerEnumType } from '@nestjs/graphql-experimental';
+import { registerEnumType } from '@nestjs/graphql';
 
 export enum Direction {
   Up = 'UP',

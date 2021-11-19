@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql-experimental';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType({ description: 'orphaned type' })
 export class SampleOrphanedType {

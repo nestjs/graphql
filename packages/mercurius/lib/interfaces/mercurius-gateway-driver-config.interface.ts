@@ -2,7 +2,7 @@ import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
-} from '@nestjs/graphql-experimental';
+} from '@nestjs/graphql';
 import { MercuriusCommonOptions, MercuriusGatewayOptions } from 'mercurius';
 
 export type MercuriusGatewayDriverConfig = GqlModuleOptions &

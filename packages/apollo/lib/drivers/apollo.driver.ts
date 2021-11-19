@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
-import {
-  GqlSubscriptionService,
-  SubscriptionConfig,
-} from '@nestjs/graphql-experimental';
-import { extend } from '@nestjs/graphql-experimental/utils';
+import { GqlSubscriptionService, SubscriptionConfig } from '@nestjs/graphql';
+import { extend } from '@nestjs/graphql/utils';
 import { printSchema } from 'graphql';
 import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';

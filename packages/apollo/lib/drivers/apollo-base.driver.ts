@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { AbstractGraphQLDriver } from '@nestjs/graphql-experimental/drivers/abstract-graphql.driver';
+import { AbstractGraphQLDriver } from '@nestjs/graphql/drivers/abstract-graphql.driver';
 import {
   ApolloError,
   ApolloServerBase,

@@ -3,7 +3,7 @@ import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
-} from '@nestjs/graphql-experimental';
+} from '@nestjs/graphql';
 
 export interface ApolloGatewayDriverConfig {
   gateway?: GatewayConfig;

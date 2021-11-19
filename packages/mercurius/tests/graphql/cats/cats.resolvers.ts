@@ -6,7 +6,7 @@ import {
   ResolveField,
   Resolver,
   Subscription,
-} from '@nestjs/graphql-experimental';
+} from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { CatsGuard } from './cats.guard';
 import { CatsService } from './cats.service';

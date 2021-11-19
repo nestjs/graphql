@@ -3,7 +3,7 @@ import {
   GqlModuleOptions,
   GqlOptionsFactory,
   SubscriptionConfig,
-} from '@nestjs/graphql-experimental';
+} from '@nestjs/graphql';
 import {
   ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
   Config,

@@ -1,4 +1,4 @@
-import { Scalar } from '@nestjs/graphql-experimental';
+import { Scalar } from '@nestjs/graphql';
 import { Kind, ValueNode } from 'graphql';
 
 @Scalar('Date', (type) => Date)

@@ -1,4 +1,4 @@
-import { createUnionType } from '@nestjs/graphql-experimental';
+import { createUnionType } from '@nestjs/graphql';
 import { Ingredient } from '../models/ingredient';
 import { Recipe } from '../models/recipe';
 export const SearchResultUnion = createUnionType({

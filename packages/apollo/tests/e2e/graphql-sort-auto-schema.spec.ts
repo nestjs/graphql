@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
-import { GraphQLSchemaHost } from '@nestjs/graphql-experimental';
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql-experimental/graphql.constants';
-import { FileSystemHelper } from '@nestjs/graphql-experimental/schema-builder/helpers/file-system.helper';
+import { GraphQLSchemaHost } from '@nestjs/graphql';
+import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
+import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { SortAutoSchemaModule } from '../graphql/sort-auto-schema.module';

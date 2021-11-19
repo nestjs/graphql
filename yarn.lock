@@ -1568,26 +1568,6 @@
     tslib "2.3.1"
     uuid "8.3.2"
 
-"@nestjs/graphql@^9.0.0":
-  version "9.1.1"
-  resolved "https://registry.yarnpkg.com/@nestjs/graphql/-/graphql-9.1.1.tgz#b12185d14fd4a20c429e96161699f6ddec331f64"
-  integrity sha512-NHMR+VRHFeHBa8/ACy9RnyMVv/581VvXDWenpPFW5RFnZiy4aNeUDCv6sdCh/EydE4CpWzmdliuUei+NrlLWEQ==
-  dependencies:
-    "@graphql-tools/merge" "6.2.5"
-    "@graphql-tools/schema" "7.1.5"
-    "@graphql-tools/utils" "7.10.0"
-    "@nestjs/mapped-types" "1.0.0"
-    chokidar "3.5.2"
-    fast-glob "3.2.7"
-    graphql-ws "5.5.1"
-    iterall "1.3.0"
-    lodash "4.17.21"
-    normalize-path "3.0.0"
-    subscriptions-transport-ws "0.9.19"
-    tslib "2.3.1"
-    uuid "8.3.2"
-    ws "8.2.3"
-
 "@nestjs/mapped-types@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-1.0.0.tgz#52a0441795f6da8144a35970d3ebc19281f31cfd"
