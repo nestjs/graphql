@@ -33,7 +33,7 @@ export class GraphQLFactory {
     private readonly gqlSchemaHost: GraphQLSchemaHost,
   ) {}
 
-  async mergeOptions<T extends GqlModuleOptions>(
+  async mergeWithSchema<T extends GqlModuleOptions>(
     options: T = { typeDefs: [] } as T,
   ): Promise<T> {
     const resolvers = this.resolversExplorerService.explore();

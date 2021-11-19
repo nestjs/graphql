@@ -1,11 +1,14 @@
+import { Injectable } from '@nestjs/common';
 import { AbstractGraphQLDriver } from '@nestjs/graphql-experimental/drivers/abstract-graphql.driver';
+import { GraphQLFederationFactory } from '@nestjs/graphql-experimental/federation/graphql-federation.factory';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 
-export class MercuriusDriver extends AbstractGraphQLDriver<
+@Injectable()
+export class MercuriusFederationDriver extends AbstractGraphQLDriver<
   FastifyInstance,
   MercuriusDriverConfig
 > {
@@ -18,16 +21,21 @@ export class MercuriusDriver extends AbstractGraphQLDriver<
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
-  public async start(mercuriusOptions: MercuriusDriverConfig) {
-    const options =
-      await this.graphQlFactory.mergeWithSchema<MercuriusDriverConfig>(
-        mercuriusOptions,
-      );
+  constructor(
+    private readonly graphqlFederationFactory: GraphQLFederationFactory,
+  ) {
+    super();
+  }
 
-    if (options.definitions && options.definitions.path) {
+  public async start(mercuriusOptions: MercuriusDriverConfig) {
+    const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
+      mercuriusOptions,
+    );
+
+    if (adapterOptions.definitions && adapterOptions.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
-        printSchema(options.schema),
-        options,
+        printSchema(adapterOptions.schema),
+        adapterOptions,
       );
     }
 
@@ -38,13 +46,13 @@ export class MercuriusDriver extends AbstractGraphQLDriver<
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
 
-    const path = this.getNormalizedPath(options);
+    const path = this.getNormalizedPath(adapterOptions);
     const app = httpAdapter.getInstance<FastifyInstance>();
 
     await app.register(mercurius, {
-      ...options,
+      ...adapterOptions,
       path,
-      schema: options.schema,
+      schema: adapterOptions.schema,
     });
   }
 

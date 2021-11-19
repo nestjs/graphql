@@ -10,5 +10,6 @@ export {
   GqlModuleOptions,
   GqlOptionsFactory,
 } from './gql-module-options.interface';
+export * from './graphql-driver.interface';
 export * from './resolve-type-fn.interface';
 export * from './return-type-func.interface';

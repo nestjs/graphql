@@ -14,6 +14,7 @@ describe('GraphQL Federation async-class', () => {
 
     app = module.createNestApplication(new FastifyAdapter());
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   it(`should return query result`, () => {

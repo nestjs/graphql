@@ -18,7 +18,9 @@ describe('GraphQL Federation', () => {
       await app.init();
     });
 
-    it(`should return query result`, () => {
+    it(`should return query result`, async () => {
+      await app.getHttpAdapter().getInstance().ready();
+
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -42,7 +44,9 @@ describe('GraphQL Federation', () => {
         });
     });
 
-    it('should resolve references', () => {
+    it('should resolve references', async () => {
+      await app.getHttpAdapter().getInstance().ready();
+
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -89,7 +93,9 @@ describe('GraphQL Federation', () => {
       await app.init();
     });
 
-    it(`should return query result`, () => {
+    it(`should return query result`, async () => {
+      await app.getHttpAdapter().getInstance().ready();
+
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -117,7 +123,8 @@ describe('GraphQL Federation', () => {
         });
     });
 
-    it('should return a stripped reference', () => {
+    it('should return a stripped reference', async () => {
+      await app.getHttpAdapter().getInstance().ready();
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -151,7 +158,9 @@ describe('GraphQL Federation', () => {
         });
     });
 
-    it(`should handle scalars`, () => {
+    it(`should handle scalars`, async () => {
+      await app.getHttpAdapter().getInstance().ready();
+
       return request(app.getHttpServer())
         .post('/graphql')
         .send({
@@ -179,7 +188,8 @@ describe('GraphQL Federation', () => {
         });
     });
 
-    it('should accept enum as query input', () => {
+    it('should accept enum as query input', async () => {
+      await app.getHttpAdapter().getInstance().ready();
       return request(app.getHttpServer())
         .post('/graphql')
         .send({

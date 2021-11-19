@@ -1,14 +1,14 @@
 import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { GraphQLTypesLoader } from '../graphql-types.loader';
 import { GraphQLFactory } from '../graphql.factory';
-import { GqlModuleOptions } from '../interfaces';
-import { wrapContextResolver } from '../utils';
+import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
+import { normalizeRoutePath, wrapContextResolver } from '../utils';
 
 export abstract class AbstractGraphQLDriver<
   TDriver = unknown,
   TOptions extends Record<string, any> = GqlModuleOptions,
-> {
+> implements GraphQLDriver<TOptions>
+{
   @Inject()
   protected readonly httpAdapterHost: HttpAdapterHost;
 
@@ -18,15 +18,11 @@ export abstract class AbstractGraphQLDriver<
   @Inject()
   protected readonly graphQlFactory: GraphQLFactory;
 
-  @Inject()
-  protected readonly graphQlTypesLoader: GraphQLTypesLoader;
-
   abstract get instance(): TDriver;
 
   public abstract start(options: TOptions): Promise<unknown>;
   public abstract stop(): Promise<void>;
 
-  public async runPreOptionsHooks(options: TOptions): Promise<void> {}
   public async mergeDefaultOptions(
     options: TOptions,
     defaults: Record<string, any> = {
@@ -40,5 +36,14 @@ export abstract class AbstractGraphQLDriver<
     };
     wrapContextResolver(clonedOptions, options);
     return clonedOptions;
+  }
+
+  protected getNormalizedPath(options: TOptions): string {
+    const prefix = this.applicationConfig.getGlobalPrefix();
+    const useGlobalPrefix = prefix && options.useGlobalPrefix;
+    const gqlOptionsPath = normalizeRoutePath(options.path);
+    return useGlobalPrefix
+      ? normalizeRoutePath(prefix) + gqlOptionsPath
+      : gqlOptionsPath;
   }
 }

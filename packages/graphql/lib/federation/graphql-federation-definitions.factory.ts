@@ -1,10 +1,8 @@
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import {
-  DefinitionsGeneratorOptions,
-  GraphQLDefinitionsFactory,
-} from '@nestjs/graphql-experimental';
-import { extend } from '@nestjs/graphql-experimental/utils';
 import { gql } from 'graphql-tag';
+import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
+import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory';
+import { extend } from '../utils';
 
 export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFactory {
   protected async exploreAndEmit(

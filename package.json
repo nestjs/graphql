@@ -18,8 +18,11 @@
     "publish:npm": "lerna publish --conventional-commits",
     "prepublish:next": "npm run build",
     "publish:next": "lerna publish --dist-tag next",
-    "test:e2e": "lerna run --parallel test:e2e",
-    "test:e2e:dev": "lerna run --parallel test:e2e:dev"
+    "test:e2e": "lerna run test:e2e",
+    "test:e2e:dev": "lerna run test:e2e:dev"
+  },
+  "resolutions": {
+    "graphql": "15.6.1"
   },
   "devDependencies": {
     "@apollo/gateway": "0.42.3",
@@ -57,6 +60,7 @@
     "lerna": "^4.0.0",
     "lerna-changelog": "^2.2.0",
     "lint-staged": "11.2.3",
+    "mercurius": "^8.9.1",
     "prettier": "2.4.1",
     "reflect-metadata": "0.1.13",
     "release-it": "14.11.6",
@@ -91,5 +95,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nestjs/graphql"
+  },
+  "dependencies": {
+    "@graphql-tools/schema": "7.1.5"
   }
 }

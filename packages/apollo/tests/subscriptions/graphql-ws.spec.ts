@@ -59,12 +59,12 @@ describe('graphql-ws protocol', () => {
 
     app = module.createNestApplication();
     await app.init();
-    await app.listen(3000);
+    await app.listen(3007);
   });
 
   it('should receive an error if missing token', (done) => {
     wsClient = createClient({
-      url: 'ws://localhost:3000/graphql',
+      url: 'ws://localhost:3007/graphql',
       webSocketImpl: ws,
       connectionParams: {},
       retryAttempts: 0,
@@ -97,7 +97,7 @@ describe('graphql-ws protocol', () => {
 
   it('should receive an error if token is malformed', (done) => {
     wsClient = createClient({
-      url: 'ws://localhost:3000/graphql',
+      url: 'ws://localhost:3007/graphql',
       webSocketImpl: ws,
       connectionParams: {
         authorization: 'wrong token',
@@ -132,7 +132,7 @@ describe('graphql-ws protocol', () => {
 
   it('should receive error on subscription if guard fails', (done) => {
     wsClient = createClient({
-      url: 'ws://localhost:3000/graphql',
+      url: 'ws://localhost:3007/graphql',
       webSocketImpl: ws,
       connectionParams: {
         authorization: 'Bearer notest',
@@ -170,7 +170,7 @@ describe('graphql-ws protocol', () => {
 
   it('should connect to subscriptions', (done) => {
     wsClient = createClient({
-      url: 'ws://localhost:3000/graphql',
+      url: 'ws://localhost:3007/graphql',
       webSocketImpl: ws,
       connectionParams: {
         authorization: 'Bearer test',

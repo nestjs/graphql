@@ -1,7 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { AbstractGraphQLDriver } from '@nestjs/graphql-experimental/drivers/abstract-graphql.driver';
-import { normalizeRoutePath } from '@nestjs/graphql-experimental/utils';
 import {
   ApolloError,
   ApolloServerBase,
@@ -161,15 +160,6 @@ export abstract class ApolloBaseDriver<
     );
 
     this._apolloServer = apolloServer;
-  }
-
-  private getNormalizedPath(apolloOptions: T): string {
-    const prefix = this.applicationConfig.getGlobalPrefix();
-    const useGlobalPrefix = prefix && apolloOptions.useGlobalPrefix;
-    const gqlOptionsPath = normalizeRoutePath(apolloOptions.path);
-    return useGlobalPrefix
-      ? normalizeRoutePath(prefix) + gqlOptionsPath
-      : gqlOptionsPath;
   }
 
   private wrapFormatErrorFn(options: T) {

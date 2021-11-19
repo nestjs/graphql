@@ -21,40 +21,31 @@ export class ApolloDriver extends ApolloBaseDriver {
   }
 
   public async start(apolloOptions: ApolloDriverConfig) {
-    const options = await this.mergeDefaultOptions(apolloOptions);
-    const typeDefs =
-      (await this.graphQlTypesLoader.mergeTypesByPaths(options.typePaths)) ||
-      [];
-
-    const mergedTypeDefs = extend(typeDefs, options.typeDefs);
-
-    options.plugins = extend(
-      options.plugins || [],
-      this.pluginsExplorerService.explore(options),
+    apolloOptions.plugins = extend(
+      apolloOptions.plugins || [],
+      this.pluginsExplorerService.explore(apolloOptions),
     );
 
-    const adapterOptions =
-      await this.graphQlFactory.mergeOptions<ApolloDriverConfig>({
-        ...options,
-        typeDefs: mergedTypeDefs,
-      });
-    await this.runPreOptionsHooks(adapterOptions);
+    const options =
+      await this.graphQlFactory.mergeWithSchema<ApolloDriverConfig>(
+        apolloOptions,
+      );
 
     if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
-        printSchema(adapterOptions.schema),
+        printSchema(options.schema),
         options,
       );
     }
 
-    await this.registerServer(adapterOptions);
+    await this.registerServer(options);
 
     if (options.installSubscriptionHandlers || options.subscriptions) {
       const subscriptionsOptions: SubscriptionConfig =
         options.subscriptions || { 'subscriptions-transport-ws': {} };
       this._subscriptionService = new GqlSubscriptionService(
         {
-          schema: adapterOptions.schema,
+          schema: options.schema,
           path: options.path,
           context: options.context,
           ...subscriptionsOptions,

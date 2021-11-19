@@ -32,6 +32,8 @@ describe('GraphQL gateway async-existing', () => {
 
     gatewayApp = gatewayModule.createNestApplication(new FastifyAdapter());
     await gatewayApp.init();
+
+    await gatewayApp.getHttpAdapter().getInstance().ready();
   });
 
   it(`should run lookup across boundaries`, () => {

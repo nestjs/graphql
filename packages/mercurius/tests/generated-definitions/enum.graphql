@@ -1,5 +1,0 @@
-enum Foobar {
-  Foo
-  Bar
-  Baz
-}

@@ -3,7 +3,7 @@ import { IResolvers, IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { GraphQLSchema } from 'graphql';
-import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver';
+import { GraphQLDriver } from '.';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
 
@@ -12,16 +12,21 @@ export type Enhancer = 'guards' | 'interceptors' | 'filters';
 /**
  * "GraphQLModule" options object.
  */
-export interface GqlModuleOptions {
+export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   /**
    * Type definitions
    */
   typeDefs?: string | string[];
 
   /**
+   * Paths to files that contain GraphQL definitions
+   */
+  typePaths?: string[];
+
+  /**
    * GraphQL server adapter
    */
-  driver?: Type<AbstractGraphQLDriver>;
+  driver?: Type<TDriver>;
 
   /**
    * An array of modules to scan when searching for resolvers

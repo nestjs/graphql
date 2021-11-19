@@ -2,60 +2,41 @@ import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ModulesContainer } from '@nestjs/core';
-import { GraphQLSchemaBuilder } from '@nestjs/graphql-experimental/graphql-schema.builder';
-import { GraphQLSchemaHost } from '@nestjs/graphql-experimental/graphql-schema.host';
-import {
-  ResolversExplorerService,
-  ScalarsExplorerService,
-} from '@nestjs/graphql-experimental/services';
+import { GraphQLFederationFactory } from '@nestjs/graphql-experimental/federation/graphql-federation.factory';
 import { extend } from '@nestjs/graphql-experimental/utils/extend.util';
 import { ApolloDriverConfig } from '..';
-import { GraphQLFederationFactory } from '../factories/graphql-federation.factory';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
 
 @Injectable()
 export class ApolloFederationDriver extends ApolloBaseDriver {
-  private readonly graphqlFederationFactory: GraphQLFederationFactory;
+  private readonly pluginsExplorerService: PluginsExplorerService;
 
   constructor(
-    resolversExplorerService: ResolversExplorerService,
-    scalarsExplorerService: ScalarsExplorerService,
-    gqlSchemaBuilder: GraphQLSchemaBuilder,
-    gqlSchemaHost: GraphQLSchemaHost,
+    private readonly graphqlFederationFactory: GraphQLFederationFactory,
     modulesContainer: ModulesContainer,
   ) {
     super();
-    const pluginsExplorerService = new PluginsExplorerService(modulesContainer);
-    this.graphqlFederationFactory = new GraphQLFederationFactory(
-      resolversExplorerService,
-      scalarsExplorerService,
-      pluginsExplorerService,
-      gqlSchemaBuilder,
-      gqlSchemaHost,
-    );
+    this.pluginsExplorerService = new PluginsExplorerService(modulesContainer);
   }
 
   public async start(options: ApolloDriverConfig): Promise<void> {
-    const { printSubgraphSchema } = loadPackage(
-      '@apollo/subgraph',
-      'ApolloFederation',
-      () => require('@apollo/subgraph'),
+    options.plugins = extend(
+      options.plugins || [],
+      this.pluginsExplorerService.explore(options),
     );
-    options = await this.mergeDefaultOptions(options);
 
-    const { typePaths } = options;
-    const typeDefs =
-      (await this.graphQlTypesLoader.mergeTypesByPaths(typePaths)) || [];
-
-    const mergedTypeDefs = extend(typeDefs, options.typeDefs);
-    const adapterOptions = await this.graphqlFederationFactory.mergeOptions({
-      ...options,
-      typeDefs: mergedTypeDefs,
-    });
-    await this.runPreOptionsHooks(adapterOptions);
+    const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
+      options,
+    );
+    await this.runExecutorFactoryIfPresent(adapterOptions);
 
     if (options.definitions && options.definitions.path) {
+      const { printSubgraphSchema } = loadPackage(
+        '@apollo/subgraph',
+        'ApolloFederation',
+        () => require('@apollo/subgraph'),
+      );
       await this.graphQlFactory.generateDefinitions(
         printSubgraphSchema(adapterOptions.schema),
         options,
@@ -70,10 +51,6 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
         'No support for subscriptions yet when using Apollo Federation',
       );
     }
-  }
-
-  public async runPreOptionsHooks(apolloOptions: ApolloDriverConfig) {
-    await this.runExecutorFactoryIfPresent(apolloOptions);
   }
 
   protected async registerExpress(apolloOptions: ApolloDriverConfig) {

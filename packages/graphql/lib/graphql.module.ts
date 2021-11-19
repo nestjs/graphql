@@ -8,6 +8,7 @@ import {
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { AbstractGraphQLDriver } from '.';
+import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
@@ -21,7 +22,7 @@ import {
 } from './interfaces/gql-module-options.interface';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import { ResolversExplorerService, ScalarsExplorerService } from './services';
-import { generateString } from './utils';
+import { extend, generateString } from './utils';
 
 @Module({
   imports: [GraphQLSchemaBuilderModule],
@@ -34,8 +35,14 @@ import { generateString } from './utils';
     GraphQLTypesLoader,
     GraphQLSchemaBuilder,
     GraphQLSchemaHost,
+    GraphQLFederationFactory,
   ],
-  exports: [GraphQLTypesLoader, GraphQLAstExplorer, GraphQLSchemaHost],
+  exports: [
+    GraphQLTypesLoader,
+    GraphQLAstExplorer,
+    GraphQLSchemaHost,
+    GraphQLFederationFactory,
+  ],
 })
 export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
   get graphQlAdapter(): AbstractGraphQLDriver<TAdapter> {
@@ -46,6 +53,7 @@ export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
     private readonly _graphQlAdapter: AbstractGraphQLDriver<TAdapter>,
+    private readonly graphQlTypesLoader: GraphQLTypesLoader,
   ) {}
 
   static forRoot<TOptions extends Record<string, any> = GqlModuleOptions>(
@@ -124,7 +132,19 @@ export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
     if (!httpAdapter) {
       return;
     }
-    await this._graphQlAdapter.start(this.options);
+
+    const options = await this._graphQlAdapter.mergeDefaultOptions(
+      this.options,
+    );
+    const { typePaths } = options;
+    const typeDefs =
+      (await this.graphQlTypesLoader.mergeTypesByPaths(typePaths)) || [];
+
+    const mergedTypeDefs = extend(typeDefs, options.typeDefs);
+    await this._graphQlAdapter.start({
+      ...options,
+      typeDefs: mergedTypeDefs,
+    });
   }
 
   async onModuleDestroy() {

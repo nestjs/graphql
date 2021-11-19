@@ -1,5 +1,6 @@
 export * from './decorators';
 export * from './drivers';
+export * from './federation';
 export * from './graphql-ast.explorer';
 export * from './graphql-definitions.factory';
 export * from './graphql-schema.host';

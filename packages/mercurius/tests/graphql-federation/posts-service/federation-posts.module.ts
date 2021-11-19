@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql-experimental';
 import { join } from 'path';
-import { MercuriusDriver, MercuriusDriverConfig } from '../../../lib';
+import { MercuriusDriverConfig, MercuriusFederationDriver } from '../../../lib';
 import { PostsModule } from './posts/posts.module';
 import { UpperCaseDirective } from './posts/upper.directive';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<MercuriusDriverConfig>({
-      driver: MercuriusDriver,
+      driver: MercuriusFederationDriver,
       typePaths: [join(__dirname, '**/*.graphql')],
       schemaDirectives: {
         upper: UpperCaseDirective,

@@ -43,11 +43,6 @@ export interface ApolloDriverConfig
     ServerRegistration,
     Omit<GqlModuleOptions, 'context'> {
   /**
-   * Paths to files that contain GraphQL definitions
-   */
-  typePaths?: string[];
-
-  /**
    * Executor factory function
    */
   executorFactory?: (

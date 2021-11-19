@@ -15,7 +15,7 @@ describe('Code-first - Federation', () => {
     await app.init();
   });
 
-  it(`should return query result`, async () => {
+  it.skip(`should return query result`, async () => {
     const fastifyInstance = app.getHttpAdapter().getInstance();
     await fastifyInstance.ready();
 
@@ -66,7 +66,7 @@ union FederationSearchResultUnion = Post | User
     });
   });
 
-  it.skip('should return the search result', async () => {
+  it('should return the search result', async () => {
     const fastifyInstance = app.getHttpAdapter().getInstance();
     await fastifyInstance.ready();
 
@@ -97,7 +97,7 @@ union FederationSearchResultUnion = Post | User
     });
   });
 
-  it.skip(`should return query result`, async () => {
+  it(`should return query result`, async () => {
     const fastifyInstance = app.getHttpAdapter().getInstance();
     await fastifyInstance.ready();
 

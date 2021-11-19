@@ -49,12 +49,12 @@ describe('subscriptions-transport-ws protocol', () => {
 
     app = module.createNestApplication();
     await app.init();
-    await app.listen(3001);
+    await app.listen(3006);
   });
 
   it('should receive an error if missing token', (done) => {
     wsClient = new SubscriptionClient(
-      'ws://localhost:3001/graphql',
+      'ws://localhost:3006/graphql',
       {
         connectionCallback: (errors) => {
           const error = errors as unknown as Error;
@@ -87,7 +87,7 @@ describe('subscriptions-transport-ws protocol', () => {
 
   it('should receive an error if token is malformed', (done) => {
     wsClient = new SubscriptionClient(
-      'ws://localhost:3001/graphql',
+      'ws://localhost:3006/graphql',
       {
         connectionCallback: (errors) => {
           const error = errors as unknown as Error;
@@ -122,7 +122,7 @@ describe('subscriptions-transport-ws protocol', () => {
 
   it('should fail to connect if no authorization is provided', (done) => {
     wsClient = new SubscriptionClient(
-      'ws://localhost:3001/graphql',
+      'ws://localhost:3006/graphql',
       {
         connectionParams: {
           authorization: 'Bearer notest',
@@ -161,7 +161,7 @@ describe('subscriptions-transport-ws protocol', () => {
 
   it('should receive subscriptions', (done) => {
     wsClient = new SubscriptionClient(
-      'ws://localhost:3001/graphql',
+      'ws://localhost:3006/graphql',
       {
         connectionParams: {
           authorization: 'Bearer test',
