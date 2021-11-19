@@ -24,9 +24,20 @@
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "devDependencies": {
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/graphql": "^9.0.0",
+    "@nestjs/platform-fastify": "8.1.1",
+    "@nestjs/testing": "8.1.1",
+    "fastify": "^3.24.0",
     "mercurius": "^8.8.0"
   },
   "dependencies": {
     "@graphql-tools/utils": "7.10.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/graphql": "^9.0.0",
+    "fastify": "^3.24.0",
+    "mercurius": "^8.8.0"
   }
 }

@@ -4,7 +4,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ModulesContainer } from '@nestjs/core';
 import { GraphQLFederationFactory } from '@nestjs/graphql-experimental/federation/graphql-federation.factory';
 import { extend } from '@nestjs/graphql-experimental/utils/extend.util';
-import { ApolloDriverConfig } from '..';
+import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
 

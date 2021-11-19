@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { ApolloGatewayDriverConfig } from '..';
+import { ApolloGatewayDriverConfig } from '../interfaces';
 import { ApolloBaseDriver } from './apollo-base.driver';
 
 @Injectable()

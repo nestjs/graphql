@@ -12,7 +12,7 @@ import {
   UserInputError,
 } from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
-import { omit } from 'lodash';
+import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 
 const apolloPredefinedExceptions: Partial<
