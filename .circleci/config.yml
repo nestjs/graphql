@@ -2,16 +2,24 @@ version: 2
 
 aliases:
   - &restore-cache
-    restore_cache:
-        key: dependency-cache-{{ checksum "package.json" }}
+    run:
+        name: Restore Yarn Package Cache
+        keys:
+          - yarn-packages-{{ checksum "yarn.lock" }}
   - &install-deps
     run:
-        name: Install dependencies
-        command: npm ci
+        name: Install Dependencies
+        command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
   - &build-packages
     run:
         name: Build
         command: npm run build
+  - &save-cache
+    run:
+        name: Save Yarn Package Cache
+        key: yarn-packages-{{ checksum "yarn.lock" }}
+        paths:
+          - ~/.cache/yarn
 
 jobs:
   build:
@@ -20,21 +28,12 @@ jobs:
       - image: circleci/node:16
     steps:
       - checkout
-      - run:
-          name: Update NPM version
-          command: 'sudo npm install -g npm@latest'
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - ./node_modules
+      - *restore-cache
+      - *install-deps
+      - *save-cache
       - run:
           name: Build
-          command: npm run build    
+          command: yarn build    
 
   e2e_tests:
     working_directory: ~/nest
@@ -46,7 +45,7 @@ jobs:
       - *install-deps
       - run:
           name: E2E tests
-          command: npm run test:e2e
+          command: yarn test:e2e
 
 workflows:
   version: 2
