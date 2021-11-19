@@ -6,6 +6,6 @@ import { ApplicationModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule, new FastifyAdapter());
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(3010);
 }
 bootstrap();

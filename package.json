@@ -18,8 +18,8 @@
     "publish:npm": "lerna publish --conventional-commits",
     "prepublish:next": "npm run build",
     "publish:next": "lerna publish --dist-tag next",
-    "test:e2e": "lerna run test:e2e",
-    "test:e2e:dev": "lerna run test:e2e:dev"
+    "test:e2e": "lerna run test:e2e --parallel",
+    "test:e2e:dev": "lerna run test:e2e:dev --parallel"
   },
   "resolutions": {
     "graphql": "15.6.1"

@@ -12,8 +12,8 @@ export class ConfigService implements MercuriusDriverConfigFactory {
       driver: MercuriusGatewayDriver,
       gateway: {
         services: [
-          { name: 'users', url: 'http://localhost:3001/graphql' },
-          { name: 'posts', url: 'http://localhost:3002/graphql' },
+          { name: 'users', url: 'http://localhost:3011/graphql' },
+          { name: 'posts', url: 'http://localhost:3012/graphql' },
         ],
       },
     };

@@ -17,14 +17,14 @@ describe('GraphQL Gateway', () => {
     }).compile();
 
     usersApp = usersModule.createNestApplication(new FastifyAdapter());
-    await usersApp.listen(3001);
+    await usersApp.listen(3011);
 
     const postsModule = await Test.createTestingModule({
       imports: [PostsModule],
     }).compile();
 
     postsApp = postsModule.createNestApplication(new FastifyAdapter());
-    await postsApp.listen(3002);
+    await postsApp.listen(3012);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
