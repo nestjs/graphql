@@ -5,7 +5,6 @@ import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
 import { normalizeRoutePath } from '../utils';
 
 export abstract class AbstractGraphQLDriver<
-  TDriver = unknown,
   TOptions extends Record<string, any> = GqlModuleOptions,
 > implements GraphQLDriver<TOptions>
 {
@@ -32,6 +31,8 @@ export abstract class AbstractGraphQLDriver<
       ...defaults,
       ...options,
     };
+    (clonedOptions as Record<string, unknown>).path =
+      this.getNormalizedPath(clonedOptions);
     return clonedOptions;
   }
 

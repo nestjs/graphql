@@ -4,10 +4,7 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 
-export class MercuriusGatewayDriver extends AbstractGraphQLDriver<
-  FastifyInstance,
-  MercuriusDriverConfig
-> {
+export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   get instance(): FastifyInstance<
     Server,
     IncomingMessage,
@@ -17,7 +14,7 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
-  public async start(mercuriusOptions: MercuriusDriverConfig) {
+  public async start(options: MercuriusDriverConfig) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 
@@ -25,12 +22,9 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
 
-    const path = this.getNormalizedPath(mercuriusOptions);
     const app = httpAdapter.getInstance<FastifyInstance>();
-
     await app.register(mercurius, {
-      ...mercuriusOptions,
-      path,
+      ...options,
     });
   }
 

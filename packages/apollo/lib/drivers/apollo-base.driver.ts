@@ -26,7 +26,7 @@ const apolloPredefinedExceptions: Partial<
 
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
-> extends AbstractGraphQLDriver<ApolloServerBase, T> {
+> extends AbstractGraphQLDriver<T> {
   protected _apolloServer: ApolloServerBase;
 
   get instance(): ApolloServerBase {
@@ -106,8 +106,7 @@ export abstract class ApolloBaseDriver<
       'GraphQLModule',
       () => require('apollo-server-express'),
     );
-    const path = this.getNormalizedPath(apolloOptions);
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
+    const { disableHealthCheck, path, onHealthCheck, cors, bodyParserConfig } =
       apolloOptions;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;

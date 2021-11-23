@@ -44,15 +44,18 @@ import { extend, generateString } from './utils';
     GraphQLFederationFactory,
   ],
 })
-export class GraphQLModule<TAdapter> implements OnModuleInit, OnModuleDestroy {
-  get graphQlAdapter(): AbstractGraphQLDriver<TAdapter> {
-    return this._graphQlAdapter;
+export class GraphQLModule<
+  TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
+> implements OnModuleInit, OnModuleDestroy
+{
+  get graphQlAdapter(): TAdapter {
+    return this._graphQlAdapter as TAdapter;
   }
 
   constructor(
     private readonly httpAdapterHost: HttpAdapterHost,
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
-    private readonly _graphQlAdapter: AbstractGraphQLDriver<TAdapter>,
+    private readonly _graphQlAdapter: AbstractGraphQLDriver,
     private readonly graphQlTypesLoader: GraphQLTypesLoader,
   ) {}
 

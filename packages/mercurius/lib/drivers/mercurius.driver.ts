@@ -6,10 +6,7 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 
-export class MercuriusDriver extends AbstractGraphQLDriver<
-  FastifyInstance,
-  MercuriusDriverConfig
-> {
+export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   get instance(): FastifyInstance<
     Server,
     IncomingMessage,
@@ -38,14 +35,9 @@ export class MercuriusDriver extends AbstractGraphQLDriver<
     if (platformName !== 'fastify') {
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
-
-    const path = this.getNormalizedPath(options);
     const app = httpAdapter.getInstance<FastifyInstance>();
-
     await app.register(mercurius, {
       ...options,
-      path,
-      schema: options.schema,
     });
   }
 

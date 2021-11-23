@@ -8,10 +8,7 @@ import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 
 @Injectable()
-export class MercuriusFederationDriver extends AbstractGraphQLDriver<
-  FastifyInstance,
-  MercuriusDriverConfig
-> {
+export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   get instance(): FastifyInstance<
     Server,
     IncomingMessage,
@@ -27,9 +24,9 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<
     super();
   }
 
-  public async start(mercuriusOptions: MercuriusDriverConfig) {
+  public async start(options: MercuriusDriverConfig) {
     const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
-      mercuriusOptions,
+      options,
     );
 
     if (adapterOptions.definitions && adapterOptions.definitions.path) {
@@ -45,14 +42,9 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<
     if (platformName !== 'fastify') {
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
-
-    const path = this.getNormalizedPath(adapterOptions);
     const app = httpAdapter.getInstance<FastifyInstance>();
-
     await app.register(mercurius, {
       ...adapterOptions,
-      path,
-      schema: adapterOptions.schema,
     });
   }
 
