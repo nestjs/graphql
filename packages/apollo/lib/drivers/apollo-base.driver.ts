@@ -141,15 +141,13 @@ export abstract class ApolloBaseDriver<
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
-    const path = this.getNormalizedPath(apolloOptions);
 
     preStartHook?.();
-
     const apolloServer = new ApolloServer(apolloOptions as any);
     await apolloServer.start();
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig } =
-      apolloOptions;
 
+    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
+      apolloOptions;
     await app.register(
       apolloServer.createHandler({
         disableHealthCheck,

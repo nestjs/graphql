@@ -25,10 +25,11 @@
   },
   "devDependencies": {
     "@nestjs/common": "^8.0.0",
-    "@nestjs/platform-fastify": "8.1.1",
-    "@nestjs/testing": "8.1.1",
+    "@nestjs/platform-fastify": "^8.1.1",
+    "@nestjs/testing": "^8.1.1",
     "fastify": "^3.24.0",
-    "mercurius": "^8.8.0"
+    "mercurius": "^8.8.0",
+    "mercurius-integration-testing": "^3.2.0"
   },
   "dependencies": {
     "@graphql-tools/utils": "7.10.0"
