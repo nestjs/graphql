@@ -18,8 +18,6 @@ export abstract class AbstractGraphQLDriver<
   @Inject()
   protected readonly graphQlFactory: GraphQLFactory;
 
-  abstract get instance(): TDriver;
-
   public abstract start(options: TOptions): Promise<unknown>;
   public abstract stop(): Promise<void>;
 
