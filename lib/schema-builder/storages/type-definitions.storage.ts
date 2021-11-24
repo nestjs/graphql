@@ -49,6 +49,10 @@ export class TypeDefinitionsStorage {
     return this.enumTypeDefinitions.get(obj);
   }
 
+  getAllEnumTypeDefinitions(): EnumDefinition[] {
+    return Array.from(this.enumTypeDefinitions.values());
+  }
+
   addUnions(unionDefs: UnionDefinition[]) {
     unionDefs.forEach(item => this.unionTypeDefinitions.set(item.id, item));
   }
