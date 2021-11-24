@@ -29,9 +29,9 @@ export interface BuildSchemaOptions {
   scalarsMap?: ScalarsTypeMap[];
 
   /**
-   * Orphaned type classes that are not explicitly used in GraphQL types definitions
+   * Orphaned type classes/enums that are not explicitly used in GraphQL types definitions
    */
-  orphanedTypes?: Function[];
+  orphanedTypes?: (Function | object)[];
 
   /**
    * Disable checking on build the correctness of a schema

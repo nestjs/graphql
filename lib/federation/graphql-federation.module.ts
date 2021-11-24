@@ -9,8 +9,11 @@ import {
   Provider,
 } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import {
+  ApplicationConfig,
+  HttpAdapterHost,
+  MetadataScanner,
+} from '@nestjs/core';
 import { ApolloServerBase } from 'apollo-server-core';
 import { GraphQLAstExplorer } from '../graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';

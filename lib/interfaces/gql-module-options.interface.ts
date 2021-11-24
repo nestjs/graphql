@@ -1,7 +1,6 @@
 import { ExecutableSchemaTransformation } from '@graphql-tools/schema';
 import { IResolverValidationOptions } from '@graphql-tools/utils';
-import { Type } from '@nestjs/common';
-import { ModuleMetadata } from '@nestjs/common/interfaces';
+import { ModuleMetadata, Type } from '@nestjs/common';
 import {
   ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
   Config,
