@@ -263,7 +263,7 @@ export class GraphQLFederationFactory {
       // union value will resolve to null. So we need to return the type with
       // the same name from the federated schema
       const resultFromFederatedSchema = info.schema.getType(
-        resultFromAutogenSchema.name,
+        (resultFromAutogenSchema as any).name,
       );
       if (
         resultFromFederatedSchema &&
@@ -273,7 +273,7 @@ export class GraphQLFederationFactory {
       }
       // If we couldn't find a match in the federated schema, return just the
       // name of the type and hope apollo works it out
-      return resultFromAutogenSchema.name;
+      return (resultFromAutogenSchema as any).name;
     };
     return typeInFederatedSchema;
   }

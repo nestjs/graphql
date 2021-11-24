@@ -119,6 +119,7 @@ export function transformSchema(
   function replaceType(type: GraphQLNamedType): GraphQLNamedType;
   function replaceType(type: GraphQLOutputType): GraphQLOutputType;
   function replaceType(type: GraphQLInputType): GraphQLInputType;
+  function replaceType(type: GraphQLType): GraphQLType;
   function replaceType(type: GraphQLType): GraphQLType {
     if (isListType(type)) {
       return new GraphQLList(replaceType(type.ofType));

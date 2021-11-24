@@ -18,10 +18,9 @@ export class ResolveTypeFactory {
       if (isString(resolvedType)) {
         return resolvedType;
       }
-      const typeDef = this.typeDefinitionsStorage.getObjectTypeByTarget(
-        resolvedType,
-      );
-      return typeDef?.type;
+      const typeDef =
+        this.typeDefinitionsStorage.getObjectTypeByTarget(resolvedType);
+      return typeDef?.type?.name;
     };
   }
 }
