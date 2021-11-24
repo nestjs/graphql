@@ -1,7 +1,6 @@
 import { GatewayConfig, ServiceEndpointDefinition } from '@apollo/gateway';
 import { GraphQLDataSource } from '@apollo/gateway/dist/datasources/types';
-import { Type } from '@nestjs/common';
-import { ModuleMetadata } from '@nestjs/common/interfaces';
+import { ModuleMetadata, Type } from '@nestjs/common';
 import { GqlModuleOptions } from './gql-module-options.interface';
 
 export interface GatewayModuleOptions {

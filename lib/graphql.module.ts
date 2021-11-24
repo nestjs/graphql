@@ -1,13 +1,13 @@
-import { Inject, Module } from '@nestjs/common';
 import {
   DynamicModule,
+  Inject,
+  Module,
   OnModuleDestroy,
   OnModuleInit,
   Provider,
-} from '@nestjs/common/interfaces';
+} from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { ApplicationConfig, HttpAdapterHost, MetadataScanner } from '@nestjs/core';
 import { ApolloServerBase } from 'apollo-server-core';
 import { printSchema } from 'graphql';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
