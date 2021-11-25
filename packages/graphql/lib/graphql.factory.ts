@@ -1,6 +1,5 @@
 import { mergeSchemas } from '@graphql-tools/merge';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import {
@@ -75,13 +74,6 @@ export class GraphQLFactory {
       );
 
       schema = new GraphQLSchema(schemaConfig);
-      if (options.schemaDirectives) {
-        SchemaDirectiveVisitor.visitSchemaDirectives(
-          schema,
-          options.schemaDirectives,
-        );
-      }
-
       schema = await transformSchema(schema);
       schema = options.sortSchema ? lexicographicSortSchema(schema) : schema;
       this.gqlSchemaHost.schema = schema;
@@ -104,7 +96,6 @@ export class GraphQLFactory {
     const executableSchema = makeExecutableSchema({
       resolvers: extend(typesResolvers, options.resolvers),
       directiveResolvers: options.directiveResolvers,
-      schemaDirectives: options.schemaDirectives as any,
       schemaTransforms: options.schemaTransforms,
       typeDefs: gql`
         ${options.typeDefs}

@@ -1,4 +1,3 @@
-import { SchemaDirectiveVisitor } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ModulesContainer } from '@nestjs/core';
@@ -51,36 +50,6 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
         'No support for subscriptions yet when using Apollo Federation',
       );
     }
-  }
-
-  protected async registerExpress(apolloOptions: ApolloDriverConfig) {
-    return super.registerExpress(apolloOptions, {
-      preStartHook: () => {
-        // If custom directives are provided merge them into schema per Apollo
-        // https://www.apollographql.com/docs/apollo-server/federation/implementing-services/#defining-custom-directives
-        if (apolloOptions.schemaDirectives) {
-          SchemaDirectiveVisitor.visitSchemaDirectives(
-            apolloOptions.schema,
-            apolloOptions.schemaDirectives,
-          );
-        }
-      },
-    });
-  }
-
-  protected async registerFastify(apolloOptions: ApolloDriverConfig) {
-    return super.registerFastify(apolloOptions, {
-      preStartHook: () => {
-        // If custom directives are provided merge them into schema per Apollo
-        // https://www.apollographql.com/docs/apollo-server/federation/implementing-services/#defining-custom-directives
-        if (apolloOptions.schemaDirectives) {
-          SchemaDirectiveVisitor.visitSchemaDirectives(
-            apolloOptions.schema,
-            apolloOptions.schemaDirectives,
-          );
-        }
-      },
-    });
   }
 
   private async runExecutorFactoryIfPresent(apolloOptions: ApolloDriverConfig) {

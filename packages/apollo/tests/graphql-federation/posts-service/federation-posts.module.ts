@@ -5,16 +5,14 @@ import { join } from 'path';
 import { ApolloDriverConfig } from '../../../lib';
 import { ApolloFederationDriver } from '../../../lib/drivers';
 import { PostsModule } from './posts/posts.module';
-import { UpperCaseDirective } from './posts/upper.directive';
+import { upperDirectiveTransformer } from './posts/upper.directive';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloFederationDriver,
       typePaths: [join(__dirname, '**/*.graphql')],
-      schemaDirectives: {
-        upper: UpperCaseDirective,
-      },
+      transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
       plugins: [ApolloServerPluginInlineTraceDisabled()],
     }),
     PostsModule,

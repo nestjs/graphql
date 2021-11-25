@@ -279,7 +279,6 @@ export class GraphQLFederationFactory {
             ...((buildSchemaOptions && buildSchemaOptions.directives) || []),
           ],
           scalarsMap,
-          schemaDirectives: options.schemaDirectives,
           skipCheck: true,
         },
         options.sortSchema,

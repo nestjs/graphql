@@ -44,11 +44,6 @@ export interface BuildSchemaOptions {
   directives?: GraphQLDirective[];
 
   /**
-   * GraphQL schema directives mapping
-   */
-  schemaDirectives?: Record<string, any>;
-
-  /**
    * GraphQL schema transforms
    */
   schemaTransforms?: ExecutableSchemaTransformation[];

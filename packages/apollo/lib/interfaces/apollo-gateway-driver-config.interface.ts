@@ -20,7 +20,6 @@ export interface ApolloGatewayDriverConfig {
     | 'definitions'
     | 'schema'
     | 'subscriptions'
-    | 'schemaDirectives'
     | 'buildSchemaOptions'
     | 'fieldResolverEnhancers'
     | 'driver'

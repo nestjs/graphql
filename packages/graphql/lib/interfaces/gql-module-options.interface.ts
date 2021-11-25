@@ -34,11 +34,6 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   include?: Function[];
 
   /**
-   * Schema directives mapping
-   */
-  schemaDirectives?: Record<string, any>;
-
-  /**
    * Directive resolvers
    */
   directiveResolvers?: any;

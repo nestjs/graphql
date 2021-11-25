@@ -31,7 +31,6 @@ export class GraphQLSchemaBuilder {
         {
           ...buildSchemaOptions,
           scalarsMap,
-          schemaDirectives: options.schemaDirectives,
           schemaTransforms: options.schemaTransforms,
         },
         options.sortSchema,
