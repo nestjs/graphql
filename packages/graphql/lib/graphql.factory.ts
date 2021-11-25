@@ -1,5 +1,4 @@
-import { mergeSchemas } from '@graphql-tools/merge';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema';
 import { Injectable } from '@nestjs/common';
 import { existsSync, lstatSync, readFileSync } from 'fs';
 import {
@@ -95,8 +94,6 @@ export class GraphQLFactory {
     }
     const executableSchema = makeExecutableSchema({
       resolvers: extend(typesResolvers, options.resolvers),
-      directiveResolvers: options.directiveResolvers,
-      schemaTransforms: options.schemaTransforms,
       typeDefs: gql`
         ${options.typeDefs}
       `,

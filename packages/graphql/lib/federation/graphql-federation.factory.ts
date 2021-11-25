@@ -1,4 +1,4 @@
-import { mergeSchemas } from '@graphql-tools/merge';
+import { mergeSchemas } from '@graphql-tools/schema';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isString } from '@nestjs/common/utils/shared.utils';

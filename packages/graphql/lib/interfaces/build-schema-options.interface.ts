@@ -1,4 +1,3 @@
-import { ExecutableSchemaTransformation } from '@graphql-tools/schema';
 import { GraphQLDirective, GraphQLScalarType } from 'graphql';
 import { FieldMiddleware } from './field-middleware.interface';
 
@@ -42,11 +41,6 @@ export interface BuildSchemaOptions {
    * GraphQL directives
    */
   directives?: GraphQLDirective[];
-
-  /**
-   * GraphQL schema transforms
-   */
-  schemaTransforms?: ExecutableSchemaTransformation[];
 
   /**
    * Array of global field middleware functions

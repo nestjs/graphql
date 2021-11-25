@@ -1,4 +1,3 @@
-import { ExecutableSchemaTransformation } from '@graphql-tools/schema';
 import { IResolvers, IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
 import { ModuleMetadata } from '@nestjs/common/interfaces';
@@ -47,11 +46,6 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
    * Extra resolvers to be registered.
    */
   resolvers?: IResolvers | Array<IResolvers>;
-
-  /**
-   * An array of executable schema transformations
-   */
-  schemaTransforms?: ExecutableSchemaTransformation[];
 
   /**
    * TypeScript definitions generator options
