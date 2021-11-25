@@ -22,18 +22,20 @@
 
 [GraphQL](https://graphql.org/) is a powerful query language for APIs and a runtime for fulfilling those queries with your existing data. It's an elegant approach that solves many problems typically found with REST APIs. For background, we suggest reading this [comparison](https://dev-blog.apollodata.com/graphql-vs-rest-5d425123e34b) between GraphQL and REST. GraphQL combined with [TypeScript](https://www.typescriptlang.org/) helps you develop better type safety with your GraphQL queries, giving you end-to-end typing.
 
+`@nestjs/apollo` is a package that provides adapters to use [Apollo](https://github.com/apollographql/apollo-server) in combination with `@nestjs/graphql`.
+
 ## Installation
 
 If you are using `express` HTTP engine, install the following packages:
 
 ```bash
-$ npm i --save @nestjs/graphql apollo-server-express graphql
+$ npm i --save @nestjs/graphql @nestjs/apollo apollo-server-express graphql
 ```
 
 In case of `fastify`, you should install `apollo-server-fastify` instead.
 
 ```bash
-$ npm i --save @nestjs/graphql apollo-server-fastify graphql
+$ npm i --save @nestjs/graphql @nestjs/apollo apollo-server-fastify graphql
 ```
 
 ## Quick Start
