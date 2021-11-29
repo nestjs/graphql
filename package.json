@@ -34,7 +34,7 @@
     "@types/node": "16.11.10",
     "@types/node-fetch": "3.0.2",
     "@types/normalize-path": "3.0.0",
-    "@types/ws": "8.2.0",
+    "@types/ws": "8.2.1",
     "@typescript-eslint/eslint-plugin": "5.4.0",
     "@typescript-eslint/parser": "5.4.0",
     "apollo-cache-inmemory": "1.6.6",
