@@ -132,10 +132,6 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
     if (!this.httpAdapterHost) {
       return;
     }
-    const httpAdapter = this.httpAdapterHost.httpAdapter;
-    if (!httpAdapter) {
-      return;
-    }
     const typeDefs =
       (await this.graphqlTypesLoader.mergeTypesByPaths(
         this.options.typePaths,
@@ -155,6 +151,10 @@ export class GraphQLModule implements OnModuleInit, OnModuleDestroy {
       );
     }
 
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+    if (!httpAdapter) {
+      return;
+    }
     await this.registerGqlServer(apolloOptions);
     if (
       this.options.installSubscriptionHandlers ||
