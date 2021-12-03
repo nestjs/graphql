@@ -68,7 +68,7 @@
     "@graphql-tools/merge": "6.2.5",
     "@graphql-tools/schema": "7.1.5",
     "@graphql-tools/utils": "7.10.0",
-    "@nestjs/mapped-types": "1.0.0",
+    "@nestjs/mapped-types": "1.0.1",
     "chokidar": "3.5.2",
     "fast-glob": "3.2.7",
     "graphql-ws": "5.5.5",
