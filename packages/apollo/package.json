@@ -22,30 +22,30 @@
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "devDependencies": {
-    "@apollo/gateway": "^0.42.0",
-    "@nestjs/common": "^8.0.0",
-    "@nestjs/core": "^8.0.0",
-    "@nestjs/platform-express": "8.1.1",
-    "@nestjs/platform-fastify": "8.1.1",
-    "@nestjs/testing": "8.1.1",
+    "@apollo/gateway": "0.44.1",
+    "@nestjs/common": "8.2.3",
+    "@nestjs/core": "8.2.3",
+    "@nestjs/platform-express": "8.2.3",
+    "@nestjs/platform-fastify": "8.2.3",
+    "@nestjs/testing": "8.2.3",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-link-ws": "1.0.20",
-    "apollo-server-core": "^3.0.0",
-    "apollo-server-express": "^3.1.2",
-    "apollo-server-fastify": "^3.1.2"
+    "apollo-server-core": "3.5.0",
+    "apollo-server-express": "3.5.0",
+    "apollo-server-fastify": "3.5.0"
   },
   "dependencies": {
-    "@graphql-tools/utils": "8.5.3",
+    "@graphql-tools/utils": "8.5.5",
     "lodash.omit": "4.5.0"
   },
   "peerDependencies": {
-    "@apollo/gateway": "^0.42.0",
-    "@nestjs/common": "^8.0.0",
-    "@nestjs/core": "^8.0.0",
-    "apollo-server-core": "^3.0.0",
-    "apollo-server-express": "^3.1.2",
-    "apollo-server-fastify": "^3.1.2"
+    "@apollo/gateway": "^0.44.1",
+    "@nestjs/common": "^8.2.3",
+    "@nestjs/core": "^8.2.3",
+    "apollo-server-core": "^3.5.0",
+    "apollo-server-express": "^3.5.0",
+    "apollo-server-fastify": "^3.5.0"
   },
   "peerDependenciesMeta": {
     "@apollo/gateway": {

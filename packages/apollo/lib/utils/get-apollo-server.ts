@@ -1,6 +1,7 @@
 import { INestApplicationContext } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloServerBase } from 'apollo-server-core';
+import { ApolloDriver } from '..';
 
 /**
  * Returns the underlying ApolloServer instance for a given application.
@@ -11,7 +12,7 @@ export function getApolloServer(
   app: INestApplicationContext,
 ): ApolloServerBase {
   try {
-    const graphqlModule = app.get(GraphQLModule);
+    const graphqlModule = app.get<GraphQLModule<ApolloDriver>>(GraphQLModule);
     return graphqlModule.graphQlAdapter?.instance;
   } catch (error) {}
   throw new Error(

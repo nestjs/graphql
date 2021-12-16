@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'graphql-tag';
+import { ApolloDriver } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
 
 describe('Code-first', () => {
@@ -16,7 +17,7 @@ describe('Code-first', () => {
 
     app = module.createNestApplication();
     await app.init();
-    const graphqlModule = app.get(GraphQLModule);
+    const graphqlModule = app.get<GraphQLModule<ApolloDriver>>(GraphQLModule);
     apolloClient = graphqlModule.graphQlAdapter?.instance;
   });
 
