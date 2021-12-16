@@ -293,11 +293,10 @@ export class GraphQLFederationFactory {
   }
 
   private loadFederationDirectives() {
-    const { federationDirectives } = loadPackage(
-      '@apollo/subgraph/dist/directives',
-      'SchemaBuilder',
-      () => require('@apollo/subgraph/dist/directives'),
-    );
-    return federationDirectives;
+    const { federationDirectives, directivesWithNoDefinitionNeeded } =
+      loadPackage('@apollo/subgraph/dist/directives', 'SchemaBuilder', () =>
+        require('@apollo/subgraph/dist/directives'),
+      );
+    return federationDirectives ?? directivesWithNoDefinitionNeeded;
   }
 }

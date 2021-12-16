@@ -53,6 +53,14 @@ type Ingredient {
   name: String @deprecated(reason: "is deprecated")
 }
 
+"""orphaned enum"""
+enum SampleOrphanedEnum {
+  Red
+  Blue
+  Black
+  White
+}
+
 type Query {
   """get recipe by id"""
   recipe(

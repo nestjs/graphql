@@ -1,7 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { REQUEST } from '@nestjs/core';
-import { createContextId } from '@nestjs/core/helpers/context-id-factory';
+import {
+  createContextId,
+  MetadataScanner,
+  ModulesContainer,
+  REQUEST,
+} from '@nestjs/core';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface';
 import { Injector } from '@nestjs/core/injector/injector';
@@ -11,8 +15,6 @@ import {
 } from '@nestjs/core/injector/instance-wrapper';
 import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module';
 import { Module } from '@nestjs/core/injector/module';
-import { ModulesContainer } from '@nestjs/core/injector/modules-container';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
 import { GraphQLResolveInfo } from 'graphql';
 import { head, identity } from 'lodash';
