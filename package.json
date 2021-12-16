@@ -22,7 +22,7 @@
     "test:e2e:dev": "lerna run test:e2e:dev --parallel"
   },
   "resolutions": {
-    "graphql": "15.6.1"
+    "graphql": "15.8.0"
   },
   "devDependencies": {
     "@commitlint/cli": "13.2.1",
