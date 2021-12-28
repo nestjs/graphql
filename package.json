@@ -22,7 +22,7 @@
     "@apollo/federation": "0.33.8",
     "@apollo/gateway": "0.44.1",
     "@apollo/subgraph": "0.1.5",
-    "@commitlint/cli": "16.0.0",
+    "@commitlint/cli": "16.0.1",
     "@commitlint/config-angular": "16.0.0",
     "@nestjs/common": "8.2.4",
     "@nestjs/core": "8.2.4",
