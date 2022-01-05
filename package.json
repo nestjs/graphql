@@ -51,7 +51,7 @@
     "graphql": "15.8.0",
     "graphql-subscriptions": "2.0.0",
     "husky": "7.0.4",
-    "jest": "27.4.6",
+    "jest": "27.4.7",
     "lint-staged": "12.1.5",
     "prettier": "2.5.1",
     "reflect-metadata": "0.1.13",
