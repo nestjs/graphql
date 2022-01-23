@@ -4,7 +4,7 @@ import { GraphQLEnumType } from 'graphql';
 import { EnumMetadata } from '../metadata';
 
 export const mapToUppercase = (value: string): string =>
-  upperCase(value).replace(' ', '_');
+  upperCase(value).replaceAll(' ', '_');
 
 export interface EnumDefinition {
   enumRef: object;
