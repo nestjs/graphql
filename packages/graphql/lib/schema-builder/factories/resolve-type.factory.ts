@@ -20,7 +20,7 @@ export class ResolveTypeFactory {
       }
       const typeDef =
         this.typeDefinitionsStorage.getObjectTypeByTarget(resolvedType);
-      return typeDef?.type;
+      return typeDef?.type?.name;
     };
   }
 }

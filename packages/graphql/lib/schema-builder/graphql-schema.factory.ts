@@ -69,7 +69,10 @@ export class GraphQLSchemaFactory {
 
     if (!options.skipCheck) {
       const introspectionQuery = getIntrospectionQuery();
-      const { errors } = await graphql(schema, introspectionQuery);
+      const { errors } = await graphql({
+        schema,
+        source: introspectionQuery,
+      });
       if (errors) {
         throw new SchemaGenerationError(errors);
       }
