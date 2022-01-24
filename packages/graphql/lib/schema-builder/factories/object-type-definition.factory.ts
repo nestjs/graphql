@@ -109,11 +109,12 @@ export class ObjectTypeDefinitionFactory {
 
       let properties = [];
       if (metadata.interfaces) {
-        const implementedInterfaces = TypeMetadataStorage.getInterfacesMetadata()
-          .filter((it) =>
-            getInterfacesArray(metadata.interfaces).includes(it.target),
-          )
-          .map((it) => it.properties);
+        const implementedInterfaces =
+          TypeMetadataStorage.getInterfacesMetadata()
+            .filter((it) =>
+              getInterfacesArray(metadata.interfaces).includes(it.target),
+            )
+            .map((it) => it.properties);
 
         implementedInterfaces.forEach((fields) =>
           properties.push(...(fields || [])),
@@ -154,9 +155,8 @@ export class ObjectTypeDefinitionFactory {
       if (!isUndefined(prototype)) {
         const parent = getParentType();
         if (parent) {
-          const parentFields = this.typeFieldsAccessor.extractFromInterfaceOrObjectType(
-            parent,
-          );
+          const parentFields =
+            this.typeFieldsAccessor.extractFromInterfaceOrObjectType(parent);
           fields = {
             ...parentFields,
             ...fields,
@@ -172,7 +172,7 @@ export class ObjectTypeDefinitionFactory {
     TSource extends object = any,
     TContext = {},
     TArgs = { [argName: string]: any },
-    TOutput = any
+    TOutput = any,
   >(field: PropertyMetadata, options: BuildSchemaOptions) {
     const rootFieldResolver = (root: object) => {
       const value = root[field.name];

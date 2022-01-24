@@ -1,4 +1,3 @@
-
 /*
  * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
@@ -8,11 +7,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface Cat {
-    id: number;
-    name: string;
-    age?: Nullable<number>;
-    color?: Nullable<string>;
-    weight?: Nullable<number>;
+  id: number;
+  name: string;
+  age?: Nullable<number>;
+  color?: Nullable<string>;
+  weight?: Nullable<number>;
 }
 
 type Nullable<T> = T | null;

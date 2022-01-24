@@ -19,14 +19,13 @@ export class OutputTypeFactory {
     buildOptions: BuildSchemaOptions,
     typeOptions: TypeOptions = {},
   ): GraphQLOutputType {
-    let gqlType:
-      | GraphQLOutputType
-      | undefined = this.typeMapperService.mapToScalarType(
-      typeRef,
-      buildOptions.scalarsMap,
-      buildOptions.dateScalarMode,
-      buildOptions.numberScalarMode,
-    );
+    let gqlType: GraphQLOutputType | undefined =
+      this.typeMapperService.mapToScalarType(
+        typeRef,
+        buildOptions.scalarsMap,
+        buildOptions.dateScalarMode,
+        buildOptions.numberScalarMode,
+      );
     if (!gqlType) {
       gqlType = this.typeDefinitionsStorage.getOutputTypeAndExtract(typeRef);
       if (!gqlType) {

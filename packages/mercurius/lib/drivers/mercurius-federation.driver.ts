@@ -48,5 +48,6 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     });
   }
 
+  /* eslit-disable-next-line @typescript-eslint/no-empty-function */
   public async stop(): Promise<void> {}
 }

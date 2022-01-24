@@ -18,9 +18,12 @@ export class OrphanedTypesFactory {
     if (types.length === 0) {
       return [];
     }
-    const interfaceTypeDefs = this.typeDefinitionsStorage.getAllInterfaceDefinitions();
-    const objectTypeDefs = this.typeDefinitionsStorage.getAllObjectTypeDefinitions();
-    const inputTypeDefs = this.typeDefinitionsStorage.getAllInputTypeDefinitions();
+    const interfaceTypeDefs =
+      this.typeDefinitionsStorage.getAllInterfaceDefinitions();
+    const objectTypeDefs =
+      this.typeDefinitionsStorage.getAllObjectTypeDefinitions();
+    const inputTypeDefs =
+      this.typeDefinitionsStorage.getAllInputTypeDefinitions();
     const classTypeDefs = [
       ...interfaceTypeDefs,
       ...objectTypeDefs,

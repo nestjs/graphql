@@ -163,7 +163,8 @@ export function getDescriptionOfNode(
 ): string {
   const sourceText = sourceFile.getFullText();
   // in case we decide to include "// comments"
-  const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/\/+.*|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
+  const replaceRegex =
+    /^ *\** *@.*$|^ *\/\*+ *|^ *\/\/+.*|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
   //const replaceRegex = /^ *\** *@.*$|^ *\/\*+ *|^ *\/+ *|^ *\*+ *| +$| *\**\/ *$/gim;
 
   const description = [];
@@ -191,9 +192,11 @@ export function getDescriptionOfNode(
   return description.join('\n');
 }
 
-export function findNullableTypeFromUnion(typeNode: UnionTypeNode, typeChecker: TypeChecker) {
-  return typeNode.types.find(
-    (tNode: TypeNode) =>
-      hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null)
+export function findNullableTypeFromUnion(
+  typeNode: UnionTypeNode,
+  typeChecker: TypeChecker,
+) {
+  return typeNode.types.find((tNode: TypeNode) =>
+    hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null),
   );
 }

@@ -20,7 +20,7 @@ export class UnionDefinitionFactory {
   public create(metadata: UnionMetadata): UnionDefinition {
     const getObjectType = (item: Type<unknown>) =>
       this.typeDefinitionsStorage.getObjectTypeByTarget(item).type;
-    const types = () => metadata.typesFn().map(item => getObjectType(item));
+    const types = () => metadata.typesFn().map((item) => getObjectType(item));
 
     return {
       id: metadata.id,
@@ -39,7 +39,7 @@ export class UnionDefinitionFactory {
       : (instance: any) => {
           const target = metadata
             .typesFn()
-            .find(Type => instance instanceof Type);
+            .find((Type) => instance instanceof Type);
 
           if (!target) {
             if (Reflect.has(instance, '__typename')) {
@@ -47,9 +47,8 @@ export class UnionDefinitionFactory {
             }
             throw new ReturnTypeCannotBeResolvedError(metadata.name);
           }
-          const objectDef = this.typeDefinitionsStorage.getObjectTypeByTarget(
-            target,
-          );
+          const objectDef =
+            this.typeDefinitionsStorage.getObjectTypeByTarget(target);
           return objectDef.type;
         };
   }

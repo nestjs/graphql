@@ -109,8 +109,7 @@ describe('GraphQL Federation', () => {
               {
                 id: '1',
                 title: 'HELLO WORLD',
-                body:
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
               },
             ],
           },
@@ -141,8 +140,7 @@ describe('GraphQL Federation', () => {
               {
                 id: '1',
                 title: 'HELLO WORLD',
-                body:
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 user: {
                   id: '5',
                 },

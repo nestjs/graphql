@@ -12,8 +12,8 @@
     "build": "tsc -b -v packages",
     "changelog": "lerna-changelog",
     "clean": "tsc -b --clean packages",
-    "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
-    "lint": "eslint 'lib/**/*.ts' --fix",
+    "format": "prettier {packages,tests}/**/*.ts --ignore-path ./.prettierignore --write",
+    "lint": "eslint '{packages,tests}/**/*.ts' --fix",
     "prepublish:npm": "npm run build && npm run changelog | pbcopy",
     "publish:npm": "lerna publish --conventional-commits",
     "prepublish:next": "npm run build",
@@ -27,19 +27,20 @@
   "devDependencies": {
     "@commitlint/cli": "15.0.0",
     "@commitlint/config-angular": "15.0.0",
-    "@typescript-eslint/eslint-plugin": "5.7.0",
-    "@typescript-eslint/parser": "5.7.0",
     "@types/graphql": "14.5.0",
     "@types/jest": "27.0.3",
     "@types/node": "17.0.0",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.0",
     "@types/ws": "8.2.2",
+    "@typescript-eslint/eslint-plugin": "5.7.0",
+    "@typescript-eslint/parser": "5.7.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
     "eslint": "8.6.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-prettier": "^4.0.0",
     "graphql": "15.8.0",
     "graphql-subscriptions": "2.0.0",
     "husky": "7.0.4",
@@ -68,7 +69,8 @@
   },
   "lint-staged": {
     "*.ts": [
-      "prettier --write"
+      "prettier --write",
+      "eslint --fix"
     ]
   },
   "husky": {

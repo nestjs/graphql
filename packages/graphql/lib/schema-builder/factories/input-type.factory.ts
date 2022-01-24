@@ -19,14 +19,13 @@ export class InputTypeFactory {
     buildOptions: BuildSchemaOptions,
     typeOptions: TypeOptions = {},
   ): GraphQLInputType {
-    let inputType:
-      | GraphQLInputType
-      | undefined = this.typeMapperService.mapToScalarType(
-      typeRef,
-      buildOptions.scalarsMap,
-      buildOptions.dateScalarMode,
-      buildOptions.numberScalarMode,
-    );
+    let inputType: GraphQLInputType | undefined =
+      this.typeMapperService.mapToScalarType(
+        typeRef,
+        buildOptions.scalarsMap,
+        buildOptions.dateScalarMode,
+        buildOptions.numberScalarMode,
+      );
     if (!inputType) {
       inputType = this.typeDefinitionsStorage.getInputTypeAndExtract(
         typeRef as any,

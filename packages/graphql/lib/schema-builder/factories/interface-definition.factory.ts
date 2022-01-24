@@ -105,9 +105,8 @@ export class InterfaceDefinitionFactory {
       this.orphanedReferenceRegistry.addToRegistryIfOrphaned(typeFn()),
     );
     const getParentType = () => {
-      const parentTypeDefinition = this.typeDefinitionsStorage.getInterfaceByTarget(
-        prototype,
-      );
+      const parentTypeDefinition =
+        this.typeDefinitionsStorage.getInterfaceByTarget(prototype);
       return parentTypeDefinition ? parentTypeDefinition.type : undefined;
     };
 
@@ -150,9 +149,10 @@ export class InterfaceDefinitionFactory {
       if (!isUndefined(prototype.prototype)) {
         const parentClassRef = getParentType();
         if (parentClassRef) {
-          const parentFields = this.typeFieldsAccessor.extractFromInterfaceOrObjectType(
-            parentClassRef,
-          );
+          const parentFields =
+            this.typeFieldsAccessor.extractFromInterfaceOrObjectType(
+              parentClassRef,
+            );
           fields = {
             ...parentFields,
             ...fields,

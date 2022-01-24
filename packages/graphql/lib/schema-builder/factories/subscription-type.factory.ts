@@ -13,7 +13,8 @@ export class SubscriptionTypeFactory {
     options: BuildSchemaOptions,
   ): GraphQLObjectType {
     const objectTypeName = 'Subscription';
-    const subscriptionsMetadata = TypeMetadataStorage.getSubscriptionsMetadata();
+    const subscriptionsMetadata =
+      TypeMetadataStorage.getSubscriptionsMetadata();
 
     return this.rootTypeFactory.create(
       typeRefs,

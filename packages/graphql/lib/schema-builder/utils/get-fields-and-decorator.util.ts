@@ -23,10 +23,8 @@ export function getFieldsAndDecoratorForType<T>(objType: Type<T>) {
     skipFieldLazyMetadata: true,
   });
 
-  const [
-    classMetadata,
-    decoratorFactory,
-  ] = getClassMetadataAndFactoryByTargetAndType(classType, objType);
+  const [classMetadata, decoratorFactory] =
+    getClassMetadataAndFactoryByTargetAndType(classType, objType);
 
   TypeMetadataStorage.loadClassPluginMetadata([classMetadata]);
   TypeMetadataStorage.compileClassMetadata([classMetadata]);

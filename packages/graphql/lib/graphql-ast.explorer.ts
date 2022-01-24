@@ -330,10 +330,8 @@ export class GraphQLAstExplorer {
 
     const isArray = type.kind === 'ListType';
     if (isArray) {
-      const {
-        type: arrayType,
-        required: arrayTypeRequired,
-      } = this.getNestedType(get(type, 'type'));
+      const { type: arrayType, required: arrayTypeRequired } =
+        this.getNestedType(get(type, 'type'));
 
       const typeName = this.addSymbolIfRoot(get(arrayType, 'name.value'));
       const name = arrayTypeRequired
@@ -356,9 +354,7 @@ export class GraphQLAstExplorer {
     };
   }
 
-  getNestedType(
-    type: TypeNode,
-  ): {
+  getNestedType(type: TypeNode): {
     type: TypeNode;
     required: boolean;
   } {
@@ -378,9 +374,9 @@ export class GraphQLAstExplorer {
     return isDefault ? defaults[typeName] : typeName;
   }
 
-  getDefaultTypes(
-    options: DefinitionsGeneratorOptions,
-  ): { [type: string]: string } {
+  getDefaultTypes(options: DefinitionsGeneratorOptions): {
+    [type: string]: string;
+  } {
     return {
       String: options.defaultTypeMapping?.String ?? 'string',
       Int: options.defaultTypeMapping?.Int ?? 'number',

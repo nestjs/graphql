@@ -42,7 +42,9 @@ export class TypeDefinitionsStorage {
   private outputTypeDefinitionsLinks?: Map<GqlOutputTypeKey, GqlOutputType>;
 
   addEnums(enumDefs: EnumDefinition[]) {
-    enumDefs.forEach(item => this.enumTypeDefinitions.set(item.enumRef, item));
+    enumDefs.forEach((item) =>
+      this.enumTypeDefinitions.set(item.enumRef, item),
+    );
   }
 
   getEnumByObject(obj: object): EnumDefinition {
@@ -54,7 +56,7 @@ export class TypeDefinitionsStorage {
   }
 
   addUnions(unionDefs: UnionDefinition[]) {
-    unionDefs.forEach(item => this.unionTypeDefinitions.set(item.id, item));
+    unionDefs.forEach((item) => this.unionTypeDefinitions.set(item.id, item));
   }
 
   getUnionBySymbol(key: symbol): UnionDefinition {
@@ -62,7 +64,7 @@ export class TypeDefinitionsStorage {
   }
 
   addInterfaces(interfaceDefs: InterfaceTypeDefinition[]) {
-    interfaceDefs.forEach(item =>
+    interfaceDefs.forEach((item) =>
       this.interfaceTypeDefinitions.set(item.target, item),
     );
   }
@@ -76,7 +78,9 @@ export class TypeDefinitionsStorage {
   }
 
   addInputTypes(inputDefs: InputTypeDefinition[]) {
-    inputDefs.forEach(item => this.inputTypeDefinitions.set(item.target, item));
+    inputDefs.forEach((item) =>
+      this.inputTypeDefinitions.set(item.target, item),
+    );
   }
 
   getInputTypeByTarget(type: Function): InputTypeDefinition {
@@ -88,7 +92,7 @@ export class TypeDefinitionsStorage {
   }
 
   addObjectTypes(objectDefs: ObjectTypeDefinition[]) {
-    objectDefs.forEach(item =>
+    objectDefs.forEach((item) =>
       this.objectTypeDefinitions.set(item.target, item),
     );
   }

@@ -11,6 +11,6 @@ export class UsersService {
   ];
 
   findById(id: string) {
-    return Promise.resolve(this.users.find(p => p.id === id));
+    return Promise.resolve(this.users.find((p) => p.id === id));
   }
 }

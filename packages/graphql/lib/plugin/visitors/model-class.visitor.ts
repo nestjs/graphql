@@ -3,7 +3,12 @@ import * as ts from 'typescript';
 import { HideField } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
-import { findNullableTypeFromUnion, getDescriptionOfNode, isNull, isUndefined } from '../utils/ast-utils';
+import {
+  findNullableTypeFromUnion,
+  getDescriptionOfNode,
+  isNull,
+  isUndefined,
+} from '../utils/ast-utils';
 import {
   getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
@@ -135,11 +140,13 @@ export class ModelClassVisitor {
     pluginOptions?: PluginOptions,
   ): ts.ObjectLiteralExpression {
     const type = typeChecker.getTypeAtLocation(node);
-    const isNullable = !!node.questionToken || isNull(type) || isUndefined(type);
+    const isNullable =
+      !!node.questionToken || isNull(type) || isUndefined(type);
 
     const properties = [
       ...existingProperties,
-      !hasPropertyKey('nullable', existingProperties) && isNullable &&
+      !hasPropertyKey('nullable', existingProperties) &&
+        isNullable &&
         ts.createPropertyAssignment('nullable', ts.createLiteral(isNullable)),
       this.createTypePropertyAssignment(
         node.type,
@@ -166,7 +173,7 @@ export class ModelClassVisitor {
     existingProperties: ts.NodeArray<ts.PropertyAssignment>,
     hostFilename: string,
     sourceFile?: ts.SourceFile,
-    pluginOptions?: PluginOptions
+    pluginOptions?: PluginOptions,
   ): ts.PropertyAssignment {
     const key = 'type';
     if (hasPropertyKey(key, existingProperties)) {
@@ -205,7 +212,7 @@ export class ModelClassVisitor {
       } else if (ts.isUnionTypeNode(node)) {
         const nullableType = findNullableTypeFromUnion(node, typeChecker);
         const remainingTypes = node.types.filter(
-          (item) => item !== nullableType
+          (item) => item !== nullableType,
         );
 
         if (remainingTypes.length === 1) {
@@ -223,7 +230,7 @@ export class ModelClassVisitor {
     if (!type) {
       return undefined;
     }
-    
+
     let typeReference = getTypeReferenceAsString(type, typeChecker);
     if (!typeReference) {
       return undefined;

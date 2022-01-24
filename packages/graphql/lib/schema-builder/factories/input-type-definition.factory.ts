@@ -56,9 +56,8 @@ export class InputTypeDefinitionFactory {
     const prototype = Object.getPrototypeOf(metadata.target);
 
     const getParentType = () => {
-      const parentTypeDefinition = this.typeDefinitionsStorage.getInputTypeByTarget(
-        prototype,
-      );
+      const parentTypeDefinition =
+        this.typeDefinitionsStorage.getInputTypeByTarget(prototype);
       return parentTypeDefinition ? parentTypeDefinition.type : undefined;
     };
     return () => {
@@ -97,9 +96,8 @@ export class InputTypeDefinitionFactory {
       if (!isUndefined(prototype.prototype)) {
         const parentClassRef = getParentType();
         if (parentClassRef) {
-          const parentFields = this.typeFieldsAccessor.extractFromInputType(
-            parentClassRef,
-          );
+          const parentFields =
+            this.typeFieldsAccessor.extractFromInputType(parentClassRef);
           fields = {
             ...parentFields,
             ...fields,

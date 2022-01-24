@@ -229,8 +229,9 @@ export class TypeMetadataStorageHost {
     this.compileResolversMetadata(resolversMetadata);
     this.compileExtendedResolversMetadata();
 
-    orphanedTypes
-      .forEach((type) => 'prototype' in type && this.applyPluginMetadata(type.prototype));
+    orphanedTypes.forEach(
+      (type) => 'prototype' in type && this.applyPluginMetadata(type.prototype),
+    );
   }
 
   loadClassPluginMetadata(metadata: ClassMetadata[]) {

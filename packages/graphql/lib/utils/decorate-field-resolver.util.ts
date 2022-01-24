@@ -5,7 +5,7 @@ export function decorateFieldResolverWithMiddleware<
   TSource extends object = any,
   TContext = {},
   TArgs = { [argName: string]: any },
-  TOutput = any
+  TOutput = any,
 >(
   originalResolveFnFactory: (
     ...args: [TSource, TArgs, TContext, GraphQLResolveInfo]
