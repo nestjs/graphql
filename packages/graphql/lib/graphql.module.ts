@@ -1,4 +1,4 @@
-import { Inject, Module } from '@nestjs/common';
+import { Inject, Logger, Module } from '@nestjs/common';
 import {
   DynamicModule,
   OnModuleDestroy,
@@ -48,6 +48,8 @@ export class GraphQLModule<
   TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
 > implements OnModuleInit, OnModuleDestroy
 {
+  private static readonly logger = new Logger('GraphQLModule');
+
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
   }
@@ -59,9 +61,15 @@ export class GraphQLModule<
     private readonly graphQlTypesLoader: GraphQLTypesLoader,
   ) {}
 
+  async onModuleDestroy() {
+    await this._graphQlAdapter.stop();
+  }
+
   static forRoot<TOptions extends Record<string, any> = GqlModuleOptions>(
     options: TOptions = {} as TOptions,
   ): DynamicModule {
+    this.assertDriver(options);
+
     return {
       module: GraphQLModule,
       providers: [
@@ -80,6 +88,7 @@ export class GraphQLModule<
   static forRootAsync<TOptions extends Record<string, any> = GqlModuleOptions>(
     options: GqlModuleAsyncOptions<TOptions, GqlOptionsFactory<TOptions>>,
   ): DynamicModule {
+    this.assertDriver(options);
     return {
       module: GraphQLModule,
       imports: options.imports,
@@ -150,7 +159,12 @@ export class GraphQLModule<
     });
   }
 
-  async onModuleDestroy() {
-    await this._graphQlAdapter.stop();
+  private static assertDriver(options: Record<string, any>) {
+    if (!options.driver) {
+      const errorMessage =
+        'Missing "driver" option. In the latest version of "@nestjs/graphql" package (v10) a new required configuration property called "driver" has been introduced. Check out the official documentation for more details on how to migrate ("Quick start" chapter).';
+      this.logger.error(errorMessage);
+      throw new Error(errorMessage);
+    }
   }
 }
