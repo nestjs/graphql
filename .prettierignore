@@ -1,1 +1,2 @@
-tests/generated-definitions/*.ts
+packages/**/tests/generated-definitions/*.ts
+packages/**/tests/**/*.fixture.ts
