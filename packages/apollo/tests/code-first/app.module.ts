@@ -11,7 +11,8 @@ import { RecipesModule } from './recipes/recipes.module';
     RecipesModule,
     DirectionsModule,
     CatsModule,
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
       debug: false,
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
