@@ -11,19 +11,21 @@ export class BaseExplorerService {
     if (!include || isEmpty(include)) {
       return [...modulesContainer.values()];
     }
-    const whitelisted = this.includeWhitelisted(modulesContainer, include);
-
-    const modules = [];
-    const toCheck = [...whitelisted];
+    const explicitlyWhitelisted = this.includeWhitelisted(
+      modulesContainer,
+      include,
+    );
+    const modulesToInclude = [];
+    const toCheck = [...explicitlyWhitelisted];
     while (toCheck.length) {
-      const mod = toCheck.pop();
-      if (!modules.includes(mod)) {
-        modules.push(mod);
-        toCheck.push(...mod.imports);
+      const moduleRef = toCheck.pop();
+      if (!modulesToInclude.includes(moduleRef)) {
+        modulesToInclude.push(moduleRef);
+        toCheck.push(...moduleRef.imports);
       }
     }
 
-    return modules;
+    return modulesToInclude;
   }
 
   includeWhitelisted(
