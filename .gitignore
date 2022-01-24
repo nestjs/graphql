@@ -1,5 +1,5 @@
 # dependencies
-/node_modules
+node_modules
 
 # IDE
 /.idea
@@ -18,5 +18,5 @@ test-schema.graphql
 *.test-definitions.ts
 
 # dist
-/lib/src
-/dist
+packages/**/dist
+**/*.tsbuildinfo

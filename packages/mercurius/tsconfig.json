@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.build.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@nestjs/graphql": ["../graphql/lib"],
+      "@nestjs/graphql/*": ["../graphql/lib/*"],
+    }
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

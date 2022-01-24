@@ -1,0 +1,64 @@
+{
+  "name": "@nestjs/apollo",
+  "version": "9.1.1",
+  "description": "Nest - modern, fast, powerful node.js web framework (@apollo)",
+  "author": "Kamil Mysliwiec",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/nestjs/graphql#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nestjs/graphql.git"
+  },
+  "scripts": {
+    "test:e2e": "jest --config ./tests/jest-e2e.ts --runInBand",
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.ts --runInBand --watch"
+  },
+  "bugs": {
+    "url": "https://github.com/nestjs/graphql/issues"
+  },
+  "devDependencies": {
+    "@apollo/gateway": "0.44.1",
+    "@nestjs/common": "8.2.3",
+    "@nestjs/core": "8.2.3",
+    "@nestjs/platform-express": "8.2.3",
+    "@nestjs/platform-fastify": "8.2.3",
+    "@nestjs/testing": "8.2.3",
+    "apollo-cache-inmemory": "1.6.6",
+    "apollo-client": "2.6.10",
+    "apollo-link-ws": "1.0.20",
+    "apollo-server-core": "3.5.0",
+    "apollo-server-express": "3.5.0",
+    "apollo-server-fastify": "3.5.0"
+  },
+  "dependencies": {
+    "@graphql-tools/utils": "8.5.5",
+    "lodash.omit": "4.5.0"
+  },
+  "peerDependencies": {
+    "@apollo/gateway": "^0.44.1",
+    "@nestjs/common": "^8.2.3",
+    "@nestjs/core": "^8.2.3",
+    "apollo-server-core": "^3.5.0",
+    "apollo-server-express": "^3.5.0",
+    "apollo-server-fastify": "^3.5.0"
+  },
+  "peerDependenciesMeta": {
+    "@apollo/gateway": {
+      "optional": true
+    },
+    "apollo-server-core": {
+      "optional": true
+    },
+    "apollo-server-express": {
+      "optional": true
+    },
+    "apollo-server-fastify": {
+      "optional": true
+    }
+  }
+}
