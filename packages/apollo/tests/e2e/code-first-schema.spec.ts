@@ -20,6 +20,7 @@ import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
 import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
 import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
+import { CatsResolver } from '../code-first/cats/cats.resolver';
 import {
   getMutation,
   getMutationByName,
@@ -29,7 +30,6 @@ import {
   getSubscriptionByName,
 } from '../utils/introspection-schema.utils';
 import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
-import { CatsResolver } from '../code-first/cats/cats.resolver';
 
 describe('Code-first - schema factory', () => {
   let schemaFactory: GraphQLSchemaFactory;
