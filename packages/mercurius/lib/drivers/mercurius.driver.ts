@@ -1,5 +1,5 @@
 import { isFunction } from '@nestjs/common/utils/shared.utils';
-import { AbstractGraphQLDriver } from '@nestjs/graphql/drivers/abstract-graphql.driver';
+import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
