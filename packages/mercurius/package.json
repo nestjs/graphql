@@ -32,7 +32,7 @@
     "mercurius-integration-testing": "3.2.0"
   },
   "dependencies": {
-    "@graphql-tools/utils": "8.5.5"
+    "@graphql-tools/utils": "8.6.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.2.3",

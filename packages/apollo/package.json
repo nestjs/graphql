@@ -36,7 +36,7 @@
     "apollo-server-fastify": "3.6.2"
   },
   "dependencies": {
-    "@graphql-tools/utils": "8.5.5",
+    "@graphql-tools/utils": "8.6.1",
     "lodash.omit": "4.5.0"
   },
   "peerDependencies": {
