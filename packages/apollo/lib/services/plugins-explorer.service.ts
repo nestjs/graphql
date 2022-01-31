@@ -1,7 +1,6 @@
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { ModulesContainer } from '@nestjs/core/injector/modules-container';
-import { GqlModuleOptions } from '@nestjs/graphql/interfaces/gql-module-options.interface';
-import { BaseExplorerService } from '@nestjs/graphql/services/base-explorer.service';
+import { BaseExplorerService, GqlModuleOptions } from '@nestjs/graphql';
 import { PLUGIN_METADATA } from '../apollo.constants';
 
 export class PluginsExplorerService extends BaseExplorerService {

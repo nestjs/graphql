@@ -7,6 +7,7 @@ import {
   ObjectType,
 } from '@nestjs/graphql';
 import { METADATA_FACTORY_NAME } from '@nestjs/graphql/plugin/plugin-constants';
+
 @InterfaceType()
 export abstract class Base {
   @Field((type) => ID)

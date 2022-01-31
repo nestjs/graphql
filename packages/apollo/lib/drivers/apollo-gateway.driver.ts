@@ -19,4 +19,13 @@ export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverCon
       gateway,
     });
   }
+
+  public async mergeDefaultOptions(
+    options: Record<string, any>,
+  ): Promise<Record<string, any>> {
+    return {
+      ...options,
+      server: await super.mergeDefaultOptions(options?.server ?? {}),
+    };
+  }
 }

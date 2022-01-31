@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/mercurius",
-  "version": "9.1.1",
+  "version": "9.2.1",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -24,10 +24,10 @@
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "devDependencies": {
-    "@nestjs/common": "8.2.3",
-    "@nestjs/platform-fastify": "8.2.3",
-    "@nestjs/testing": "8.2.3",
-    "fastify": "3.25.0",
+    "@nestjs/common": "8.2.6",
+    "@nestjs/platform-fastify": "8.2.6",
+    "@nestjs/testing": "8.2.6",
+    "fastify": "3.27.0",
     "mercurius": "8.12.0",
     "mercurius-integration-testing": "3.2.0"
   },

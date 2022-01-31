@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.0",
+  "version": "9.2.0",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "command": {
@@ -11,7 +11,9 @@
     }
   },
   "changelog": {
-    "ignoreCommitters": ["allcontributors"],
+    "ignoreCommitters": [
+      "allcontributors"
+    ],
     "labels": {
       "enhancement": ":rocket: New Feature",
       "core": ":earth_asia: Core",
