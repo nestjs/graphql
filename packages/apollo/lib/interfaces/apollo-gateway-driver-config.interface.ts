@@ -1,14 +1,28 @@
 import { GatewayConfig } from '@apollo/gateway';
+import { Type } from '@nestjs/common';
 import {
   GqlModuleAsyncOptions,
-  GqlModuleOptions,
   GqlOptionsFactory,
+  GraphQLDriver,
 } from '@nestjs/graphql';
+import { ApolloDriverConfig } from './apollo-driver-config.interface';
 
-export interface ApolloGatewayDriverConfig {
+export interface ApolloGatewayDriverConfig<
+  TDriver extends GraphQLDriver = any,
+> {
+  /**
+   * GraphQL gateway adapter
+   */
+  driver?: Type<TDriver>;
+  /**
+   * Gateway configuration
+   */
   gateway?: GatewayConfig;
+  /**
+   * Server configuration
+   */
   server?: Omit<
-    GqlModuleOptions,
+    ApolloDriverConfig,
     | 'typeDefs'
     | 'typePaths'
     | 'include'
