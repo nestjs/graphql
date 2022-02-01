@@ -36,6 +36,18 @@ export abstract class AbstractGraphQLDriver<
     return clonedOptions;
   }
 
+  public subscriptionWithFilter(
+    instanceRef: unknown,
+    filterFn: (
+      payload: any,
+      variables: any,
+      context: any,
+    ) => boolean | Promise<boolean>,
+    createSubscribeContext: Function,
+  ) {
+    return createSubscribeContext();
+  }
+
   protected getNormalizedPath(options: TOptions): string {
     const prefix = this.applicationConfig.getGlobalPrefix();
     const useGlobalPrefix = prefix && options.useGlobalPrefix;

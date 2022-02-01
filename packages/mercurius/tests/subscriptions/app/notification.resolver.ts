@@ -17,14 +17,12 @@ export class NotificationResolver {
 
   @UseGuards(AuthGuard)
   @Subscription(() => Notification, {
-    // filter(payload, variables, context) {
-    //   // console.log('in filter', { payload, variables, context });
-    //   // return (
-    //   //   context.user === payload.newNotification.recipient &&
-    //   //   payload.newNotification.id === variables.id
-    //   // );
-    //   return true;
-    // },
+    filter(payload, variables, context) {
+      return (
+        context.user === payload.newNotification.recipient &&
+        payload.newNotification.id === variables.id
+      );
+    },
   })
   newNotification(
     @Args('id', {

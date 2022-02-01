@@ -202,7 +202,7 @@ export class TypeMetadataStorageHost {
   }
 
   addMethodParamMetadata(metadata: MethodArgsMetadata) {
-    this.params.push(metadata);
+    this.params.unshift(metadata);
   }
 
   compile(orphanedTypes: (Function | object)[] = []) {

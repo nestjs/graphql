@@ -15,6 +15,7 @@ import {
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
+import { createAsyncIterator } from '../utils/async-iterator.util';
 
 const apolloPredefinedExceptions: Partial<
   Record<HttpStatus, typeof ApolloError | typeof UserInputError>
@@ -95,6 +96,23 @@ export abstract class ApolloBaseDriver<
     this.wrapContextResolver(options);
     this.wrapFormatErrorFn(options);
     return options;
+  }
+
+  public subscriptionWithFilter(
+    instanceRef: unknown,
+    filterFn: (
+      payload: any,
+      variables: any,
+      context: any,
+    ) => boolean | Promise<boolean>,
+    createSubscribeContext: Function,
+  ) {
+    return <TPayload, TVariables, TContext, TInfo>(
+      ...args: [TPayload, TVariables, TContext, TInfo]
+    ): any =>
+      createAsyncIterator(createSubscribeContext()(...args), (payload: any) =>
+        filterFn.call(instanceRef, payload, ...args.slice(1)),
+      );
   }
 
   protected async registerExpress(

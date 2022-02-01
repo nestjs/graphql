@@ -51,6 +51,21 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
     return options;
   }
 
+  public subscriptionWithFilter(
+    instanceRef: unknown,
+    filterFn: (
+      payload: any,
+      variables: any,
+      context: any,
+    ) => boolean | Promise<boolean>,
+    createSubscribeContext: Function,
+  ) {
+    return mercurius.withFilter(
+      createSubscribeContext(),
+      (...args: unknown[]) => filterFn.call(instanceRef, ...args),
+    ) as any;
+  }
+
   private wrapContextResolver(
     targetOptions: MercuriusDriverConfig,
     originalOptions: MercuriusDriverConfig = { ...targetOptions },

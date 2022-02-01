@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common/interfaces';
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { AbstractGraphQLDriver } from '.';
+import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver';
 import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';

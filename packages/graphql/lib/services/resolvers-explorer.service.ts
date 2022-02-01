@@ -3,6 +3,7 @@ import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   createContextId,
   MetadataScanner,
+  ModuleRef,
   ModulesContainer,
   REQUEST,
 } from '@nestjs/core';
@@ -18,7 +19,8 @@ import { Module } from '@nestjs/core/injector/module';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
 import { GraphQLResolveInfo } from 'graphql';
 import { head, identity } from 'lodash';
-import { GqlModuleOptions, SubscriptionOptions } from '..';
+import { SubscriptionOptions } from '../decorators/subscription.decorator';
+import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { Resolver } from '../enums/resolver.enum';
 import { GqlParamsFactory } from '../factories/params.factory';
@@ -30,8 +32,8 @@ import {
   SUBSCRIPTION_OPTIONS_METADATA,
   SUBSCRIPTION_TYPE,
 } from '../graphql.constants';
+import { GqlModuleOptions } from '../interfaces';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
-import { createAsyncIterator } from '../utils/async-iterator.util';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
@@ -49,6 +51,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     private readonly externalContextCreator: ExternalContextCreator,
     @Inject(GRAPHQL_MODULE_OPTIONS)
     private readonly gqlOptions: GqlModuleOptions,
+    private readonly moduleRef: ModuleRef,
   ) {
     super();
   }
@@ -58,13 +61,15 @@ export class ResolversExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
+    const gqlAdapter = this.moduleRef.get(AbstractGraphQLDriver);
     const resolvers = this.flatMap(modules, (instance, moduleRef) =>
-      this.filterResolvers(instance, moduleRef),
+      this.filterResolvers(gqlAdapter, instance, moduleRef),
     );
     return this.groupMetadata(resolvers);
   }
 
   filterResolvers(
+    gqlAdapter: AbstractGraphQLDriver,
     wrapper: InstanceWrapper,
     moduleRef: Module,
   ): ResolverMetadata[] {
@@ -118,6 +123,7 @@ export class ResolversExplorerService extends BaseExplorerService {
             instance[resolver.methodName],
           );
           return this.createSubscriptionMetadata(
+            gqlAdapter,
             createContext,
             subscriptionOptions,
             resolver,
@@ -238,6 +244,7 @@ export class ResolversExplorerService extends BaseExplorerService {
   }
 
   createSubscriptionMetadata(
+    gqlAdapter: AbstractGraphQLDriver,
     createSubscribeContext: Function,
     subscriptionOptions: SubscriptionOptions,
     resolverMetadata: ResolverMetadata,
@@ -255,16 +262,11 @@ export class ResolversExplorerService extends BaseExplorerService {
         ...resolverMetadata,
         callback: {
           ...baseCallbackMetadata,
-          subscribe: <TPayload, TVariables, TContext, TInfo>(
-            ...args: [TPayload, TVariables, TContext, TInfo]
-          ) =>
-            createAsyncIterator(createSubscribeContext()(...args), (payload) =>
-              (subscriptionOptions.filter as Function).call(
-                instanceRef,
-                payload,
-                ...args.slice(1),
-              ),
-            ),
+          subscribe: gqlAdapter.subscriptionWithFilter(
+            instanceRef,
+            subscriptionOptions.filter,
+            createSubscribeContext,
+          ),
         },
       };
     }
