@@ -1,6 +1,12 @@
 import { Injectable, Logger, Type } from '@nestjs/common';
 import { isEmpty, isFunction } from '@nestjs/common/utils/shared.utils';
-import { getIntrospectionQuery, graphql, GraphQLSchema } from 'graphql';
+import {
+  getIntrospectionQuery,
+  graphql,
+  GraphQLError,
+  GraphQLSchema,
+  version as GraphQLPackageVersion,
+} from 'graphql';
 import {
   SCALAR_NAME_METADATA,
   SCALAR_TYPE_METADATA,
@@ -69,7 +75,17 @@ export class GraphQLSchemaFactory {
 
     if (!options.skipCheck) {
       const introspectionQuery = getIntrospectionQuery();
-      const { errors } = await graphql(schema, introspectionQuery);
+      let errors: readonly GraphQLError[];
+      if (GraphQLPackageVersion.startsWith('15')) {
+        const executionResult = await graphql(schema, introspectionQuery);
+        errors = executionResult.errors;
+      } else {
+        const executionResult = await graphql({
+          schema,
+          source: introspectionQuery,
+        });
+        errors = executionResult.errors;
+      }
       if (errors) {
         throw new SchemaGenerationError(errors);
       }
