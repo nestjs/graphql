@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.2.7](https://github.com/nestjs/graphql/compare/v9.2.0...v9.2.7) (2022-02-02)
+
+
+### Bug Fixes
+
+* address minor issues, fix subscriptions support (mercurius) ([da8c23a](https://github.com/nestjs/graphql/commit/da8c23ac915cdfc2cebffe0cf38921301a7bb246))
+* **deps:** update dependency @graphql-tools/utils to v8.6.1 ([342ec1f](https://github.com/nestjs/graphql/commit/342ec1f5cd9f8f44b244e3fb09636a810e2785d3))
+* **deps:** update dependency chokidar to v3.5.3 ([5a5ef29](https://github.com/nestjs/graphql/commit/5a5ef2989ba46ef4f1065cc39bc1baca56483a1c))
+* **graphql:** add info on how to migrate, import only from root files ([bc68510](https://github.com/nestjs/graphql/commit/bc68510603af7dd6f938008bcd1f93b3ab45d2e0))
+* support gql v16 ([c498fc3](https://github.com/nestjs/graphql/commit/c498fc3614703205c628a68126a921ae717e5866))
+
+
+
+
+
 # 9.2.0 (2022-01-24)
 
 
