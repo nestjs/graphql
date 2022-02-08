@@ -279,22 +279,22 @@ export class ResolversExplorerService extends BaseExplorerService {
     };
   }
 
-  mapCtors(wrapper: InstanceWrapper): Function[] {
+  getAllCtors(): Function[] {
+    const modules = this.getModules(
+      this.modulesContainer,
+      this.gqlOptions.include || [],
+    );
+    const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
+    return resolvers;
+  }
+
+  private mapToCtor(wrapper: InstanceWrapper): Function[] {
     const { instance } = wrapper;
     if (!instance) {
       return undefined;
     }
 
     return instance.constructor;
-  }
-
-  getAllCtors(): Function[] {
-    const modules = this.getModules(
-      this.modulesContainer,
-      this.gqlOptions.include || [],
-    );
-    const resolvers = this.flatMap(modules, this.mapCtors).filter(Boolean);
-    return resolvers;
   }
 
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
