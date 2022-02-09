@@ -11,8 +11,10 @@ export class GqlExecutionContext
 {
   static create(context: ExecutionContext): GqlExecutionContext {
     const type = context.getType();
+    const args = context.getArgs();
     const gqlContext = new GqlExecutionContext(
-      context.getArgs(),
+      // Reference resolver args don't have root argument
+      args.length === 3 ? [undefined, ...args] : args,
       context.getClass(),
       context.getHandler(),
     );
