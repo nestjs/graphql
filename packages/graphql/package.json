@@ -34,7 +34,7 @@
     "ws": "8.5.0"
   },
   "devDependencies": {
-    "@apollo/subgraph": "0.1.5",
+    "@apollo/subgraph": "0.3.0",
     "@nestjs/common": "8.2.6",
     "@nestjs/core": "8.2.6",
     "@nestjs/testing": "8.2.6",
@@ -43,7 +43,7 @@
     "ts-morph": "12.0.0"
   },
   "peerDependencies": {
-    "@apollo/subgraph": "^0.1.5",
+    "@apollo/subgraph": "^0.1.5 || ^0.3.0",
     "@nestjs/common": "^8.2.3",
     "@nestjs/core": "^8.2.3",
     "graphql": "^15.8.0 || ^16.0.0",
