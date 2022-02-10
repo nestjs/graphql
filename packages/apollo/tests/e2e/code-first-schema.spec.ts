@@ -70,10 +70,10 @@ describe('Code-first - schema factory', () => {
         printedSchemaSnapshot,
       );
     });
-    it('should define 6 queries', async () => {
+    it('should define 7 queries', async () => {
       const type = getQuery(introspectionSchema);
 
-      expect(type.fields.length).toEqual(6);
+      expect(type.fields.length).toEqual(7);
       expect(type.fields.map((item) => item.name)).toEqual(
         expect.arrayContaining([
           'recipes',
@@ -185,6 +185,18 @@ describe('Code-first - schema factory', () => {
               description: null,
               isDeprecated: false,
               name: 'RAGDOLL',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'SOME_NEW_AWESOME_CAT',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'SOME_WEIRD_CAT',
             },
           ],
         }),

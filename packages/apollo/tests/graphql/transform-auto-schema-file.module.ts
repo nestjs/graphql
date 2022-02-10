@@ -10,7 +10,7 @@ import { CatsModule } from '../code-first/cats/cats.module';
   imports: [
     RecipesModule,
     DirectionsModule,
-    CatsModule,
+    CatsModule.register('useClass'),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.graphql',

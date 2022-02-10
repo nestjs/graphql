@@ -75,6 +75,7 @@ type Query {
     take: Int = 25
   ): [Recipe!]!
   move(direction: Direction!): Direction!
+  getAnimalName: String!
   catType(catType: CatType!): CatType!
 }
 
@@ -96,6 +97,8 @@ enum CatType {
   PERSIAN_CAT
   MAINE_COON
   RAGDOLL
+  SOME_NEW_AWESOME_CAT
+  SOME_WEIRD_CAT
 }
 
 type Mutation {
@@ -126,6 +129,8 @@ enum CatType {
   MAINE_COON
   PERSIAN_CAT
   RAGDOLL
+  SOME_NEW_AWESOME_CAT
+  SOME_WEIRD_CAT
 }
 
 type Category {
@@ -179,6 +184,7 @@ input NewRecipeInput {
 type Query {
   catType(catType: CatType!): CatType!
   categories: [Category!]!
+  getAnimalName: String!
   move(direction: Direction!): Direction!
 
   """get recipe by id"""
