@@ -82,8 +82,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nestjs/graphql"
-  },
-  "dependencies": {
-    "@graphql-tools/schema": "8.3.1"
   }
 }
