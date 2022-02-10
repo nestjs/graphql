@@ -3,7 +3,9 @@ import { CatsResolver } from './cats.resolver';
 
 @Module({})
 export class CatsModule {
-  static register(resolverRegistrationMethod: 'useClass'|'useFactory'|'useValue') {
+  static register(
+    resolverRegistrationMethod: 'useClass' | 'useFactory' | 'useValue',
+  ) {
     switch (resolverRegistrationMethod) {
       case 'useClass':
         return {
@@ -11,7 +13,7 @@ export class CatsModule {
           providers: [
             {
               provide: CatsResolver,
-              useClass: CatsResolver
+              useClass: CatsResolver,
             },
           ],
         };

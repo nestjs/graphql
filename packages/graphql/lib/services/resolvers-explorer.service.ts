@@ -288,12 +288,11 @@ export class ResolversExplorerService extends BaseExplorerService {
     return resolvers;
   }
 
-  private mapToCtor(wrapper: InstanceWrapper): Function[] {
+  private mapToCtor(wrapper: InstanceWrapper): Function {
     const { instance } = wrapper;
     if (!instance) {
       return undefined;
     }
-
     return instance.constructor;
   }
 
