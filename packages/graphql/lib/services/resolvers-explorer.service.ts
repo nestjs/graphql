@@ -284,8 +284,17 @@ export class ResolversExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
-    const resolvers = this.flatMap(modules, (instance) => instance.metatype);
+    const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
     return resolvers;
+  }
+
+  private mapToCtor(wrapper: InstanceWrapper): Function[] {
+    const { instance } = wrapper;
+    if (!instance) {
+      return undefined;
+    }
+
+    return instance.constructor;
   }
 
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
