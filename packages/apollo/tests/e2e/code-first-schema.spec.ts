@@ -29,6 +29,7 @@ import {
   getSubscriptionByName,
 } from '../utils/introspection-schema.utils';
 import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
+import { CatsResolver } from '../code-first/cats/cats.resolver';
 
 describe('Code-first - schema factory', () => {
   let schemaFactory: GraphQLSchemaFactory;
@@ -50,6 +51,7 @@ describe('Code-first - schema factory', () => {
         [
           RecipesResolver,
           DirectionsResolver,
+          CatsResolver,
           AbstractResolver,
           IRecipesResolver,
         ],
@@ -68,10 +70,10 @@ describe('Code-first - schema factory', () => {
         printedSchemaSnapshot,
       );
     });
-    it('should define 5 queries', async () => {
+    it('should define 6 queries', async () => {
       const type = getQuery(introspectionSchema);
 
-      expect(type.fields.length).toEqual(5);
+      expect(type.fields.length).toEqual(6);
       expect(type.fields.map((item) => item.name)).toEqual(
         expect.arrayContaining([
           'recipes',
@@ -79,6 +81,7 @@ describe('Code-first - schema factory', () => {
           'categories',
           'move',
           'recipe',
+          'catType',
         ]),
       );
     });
@@ -148,6 +151,40 @@ describe('Code-first - schema factory', () => {
               description: null,
               isDeprecated: true,
               name: 'Sideways',
+            },
+          ],
+        }),
+      );
+    });
+
+    it('should define "CatType" enum to use CAPITALIZED_UNDERSCORE', () => {
+      const type = introspectionSchema.types.find(
+        ({ name }) => name === 'CatType',
+      );
+
+      expect(type).toEqual(
+        expect.objectContaining({
+          kind: TypeKind.ENUM,
+          name: 'CatType',
+          description: 'Distinguish cats',
+          enumValues: [
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'PERSIAN_CAT',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'MAINE_COON',
+            },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'RAGDOLL',
             },
           ],
         }),

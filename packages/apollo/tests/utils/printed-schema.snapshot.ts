@@ -75,6 +75,7 @@ type Query {
     take: Int = 25
   ): [Recipe!]!
   move(direction: Direction!): Direction!
+  catType(catType: CatType!): CatType!
 }
 
 """Search result description"""
@@ -88,6 +89,13 @@ enum Direction {
   Left
   Right
   Sideways @deprecated(reason: "Replaced with Left or Right")
+}
+
+"""Distinguish cats"""
+enum CatType {
+  PERSIAN_CAT
+  MAINE_COON
+  RAGDOLL
 }
 
 type Mutation {
@@ -112,6 +120,13 @@ type Subscription {
 export const sortedPrintedSchemaSnapshot = `# ------------------------------------------------------
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
+
+"""Distinguish cats"""
+enum CatType {
+  MAINE_COON
+  PERSIAN_CAT
+  RAGDOLL
+}
 
 type Category {
   description: String!
@@ -162,6 +177,7 @@ input NewRecipeInput {
 }
 
 type Query {
+  catType(catType: CatType!): CatType!
   categories: [Category!]!
   move(direction: Direction!): Direction!
 
