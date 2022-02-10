@@ -161,8 +161,11 @@ export class GraphQLModule<
 
   private static assertDriver(options: Record<string, any>) {
     if (!options.driver) {
-      const errorMessage =
-        'Missing "driver" option. In the latest version of "@nestjs/graphql" package (v10) a new required configuration property called "driver" has been introduced. Check out the official documentation for more details on how to migrate (https://docs.nestjs.com/graphql/migration-guide).';
+      const errorMessage = `Missing "driver" option. In the latest version of "@nestjs/graphql" package (v10) a new required configuration property called "driver" has been introduced. Check out the official documentation for more details on how to migrate (https://docs.nestjs.com/graphql/migration-guide). Example:
+
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver: ApolloDriver,
+})`;
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
