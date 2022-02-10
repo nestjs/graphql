@@ -15,7 +15,7 @@
     "format": "prettier packages/**/*.ts --ignore-path ./.prettierignore --write",
     "lint": "eslint 'packages/**/*.ts' --fix",
     "prepublish:npm": "yarn build && yarn changelog | pbcopy",
-    "publish:npm": "lerna publish --conventional-commits",
+    "publish:npm": "lerna publish",
     "prepublish:next": "yarn build",
     "publish:next": "lerna publish --dist-tag next",
     "test:e2e": "lerna run test:e2e --parallel",
