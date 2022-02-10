@@ -6,6 +6,7 @@ export enum CatType {
   Ragdoll = 'ragdoll',
   SomeNewAwesomeCat = 'some-new-awesome-cat',
   SomeWEIRDCat = 'some-weird-cat',
+  anotherAwesomeCat = 'another-awesome-cat',
 }
 
 registerEnumType(CatType, {

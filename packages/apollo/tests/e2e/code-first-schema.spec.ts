@@ -198,6 +198,12 @@ describe('Code-first - schema factory', () => {
               isDeprecated: false,
               name: 'SOME_WEIRD_CAT',
             },
+            {
+              deprecationReason: null,
+              description: null,
+              isDeprecated: false,
+              name: 'ANOTHER_AWESOME_CAT',
+            },
           ],
         }),
       );

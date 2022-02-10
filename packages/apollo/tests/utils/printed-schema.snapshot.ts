@@ -99,6 +99,7 @@ enum CatType {
   RAGDOLL
   SOME_NEW_AWESOME_CAT
   SOME_WEIRD_CAT
+  ANOTHER_AWESOME_CAT
 }
 
 type Mutation {
@@ -126,6 +127,7 @@ export const sortedPrintedSchemaSnapshot = `# ----------------------------------
 
 """Distinguish cats"""
 enum CatType {
+  ANOTHER_AWESOME_CAT
   MAINE_COON
   PERSIAN_CAT
   RAGDOLL
