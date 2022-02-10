@@ -7,6 +7,10 @@ export class GqlParamsFactory implements ParamsFactory {
     if (!args) {
       return null;
     }
+    // Reference resolver args don't have root argument
+    if (args.length === 3) {
+      args = [undefined, ...args];
+    }
     switch (type as GqlParamtype) {
       case GqlParamtype.ROOT:
         return args[0];
