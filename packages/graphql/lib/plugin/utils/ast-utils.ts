@@ -272,7 +272,7 @@ export function createNamedImport(
       undefined,
       f.createNamedImports(
         what.map((name) =>
-          f.createImportSpecifier(undefined, f.createIdentifier(name)),
+          f.createImportSpecifier(false, undefined, f.createIdentifier(name)),
         ),
       ),
     ),

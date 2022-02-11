@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./apollo/tsconfig.build.json",
+    },
+    {
+      "path": "./graphql/tsconfig.build.json",
+    },
+    {
+      "path": "./mercurius/tsconfig.build.json",
+    },
+  ]
+}
