@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "10.0.1-pre.0",
+  "version": "10.0.1",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "changelog": {
