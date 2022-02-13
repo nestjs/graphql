@@ -38,6 +38,10 @@ describe('GraphQL (async class)', () => {
       });
   });
 
+  it('should get altair', () => {
+    return request(app.getHttpServer()).get('/altair').expect(200);
+  });
+
   afterEach(async () => {
     await app.close();
   });

@@ -4,6 +4,7 @@ import { join } from 'path';
 import { MercuriusDriverConfig } from '../../lib';
 import { MercuriusDriver } from '../../lib/drivers';
 import { CatsModule } from './cats/cats.module';
+import { altairPlugin } from './common/plugins/altair.plugin';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { CatsModule } from './cats/cats.module';
     GraphQLModule.forRoot<MercuriusDriverConfig>({
       driver: MercuriusDriver,
       typePaths: [join(__dirname, '**', '*.graphql')],
+      plugins: [altairPlugin],
     }),
   ],
 })

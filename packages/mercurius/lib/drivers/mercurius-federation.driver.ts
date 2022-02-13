@@ -8,6 +8,7 @@ import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { addPlugins } from '../utils/add-plugins.util';
 
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
@@ -48,6 +49,7 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     await app.register(mercurius, {
       ...adapterOptions,
     });
+    await addPlugins(app, options.plugins);
   }
 
   /* eslit-disable-next-line @typescript-eslint/no-empty-function */

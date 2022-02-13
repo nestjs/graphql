@@ -48,6 +48,10 @@ describe('GraphQL Fastify (global prefix)', () => {
         });
     });
 
+    it('should get altair', () => {
+      return request(app.getHttpServer()).get('/altair').expect(200);
+    });
+
     afterEach(async () => {
       await app.close();
     });

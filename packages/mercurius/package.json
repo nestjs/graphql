@@ -27,6 +27,7 @@
     "@nestjs/common": "8.2.6",
     "@nestjs/platform-fastify": "8.2.6",
     "@nestjs/testing": "8.2.6",
+    "altair-fastify-plugin": "^4.4.0",
     "fastify": "3.27.1",
     "mercurius": "8.12.0",
     "mercurius-integration-testing": "4.0.0"

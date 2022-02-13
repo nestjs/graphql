@@ -5,6 +5,7 @@ import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { addPlugins } from '../utils/add-plugins.util';
 
 export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   get instance(): FastifyInstance<
@@ -36,9 +37,11 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
     const app = httpAdapter.getInstance<FastifyInstance>();
+    const { plugins, ...rest } = options;
     await app.register(mercurius, {
-      ...options,
+      ...rest,
     });
+    await addPlugins(app, plugins);
   }
 
   public async stop(): Promise<void> {}

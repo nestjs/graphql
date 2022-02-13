@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MercuriusGatewayDriver } from '../../../lib/drivers';
+import { altairPlugin } from '../../graphql/common/plugins/altair.plugin';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MercuriusGatewayDriver } from '../../../lib/drivers';
           { name: 'posts', url: 'http://localhost:3012/graphql' },
         ],
       },
+      plugins: [altairPlugin],
     }),
   ],
 })

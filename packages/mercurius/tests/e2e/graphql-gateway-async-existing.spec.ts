@@ -72,6 +72,10 @@ describe('GraphQL gateway async-existing', () => {
       });
   });
 
+  it('should get altair', () => {
+    return request(gatewayApp.getHttpServer()).get('/altair').expect(200);
+  });
+
   afterEach(async () => {
     await postsApp.close();
     await usersApp.close();
