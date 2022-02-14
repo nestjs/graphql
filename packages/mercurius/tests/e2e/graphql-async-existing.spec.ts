@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import * as request from 'supertest';
 import { AsyncExistingApplicationModule } from '../graphql/async-options-existing.module';
+import { BASE_URL, PLUGIN_RESPONSE } from '../mock-plugin/contants';
 
 describe('GraphQL (async existing)', () => {
   let app: INestApplication;
@@ -38,8 +39,12 @@ describe('GraphQL (async existing)', () => {
       });
   });
 
-  it('should get altair', () => {
-    return request(app.getHttpServer()).get('/altair').expect(200);
+  describe('plugins test', () => {
+    it('should get the plugin', () => {
+      return request(app.getHttpServer())
+        .get(BASE_URL)
+        .expect(200, PLUGIN_RESPONSE);
+    });
   });
 
   afterEach(async () => {

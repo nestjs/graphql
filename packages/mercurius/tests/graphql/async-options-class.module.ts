@@ -3,14 +3,14 @@ import { GqlOptionsFactory, GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { MercuriusDriverConfig } from '../../lib';
 import { MercuriusDriver } from '../../lib/drivers';
+import { noOptionsPlugin } from '../mock-plugin/common/mock.mercurius-driver-plugin';
 import { CatsModule } from './cats/cats.module';
-import { altairPlugin } from './common/plugins/altair.plugin';
 
 class ConfigService implements GqlOptionsFactory {
   createGqlOptions(): MercuriusDriverConfig {
     return {
       typePaths: [join(__dirname, '**', '*.graphql')],
-      plugins: [altairPlugin],
+      plugins: [noOptionsPlugin],
     };
   }
 }

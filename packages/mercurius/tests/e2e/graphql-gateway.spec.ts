@@ -5,6 +5,7 @@ import * as request from 'supertest';
 import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
+import { NEW_URL, PLUGIN_RESPONSE } from '../mock-plugin/contants';
 
 describe('GraphQL Gateway', () => {
   let postsApp: INestApplication;
@@ -108,8 +109,12 @@ describe('GraphQL Gateway', () => {
       });
   });
 
-  it('should get altair', () => {
-    return request(gatewayApp.getHttpServer()).get('/altair').expect(200);
+  describe('plugins test', () => {
+    it('should get the plugin', () => {
+      return request(gatewayApp.getHttpServer())
+        .get(NEW_URL)
+        .expect(200, PLUGIN_RESPONSE);
+    });
   });
 
   afterEach(async () => {

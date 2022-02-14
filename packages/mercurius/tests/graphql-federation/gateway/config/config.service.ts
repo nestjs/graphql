@@ -3,7 +3,7 @@ import {
   MercuriusDriverConfig,
   MercuriusDriverConfigFactory,
 } from '../../../../lib';
-import { altairPlugin } from '../../../graphql/common/plugins/altair.plugin';
+import { noOptionsPlugin } from '../../../mock-plugin/common/mock.mercurius-driver-plugin';
 
 @Injectable()
 export class ConfigService implements MercuriusDriverConfigFactory {
@@ -15,7 +15,7 @@ export class ConfigService implements MercuriusDriverConfigFactory {
           { name: 'posts', url: 'http://localhost:3012/graphql' },
         ],
       },
-      plugins: [altairPlugin],
+      plugins: [noOptionsPlugin],
     };
   }
 }

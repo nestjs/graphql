@@ -3,8 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { MercuriusDriverConfig } from '../../lib';
 import { MercuriusDriver } from '../../lib/drivers';
+import { noOptionsPlugin } from '../mock-plugin/common/mock.mercurius-driver-plugin';
 import { CatsModule } from './cats/cats.module';
-import { altairPlugin } from './common/plugins/altair.plugin';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { altairPlugin } from './common/plugins/altair.plugin';
       driver: MercuriusDriver,
       useFactory: async () => ({
         typePaths: [join(__dirname, '**', '*.graphql')],
-        plugins: [altairPlugin],
+        plugins: [noOptionsPlugin],
       }),
     }),
   ],
