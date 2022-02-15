@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import {AppModule } from './federation-users.module';
+import { AppModule } from './federation-users.module';
 import {
   FastifyAdapter,
   NestFastifyApplication,

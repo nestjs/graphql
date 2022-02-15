@@ -79,8 +79,8 @@ type User @extends @key(fields: "id") {
   id: ID! @external
   posts: [Post!]!
 }
-`
-      }
+`,
+      },
     });
   });
 
@@ -138,11 +138,11 @@ type User @extends @key(fields: "id") {
 
   it('should return posts query result from gateway', async () => {
     return request(gatewayApp.getHttpServer())
-    .post('/graphql')
-    .send({
-      operationName: null,
-      variables: {},
-      query: `
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
         {
           search {
             __typename
@@ -156,17 +156,17 @@ type User @extends @key(fields: "id") {
             }
           }
         }`,
-    })
-    .expect(200, {
-      data: {
-        search: [
-          { __typename: 'User', id: '1' },
-          { __typename: 'Post', id: '2', title: 'lorem ipsum', authorId: 1 },
-        ],
-      },
-    });
+      })
+      .expect(200, {
+        data: {
+          search: [
+            { __typename: 'User', id: '1' },
+            { __typename: 'Post', id: '2', title: 'lorem ipsum', authorId: 1 },
+          ],
+        },
+      });
   });
-})
+});
 
 // describe.skip('Code-first - Federation', () => {
 //   let app: INestApplication;
