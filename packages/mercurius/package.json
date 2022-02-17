@@ -33,7 +33,7 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^8.2.3",
-    "@nestjs/graphql": "^9.1.2",
+    "@nestjs/graphql": "^10.0.0",
     "fastify": "^3.25.0",
     "mercurius": "^8.12.0 || ^9.0.0"
   }
