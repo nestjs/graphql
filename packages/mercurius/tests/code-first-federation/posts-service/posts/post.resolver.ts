@@ -1,6 +1,6 @@
 import { Args, Query, Resolver, ResolveReference } from '@nestjs/graphql';
 import { FederationSearchResultUnion } from '../unions/search-result.union';
-import { User } from '../user/user.entity';
+import { User } from '../users/user.entity';
 import { Post } from './post.entity';
 import { PostService } from './post.service';
 

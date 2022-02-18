@@ -1,5 +1,5 @@
 import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
-import { Post } from '../post/post.entity';
+import { Post } from '../posts/post.entity';
 
 @ObjectType()
 @Directive('@extends')
@@ -12,7 +12,7 @@ export class User {
   @Field((type) => [Post])
   public posts: Post[];
 
-  constructor(post: Partial<User>) {
-    Object.assign(this, post);
+  constructor(user: Partial<User>) {
+    Object.assign(this, user);
   }
 }
