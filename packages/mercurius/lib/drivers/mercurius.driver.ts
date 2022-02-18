@@ -75,8 +75,8 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
     } else if (isFunction(targetOptions.context)) {
       targetOptions.context = async (...args: unknown[]) => {
         const ctx = await (originalOptions.context as Function)(...args);
-        const { req, request } = args[0] as Record<string, unknown>;
-        return this.assignReqProperty(ctx, req ?? request);
+        const request = args[0] as Record<string, unknown>;
+        return this.assignReqProperty(ctx, request);
       };
     } else {
       targetOptions.context = (req: Record<string, unknown>) => {
