@@ -92,7 +92,8 @@ export class InterfaceDefinitionFactory {
             }
             throw new ReturnTypeCannotBeResolvedError(metadata.name);
           }
-          return this.typeDefinitionsStorage.getObjectTypeByTarget(target).type;
+          return this.typeDefinitionsStorage.getObjectTypeByTarget(target).type
+            ?.name;
         };
   }
 
