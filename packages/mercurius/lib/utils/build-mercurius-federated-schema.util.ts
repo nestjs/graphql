@@ -19,12 +19,11 @@ export function buildMercuriusFederatedSchema({
   });
 
   const subscriptionResolvers = resolvers.Subscription;
-  // if no Subscriptions are defined, this is undefined
   executableSchema = transformSchema(executableSchema, (type) => {
     if (isObjectType(type)) {
       const isSubscription = type.name === 'Subscription';
       forEach(type.getFields(), (value, key) => {
-        if (isSubscription) {
+        if (isSubscription && subscriptionResolvers) {
           const resolver = subscriptionResolvers[key];
           if (resolver && !value.subscribe) {
             value.subscribe = resolver.subscribe;
