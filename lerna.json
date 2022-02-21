@@ -7,7 +7,7 @@
   "useWorkspaces": true,
   "changelog": {
     "labels": {
-      "type: feature :tada:": "Features",
+      "feature": "Features",
       "bug": "Bug fixes",
       "enhancement": "Enhancements",
       "dependencies": "Dependencies"
