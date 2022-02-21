@@ -18,3 +18,4 @@ export * from './tokens';
 export * from './type-factories';
 export * from './type-helpers';
 export * from './utils/extend.util';
+export * from './utils/transform-schema.util';
