@@ -89,6 +89,11 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   resolverValidationOptions?: IResolverValidationOptions;
 
   /**
+   * Inherit missing resolvers from their interface types defined in the resolvers object.
+   */
+  inheritResolversFromInterfaces?: boolean;
+
+  /**
    * Function to be applied to the schema letting you register custom transformations.
    */
   transformSchema?: (
