@@ -28,7 +28,7 @@
     "@commitlint/cli": "16.2.1",
     "@commitlint/config-angular": "16.2.1",
     "@types/graphql": "14.5.0",
-    "@types/jest": "27.4.0",
+    "@types/jest": "27.4.1",
     "@types/node": "17.0.0",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.0",
@@ -60,10 +60,10 @@
   },
   "changelog": {
     "labels": {
-      "type: feature :tada:": "Features",
-      "type: bug :sob:": "Bug fixes",
-      "type: enhancement :wolf:": "Enhancements",
-      "type: docs :page_facing_up:": "Docs",
+      "feature": "Features",
+      "bug": "Bug fixes",
+      "enhancement": "Enhancements",
+      "docs": "Docs",
       "dependencies": "Dependencies"
     }
   },
