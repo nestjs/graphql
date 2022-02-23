@@ -58,7 +58,7 @@ type Recipe implements IRecipe {
   description: String!
 }
 
-type Query @extends {
+type Query {
   findPost(id: Float!): Post!
   getPosts: [Post!]!
   search: [FederationSearchResultUnion!]! @deprecated(reason: \"test\")
