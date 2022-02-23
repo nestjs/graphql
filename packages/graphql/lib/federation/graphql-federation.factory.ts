@@ -42,7 +42,7 @@ export class GraphQLFederationFactory {
   async mergeWithSchema<T extends GqlModuleOptions>(
     options: T = {} as T,
     buildFederatedSchema?: (
-      options: import('@apollo/subgraph/dist/buildSubgraphSchema').GraphQLSchemaModule,
+      options: BuildFederatedSchemaOptions,
     ) => GraphQLSchema,
   ): Promise<T> {
     const transformSchema = async (schema: GraphQLSchema) =>
