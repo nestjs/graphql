@@ -13,6 +13,11 @@ export type Enhancer = 'guards' | 'interceptors' | 'filters';
  */
 export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   /**
+   * Path to mount GraphQL API
+   */
+  path?: string;
+
+  /**
    * Type definitions
    */
   typeDefs?: string | string[];

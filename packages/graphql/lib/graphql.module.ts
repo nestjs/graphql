@@ -1,4 +1,4 @@
-import { Inject, Logger, Module } from '@nestjs/common';
+import { Inject, Logger, Module, RequestMethod } from '@nestjs/common';
 import {
   DynamicModule,
   OnModuleDestroy,
@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common/interfaces';
 import { HttpAdapterHost } from '@nestjs/core';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { ROUTE_MAPPED_MESSAGE } from '@nestjs/core/helpers/messages';
 import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver';
 import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
@@ -48,7 +49,7 @@ export class GraphQLModule<
   TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
 > implements OnModuleInit, OnModuleDestroy
 {
-  private static readonly logger = new Logger('GraphQLModule');
+  private static readonly logger = new Logger(GraphQLModule.name, { timestamp: true });
 
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
@@ -157,6 +158,7 @@ export class GraphQLModule<
       ...options,
       typeDefs: mergedTypeDefs,
     });
+    GraphQLModule.logger.log(ROUTE_MAPPED_MESSAGE(options.path, RequestMethod.POST));
   }
 
   private static assertDriver(options: Record<string, any>) {
