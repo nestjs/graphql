@@ -158,7 +158,10 @@ export class GraphQLModule<
       ...options,
       typeDefs: mergedTypeDefs,
     });
-    GraphQLModule.logger.log(ROUTE_MAPPED_MESSAGE(options.path, RequestMethod.POST));
+
+    if (options.path) {
+      GraphQLModule.logger.log(ROUTE_MAPPED_MESSAGE(options.path, RequestMethod.POST));
+    }
   }
 
   private static assertDriver(options: Record<string, any>) {
