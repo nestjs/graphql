@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx commitlint -c --config .commitlintrc.json -E --edit $1

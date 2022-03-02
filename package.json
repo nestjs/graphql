@@ -19,7 +19,8 @@
     "prepublish:next": "yarn build",
     "publish:next": "lerna publish --dist-tag next",
     "test:e2e": "lerna run test:e2e --parallel",
-    "test:e2e:dev": "lerna run test:e2e:dev --parallel"
+    "test:e2e:dev": "lerna run test:e2e:dev --parallel",
+    "prepare": "husky install"
   },
   "resolutions": {
     "graphql": "15.8.0"
@@ -72,12 +73,6 @@
       "prettier --write",
       "eslint --fix"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -c .commitlintrc.json -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
-    }
   },
   "repository": {
     "type": "git",
