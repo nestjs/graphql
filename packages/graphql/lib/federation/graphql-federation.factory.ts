@@ -280,6 +280,12 @@ export class GraphQLFederationFactory {
     options: T,
     resolvers: Function[],
   ) {
+    const { printSubgraphSchema } = loadPackage(
+      '@apollo/subgraph',
+      'ApolloFederation',
+      () => require('@apollo/subgraph'),
+    );
+
     const scalarsMap = this.scalarsExplorerService.getScalarsMap();
     try {
       const buildSchemaOptions = options.buildSchemaOptions || {};
@@ -298,6 +304,7 @@ export class GraphQLFederationFactory {
         },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
+        printSubgraphSchema,
       );
     } catch (err) {
       if (err && err.details) {
