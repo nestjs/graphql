@@ -824,11 +824,6 @@
   dependencies:
     tslib "~2.3.0"
 
-"@graphql-typed-document-node/core@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.0.tgz#0eee6373e11418bfe0b5638f654df7a4ca6a3950"
-  integrity sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==
-
 "@graphql-typed-document-node/core@^3.1.1":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.1.tgz#076d78ce99822258cf813ecc1e7fa460fa74d052"
@@ -4881,10 +4876,15 @@ fastify-cors@^6.0.0:
     fastify-plugin "^3.0.0"
     vary "^1.1.2"
 
-fastify-error@^0.3.0, fastify-error@^0.3.1:
+fastify-error@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-0.3.1.tgz#8eb993e15e3cf57f0357fc452af9290f1c1278d2"
   integrity sha512-oCfpcsDndgnDVgiI7bwFKAun2dO+4h84vBlkWsWnz/OUK9Reff5UFoFl241xTiLeHWX/vU9zkDVXqYUxjOwHcQ==
+
+fastify-error@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-1.0.0.tgz#696eaf420e5e57dba73f954c1cdba1394128fe36"
+  integrity sha512-RauR3BH7vy5QXra5kZpOt7KxR7G344LmKX+uRY+QrXjfZXa2RT9PE9svAdyTruxZCCgFcnnSu6dASRFMXx6z8A==
 
 fastify-formbody@5.2.0:
   version "5.2.0"
@@ -5439,12 +5439,12 @@ graceful-fs@^4.2.9:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.9.tgz#041b05df45755e587a24942279b9d113146e1c96"
   integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
 
-graphql-jit@^0.7.0:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.7.2.tgz#8cf08863c22377ea4a0c4b3c12a258f3c94934ca"
-  integrity sha512-u+FuMCBZfoB0v8Iw6blh+D3Feke2m6hS1TFhStJcLTCOyH+KmJPo3XCFJC5QLHxqT+PJEfyf0S+zKJUZjZrhsg==
+graphql-jit@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.7.3.tgz#cdc14d93efb8aba75cafb0be263cbafd4881d4d9"
+  integrity sha512-sb7j5K4uWjpzZvmhEzU9ei9bgZImmB8bnzE2u9Mi5IkDk1Hjb0wc5+r7XAy9dwWDfuAzFZnN5mOmKjsBu1+4xw==
   dependencies:
-    "@graphql-typed-document-node/core" "3.1.0"
+    "@graphql-typed-document-node/core" "^3.1.1"
     fast-json-stringify "^1.13.0"
     generate-function "^2.3.1"
     json-schema "^0.4.0"
@@ -5478,7 +5478,7 @@ graphql-ws@5.5.5:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.5.5.tgz#f375486d3f196e2a2527b503644693ae3a8670a9"
   integrity sha512-hvyIS71vs4Tu/yUYHPvGXsTgo0t3arU820+lT5VjZS2go0ewp2LqyCgxEN56CzOG7Iys52eRhHBiD1gGRdiQtw==
 
-graphql@*, graphql@15.8.0, graphql@^15.5.1:
+graphql@*, graphql@15.8.0, graphql@^16.0.0:
   version "15.8.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.8.0.tgz#33410e96b012fa3bdb1091cc99a94769db212b38"
   integrity sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==
@@ -7280,19 +7280,19 @@ mercurius-integration-testing@4.0.0:
     cookie "^0.4.2"
     ws "^8.4.2"
 
-mercurius@8.12.0:
-  version "8.12.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-8.12.0.tgz#ec53deabc0fab28d02cae6cbbad8b5f6745156b4"
-  integrity sha512-z36afRf2GgoS3NCHJUV6wKVg8jlNuCC/dkWsARWwrbZeVd7LXZRZclOu8z9aFP2+45P1KwtzZ/B+zG++oOKbQA==
+mercurius@9.3.3:
+  version "9.3.3"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-9.3.3.tgz#940c6563f909c23bff9ae30c872ffcc7b8568500"
+  integrity sha512-C6OFyu40MeEYrVCZItCliyWO4E4Xplprd0nv8jUTNPDozLKWQUHueXECEvhwH8XFYw0axdtxKAJVDaKkPZTOGg==
   dependencies:
     "@types/isomorphic-form-data" "^2.0.0"
     events.on "^1.0.1"
-    fastify-error "^0.3.1"
+    fastify-error "^1.0.0"
     fastify-plugin "^3.0.0"
     fastify-static "^4.2.2"
     fastify-websocket "^4.0.0"
-    graphql "^15.5.1"
-    graphql-jit "^0.7.0"
+    graphql "^16.0.0"
+    graphql-jit "^0.7.3"
     mqemitter "^4.4.1"
     p-map "^4.0.0"
     promise.allsettled "^1.0.4"
@@ -7300,7 +7300,7 @@ mercurius@8.12.0:
     safe-stable-stringify "^2.3.0"
     secure-json-parse "^2.4.0"
     single-user-cache "^0.6.0"
-    tiny-lru "^7.0.6"
+    tiny-lru "^8.0.1"
     undici "^4.8.0"
     ws "^8.2.2"
 
@@ -9753,11 +9753,6 @@ through@2, "through@>=2.2.7 <3", through@^2.3.4, through@^2.3.6, through@^2.3.8:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
-
-tiny-lru@^7.0.6:
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-7.0.6.tgz#b0c3cdede1e5882aa2d1ae21cb2ceccf2a331f24"
-  integrity sha512-zNYO0Kvgn5rXzWpL0y3RS09sMK67eGaQj9805jlK9G6pSadfriTczzLHFXa/xcW4mIRfmlB9HyQ/+SgL0V1uow==
 
 tiny-lru@^8.0.1:
   version "8.0.1"
