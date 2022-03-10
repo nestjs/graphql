@@ -7,26 +7,26 @@
   resolved "https://registry.yarnpkg.com/@apollo/core-schema/-/core-schema-0.2.0.tgz#4eb529ee27553eeb6c18cd27eb0b94f2bd8b22a8"
   integrity sha512-bhzZMIyzP3rynXwtUuEt2ENJIgKd9P/iR98VsuA3tOyYdWPjD5BfsrdWO0oIJXW/pjbbr0oHX5gqutFRKYuwAA==
 
-"@apollo/federation@^0.35.1":
-  version "0.35.1"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.35.1.tgz#8715731ad66b96cfdaa2b0408ea5f16839785542"
-  integrity sha512-8c9coGmulfgf6/lXfPigf+IpLFR5o9RoEynbfz3FIdTynRyGBO8iszjA6lBRUmcRX0HD1ihvnii71QnQk6DX4A==
+"@apollo/federation@^0.35.3":
+  version "0.35.3"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.35.3.tgz#3c1bb6f0c23f8dc819e221dd91e2c86effa840af"
+  integrity sha512-UWsgRhhIW2Uvnt0FHqr+pMAwXAsPcIfgajDRLkcTxmCV2/L+SnBY9Pu83BTf5exD9rDQgwJGe9PUuao8aoHYUA==
   dependencies:
-    "@apollo/subgraph" "^0.3.1"
+    "@apollo/subgraph" "^0.3.3"
     apollo-server-types "^3.0.2"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.48.1":
-  version "0.48.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.48.1.tgz#d9c2d63303eed408301540462473e3eeab12fba1"
-  integrity sha512-Rvq1Ol2CMdGG2/1X7Hr+9ISaDsDSKtsl6aS77pzRcDkMlfsFrIu5sX5AXx9azkEFeAICU4SAeCzm0O+hDRM4yw==
+"@apollo/gateway@0.48.3":
+  version "0.48.3"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.48.3.tgz#e990c62109d4bf1b8094bab09ac256f1b983751e"
+  integrity sha512-svEUgdf0I2NTopbljvO+/uKnYnziadA6RgFyiZKKGh4F8vPtiQthCQzmWl/Cv+dG5PzxaFS/fths4LbnKKPCBw==
   dependencies:
     "@apollo/core-schema" "^0.2.0"
-    "@apollo/federation" "^0.35.1"
-    "@apollo/query-planner" "^0.8.0"
+    "@apollo/federation" "^0.35.3"
+    "@apollo/query-planner" "^0.8.2"
     "@josephg/resolvable" "^1.0.1"
     "@opentelemetry/api" "^1.0.1"
-    "@types/node-fetch" "2.5.12"
+    "@types/node-fetch" "2.6.1"
     apollo-reporting-protobuf "^0.8.0 || ^3.0.0"
     apollo-server-caching "^0.7.0 || ^3.0.0"
     apollo-server-core "^2.23.0 || ^3.0.0"
@@ -59,19 +59,19 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-planner@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.8.0.tgz#d916e50a9047895809b81c4d575ae8ec8cd03c68"
-  integrity sha512-NscpSv3NfP01aAPOgMAuwCXaqBFAL2fwF3K8aw2ZKlTHDxugSi1/+QPH6cVXF85/zZTSnOf+BfFSeJIsxdwLMA==
+"@apollo/query-planner@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.8.2.tgz#aa3101feb3b939004f984da335f7dadad1dd7c70"
+  integrity sha512-ql/ZzSP1gi+4X2k134TZDYKW0EPb1XtRgpOui0ALm6ofHJMLmt1luLtbUOLhZ0LYwUdSq1uOwOC3r+aOteaWeQ==
   dependencies:
     chalk "^4.1.0"
     deep-equal "^2.0.5"
     pretty-format "^27.4.6"
 
-"@apollo/subgraph@0.3.1", "@apollo/subgraph@^0.3.1":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-0.3.1.tgz#33e2ca8f87a8b0bb988888de794361db04cedd95"
-  integrity sha512-MWqzfZEcvN86iwwgsgkFnkoBvv/wCdw/qyXjayuZ4wwQgVZ8NpFNbUxjRC0MwKNHwBU/ZH1oDHOnC8WbUuUMsg==
+"@apollo/subgraph@0.3.3", "@apollo/subgraph@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-0.3.3.tgz#0f9b2fa560d59c6b3c1994bfe84ceb81ccbd9720"
+  integrity sha512-VH8B0IEa960ajMApWPs0eu/kH28tDUbuXgGJN2ZUo9hIo6LtyPfDRATtHlMr2SeW1Vh3ukiZE3BW78zrtTHCUA==
 
 "@apollographql/apollo-tools@^0.5.1":
   version "0.5.2"
@@ -2313,10 +2313,10 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/node-fetch@2.5.12":
-  version "2.5.12"
-  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.12.tgz#8a6f779b1d4e60b7a57fb6fd48d84fb545b9cc66"
-  integrity sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==
+"@types/node-fetch@2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.1.tgz#8f127c50481db65886800ef496f20bbf15518975"
+  integrity sha512-oMqjURCaxoSIsHSr1E47QHzbmzNR5rK8McHuNb11BOM9cHcIK3Avy0s/b2JlXHoQGTYS3NsvWzV1M0iK7l0wbA==
   dependencies:
     "@types/node" "*"
     form-data "^3.0.0"
