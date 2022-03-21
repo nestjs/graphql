@@ -117,23 +117,26 @@ export class GraphQLAstExplorer {
 
     const fileStructure = tsFile.getStructure();
 
-    fileStructure.statements = definitions
-      .map((item) =>
-        this.toDefinitionStructures(
-          item as Readonly<TypeSystemDefinitionNode>,
-          mode,
-          options,
-        ),
-      )
-      .filter(Boolean);
-
-    tsFile.set(fileStructure);
-
     const header = options.additionalHeader
-      ? `${DEFINITIONS_FILE_HEADER}\n${options.additionalHeader}\n\n`
+      ? `${DEFINITIONS_FILE_HEADER}\n\n${options.additionalHeader}`
       : DEFINITIONS_FILE_HEADER;
-    tsFile.insertText(0, header);
-    tsFile.addTypeAlias({
+
+    fileStructure.statements = [header];
+
+    fileStructure.statements.push(
+      ...definitions
+        .map((item) =>
+          this.toDefinitionStructures(
+            item as Readonly<TypeSystemDefinitionNode>,
+            mode,
+            options,
+          ),
+        )
+        .filter(Boolean),
+    );
+
+    fileStructure.statements.push({
+      kind: StructureKind.TypeAlias,
       name: 'Nullable',
       isExported: false,
       type: 'T | null',
@@ -143,6 +146,8 @@ export class GraphQLAstExplorer {
         },
       ],
     });
+
+    tsFile.set(fileStructure);
 
     return tsFile;
   }

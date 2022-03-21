@@ -26,7 +26,7 @@ export const DEFINITIONS_FILE_HEADER = `
  */
 
 /* tslint:disable */
-/* eslint-disable */\n`;
+/* eslint-disable */`;
 
 export const GRAPHQL_SDL_FILE_HEADER = `\
 # ------------------------------------------------------
