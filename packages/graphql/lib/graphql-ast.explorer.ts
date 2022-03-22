@@ -354,42 +354,37 @@ export class GraphQLAstExplorer {
     name: string;
     required: boolean;
   } {
-    const { required, type } = this.getNestedType(typeNode);
+    const stringifyType = (typeNode: TypeNode) => {
+      const { type, required } = this.unwrapTypeIfNonNull(typeNode);
+      const isArray = type.kind === 'ListType';
 
-    const isArray = type.kind === 'ListType';
-    if (isArray) {
-      const { type: arrayType, required: arrayTypeRequired } =
-        this.getNestedType(get(type, 'type'));
-
-      const typeName = this.addSymbolIfRoot(get(arrayType, 'name.value'));
-      const name = arrayTypeRequired
+      if (isArray) {
+        const arrayType = get(type, 'type');
+        return required
+          ? `${stringifyType(arrayType)}[]`
+          : `Nullable<${stringifyType(arrayType)}[]>`;
+      }
+      const typeName = this.addSymbolIfRoot(get(type, 'name.value'));
+      return required
         ? this.getType(typeName, options)
         : `Nullable<${this.getType(typeName, options)}>`;
+    };
 
-      return {
-        name: required ? name + '[]' : `Nullable<${name}[]>`,
-        required,
-      };
-    }
-
-    const typeName = this.addSymbolIfRoot(get(type, 'name.value'));
-
+    const { required } = this.unwrapTypeIfNonNull(typeNode);
     return {
-      name: required
-        ? this.getType(typeName, options)
-        : `Nullable<${this.getType(typeName, options)}>`,
+      name: stringifyType(typeNode),
       required,
     };
   }
 
-  getNestedType(type: TypeNode): {
+  unwrapTypeIfNonNull(type: TypeNode): {
     type: TypeNode;
     required: boolean;
   } {
     const isNonNullType = type.kind === 'NonNullType';
     if (isNonNullType) {
       return {
-        type: this.getNestedType(get(type, 'type')).type,
+        type: this.unwrapTypeIfNonNull(get(type, 'type')).type,
         required: isNonNullType,
       };
     }
