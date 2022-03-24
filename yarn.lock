@@ -7271,10 +7271,10 @@ mercurius-integration-testing@4.0.0:
     cookie "^0.4.2"
     ws "^8.4.2"
 
-mercurius@8.12.1:
-  version "8.12.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-8.12.1.tgz#14e7c4131b17721670f68959e475521402204ac2"
-  integrity sha512-oRdp0d74Km+sY7sCY7AxIwpNdYr5tcrJyVyp3AV9kvyg0nVYkg8Lz8WhxToakZa1O3Jts58r4JomRf/XYGc3DQ==
+mercurius@8.12.2:
+  version "8.12.2"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-8.12.2.tgz#78a94c764d987f9efb9ade43ff4c79891131fe91"
+  integrity sha512-3bLLjGapSsYStSDNgcGOkz2biSzHIHVCMi7ecGBVXLS8uBGCb1dlruYS83rq74AhOLdpWMwWReZ6jqyuc8SZNw==
   dependencies:
     "@types/isomorphic-form-data" "^2.0.0"
     events.on "^1.0.1"
