@@ -9,6 +9,7 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
+import { registerMercuriusPlugins } from '../utils/register-mercurius-plugins.util';
 
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
@@ -47,9 +48,12 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
     const app = httpAdapter.getInstance<FastifyInstance>();
+    const plugins = options.plugins;
+    delete options.plugins;
     await app.register(mercurius, {
       ...adapterOptions,
     });
+    await registerMercuriusPlugins(app, plugins);
   }
 
   /* eslit-disable-next-line @typescript-eslint/no-empty-function */

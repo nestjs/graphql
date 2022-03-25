@@ -3,6 +3,7 @@ import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { registerMercuriusPlugins } from '../utils/register-mercurius-plugins.util';
 
 export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   get instance(): FastifyInstance<
@@ -23,9 +24,12 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
     }
 
     const app = httpAdapter.getInstance<FastifyInstance>();
+    const plugins = options.plugins;
+    delete options.plugins;
     await app.register(mercurius, {
       ...options,
     });
+    await registerMercuriusPlugins(app, plugins);
   }
 
   public async stop(): Promise<void> {}
