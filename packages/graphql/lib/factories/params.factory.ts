@@ -1,16 +1,16 @@
 import { ParamData } from '@nestjs/common';
 import { ParamsFactory } from '@nestjs/core/helpers/external-context-creator';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
+import { normalizeResolverArgs } from '../utils/normalize-resolver-args';
 
 export class GqlParamsFactory implements ParamsFactory {
   exchangeKeyForValue(type: number, data: ParamData, args: any) {
     if (!args) {
       return null;
     }
-    // Reference resolver args don't have root argument
-    if (args.length === 3) {
-      args = [undefined, ...args];
-    }
+
+    args = normalizeResolverArgs(args);
+
     switch (type as GqlParamtype) {
       case GqlParamtype.ROOT:
         return args[0];
