@@ -3,6 +3,7 @@
 // https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo-graphql/src/schema/transformSchema.ts
 
 import {
+  GraphQLDirective,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
@@ -67,6 +68,7 @@ export function transformSchema(
     query: replaceMaybeType(schemaConfig.query),
     mutation: replaceMaybeType(schemaConfig.mutation),
     subscription: replaceMaybeType(schemaConfig.subscription),
+    directives: replaceDirectives(schemaConfig.directives),
   });
 
   function recreateNamedType(type: GraphQLNamedType): GraphQLNamedType {
@@ -163,6 +165,16 @@ export function transformSchema(
       ...arg,
       type: replaceType(arg.type),
     }));
+  }
+
+  function replaceDirectives(directives: GraphQLDirective[]) {
+    return directives.map((directive) => {
+      const config = directive.toConfig();
+      return new GraphQLDirective({
+        ...config,
+        args: replaceArgs(config.args),
+      });
+    });
   }
 }
 

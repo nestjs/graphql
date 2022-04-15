@@ -33,7 +33,8 @@
     "apollo-link-ws": "1.0.20",
     "apollo-server-core": "3.6.7",
     "apollo-server-express": "3.6.7",
-    "apollo-server-fastify": "3.6.7"
+    "apollo-server-fastify": "3.6.7",
+    "apollo-server-plugin-response-cache": "3.5.2"
   },
   "dependencies": {
     "iterall": "1.3.0",
