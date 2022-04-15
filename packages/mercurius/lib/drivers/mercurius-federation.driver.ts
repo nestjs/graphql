@@ -29,6 +29,9 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
   }
 
   public async start(options: MercuriusDriverConfig) {
+    const plugins = options.plugins;
+    delete options.plugins;
+
     const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
       options,
       buildMercuriusFederatedSchema,
@@ -48,8 +51,6 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
     const app = httpAdapter.getInstance<FastifyInstance>();
-    const plugins = options.plugins;
-    delete options.plugins;
     await app.register(mercurius, {
       ...adapterOptions,
     });

@@ -7,7 +7,8 @@ export async function registerMercuriusPlugins(
 ): Promise<void> {
   if (!plugins || plugins.length === 0) return;
 
-  for (const plugin of plugins) {
+  for (let i = 0; i < plugins.length; i++) {
+    const plugin = plugins[i];
     await app.register(plugin.plugin, plugin.options);
   }
 }
