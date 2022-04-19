@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/tests",
+    "types": ["jest", "node"],
+    "rootDir": ".",
+    "resolveJsonModule": true,
+    "paths": {
+      "@nestjs/graphql": ["../graphql/lib"],
+      "@nestjs/graphql/*": ["../graphql/lib/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "../graphql/tsconfig.build.json"
+    }
+  ]
+}
