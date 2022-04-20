@@ -11,7 +11,7 @@ export type YogaDriverSubscriptionConfig = Omit<
   'graphql-ws' | 'subscriptions-transport-ws'
 > & {
   'graphql-ws'?: Omit<SubscriptionConfig['graphql-ws'], 'onSubscribe'>;
-  'subscriptions-tranport-ws'?: Omit<
+  'subscriptions-transport-ws'?: Omit<
     SubscriptionConfig['subscriptions-transport-ws'],
     'onOperation'
   >;
