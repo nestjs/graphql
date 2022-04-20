@@ -24,6 +24,7 @@ export class YogaDriver extends YogaBaseDriver {
     await super.start(opts);
 
     if (opts.installSubscriptionHandlers || opts.subscriptions) {
+      const { execute, subscribe } = this.yogaInstance.getEnveloped();
       const subscriptionsOptions: SubscriptionConfig = opts.subscriptions || {
         'subscriptions-transport-ws': {},
       };
@@ -32,6 +33,8 @@ export class YogaDriver extends YogaBaseDriver {
           schema: opts.schema,
           path: opts.path,
           context: opts.context,
+          execute,
+          subscribe,
           ...subscriptionsOptions,
         },
         this.httpAdapterHost.httpAdapter?.getHttpServer(),

@@ -2,7 +2,7 @@ import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 import { YogaDriverConfig } from '../interfaces';
-import { createServer } from '@graphql-yoga/node';
+import { createServer, YogaNodeServerInstance } from '@graphql-yoga/node';
 import { useApolloServerErrors } from '@envelop/apollo-server-errors';
 import { Logger } from '@nestjs/common';
 import { createAsyncIterator } from '../utils/async-iterator.util';
@@ -10,6 +10,8 @@ import { createAsyncIterator } from '../utils/async-iterator.util';
 export abstract class YogaBaseDriver<
   T extends YogaDriverConfig = YogaDriverConfig,
 > extends AbstractGraphQLDriver<T> {
+  protected yogaInstance: YogaNodeServerInstance<{}, {}, {}>;
+
   public async start(options: T) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
@@ -59,6 +61,8 @@ export abstract class YogaBaseDriver<
         : options.logging,
     });
 
+    this.yogaInstance = graphQLServer;
+
     app.use(options.path, graphQLServer);
   }
 
@@ -82,6 +86,8 @@ export abstract class YogaBaseDriver<
         ? app.log
         : options.logging,
     });
+
+    this.yogaInstance = graphQLServer;
 
     app.route({
       url: options.path,
