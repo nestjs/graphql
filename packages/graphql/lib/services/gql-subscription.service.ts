@@ -29,7 +29,7 @@ export type GraphQLWsSubscriptionsConfig = Partial<
 export type GraphQLSubscriptionTransportWsConfig = Partial<
   Pick<
     SubscriptionTransportWsServerOptions,
-    'onConnect' | 'onDisconnect' | 'keepAlive'
+    'onConnect' | 'onDisconnect' | 'onOperation' | 'keepAlive'
   >
 > & {
   path?: string;
