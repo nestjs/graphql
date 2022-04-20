@@ -5,7 +5,6 @@ import { printSchema } from 'graphql';
 import { YogaDriverConfig } from '../interfaces';
 import { YogaBaseDriver } from './yoga-base.driver';
 import type { ExecutionParams } from 'subscriptions-transport-ws';
-import { WebSocket } from 'ws';
 
 @Injectable()
 export class YogaDriver extends YogaBaseDriver {
@@ -71,7 +70,6 @@ export class YogaDriver extends YogaBaseDriver {
         subscriptionsOptions['subscriptions-transport-ws'].onOperation = async (
           _msg: any,
           params: ExecutionParams,
-          socket: WebSocket,
         ) => {
           const {
             schema,
