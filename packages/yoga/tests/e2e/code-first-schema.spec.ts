@@ -2,6 +2,7 @@ import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
+// @ts-expect-error
 import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
 import { Test } from '@nestjs/testing';
 import {

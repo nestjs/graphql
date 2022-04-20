@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
 import { join } from 'path';
-import { ApolloDriverConfig, ApolloDriverConfigFactory } from '../../../../lib';
+import { YogaDriverConfig, YogaDriverConfigFactory } from '../../../../lib';
 
 @Injectable()
-export class ConfigService implements ApolloDriverConfigFactory {
-  public createGqlOptions(): Partial<ApolloDriverConfig> {
+export class ConfigService implements YogaDriverConfigFactory {
+  public createGqlOptions(): Partial<YogaDriverConfig> {
     return {
       typePaths: [join(__dirname, '../**/*.graphql')],
-      plugins: [ApolloServerPluginInlineTraceDisabled()],
     };
   }
 }

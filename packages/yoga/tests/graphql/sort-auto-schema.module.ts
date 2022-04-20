@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '../../lib/drivers';
+import { YogaDriver, YogaDriverConfig } from '../../lib';
 import { DirectionsModule } from '../code-first/directions/directions.module';
 import { RecipesModule } from '../code-first/recipes/recipes.module';
 
@@ -8,8 +8,8 @@ import { RecipesModule } from '../code-first/recipes/recipes.module';
   imports: [
     RecipesModule,
     DirectionsModule,
-    GraphQLModule.forRoot({
-      driver: ApolloDriver,
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      driver: YogaDriver,
       autoSchemaFile: 'schema.graphql',
       sortSchema: true,
     }),

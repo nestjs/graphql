@@ -26,22 +26,29 @@ describe('GraphQL - Pipes', () => {
           'mutation {\n  addRecipe(newRecipeData: {title: "test", ingredients: []}) {\n    id\n  }\n}\n',
       })
       .expect(200, {
-        data: null,
         errors: [
           {
+            message: 'Bad Request Exception',
+            locations: [{ line: 2, column: 3 }],
+            path: ['addRecipe'],
             extensions: {
-              code: 'BAD_USER_INPUT',
-              response: {
-                error: 'Bad Request',
-                message: [
-                  'description must be longer than or equal to 30 characters',
-                ],
-                statusCode: 400,
+              code: 'INTERNAL_SERVER_ERROR',
+              exception: {
+                response: {
+                  statusCode: 400,
+                  message: [
+                    'description must be longer than or equal to 30 characters',
+                  ],
+                  error: 'Bad Request',
+                },
+                status: 400,
+                message: 'Bad Request Exception',
+                name: 'BadRequestException',
               },
             },
-            message: 'Bad Request Exception',
           },
         ],
+        data: null,
       });
   });
 

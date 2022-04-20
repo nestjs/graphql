@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GqlOptionsFactory, GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloDriver } from '../../lib/drivers';
+import { YogaDriver, YogaDriverConfig } from '../../lib';
 import { CatsModule } from './cats/cats.module';
 
 class ConfigService implements GqlOptionsFactory {
-  createGqlOptions(): ApolloDriverConfig {
+  createGqlOptions(): YogaDriverConfig {
     return {
       typePaths: [join(__dirname, '**', '*.graphql')],
       useGlobalPrefix: true,
@@ -17,8 +16,8 @@ class ConfigService implements GqlOptionsFactory {
 @Module({
   imports: [
     CatsModule,
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
+    GraphQLModule.forRootAsync<YogaDriverConfig>({
+      driver: YogaDriver,
       useClass: ConfigService,
     }),
   ],

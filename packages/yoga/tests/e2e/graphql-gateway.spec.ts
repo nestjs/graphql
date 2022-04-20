@@ -33,7 +33,7 @@ describe('GraphQL Gateway', () => {
     await gatewayApp.init();
   });
 
-  it(`should run lookup across boundaries`, () => {
+  it(`should run lookup across boundaries`, async () => {
     return request(gatewayApp.getHttpServer())
       .post('/graphql')
       .send({

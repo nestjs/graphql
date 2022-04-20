@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloFederationDriver } from '../../lib/drivers';
+import { YogaFederationDriver, YogaFederationDriverConfig } from '../../lib';
 import { PostModule } from './post/post.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { User } from './user/user.entity';
@@ -13,14 +11,12 @@ import { UserModule } from './user/user.module';
     UserModule,
     PostModule,
     RecipeModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloFederationDriver,
-      debug: false,
+    GraphQLModule.forRoot<YogaFederationDriverConfig>({
+      driver: YogaFederationDriver,
       autoSchemaFile: true,
       buildSchemaOptions: {
         orphanedTypes: [User],
       },
-      plugins: [ApolloServerPluginInlineTraceDisabled()],
     }),
   ],
 })

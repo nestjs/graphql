@@ -1,20 +1,14 @@
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import { YogaNodeServerInstance } from '@graphql-yoga/node';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 
 import { YogaDriverConfig } from '../interfaces';
 import { createServer } from '@graphql-yoga/node';
-import { Logger, Options } from '@nestjs/common';
+import { useApolloServerErrors } from '@envelop/apollo-server-errors';
+import { Logger } from '@nestjs/common';
 
 export abstract class YogaBaseDriver<
   T extends YogaDriverConfig = YogaDriverConfig,
 > extends AbstractGraphQLDriver<T> {
-  protected _server: YogaNodeServerInstance<{}, {}, {}>;
-
-  get instance(): YogaNodeServerInstance<{}, {}, {}> {
-    return this._server;
-  }
-
   public async start(options: T) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
@@ -28,9 +22,8 @@ export abstract class YogaBaseDriver<
     }
   }
 
-  public stop() {
-    return Promise.resolve(this._server?.stop());
-  }
+  /* eslit-disable-next-line @typescript-eslint/no-empty-function */
+  public async stop(): Promise<void> {}
 
   protected async registerExpress(
     options: T,
@@ -43,6 +36,9 @@ export abstract class YogaBaseDriver<
 
     const graphQLServer = createServer({
       ...options,
+      plugins: [...(options.plugins || []), useApolloServerErrors()],
+      // disable error masking by default
+      maskedErrors: options.maskedErrors ? true : false,
       // disable graphiql in production
       graphiql:
         (options.graphiql === undefined &&
@@ -58,9 +54,7 @@ export abstract class YogaBaseDriver<
         : options.logging,
     });
 
-    await graphQLServer.start();
-
-    this._server = graphQLServer;
+    app.use(options.path || '/graphql', graphQLServer);
   }
 
   protected async registerFastify(
@@ -77,6 +71,9 @@ export abstract class YogaBaseDriver<
       reply: FastifyReply;
     }>({
       ...options,
+      plugins: [...(options.plugins || []), useApolloServerErrors()],
+      // disable error masking by default
+      maskedErrors: options.maskedErrors ? true : false,
       // disable graphiql in production
       graphiql:
         (options.graphiql === undefined &&
@@ -85,11 +82,15 @@ export abstract class YogaBaseDriver<
           ? false
           : options.graphiql,
       // disable logging by default, if set to `true`, pass a nestjs Logger or pass custom logger
-      logging: app.log,
+      logging: !options.logging
+        ? false
+        : typeof options.logging === 'boolean'
+        ? app.log
+        : options.logging,
     });
 
     app.route({
-      url: options.path,
+      url: options.path || '/graphql',
       method: ['GET', 'POST', 'OPTIONS'],
       handler: async (req, reply) => {
         const response = await graphQLServer.handleIncomingMessage(req, {
@@ -105,9 +106,5 @@ export abstract class YogaBaseDriver<
         reply.send(response.body);
       },
     });
-
-    await graphQLServer.start();
-
-    this._server = graphQLServer;
   }
 }

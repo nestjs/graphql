@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloDriver } from '../../lib/drivers';
+import { YogaDriver, YogaDriverConfig } from '../../lib';
 import { CatsModule } from './cats/cats.module';
 import { ConfigModule } from './config.module';
 import { ConfigService } from './config.service';
@@ -9,8 +8,8 @@ import { ConfigService } from './config.service';
 @Module({
   imports: [
     CatsModule,
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
+    GraphQLModule.forRootAsync<YogaDriverConfig>({
+      driver: YogaDriver,
       imports: [ConfigModule],
       useExisting: ConfigService,
     }),

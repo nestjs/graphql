@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { DynamicModule } from '@nestjs/common/interfaces';
 import { GraphQLModule } from '@nestjs/graphql';
-import { GqlModuleOptions } from '@nestjs/graphql/interfaces/gql-module-options.interface';
-import { ApolloDriverConfig } from '../../../lib';
-import { ApolloDriver } from '../../../lib/drivers';
+import { GqlModuleOptions } from '@nestjs/graphql';
+import { YogaDriver, YogaDriverConfig } from '../../../lib';
 import { NotificationModule } from './notification.module';
 
 export type AppModuleConfig = {
   context?: GqlModuleOptions['context'];
-  subscriptions?: ApolloDriverConfig['subscriptions'];
+  subscriptions?: YogaDriverConfig['subscriptions'];
 };
 
 @Module({})
@@ -18,9 +17,8 @@ export class AppModule {
       module: AppModule,
       imports: [
         NotificationModule,
-        GraphQLModule.forRoot({
-          driver: ApolloDriver,
-          debug: false,
+        GraphQLModule.forRoot<YogaDriverConfig>({
+          driver: YogaDriver,
           context: options?.context,
           autoSchemaFile: true,
           subscriptions: options?.subscriptions,

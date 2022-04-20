@@ -1,40 +1,34 @@
 import { INestApplication } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
-import { gql } from 'graphql-tag';
-import { ApolloFederationDriver } from '../../lib';
+import { NestFactory } from '@nestjs/core';
+import * as request from 'supertest';
 import { ApplicationModule } from '../code-first-federation/app.module';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerBase;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
-      imports: [ApplicationModule],
-    }).compile();
-
-    app = module.createNestApplication();
+    app = await NestFactory.create(ApplicationModule, { logger: false });
     await app.init();
-    const graphqlModule =
-      app.get<GraphQLModule<ApolloFederationDriver>>(GraphQLModule);
-    apolloClient = graphqlModule.graphQlAdapter?.instance;
   });
 
   it(`should return query result`, async () => {
-    const response = await apolloClient.executeOperation({
-      query: gql`
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
         {
           _service {
             sdl
           }
         }
       `,
-    });
-    expect(response.data).toEqual({
-      _service: {
-        sdl: `interface IRecipe {
+      })
+      .expect(200, {
+        data: {
+          _service: {
+            sdl: `interface IRecipe {
   id: ID!
   title: String!
   externalField: String! @external
@@ -68,13 +62,18 @@ type Query {
 \"\"\"Search result description\"\"\"
 union FederationSearchResultUnion = Post | User
 `,
-      },
-    });
+          },
+        },
+      });
   });
 
   it('should return the search result', async () => {
-    const response = await apolloClient.executeOperation({
-      query: gql`
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
         {
           search {
             ... on Post {
@@ -87,24 +86,30 @@ union FederationSearchResultUnion = Post | User
           }
         }
       `,
-    });
-    expect(response.data).toEqual({
-      search: [
-        {
-          id: '1',
-          __typename: 'User',
+      })
+      .expect(200, {
+        data: {
+          search: [
+            {
+              id: '1',
+              __typename: 'User',
+            },
+            {
+              title: 'lorem ipsum',
+              __typename: 'Post',
+            },
+          ],
         },
-        {
-          title: 'lorem ipsum',
-          __typename: 'Post',
-        },
-      ],
-    });
+      });
   });
 
   it(`should return query result`, async () => {
-    const response = await apolloClient.executeOperation({
-      query: gql`
+    return request(app.getHttpServer())
+      .post('/graphql')
+      .send({
+        operationName: null,
+        variables: {},
+        query: `
         {
           recipe {
             id
@@ -115,14 +120,16 @@ union FederationSearchResultUnion = Post | User
           }
         }
       `,
-    });
-    expect(response.data).toEqual({
-      recipe: {
-        id: '1',
-        title: 'Recipe',
-        description: 'Interface description',
-      },
-    });
+      })
+      .expect(200, {
+        data: {
+          recipe: {
+            id: '1',
+            title: 'Recipe',
+            description: 'Interface description',
+          },
+        },
+      });
   });
 
   afterEach(async () => {

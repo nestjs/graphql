@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloGatewayDriverConfig } from '../../../lib';
-import { ApolloGatewayDriver } from '../../../lib/drivers';
+import { YogaGatewayDriverConfig, YogaGatewayDriver } from '../../../lib';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 
 @Module({
   imports: [
-    GraphQLModule.forRootAsync<ApolloGatewayDriverConfig>({
-      driver: ApolloGatewayDriver,
+    GraphQLModule.forRootAsync<YogaGatewayDriverConfig>({
+      driver: YogaGatewayDriver,
       useExisting: ConfigService,
       imports: [ConfigModule],
       inject: [ConfigService],

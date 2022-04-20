@@ -1,15 +1,16 @@
 import { DynamicModule, Inject, Module, Provider, Scope } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { ApolloDriver } from '../../../lib/drivers';
+import { YogaDriverConfig } from '../../../lib';
+import { YogaDriver } from '../../../lib/drivers';
 import { HelloResolver } from './hello.resolver';
 import { HelloService } from './hello.service';
 import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot({
-      driver: ApolloDriver,
+    GraphQLModule.forRoot<YogaDriverConfig>({
+      driver: YogaDriver,
       typePaths: [join(__dirname, '*.graphql')],
     }),
   ],
