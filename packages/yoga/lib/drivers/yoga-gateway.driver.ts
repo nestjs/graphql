@@ -3,7 +3,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { useApolloFederation as useApolloFederationPlugin } from '@envelop/apollo-federation';
 import type { ApolloGateway } from '@apollo/gateway';
 
-import { YogaGatewayDriverConfig, YogaDriverConfig } from '../interfaces';
+import { YogaGatewayDriverConfig } from '../interfaces';
 import { YogaBaseDriver } from './yoga-base.driver';
 
 @Injectable()
