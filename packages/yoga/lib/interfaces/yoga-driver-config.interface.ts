@@ -6,6 +6,17 @@ import {
   SubscriptionConfig,
 } from '@nestjs/graphql';
 
+export type YogaDriverSubscriptionConfig = Omit<
+  SubscriptionConfig,
+  'graphql-ws' | 'subscriptions-transport-ws'
+> & {
+  'graphql-ws'?: Omit<SubscriptionConfig['graphql-ws'], 'onSubscribe'>;
+  'subscriptions-tranport-ws'?: Omit<
+    SubscriptionConfig['subscriptions-transport-ws'],
+    'onOperation'
+  >;
+};
+
 export interface YogaDriverConfig
   extends GqlModuleOptions,
     Omit<YogaServerOptions<{}, {}, {}>, 'context' | 'schema'> {
@@ -17,7 +28,7 @@ export interface YogaDriverConfig
   /**
    * Subscriptions configuration.
    */
-  subscriptions?: SubscriptionConfig;
+  subscriptions?: YogaDriverSubscriptionConfig;
 }
 
 export type YogaDriverConfigFactory = GqlOptionsFactory<YogaDriverConfig>;

@@ -30,14 +30,14 @@ export class YogaDriver extends YogaBaseDriver {
         'subscriptions-transport-ws': {},
       };
       if (
-        opts.subscriptions?.['graphql-ws'] != null &&
-        opts.subscriptions?.['graphql-ws'] !== false
+        subscriptionsOptions['graphql-ws'] != null &&
+        subscriptionsOptions['graphql-ws'] !== false
       ) {
-        opts.subscriptions['graphql-ws'] =
-          typeof opts.subscriptions['graphql-ws'] === 'object'
-            ? opts.subscriptions['graphql-ws']
+        subscriptionsOptions['graphql-ws'] =
+          typeof subscriptionsOptions['graphql-ws'] === 'object'
+            ? subscriptionsOptions['graphql-ws']
             : {};
-        opts.subscriptions['graphql-ws'].onSubscribe = async (ctx, msg) => {
+        subscriptionsOptions['graphql-ws'].onSubscribe = async (ctx, msg) => {
           const {
             schema,
             execute,
@@ -61,14 +61,14 @@ export class YogaDriver extends YogaBaseDriver {
         };
       }
       if (
-        opts.subscriptions?.['subscriptions-transport-ws'] != null &&
-        opts.subscriptions?.['subscriptions-transport-ws'] !== false
+        subscriptionsOptions['subscriptions-transport-ws'] != null &&
+        subscriptionsOptions['subscriptions-transport-ws'] !== false
       ) {
-        opts.subscriptions['subscriptions-transport-ws'] =
-          typeof opts.subscriptions['subscriptions-transport-ws'] === 'object'
-            ? opts.subscriptions['subscriptions-transport-ws']
+        subscriptionsOptions['subscriptions-transport-ws'] =
+          typeof subscriptionsOptions['subscriptions-transport-ws'] === 'object'
+            ? subscriptionsOptions['subscriptions-transport-ws']
             : {};
-        opts.subscriptions['subscriptions-transport-ws'].onOperation = async (
+        subscriptionsOptions['subscriptions-transport-ws'].onOperation = async (
           _msg: any,
           params: ExecutionParams,
           socket: WebSocket,
@@ -80,7 +80,7 @@ export class YogaDriver extends YogaBaseDriver {
             contextFactory,
             parse,
             validate,
-          } = this.yogaInstance.getEnveloped(socket);
+          } = this.yogaInstance.getEnveloped(params.context);
 
           const args = {
             schema,
@@ -89,8 +89,8 @@ export class YogaDriver extends YogaBaseDriver {
               typeof params.query === 'string'
                 ? parse(params.query)
                 : params.query,
-            variableValues: params.variables,
-            contextValue: await contextFactory({ execute, subscribe }),
+            variables: params.variables,
+            context: await contextFactory({ execute, subscribe }),
           };
 
           const errors = validate(args.schema, args.document);
@@ -103,13 +103,12 @@ export class YogaDriver extends YogaBaseDriver {
         {
           schema: opts.schema,
           path: opts.path,
-          context: opts.context,
           execute: (...args) => {
-            const contextValue = args[4] || args[0].contextValue;
+            const contextValue = args[3] || args[0].contextValue;
             return contextValue.execute(...args);
           },
           subscribe: (...args) => {
-            const contextValue = args[4] || args[0].contextValue;
+            const contextValue = args[3] || args[0].contextValue;
             return contextValue.subscribe(...args);
           },
           ...subscriptionsOptions,
