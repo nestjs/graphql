@@ -5,6 +5,7 @@ import { YogaDriverConfig } from '../interfaces';
 import { createServer } from '@graphql-yoga/node';
 import { useApolloServerErrors } from '@envelop/apollo-server-errors';
 import { Logger } from '@nestjs/common';
+import { createAsyncIterator } from '../utils/async-iterator.util';
 
 export abstract class YogaBaseDriver<
   T extends YogaDriverConfig = YogaDriverConfig,
@@ -99,5 +100,22 @@ export abstract class YogaBaseDriver<
         reply.send(response.body);
       },
     });
+  }
+
+  public subscriptionWithFilter(
+    instanceRef: unknown,
+    filterFn: (
+      payload: any,
+      variables: any,
+      context: any,
+    ) => boolean | Promise<boolean>,
+    createSubscribeContext: Function,
+  ) {
+    return <TPayload, TVariables, TContext, TInfo>(
+      ...args: [TPayload, TVariables, TContext, TInfo]
+    ): any =>
+      createAsyncIterator(createSubscribeContext()(...args), (payload: any) =>
+        filterFn.call(instanceRef, payload, ...args.slice(1)),
+      );
   }
 }

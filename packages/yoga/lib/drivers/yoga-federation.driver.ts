@@ -39,5 +39,12 @@ export class YogaFederationDriver extends YogaBaseDriver<YogaFederationDriverCon
     const { typeDefs, resolvers, ...optsRest } = opts;
 
     await super.start(opts);
+
+    if (options.installSubscriptionHandlers || options.subscriptions) {
+      // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
+      throw new Error(
+        'No support for subscriptions yet when using Apollo Federation',
+      );
+    }
   }
 }
