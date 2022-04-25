@@ -7,23 +7,24 @@
   resolved "https://registry.yarnpkg.com/@apollo/core-schema/-/core-schema-0.2.0.tgz#4eb529ee27553eeb6c18cd27eb0b94f2bd8b22a8"
   integrity sha512-bhzZMIyzP3rynXwtUuEt2ENJIgKd9P/iR98VsuA3tOyYdWPjD5BfsrdWO0oIJXW/pjbbr0oHX5gqutFRKYuwAA==
 
-"@apollo/federation@^0.36.1":
-  version "0.36.1"
-  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.36.1.tgz#25afa0598c701763928de13f6fbbe49dfabdb24e"
-  integrity sha512-SAvW7ZRUEtmAdK+UWRXZxo/wRNVbDDyYbeYJooKAtvc8B4Mly+2PusqBQ+4RuHhg5dSqrv5d6RXJeY9MBiraVA==
+"@apollo/federation@^0.36.2":
+  version "0.36.2"
+  resolved "https://registry.yarnpkg.com/@apollo/federation/-/federation-0.36.2.tgz#bc37e668cb541dfdd0d76eeb20e9b39e8a29365c"
+  integrity sha512-2yqHevdz41wR/fZI+OEk7ibDlEWWhHxXg7ABT8KqHHS5VtKGIwbcekf3kxJXQWIHSXNuHu8r2BcEGJO7JqY8ww==
   dependencies:
-    "@apollo/subgraph" "^0.4.1"
+    "@apollo/subgraph" "^0.4.2"
     apollo-server-types "^3.0.2"
     lodash.xorby "^4.7.0"
 
-"@apollo/gateway@0.50.1":
-  version "0.50.1"
-  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.50.1.tgz#d93b8f744d157a5538684f8b496d3b3edfefbe81"
-  integrity sha512-mU33K/ZQm3zpQt18pN48gt3scIHgmKp5ejDKCHxzXxrTzft3r+UpvKD1oTEsRHTfvy1tjQxz7zZ+UMjWOlLfEA==
+"@apollo/gateway@0.50.2":
+  version "0.50.2"
+  resolved "https://registry.yarnpkg.com/@apollo/gateway/-/gateway-0.50.2.tgz#e872e6942156532c933200914aa95bc9f23bafd7"
+  integrity sha512-2aCFkWGF/G7fJ3dMntteWyqrHe/N2FC17uI0NjX4PioUidNEd/PkzSjgzRe5C60Gy9rZJHztYeZBk4tSO+SZmg==
   dependencies:
     "@apollo/core-schema" "^0.2.0"
-    "@apollo/federation" "^0.36.1"
-    "@apollo/query-planner" "^0.10.1"
+    "@apollo/federation" "^0.36.2"
+    "@apollo/query-planner" "^0.10.2"
+    "@apollo/utils.createhash" "^1.0.0"
     "@apollo/utils.logger" "^1.0.0"
     "@josephg/resolvable" "^1.0.1"
     "@opentelemetry/api" "^1.0.1"
@@ -38,7 +39,6 @@
     loglevel "^1.6.1"
     make-fetch-happen "^8.0.0"
     pretty-format "^27.4.6"
-    sha.js "^2.4.11"
 
 "@apollo/protobufjs@1.2.2":
   version "1.2.2"
@@ -59,19 +59,32 @@
     "@types/node" "^10.1.0"
     long "^4.0.0"
 
-"@apollo/query-planner@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.10.1.tgz#15c393dfa8bbd1f9151104a7be1aefc729dd0206"
-  integrity sha512-RES2EF7J7Q8DwhQXSGtY0oDC6UVwn5W6fxTELjjKCwVABCh8vw1GqtQfPD6xtUOzFWWFwnE0UejYaF/w2iuDaw==
+"@apollo/query-planner@^0.10.2":
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/@apollo/query-planner/-/query-planner-0.10.2.tgz#e71d4bf794787229da49f23421a6a9253dcc9775"
+  integrity sha512-A9pqfaoDrfWwewkBcRmXsTxTctRtkiPi+uQ86CJTfxz8ZfNw/KEgr0CdFCzHLcToo4SQDBFLOsb4kDdo2jjxRg==
   dependencies:
     chalk "^4.1.0"
     deep-equal "^2.0.5"
     pretty-format "^27.4.6"
 
-"@apollo/subgraph@0.4.1", "@apollo/subgraph@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-0.4.1.tgz#7bc4f0a133a8558607b99f83138cbb313fe39b42"
-  integrity sha512-4tm9sY/aYGwB20xccVRJiLupEpEhXBbhbJNlpqigtXnE6A5uQvvKn7qgDdZn5fZr6rw4kX5N9lLSliU03QwTfA==
+"@apollo/subgraph@0.4.2", "@apollo/subgraph@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-0.4.2.tgz#f8516f1d5e5fbd57189727497ed9f805fa5017c8"
+  integrity sha512-sIGzqfUryW6tS5RPWp1awtO+5CehjPV6xbDrWS4I2Hsj8rug8Y9oiMpcnNk8GaQ1TF3UEf99ZL16mNa4J++IIQ==
+
+"@apollo/utils.createhash@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@apollo/utils.createhash/-/utils.createhash-1.0.0.tgz#e5adbae69550b8da8f5fa56a8fa6ff1f6208fd78"
+  integrity sha512-FsijruGzaD+mNdelqXKgO+PCvdxD16rbN275oHGcVbhQixvdXfUSgqwfjUJSPFJAQoW/QvyoNaVf7M51gJNiTw==
+  dependencies:
+    "@apollo/utils.isnodelike" "^1.0.0"
+    sha.js "^2.4.11"
+
+"@apollo/utils.isnodelike@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@apollo/utils.isnodelike/-/utils.isnodelike-1.0.0.tgz#a7b2638f7c39acbdbd5b3f62c94708ed4789c246"
+  integrity sha512-uS0TNODZXYDiKp5r+OXUtqLcjgcJ7s0GyY8m+TGnYOLu6CpqL4BiJSR54o4gXK+oxFGWy7Fs2NjVJtjFVt8ifg==
 
 "@apollo/utils.logger@^1.0.0":
   version "1.0.0"

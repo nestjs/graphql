@@ -22,7 +22,7 @@
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "devDependencies": {
-    "@apollo/gateway": "0.50.1",
+    "@apollo/gateway": "0.50.2",
     "@nestjs/common": "8.4.4",
     "@nestjs/core": "8.4.4",
     "@nestjs/platform-express": "8.4.4",
