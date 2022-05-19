@@ -41,7 +41,7 @@
     "tslib": "2.4.0"
   },
   "peerDependencies": {
-    "@apollo/gateway": "^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0",
+    "@apollo/gateway": "^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0",
     "@nestjs/common": "^8.2.3",
     "@nestjs/core": "^8.2.3",
     "@nestjs/graphql": "^10.0.0",
