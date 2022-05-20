@@ -2,6 +2,7 @@ import { Directive, Field, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 @Directive('@key(fields: "id")')
+@Directive('@cacheControl(maxAge: 30)')
 export class Post {
   @Field((type) => ID)
   public id: number;
