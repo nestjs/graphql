@@ -18,9 +18,9 @@
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --watch"
   },
   "dependencies": {
-    "@graphql-tools/merge": "8.2.12",
-    "@graphql-tools/schema": "8.3.12",
-    "@graphql-tools/utils": "8.6.11",
+    "@graphql-tools/merge": "8.2.13",
+    "@graphql-tools/schema": "8.3.13",
+    "@graphql-tools/utils": "8.6.12",
     "@nestjs/mapped-types": "1.0.1",
     "chokidar": "3.5.3",
     "fast-glob": "3.2.11",
