@@ -7,6 +7,7 @@ export * from './graphql-schema.host';
 export * from './graphql-types.loader';
 export * from './graphql.factory';
 export * from './graphql.module';
+export * from './graphql.constants';
 export * from './interfaces';
 export * from './scalars';
 export * from './schema-builder';
