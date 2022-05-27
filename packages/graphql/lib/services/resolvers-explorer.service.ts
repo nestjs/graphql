@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
-  createContextId,
   MetadataScanner,
   ModuleRef,
   ModulesContainer,
@@ -23,6 +22,10 @@ import { SubscriptionOptions } from '../decorators/subscription.decorator';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { Resolver } from '../enums/resolver.enum';
+import {
+  ContextIdFactory,
+  GraphqlContextIdFactory,
+} from '../factories/context-id-factory';
 import { GqlParamsFactory } from '../factories/params.factory';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
@@ -38,7 +41,6 @@ import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-res
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
-
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
   private readonly logger = new Logger(ResolversExplorerService.name);
@@ -52,6 +54,8 @@ export class ResolversExplorerService extends BaseExplorerService {
     @Inject(GRAPHQL_MODULE_OPTIONS)
     private readonly gqlOptions: GqlModuleOptions,
     private readonly moduleRef: ModuleRef,
+    @Inject(GraphqlContextIdFactory)
+    private readonly contextIdFactory: ContextIdFactory,
   ) {
     super();
   }
@@ -172,24 +176,15 @@ export class ResolversExplorerService extends BaseExplorerService {
           undefined,
           args,
         );
-        let contextId: ContextId;
-        if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
-          contextId = gqlContext[REQUEST_CONTEXT_ID];
-        } else if (
-          gqlContext &&
-          gqlContext.req &&
-          gqlContext.req[REQUEST_CONTEXT_ID]
-        ) {
-          contextId = gqlContext.req[REQUEST_CONTEXT_ID];
-        } else {
-          contextId = createContextId();
-          Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-            value: contextId,
-            enumerable: false,
-            configurable: false,
-            writable: false,
-          });
-        }
+
+        const contextId: ContextId =
+          this.contextIdFactory.getByRequest(gqlContext);
+        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+          value: contextId,
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
 
         this.registerContextProvider(gqlContext, contextId);
         const contextInstance = await this.injector.loadPerContext(
