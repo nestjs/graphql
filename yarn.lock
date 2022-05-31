@@ -1914,20 +1914,20 @@
     npmlog "^4.1.2"
     write-file-atomic "^3.0.3"
 
-"@nestjs/common@8.4.5":
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-8.4.5.tgz#9279e125b8128c92700dfe0cf2beacc7e7c4abe7"
-  integrity sha512-DL30hLtcmosOWGRFrU1YYB59k+7FGX82sbq2QiXLsEXuSig8ZzFm8LR+tD8CX+aKabU9t1GGc18HLjFud/3sww==
+"@nestjs/common@8.4.6":
+  version "8.4.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-8.4.6.tgz#e2858c230371eeb5ccf7547d5b9434a2096da835"
+  integrity sha512-INp1ERDrLiQ4GwRc3zotTwBLZm2sIwcJwnBE2yXqsth17KijmoVmY8UB5Tares0IlwjsqlRFWkCX8uWE5rzbSA==
   dependencies:
     axios "0.27.2"
     iterare "1.2.1"
     tslib "2.4.0"
     uuid "8.3.2"
 
-"@nestjs/core@8.4.5":
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.4.5.tgz#a419259f074a9a1b889540ce2ab46a87b85e9fbf"
-  integrity sha512-mT4MV2pEILu+Xy/deIvhb4JkIWaUU+yxssQqMScj8pWvAQ4+6sN52Sxl5NwLb6FTyZ8t5m8Qgr4yZPTmS+Y1Ig==
+"@nestjs/core@8.4.6":
+  version "8.4.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-8.4.6.tgz#db1afa3202cddffa308c6f321e2e07ebcc05d513"
+  integrity sha512-5zHpxTYV7HT3lfF7l/x0EWBfmuyuDOnGRcALf88tzDGs/7Q/VC6l65d6eFwDwI37NLtScqnmEkT9of8E3fT3mA==
   dependencies:
     "@nuxtjs/opencollective" "0.3.2"
     fast-safe-stringify "2.1.1"
@@ -1942,10 +1942,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-1.0.1.tgz#78b62041c7a407db4a90eb140567321602bed18e"
   integrity sha512-NFvofzSinp00j5rzUd4tf+xi9od6383iY0JP7o0Bnu1fuItAUkWBgc4EKuIQ3D+c2QI3i9pG1kDWAeY27EMGtg==
 
-"@nestjs/platform-express@8.4.5":
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-8.4.5.tgz#5683da37b4e5463a4f26e78cb5fb1ba75e94440c"
-  integrity sha512-36yGMrcb2MBhwOq9l0/fip3gWAae5OadsAQxfHJbxgm8D5bDisTdIvvO7KRWYuKFGerGg9kBm53mZ7Rs3fmfPQ==
+"@nestjs/platform-express@8.4.6":
+  version "8.4.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-8.4.6.tgz#517f503391248e7a88c51365cedd8ad9a9c6cb9d"
+  integrity sha512-OserZ+RwjMyECFAL0/12Bztf63EnFhlFUEJ4/a502RQ0eZogt4M3ROauaW4bpt2Q3YH4hy0eT+4eqkVOMzjtPQ==
   dependencies:
     body-parser "1.20.0"
     cors "2.8.5"
@@ -1953,25 +1953,24 @@
     multer "1.4.4"
     tslib "2.4.0"
 
-"@nestjs/platform-fastify@8.4.5":
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-8.4.5.tgz#88636e377ed5691cde60001507bbbc0e74481a77"
-  integrity sha512-X2H3weE826558u6WZGr8mY0TA1sZhzgT0NRyN5ZMtDScQRDwd+v76gUZA4CHzDnQ9rJz0sL4g0MpqhFWGxNBOg==
+"@nestjs/platform-fastify@8.4.6":
+  version "8.4.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-8.4.6.tgz#ef8b95c2d6e66900026bdfa3a1a4b348573a501b"
+  integrity sha512-sRu8nWRFOAyLsu84Mc/YIWztorcYnDkO21P2ZDK6kxGPOrw82ePr0G5xV5BtbbTlkJkzjJ4GWsZvRGYTtnH0cg==
   dependencies:
     fastify "3.29.0"
     fastify-cors "6.1.0"
-    fastify-formbody "5.2.0"
-    light-my-request "4.10.1"
+    fastify-formbody "5.3.0"
+    light-my-request "5.0.0"
     middie "6.1.0"
     path-to-regexp "3.2.0"
     tslib "2.4.0"
 
-"@nestjs/testing@8.4.5":
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-8.4.5.tgz#b6f6e8c5f8c3c2b8fe6b8f8fa518b97460680f76"
-  integrity sha512-RWFfkRitor8Aw1yWhZqWim/sAYmFv45Hw7jlVaFCx2PCu6IIHCaK2ENv/20yA0+kffaFUQ6KyFzJvCUYKGFoqg==
+"@nestjs/testing@8.4.6":
+  version "8.4.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-8.4.6.tgz#4e80368090bb71d775d14d99efa96803b96312d0"
+  integrity sha512-uGRNQ0iWIHqjz5CLxQCTtQ3dB1KyPfkHXnko5mBwKk/iBTiACmll61rVt89Wh8RM+w0bmvCHp9sacNI7IynESg==
   dependencies:
-    optional "0.1.4"
     tslib "2.4.0"
 
 "@nodelib/fs.scandir@2.1.5":
@@ -5216,12 +5215,20 @@ fastify-error@^0.3.1:
   resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-0.3.1.tgz#8eb993e15e3cf57f0357fc452af9290f1c1278d2"
   integrity sha512-oCfpcsDndgnDVgiI7bwFKAun2dO+4h84vBlkWsWnz/OUK9Reff5UFoFl241xTiLeHWX/vU9zkDVXqYUxjOwHcQ==
 
-fastify-formbody@5.2.0:
+"fastify-formbody-deprecated@npm:fastify-formbody@5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/fastify-formbody/-/fastify-formbody-5.2.0.tgz#942f0847f106888cad419812590cfff7ffb61f92"
   integrity sha512-d8Y5hCL82akPyoFiXh2wYOm3es0pV9jqoPo3pO9OV2cNF0cQx39J5WAVXzCh4MSt9Z2qF4Fy5gHlvlyESwjtvg==
   dependencies:
     fastify-plugin "^3.0.0"
+
+fastify-formbody@5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/fastify-formbody/-/fastify-formbody-5.3.0.tgz#c125902b9c07c9d94c1b4a06561896e97968ec69"
+  integrity sha512-7cjFV2HE/doojyfTwCLToIFD6Hmbw2jVTbfqZ2lbUZznQWlSXu+MBQgqBU8T2nHcMfqSi9vx6PyX0LwTehuKkg==
+  dependencies:
+    fastify-formbody-deprecated "npm:fastify-formbody@5.2.0"
+    process-warning "^1.0.0"
 
 fastify-plugin@^3.0.0:
   version "3.0.0"
@@ -7298,10 +7305,10 @@ libphonenumber-js@^1.9.43:
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.9.44.tgz#d036364fe4c1e27205d1d283c7bf8fc25625200b"
   integrity sha512-zhw8nUMJuQf7jG1dZfEOKKOS6M3QYIv3HnvB/vGohNd0QfxIQcObH3a6Y6s350H+9xgBeOXClOJkS0hJ0yvS3g==
 
-light-my-request@4.10.1:
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-4.10.1.tgz#09a93fa5af6a7b4339322b2e2b3f5d1c9679ed02"
-  integrity sha512-l+zWk0HXGhGzY7IYTZnYEqIpj3Mpcyk2f8+FkKUyREywvaiWCf2jyQVxpasKRsploY/nVpoqTlxx72CIeQNcIQ==
+light-my-request@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-5.0.0.tgz#2ac329d472c5c74c74be62fb2a8790c444c22ab0"
+  integrity sha512-0OPHKV+uHgBOnRokzL1LqeMCnSAo5l/rZS7kyB6G1I8qxGCvhXpq1M6WK565Y9A5CSn50l3DVaHnJ5FCdpguZQ==
   dependencies:
     ajv "^8.1.0"
     cookie "^0.5.0"
@@ -8392,11 +8399,6 @@ optimism@^0.10.0:
   integrity sha512-9A5pqGoQk49H6Vhjb9kPgAeeECfUDF6aIICbMDL23kDLStBn1MWk3YvcZ4xWF9CsSf6XEgvRLkXy4xof/56vVw==
   dependencies:
     "@wry/context" "^0.4.0"
-
-optional@0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/optional/-/optional-0.1.4.tgz#cdb1a9bedc737d2025f690ceeb50e049444fd5b3"
-  integrity sha512-gtvrrCfkE08wKcgXaVwQVgwEQ8vel2dc5DDBn9RLQZ3YtmtkBss6A2HY6BnJH4N/4Ku97Ri/SF8sNWE2225WJw==
 
 optionator@^0.8.1:
   version "0.8.3"
