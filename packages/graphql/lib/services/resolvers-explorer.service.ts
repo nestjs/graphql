@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
+  ContextIdFactory,
   createContextId,
   MetadataScanner,
   ModuleRef,
@@ -172,24 +173,13 @@ export class ResolversExplorerService extends BaseExplorerService {
           undefined,
           args,
         );
-        let contextId: ContextId;
-        if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
-          contextId = gqlContext[REQUEST_CONTEXT_ID];
-        } else if (
-          gqlContext &&
-          gqlContext.req &&
-          gqlContext.req[REQUEST_CONTEXT_ID]
-        ) {
-          contextId = gqlContext.req[REQUEST_CONTEXT_ID];
-        } else {
-          contextId = createContextId();
-          Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-            value: contextId,
-            enumerable: false,
-            configurable: false,
-            writable: false,
-          });
-        }
+        const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
+        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+          value: contextId,
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
 
         this.registerContextProvider(gqlContext, contextId);
         const contextInstance = await this.injector.loadPerContext(
