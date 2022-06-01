@@ -179,8 +179,8 @@ interface AllMetadata {
 }
 
 export class TypeMetadataStorageModelList {
-  private map = new Map<Function, TypeMetadataStorageModel>();
-  private array = new Array<TypeMetadataStorageModel>();
+  private storageMap = new Map<Function, TypeMetadataStorageModel>();
+  private storageList = new Array<TypeMetadataStorageModel>();
 
   public all: AllMetadata = {
     argumentType: [],
@@ -195,21 +195,27 @@ export class TypeMetadataStorageModelList {
   };
 
   get(target: Function) {
-    let metadata = this.map.get(target);
+    let metadata = this.storageMap.get(target);
 
     if (!metadata) {
       metadata = new TypeMetadataStorageModel(this.all);
-      this.map.set(target, metadata);
-      this.array.push(metadata);
+      this.storageMap.set(target, metadata);
+      this.storageList.push(metadata);
     }
 
     return metadata;
   }
 
   compile() {
-    this.all.classDirectives.reverse();
-    this.all.classExtensions.reverse();
-    this.all.fieldDirectives.reverse();
-    this.all.fieldExtensions.reverse();
+    this.reversePredicate((t) => t.classDirectives);
+    this.reversePredicate((t) => t.classExtensions);
+    this.reversePredicate((t) => t.fieldDirectives.getAll());
+    this.reversePredicate((t) => t.fieldExtensions.getAll());
+  }
+
+  private reversePredicate<V>(
+    predicate: (t: TypeMetadataStorageModel) => Array<V>,
+  ) {
+    this.storageList.forEach((t) => predicate(t).reverse());
   }
 }
