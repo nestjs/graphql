@@ -10,7 +10,7 @@ import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 
 export interface MetadataCollectionModel {
   argumentType: ClassMetadata[];
-  interface: ClassMetadata[];
+  interface: Map<Function, ClassMetadata>;
   inputType: ClassMetadata[];
   objectType: ObjectTypeMetadata[];
   resolver: ResolverClassMetadata[];
