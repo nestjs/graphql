@@ -173,14 +173,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           undefined,
           args,
         );
-        const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
-        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-          value: contextId,
-          enumerable: false,
-          configurable: false,
-          writable: false,
-        });
-
+        const contextId = this.getContextId(gqlContext);
         this.registerContextProvider(gqlContext, contextId);
         const contextInstance = await this.injector.loadPerContext(
           instance,
@@ -335,5 +328,43 @@ export class ResolversExplorerService extends BaseExplorerService {
       TArgs,
       TOutput
     >(originalResolveFnFactory, middlewareFunctions);
+  }
+
+  private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
+    if (ContextIdFactory.getByRequest.length === 2) {
+      const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
+      if (!gqlContext[REQUEST_CONTEXT_ID as any]) {
+        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+          value: contextId,
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
+      }
+      return contextId;
+    } else {
+      // Left for backward compatibility purposes
+      let contextId: ContextId;
+
+      if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
+        contextId = gqlContext[REQUEST_CONTEXT_ID];
+      } else if (
+        gqlContext &&
+        gqlContext.req &&
+        gqlContext.req[REQUEST_CONTEXT_ID]
+      ) {
+        contextId = gqlContext.req[REQUEST_CONTEXT_ID];
+      } else {
+        contextId = createContextId();
+        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+          value: contextId,
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
+      }
+
+      return contextId;
+    }
   }
 }
