@@ -1,4 +1,4 @@
-import { MetadataByNameCollection } from './metadata.by.name.collection';
+import { MetadataByNameCollection } from './metadata-by-name.collection';
 
 export class MetadataListByNameCollection<T> extends MetadataByNameCollection<
   T[]

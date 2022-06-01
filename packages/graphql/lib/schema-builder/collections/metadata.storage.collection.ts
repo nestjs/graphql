@@ -1,4 +1,4 @@
-import { MetadataByNameCollection } from './metadata.by.name.collection';
+import { MetadataByNameCollection } from './metadata-by-name.collection';
 import {
   ClassDirectiveMetadata,
   ClassExtensionsMetadata,
@@ -8,8 +8,8 @@ import {
   PropertyMetadata,
   ResolverClassMetadata,
 } from '../metadata';
-import { MetadataListByNameCollection } from './metadata.list.by.name.collection';
-import { FieldDirectiveCollection } from './field.directive.collection';
+import { MetadataListByNameCollection } from './metadata-list-by-name.collection';
+import { FieldDirectiveCollection } from './field-directive.collection';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { ArrayCollection } from './array.collection';
 import { MetadataCollectionModelInterface } from './metada.collection.model.interface';
@@ -35,6 +35,7 @@ export class MetadataStorageCollection {
     this._argumentType = val;
     this.all.argumentType.push(val);
   }
+
   get argumentType() {
     return this._argumentType;
   }
@@ -43,6 +44,7 @@ export class MetadataStorageCollection {
     this._interface = val;
     this.all.interface.push(val);
   }
+
   get interface() {
     return this._interface;
   }
@@ -51,6 +53,7 @@ export class MetadataStorageCollection {
     this._inputType = val;
     this.all.inputType.push(val);
   }
+
   get inputType() {
     return this._inputType;
   }
@@ -59,6 +62,7 @@ export class MetadataStorageCollection {
     this._objectType = val;
     this.all.objectType.push(val);
   }
+
   get objectType() {
     return this._objectType;
   }
@@ -67,6 +71,7 @@ export class MetadataStorageCollection {
     this._resolver = val;
     this.all.resolver.push(val);
   }
+
   get resolver() {
     return this._resolver;
   }

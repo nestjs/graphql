@@ -1,5 +1,5 @@
 export class ArrayCollection<T> {
-  private array: T[] = [];
+  private readonly array: T[] = [];
 
   constructor(private globalArray: Array<T>) {}
 
