@@ -1,14 +1,14 @@
 import {
-  FieldDirectiveMap,
-  MapArrayByName,
-  MapByName,
-} from '../../../lib/schema-builder/storages/type-metadata.storage.model';
+  FieldDirectiveCollection,
+  MetadataListByNameCollection,
+  MetadataByNameCollection,
+} from '../../../lib/schema-builder/collections/';
 import { PropertyDirectiveMetadata } from '../../../lib/schema-builder/metadata';
 
 describe('TypeMetadataStorageModel', () => {
   describe('MapByName', () => {
     it('should not add multiple values under the same name', () => {
-      const map = new MapByName<string>();
+      const map = new MetadataByNameCollection<string>();
       map.add('foo', 'uniqueName1');
       map.add('bar', 'uniqueName2');
       map.add('baz', 'uniqueName1');
@@ -19,7 +19,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should not add multiple values under the same name even in reverse', () => {
-      const map = new MapByName<string>();
+      const map = new MetadataByNameCollection<string>();
       map.unshift('foo', 'uniqueName1');
       map.unshift('bar', 'uniqueName2');
       map.unshift('baz', 'uniqueName1');
@@ -30,7 +30,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should add items in reverse', () => {
-      const map = new MapByName<string>();
+      const map = new MetadataByNameCollection<string>();
       map.add('foo', 'uniqueName1');
       map.unshift('bar', 'uniqueName2');
 
@@ -43,14 +43,14 @@ describe('TypeMetadataStorageModel', () => {
 
   describe('MapArrayByName', () => {
     it('should return an empty array if a name is not found', () => {
-      const map = new MapArrayByName<string>();
+      const map = new MetadataListByNameCollection<string>();
       const possibleArray = map.getByName('unknown');
       expect(Array.isArray(possibleArray)).toBe(true);
       expect(possibleArray.length).toBe(0);
     });
 
     it('should continuously add values to an array', () => {
-      const map = new MapArrayByName<string>();
+      const map = new MetadataListByNameCollection<string>();
       map.add('foo', 'uniqueName1');
       map.add('baz', 'uniqueName1');
       map.add('bar', 'uniqueName2');
@@ -63,7 +63,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should return a flat array of all values', () => {
-      const map = new MapArrayByName<string>();
+      const map = new MetadataListByNameCollection<string>();
       map.add('foo', 'uniqueName1');
       map.add('baz', 'uniqueName1');
       map.add('bar', 'uniqueName2');
@@ -92,7 +92,7 @@ describe('TypeMetadataStorageModel', () => {
     };
 
     it('should keep a list of all SDLs added', () => {
-      const map = new FieldDirectiveMap();
+      const map = new FieldDirectiveCollection();
       map.add(directive1);
       map.add(directive2);
       map.add(directive3);
@@ -101,7 +101,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should keep a list of all fieldName added', () => {
-      const map = new FieldDirectiveMap();
+      const map = new FieldDirectiveCollection();
       map.add(directive1);
       map.add(directive2);
       map.add(directive3);
@@ -110,7 +110,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should add 2 different directives on the same field', () => {
-      const map = new FieldDirectiveMap();
+      const map = new FieldDirectiveCollection();
       const directive1Alt: PropertyDirectiveMetadata = {
         fieldName: 'foo',
         sdl: '@bar',
@@ -123,7 +123,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should add 2 different fields with the same directive', () => {
-      const map = new FieldDirectiveMap();
+      const map = new FieldDirectiveCollection();
       const directive1Alt: PropertyDirectiveMetadata = {
         fieldName: 'bar',
         sdl: '@foo',
@@ -137,7 +137,7 @@ describe('TypeMetadataStorageModel', () => {
     });
 
     it('should NOT the same directive on the same field twice', () => {
-      const map = new FieldDirectiveMap();
+      const map = new FieldDirectiveCollection();
       map.add(directive1);
       map.add(directive1);
 

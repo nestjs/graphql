@@ -22,7 +22,7 @@ import {
 import { InterfaceMetadata } from '../metadata/interface.metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { isThrowing } from '../utils/is-throwing.util';
-import { TypeMetadataStorageModelList } from './type-metadata.storage.model';
+import { MetadataStorageCollectionList } from '../collections/';
 
 export class TypeMetadataStorageHost {
   /**
@@ -38,7 +38,7 @@ export class TypeMetadataStorageHost {
   private readonly enums = new Array<EnumMetadata>();
   private readonly unions = new Array<UnionMetadata>();
 
-  targets = new TypeMetadataStorageModelList();
+  targets = new MetadataStorageCollectionList();
 
   addMutationMetadata(metadata: ResolverTypeMetadata) {
     this.mutations.push(metadata);
