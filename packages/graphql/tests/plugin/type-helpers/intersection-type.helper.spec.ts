@@ -1,12 +1,7 @@
-import {
-  Directive,
-  Extensions,
-  Field,
-  ObjectType,
-} from '../../../lib/decorators';
+import { Directive, Extensions, Field, ObjectType } from '../../../lib';
 import { METADATA_FACTORY_NAME } from '../../../lib/plugin/plugin-constants';
 import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
-import { IntersectionType } from '../../../lib/type-helpers';
+import { IntersectionType } from '../../../lib';
 
 describe('IntersectionType', () => {
   @ObjectType()
@@ -41,27 +36,28 @@ describe('IntersectionType', () => {
   it('should inherit all fields from two types', () => {
     const prototype = Object.getPrototypeOf(UpdateUserDto);
     const { fields } = getFieldsAndDecoratorForType(prototype);
+    const [loginField, passwordField, lastNameField, firstNameField] = fields;
     expect(fields.length).toEqual(4);
-    expect(fields[0].name).toEqual('login');
-    expect(fields[1].name).toEqual('password');
-    expect(fields[2].name).toEqual('lastName');
-    expect(fields[3].name).toEqual('firstName');
-    expect(fields[0].directives.length).toEqual(1);
-    expect(fields[0].directives).toContainEqual({
+    expect(loginField.name).toEqual('login');
+    expect(passwordField.name).toEqual('password');
+    expect(lastNameField.name).toEqual('lastName');
+    expect(firstNameField.name).toEqual('firstName');
+    expect(loginField.directives.length).toEqual(1);
+    expect(loginField.directives).toContainEqual({
       fieldName: 'login',
       sdl: '@upper',
       target: prototype,
     });
-    expect(fields[0].extensions).toEqual({
+    expect(loginField.extensions).toEqual({
       extension: true,
     });
-    expect(fields[2].directives.length).toEqual(1);
-    expect(fields[2].directives).toContainEqual({
+    expect(lastNameField.directives.length).toEqual(1);
+    expect(lastNameField.directives).toContainEqual({
       fieldName: 'lastName',
       sdl: '@upper',
       target: prototype,
     });
-    expect(fields[2].extensions).toEqual({
+    expect(lastNameField.extensions).toEqual({
       extension: true,
     });
   });
