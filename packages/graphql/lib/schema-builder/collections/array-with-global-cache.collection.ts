@@ -1,4 +1,4 @@
-export class ArrayCollection<T> {
+export class ArrayWithGlobalCacheCollection<T> {
   private readonly array: T[] = [];
 
   constructor(private globalArray: Array<T>) {}

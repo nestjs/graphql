@@ -11,7 +11,7 @@ import {
 import { MetadataListByNameCollection } from './metadata-list-by-name.collection';
 import { FieldDirectiveCollection } from './field-directive.collection';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
-import { ArrayCollection } from './array.collection';
+import { ArrayWithGlobalCacheCollection } from './array-with-global-cache.collection';
 import { MetadataCollectionModelInterface } from './metada.collection.model.interface';
 
 export class MetadataStorageCollection {
@@ -24,10 +24,10 @@ export class MetadataStorageCollection {
     new MetadataListByNameCollection<PropertyExtensionsMetadata>(
       this.all.fieldExtensions,
     );
-  classDirectives = new ArrayCollection<ClassDirectiveMetadata>(
+  classDirectives = new ArrayWithGlobalCacheCollection<ClassDirectiveMetadata>(
     this.all.classDirectives,
   );
-  classExtensions = new ArrayCollection<ClassExtensionsMetadata>(
+  classExtensions = new ArrayWithGlobalCacheCollection<ClassExtensionsMetadata>(
     this.all.classExtensions,
   );
 
