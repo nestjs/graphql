@@ -30,8 +30,8 @@ export class MetadataStorageCollectionList {
   }
 
   compile() {
-    this.reversePredicate((t) => t.classDirectives);
-    this.reversePredicate((t) => t.classExtensions);
+    this.reversePredicate((t) => t.classDirectives.getAll());
+    this.reversePredicate((t) => t.classExtensions.getAll());
     this.reversePredicate((t) => t.fieldDirectives.getAll());
     this.reversePredicate((t) => t.fieldExtensions.getAll());
   }

@@ -257,7 +257,9 @@ export class TypeMetadataStorageHost {
         item.properties = this.getClassFieldsByPredicate(item);
       }
       if (!item.directives) {
-        item.directives = this.targets.get(item.target).classDirectives;
+        item.directives = this.targets
+          .get(item.target)
+          .classDirectives.getAll();
       }
       if (!item.extensions) {
         item.extensions = this.targets
