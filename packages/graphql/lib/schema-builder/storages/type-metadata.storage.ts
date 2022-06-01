@@ -73,7 +73,7 @@ export class TypeMetadataStorageHost {
   }
 
   getArgumentsMetadata(): ClassMetadata[] {
-    return this.targets.getAll().argumentType();
+    return this.targets.all.argumentType;
   }
 
   getArgumentsMetadataByTarget(
@@ -87,7 +87,7 @@ export class TypeMetadataStorageHost {
   }
 
   getInterfacesMetadata(): InterfaceMetadata[] {
-    return this.targets.getAll().interface();
+    return this.targets.all.interface;
   }
 
   getInterfaceMetadataByTarget(
@@ -101,7 +101,7 @@ export class TypeMetadataStorageHost {
   }
 
   getInputTypesMetadata(): ClassMetadata[] {
-    return this.targets.getAll().inputType();
+    return this.targets.all.inputType;
   }
 
   getInputTypeMetadataByTarget(
@@ -115,7 +115,7 @@ export class TypeMetadataStorageHost {
   }
 
   getObjectTypesMetadata(): ObjectTypeMetadata[] {
-    return this.targets.getAll().objectType();
+    return this.targets.all.objectType;
   }
 
   getObjectTypeMetadataByTarget(
@@ -188,11 +188,13 @@ export class TypeMetadataStorageHost {
   }
 
   compile(orphanedTypes: (Function | object)[] = []) {
+    this.targets.compile();
+
     const classMetadata = [
-      ...this.targets.getAll().objectType(),
-      ...this.targets.getAll().inputType(),
-      ...this.targets.getAll().argumentType(),
-      ...this.targets.getAll().interface(),
+      ...this.targets.all.objectType,
+      ...this.targets.all.inputType,
+      ...this.targets.all.argumentType,
+      ...this.targets.all.interface,
     ];
     this.loadClassPluginMetadata(classMetadata);
     this.compileClassMetadata(classMetadata);
@@ -332,8 +334,9 @@ export class TypeMetadataStorageHost {
     const objectTypeRef = this.targets.get(item.target).resolver.typeFn();
 
     const objectOrInterfaceTypeMetadata =
-      this.targets.get(item.target).objectType ||
-      this.targets.get(item.target).interface;
+      this.targets.get(objectTypeRef).objectType ||
+      this.targets.get(objectTypeRef).interface;
+
     if (!objectOrInterfaceTypeMetadata) {
       throw new CannotDetermineHostTypeError(
         item.schemaName,
@@ -383,40 +386,37 @@ export class TypeMetadataStorageHost {
   }
 
   private compileExtendedResolversMetadata() {
-    this.targets
-      .getAll()
-      .resolver()
-      .forEach((item) => {
-        let parentClass = Object.getPrototypeOf(item.target);
+    this.targets.all.resolver.forEach((item) => {
+      let parentClass = Object.getPrototypeOf(item.target);
 
-        while (parentClass.prototype) {
-          const parentMetadata = this.targets.get(item.target).resolver;
+      while (parentClass.prototype) {
+        const parentMetadata = this.targets.get(item.target).resolver;
 
-          if (parentMetadata) {
-            this.queries = this.mergeParentResolverHandlers(
-              this.queries,
-              parentClass,
-              item,
-            );
-            this.mutations = this.mergeParentResolverHandlers(
-              this.mutations,
-              parentClass,
-              item,
-            );
-            this.subscriptions = this.mergeParentResolverHandlers(
-              this.subscriptions,
-              parentClass,
-              item,
-            );
-            this.fieldResolvers = this.mergeParentFieldHandlers(
-              this.fieldResolvers,
-              parentClass,
-              item,
-            );
-          }
-          parentClass = Object.getPrototypeOf(parentClass);
+        if (parentMetadata) {
+          this.queries = this.mergeParentResolverHandlers(
+            this.queries,
+            parentClass,
+            item,
+          );
+          this.mutations = this.mergeParentResolverHandlers(
+            this.mutations,
+            parentClass,
+            item,
+          );
+          this.subscriptions = this.mergeParentResolverHandlers(
+            this.subscriptions,
+            parentClass,
+            item,
+          );
+          this.fieldResolvers = this.mergeParentFieldHandlers(
+            this.fieldResolvers,
+            parentClass,
+            item,
+          );
         }
-      });
+        parentClass = Object.getPrototypeOf(parentClass);
+      }
+    });
   }
 
   private mergeParentResolverHandlers<

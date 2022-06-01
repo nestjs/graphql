@@ -8,12 +8,11 @@ import {
   PropertyMetadata,
   ResolverClassMetadata,
 } from '../metadata';
-import { InterfaceMetadata } from '../metadata/interface.metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 
 export class MapByName<T> {
   protected map = new Map<string, T>();
-  protected all: T[] = [];
+  protected all: (T extends any[] ? T[number] : T)[] = [];
 
   getAll() {
     return this.all;
@@ -39,12 +38,16 @@ export class MapByName<T> {
 }
 
 export class MapArrayByName<T> extends MapByName<T[]> {
+  constructor(protected globalArray: Array<T> = null) {
+    super();
+  }
+
   getByName(name: string): T[] {
     return super.getByName(name) || [];
   }
 
-  add(value: T[] extends any[] ? T[][number] : T[], name: string) {
-    let arrayResult = this.map.get(name);
+  add(value: T, name: string) {
+    let arrayResult = super.getByName(name);
     if (!arrayResult) {
       arrayResult = [];
       this.map.set(name, arrayResult);
@@ -52,6 +55,19 @@ export class MapArrayByName<T> extends MapByName<T[]> {
 
     arrayResult.push(value);
     this.all.push(value);
+    this.globalArray && this.globalArray.push(value);
+  }
+
+  unshift(value: T, name: string) {
+    let arrayResult = super.getByName(name);
+    if (!arrayResult) {
+      arrayResult = [];
+      this.map.set(name, arrayResult);
+    }
+
+    arrayResult.unshift(value);
+    this.all.push(value);
+    this.globalArray && this.globalArray.unshift(value);
   }
 }
 
@@ -67,32 +83,122 @@ export class FieldDirectiveMap extends MapArrayByName<PropertyDirectiveMetadata>
 
     this.sdls.add(value.sdl);
     this.fieldNames.add(value.fieldName);
+    this.globalArray && this.globalArray.push(value);
+  }
+}
+
+class ArrayWithGlobalValues<T> extends Array<T> {
+  constructor(private globalArray: Array<T>) {
+    super();
+  }
+
+  push(...items): number {
+    this.globalArray.push(...items);
+    return super.push(...items);
+  }
+
+  unshift(...items): number {
+    this.globalArray.unshift(...items);
+    return super.unshift(...items);
   }
 }
 
 export class TypeMetadataStorageModel {
-  fieldDirectives = new FieldDirectiveMap();
-  fieldExtensions = new MapArrayByName<PropertyExtensionsMetadata>();
+  constructor(private all: AllMetadata) {}
+
   fields = new MapByName<PropertyMetadata>();
   params = new MapArrayByName<MethodArgsMetadata>();
-  classDirectives = new Array<ClassDirectiveMetadata>();
-  classExtensions = new Array<ClassExtensionsMetadata>();
-  argumentType: ClassMetadata;
-  interface: InterfaceMetadata;
-  inputType: ClassMetadata;
-  objectType: ObjectTypeMetadata;
-  resolver: ResolverClassMetadata;
+  fieldDirectives = new FieldDirectiveMap(this.all.fieldDirectives);
+  fieldExtensions = new MapArrayByName<PropertyExtensionsMetadata>(
+    this.all.fieldExtensions,
+  );
+  classDirectives = new ArrayWithGlobalValues<ClassDirectiveMetadata>(
+    this.all.classDirectives,
+  );
+  classExtensions = new ArrayWithGlobalValues<ClassExtensionsMetadata>(
+    this.all.classExtensions,
+  );
+
+  set argumentType(val: ClassMetadata) {
+    this._argumentType = val;
+    this.all.argumentType.push(val);
+  }
+  get argumentType() {
+    return this._argumentType;
+  }
+
+  set interface(val: ClassMetadata) {
+    this._interface = val;
+    this.all.interface.push(val);
+  }
+  get interface() {
+    return this._interface;
+  }
+
+  set inputType(val: ClassMetadata) {
+    this._inputType = val;
+    this.all.inputType.push(val);
+  }
+  get inputType() {
+    return this._inputType;
+  }
+
+  set objectType(val: ObjectTypeMetadata) {
+    this._objectType = val;
+    this.all.objectType.push(val);
+  }
+  get objectType() {
+    return this._objectType;
+  }
+
+  set resolver(val: ResolverClassMetadata) {
+    this._resolver = val;
+    this.all.resolver.push(val);
+  }
+  get resolver() {
+    return this._resolver;
+  }
+
+  _argumentType: ClassMetadata;
+  _interface: ClassMetadata;
+  _inputType: ClassMetadata;
+  _objectType: ObjectTypeMetadata;
+  _resolver: ResolverClassMetadata;
+}
+
+interface AllMetadata {
+  argumentType: ClassMetadata[];
+  interface: ClassMetadata[];
+  inputType: ClassMetadata[];
+  objectType: ObjectTypeMetadata[];
+  resolver: ResolverClassMetadata[];
+  classDirectives: [];
+  classExtensions: [];
+  fieldDirectives: [];
+  fieldExtensions: [];
 }
 
 export class TypeMetadataStorageModelList {
   private map = new Map<Function, TypeMetadataStorageModel>();
   private array = new Array<TypeMetadataStorageModel>();
 
+  public all: AllMetadata = {
+    argumentType: [],
+    interface: [],
+    inputType: [],
+    objectType: [],
+    resolver: [],
+    classDirectives: [],
+    classExtensions: [],
+    fieldDirectives: [],
+    fieldExtensions: [],
+  };
+
   get(target: Function) {
     let metadata = this.map.get(target);
 
     if (!metadata) {
-      metadata = new TypeMetadataStorageModel();
+      metadata = new TypeMetadataStorageModel(this.all);
       this.map.set(target, metadata);
       this.array.push(metadata);
     }
@@ -100,30 +206,10 @@ export class TypeMetadataStorageModelList {
     return metadata;
   }
 
-  private getAllWithoutNullsByPredicate<V>(
-    predicate: (t: TypeMetadataStorageModel) => V,
-  ) {
-    return this.array.reduce((prev, curr) => {
-      const val = predicate(curr);
-      if (val) prev.push(val);
-      return prev;
-    }, new Array<V>());
-  }
-
-  getAll() {
-    return {
-      argumentType: () =>
-        this.getAllWithoutNullsByPredicate((t) => t.argumentType),
-      interface: () => this.getAllWithoutNullsByPredicate((t) => t.interface),
-      inputType: () => this.getAllWithoutNullsByPredicate((t) => t.inputType),
-      objectType: () => this.getAllWithoutNullsByPredicate((t) => t.objectType),
-      resolver: () => this.getAllWithoutNullsByPredicate((t) => t.resolver),
-      classDirectives: () => this.array.flatMap((t) => t.classDirectives),
-      classExtensions: () => this.array.flatMap((t) => t.classExtensions),
-      fieldDirectives: () =>
-        this.array.flatMap((t) => t.fieldDirectives.getAll()),
-      fieldExtensions: () =>
-        this.array.flatMap((t) => t.fieldExtensions.getAll()),
-    };
+  compile() {
+    this.all.classDirectives.reverse();
+    this.all.classExtensions.reverse();
+    this.all.fieldDirectives.reverse();
+    this.all.fieldExtensions.reverse();
   }
 }
