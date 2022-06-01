@@ -35,6 +35,7 @@ import {
 } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
+import { getNumberOfArguments } from '../utils';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
@@ -331,7 +332,11 @@ export class ResolversExplorerService extends BaseExplorerService {
   }
 
   private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
-    if (ContextIdFactory.getByRequest.length === 2) {
+    const numberOfArguments = getNumberOfArguments(
+      ContextIdFactory.getByRequest,
+    );
+
+    if (numberOfArguments === 2) {
       const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
       if (!gqlContext[REQUEST_CONTEXT_ID as any]) {
         Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
