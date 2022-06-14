@@ -27,9 +27,9 @@
     "tslib": "2.4.0"
   },
   "devDependencies": {
-    "@nestjs/common": "8.4.6",
-    "@nestjs/platform-fastify": "8.4.6",
-    "@nestjs/testing": "8.4.6",
+    "@nestjs/common": "8.4.7",
+    "@nestjs/platform-fastify": "8.4.7",
+    "@nestjs/testing": "8.4.7",
     "fastify": "3.29.0",
     "mercurius": "8.12.2",
     "mercurius-integration-testing": "5.0.0"
