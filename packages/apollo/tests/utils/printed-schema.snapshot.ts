@@ -31,15 +31,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-"""orphaned type"""
-type SampleOrphanedType {
-  id: ID!
-  title: String!
-  description: String
-  creationDate: DateTime!
-  averageRating: Float!
-}
-
 type Category {
   name: String!
   description: String!
@@ -51,6 +42,15 @@ type Ingredient {
 
   """ingredient name"""
   name: String @deprecated(reason: "is deprecated")
+}
+
+"""orphaned type"""
+type SampleOrphanedType {
+  id: ID!
+  title: String!
+  description: String
+  creationDate: DateTime!
+  averageRating: Float!
 }
 
 """orphaned enum"""
@@ -106,8 +106,7 @@ input NewRecipeInput {
 type Subscription {
   """subscription description"""
   recipeAdded: Recipe!
-}
-`;
+}`;
 
 export const sortedPrintedSchemaSnapshot = `# ------------------------------------------------------
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
@@ -201,5 +200,4 @@ union SearchResultUnion = Ingredient | Recipe
 type Subscription {
   """subscription description"""
   recipeAdded: Recipe!
-}
-`;
+}`;

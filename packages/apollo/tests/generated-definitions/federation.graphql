@@ -5,13 +5,13 @@ type Post {
   category: Category!
 }
 
+extend type Query {
+  getPosts: [Post]
+}
+
 extend type User @key(fields: "id") {
   id: ID! @external
   posts: [Post]
-}
-
-extend type Query {
-  getPosts: [Post]
 }
 
 extend enum Category {

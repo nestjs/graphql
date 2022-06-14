@@ -1,25 +1,16 @@
 import {
-  GraphQLSchemaBuilderModule,
-  GraphQLSchemaFactory,
-} from '@nestjs/graphql';
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
-import { Test } from '@nestjs/testing';
-import {
-  getIntrospectionQuery,
-  graphql,
   GraphQLSchema,
   IntrospectionField,
   IntrospectionSchema,
-  printSchema,
   TypeKind,
+  getIntrospectionQuery,
+  graphql,
+  printSchema,
 } from 'graphql';
-import { DirectionsResolver } from '../code-first/directions/directions.resolver';
-import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
-import { AbstractResolver } from '../code-first/other/abstract.resolver';
-import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
-import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
-import { Recipe } from '../code-first/recipes/models/recipe';
-import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
+import {
+  GraphQLSchemaBuilderModule,
+  GraphQLSchemaFactory,
+} from '@nestjs/graphql';
 import {
   getMutation,
   getMutationByName,
@@ -28,6 +19,16 @@ import {
   getSubscription,
   getSubscriptionByName,
 } from '../utils/introspection-schema.utils';
+
+import { AbstractResolver } from '../code-first/other/abstract.resolver';
+import { DirectionsResolver } from '../code-first/directions/directions.resolver';
+import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
+import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
+import { Recipe } from '../code-first/recipes/models/recipe';
+import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
+import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
+import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
+import { Test } from '@nestjs/testing';
 import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 
 describe('Code-first - schema factory', () => {
@@ -56,9 +57,9 @@ describe('Code-first - schema factory', () => {
         { orphanedTypes: [SampleOrphanedType, SampleOrphanedEnum] },
       );
 
-      introspectionSchema = await (
-        await graphql(schema, getIntrospectionQuery())
-      ).data.__schema;
+      introspectionSchema = (await (
+        await graphql({ schema, source: getIntrospectionQuery() })
+      ).data.__schema) as IntrospectionSchema;
     });
     it('should be valid', async () => {
       expect(schema).toBeInstanceOf(GraphQLSchema);

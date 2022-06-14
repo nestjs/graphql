@@ -1,6 +1,6 @@
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver } from '../../../lib/drivers';
+import { GraphQLModule } from '@nestjs/graphql';
+import { Module } from '@nestjs/common';
 
 @Module({
   imports: [

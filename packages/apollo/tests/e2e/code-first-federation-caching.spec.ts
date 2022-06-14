@@ -1,33 +1,34 @@
 import {
-  GraphQLModule,
-  GraphQLSchemaBuilderModule,
-  GraphQLSchemaFactory,
-} from '@nestjs/graphql';
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
-import { Test } from '@nestjs/testing';
-import {
   DirectiveLocation,
-  getIntrospectionQuery,
-  graphql,
   GraphQLBoolean,
   GraphQLDirective,
   GraphQLEnumType,
   GraphQLInt,
   GraphQLSchema,
   IntrospectionSchema,
+  getIntrospectionQuery,
+  graphql,
   printSchema,
 } from 'graphql';
-import { PostResolver } from '../code-first-federation/post/post.resolver';
-import { IRecipeResolver } from '../code-first-federation/recipe/irecipe.resolver';
-import { UserResolver } from '../code-first-federation/user/user.resolver';
-import { printedSchemaSnapshot } from '../utils/printed-schema-with-cache-control.snapshot';
-import { INestApplication } from '@nestjs/common';
-import { ApolloServerBase } from 'apollo-server-core';
+import {
+  GraphQLModule,
+  GraphQLSchemaBuilderModule,
+  GraphQLSchemaFactory,
+} from '@nestjs/graphql';
+
 import { ApolloFederationDriver } from '../../lib';
-import { gql } from 'graphql-tag';
+import { ApolloServerBase } from 'apollo-server-core';
 import { CachingApplicationModule } from '../code-first-federation/caching.module';
-import { PostService } from '../code-first-federation/post/post.service';
+import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
+import { INestApplication } from '@nestjs/common';
+import { IRecipeResolver } from '../code-first-federation/recipe/irecipe.resolver';
 import { Post } from '../code-first-federation/post/post.entity';
+import { PostResolver } from '../code-first-federation/post/post.resolver';
+import { PostService } from '../code-first-federation/post/post.service';
+import { Test } from '@nestjs/testing';
+import { UserResolver } from '../code-first-federation/user/user.resolver';
+import { gql } from '@apollo/client/core';
+import { printedSchemaSnapshot } from '../utils/printed-schema-with-cache-control.snapshot';
 
 describe('Code-first - Federation with caching', () => {
   describe('generated schema', () => {
@@ -69,9 +70,9 @@ describe('Code-first - Federation with caching', () => {
         },
       );
 
-      introspectionSchema = await (
-        await graphql(schema, getIntrospectionQuery())
-      ).data.__schema;
+      introspectionSchema = (await (
+        await graphql({ schema, source: getIntrospectionQuery() })
+      ).data.__schema) as IntrospectionSchema;
     });
 
     it('should be valid', async () => {

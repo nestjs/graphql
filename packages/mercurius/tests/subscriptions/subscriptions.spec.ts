@@ -1,10 +1,10 @@
-import { INestApplication } from '@nestjs/common';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
-import { Test } from '@nestjs/testing';
-import { gql } from 'graphql-tag';
-import { createMercuriusTestClient } from 'mercurius-integration-testing';
-import { EventEmitter } from 'stream';
 import { AppModule } from './app/app.module';
+import { EventEmitter } from 'stream';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { createMercuriusTestClient } from 'mercurius-integration-testing';
+import { gql } from '@apollo/client/core';
 
 class CustomPubSub {
   emitter: EventEmitter;

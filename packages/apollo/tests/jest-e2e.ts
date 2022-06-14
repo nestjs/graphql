@@ -1,6 +1,6 @@
 import type { Config } from '@jest/types';
-import { pathsToModuleNameMapper } from 'ts-jest';
 import { compilerOptions } from '../tsconfig.spec.json';
+import { pathsToModuleNameMapper } from 'ts-jest';
 
 const moduleNameMapper = pathsToModuleNameMapper(compilerOptions.paths, {
   prefix: '<rootDir>/',

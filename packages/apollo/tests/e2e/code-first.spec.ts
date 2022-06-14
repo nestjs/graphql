@@ -1,10 +1,10 @@
-import { INestApplication } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
-import { gql } from 'graphql-tag';
 import { ApolloDriver } from '../../lib';
+import { ApolloServerBase } from 'apollo-server-core';
 import { ApplicationModule } from '../code-first/app.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { gql } from '@apollo/client/core';
 
 describe('Code-first', () => {
   let app: INestApplication;

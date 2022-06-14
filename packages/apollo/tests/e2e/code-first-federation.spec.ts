@@ -1,10 +1,10 @@
-import { INestApplication } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
-import { gql } from 'graphql-tag';
 import { ApolloFederationDriver } from '../../lib';
+import { ApolloServerBase } from 'apollo-server-core';
 import { ApplicationModule } from '../code-first-federation/app.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { INestApplication } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { gql } from '@apollo/client/core';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;
@@ -34,19 +34,36 @@ describe('Code-first - Federation', () => {
     });
     expect(response.data).toEqual({
       _service: {
-        sdl: `interface IRecipe {
+        sdl: `directive @key(fields: _FieldSet!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
+
+directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
+
+directive @extends on OBJECT | INTERFACE
+
+directive @external(reason: String) on OBJECT | FIELD_DEFINITION
+
+directive @tag(name: String!) repeatable on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+interface IRecipe {
   id: ID!
   title: String!
   externalField: String! @external
 }
 
-type Post @key(fields: \"id\") {
+extend type Post
+  @key(fields: \"id\")
+{
   id: ID!
   title: String!
   authorId: Int!
 }
 
-type User @extends @key(fields: \"id\") {
+extend type User
+  @extends
+  @key(fields: \"id\")
+{
   id: ID! @external
   posts: [Post!]!
 }
@@ -63,11 +80,22 @@ type Query {
   getPosts: [Post!]!
   search: [FederationSearchResultUnion!]! @deprecated(reason: \"test\")
   recipe: IRecipe!
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
 }
 
 \"\"\"Search result description\"\"\"
 union FederationSearchResultUnion = Post | User
-`,
+
+scalar _FieldSet
+
+scalar _Any
+
+type _Service {
+  sdl: String
+}
+
+union _Entity = Post | User`,
       },
     });
   });

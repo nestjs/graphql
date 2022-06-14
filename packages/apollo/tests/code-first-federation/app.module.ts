@@ -1,8 +1,16 @@
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
+import {
+  DirectiveLocation,
+  GraphQLBoolean,
+  GraphQLDirective,
+  GraphQLEnumType,
+  GraphQLInt,
+} from 'graphql';
+
 import { ApolloDriverConfig } from '../../lib';
 import { ApolloFederationDriver } from '../../lib/drivers';
+import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
+import { GraphQLModule } from '@nestjs/graphql';
+import { Module } from '@nestjs/common';
 import { PostModule } from './post/post.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { User } from './user/user.entity';

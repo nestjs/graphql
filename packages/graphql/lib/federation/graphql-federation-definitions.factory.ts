@@ -1,8 +1,8 @@
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { gql } from 'graphql-tag';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory';
 import { extend } from '../utils';
+import { gql } from '@apollo/client/core';
+import { loadPackage } from '@nestjs/common/utils/load-package.util';
 
 export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFactory {
   protected async exploreAndEmit(

@@ -1,6 +1,7 @@
-import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema';
-import { Injectable } from '@nestjs/common';
-import { existsSync, lstatSync, readFileSync } from 'fs';
+import {
+  DefinitionsGeneratorOptions,
+  GraphQLAstExplorer,
+} from './graphql-ast.explorer';
 import {
   GraphQLField,
   GraphQLObjectType,
@@ -9,17 +10,17 @@ import {
   lexicographicSortSchema,
   printSchema,
 } from 'graphql';
-import { gql } from 'graphql-tag';
+import { ResolversExplorerService, ScalarsExplorerService } from './services';
+import { existsSync, lstatSync, readFileSync } from 'fs';
+import { extend, removeTempField } from './utils';
 import { forEach, isEmpty } from 'lodash';
-import {
-  DefinitionsGeneratorOptions,
-  GraphQLAstExplorer,
-} from './graphql-ast.explorer';
+import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema';
+
+import { GqlModuleOptions } from './interfaces';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
-import { GqlModuleOptions } from './interfaces';
-import { ResolversExplorerService, ScalarsExplorerService } from './services';
-import { extend, removeTempField } from './utils';
+import { Injectable } from '@nestjs/common';
+import { gql } from '@apollo/client/core';
 
 @Injectable()
 export class GraphQLFactory {

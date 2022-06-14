@@ -18,35 +18,34 @@
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --watch"
   },
   "dependencies": {
-    "@graphql-tools/merge": "8.2.13",
-    "@graphql-tools/schema": "8.3.13",
-    "@graphql-tools/utils": "8.6.12",
+    "@graphql-tools/merge": "8.2.14",
+    "@graphql-tools/schema": "8.3.14",
+    "@graphql-tools/utils": "8.6.13",
     "@nestjs/mapped-types": "1.0.1",
     "chokidar": "3.5.3",
     "fast-glob": "3.2.11",
-    "graphql-tag": "2.12.6",
-    "graphql-ws": "5.5.5",
+    "graphql-ws": "5.9.0",
     "lodash": "4.17.21",
     "normalize-path": "3.0.0",
     "subscriptions-transport-ws": "0.11.0",
     "tslib": "2.4.0",
     "uuid": "8.3.2",
-    "ws": "8.7.0"
+    "ws": "8.8.0"
   },
   "devDependencies": {
-    "@apollo/subgraph": "0.4.2",
+    "@apollo/subgraph": "2.0.2",
     "@nestjs/common": "8.4.6",
     "@nestjs/core": "8.4.6",
     "@nestjs/testing": "8.4.6",
-    "graphql": "15.8.0",
+    "graphql": "16.5.0",
     "reflect-metadata": "0.1.13",
     "ts-morph": "15.1.0"
   },
   "peerDependencies": {
     "@apollo/subgraph": "^0.1.5 || ^0.3.0 || ^0.4.0 || ^2.0.0",
-    "@nestjs/common": "^8.2.3",
-    "@nestjs/core": "^8.2.3",
-    "graphql": "^15.8.0 || ^16.0.0",
+    "@nestjs/common": "^8.4.6",
+    "@nestjs/core": "^8.4.6",
+    "graphql": "^16.0.0",
     "reflect-metadata": "^0.1.13",
     "ts-morph": "^13.0.2 || ^14.0.0 || ^15.0.0"
   },
