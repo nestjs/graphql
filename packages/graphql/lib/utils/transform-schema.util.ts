@@ -102,7 +102,7 @@ export function transformSchema(
         fields: () => replaceFields(config.fields),
       });
 
-      if (type.extensions.apollo?.subgraph?.resolveReference) {
+      if (type.extensions?.apollo?.subgraph?.resolveReference) {
         objectType.extensions = {
           ...objectType.extensions,
           apollo: {
