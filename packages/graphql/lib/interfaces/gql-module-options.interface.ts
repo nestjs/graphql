@@ -8,6 +8,19 @@ import { BuildSchemaOptions } from './build-schema-options.interface';
 
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 
+export interface Federation2Config {
+  /**
+   * The imported directives
+   * @default ['@key', '@shareable', '@external', '@override', '@requires']
+   */
+  directives?: string[];
+  /**
+   * The import link
+   * @default 'https://specs.apollo.dev/federation/v2.0'
+   */
+  url?: string;
+}
+
 /**
  * "GraphQLModule" options object.
  */
@@ -36,6 +49,16 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
    * An array of modules to scan when searching for resolvers
    */
   include?: Function[];
+
+  /**
+   * Defines if wants to federation 2
+   * 
+   * This will add to your schema:
+   * ```graphql
+      extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable", "@external", "@override", "@requires"])
+   * ```
+   */
+  useFed2?: boolean | Federation2Config;
 
   /**
    * Directive resolvers
