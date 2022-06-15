@@ -94,11 +94,9 @@ export class GraphQLFederationFactory {
       'ApolloFederation',
       () => require('@apollo/subgraph'),
     );
-    const apolloSubgraphVersion = loadPackage(
-      '@apollo/subgraph',
-      'ApolloFederation',
-      () => require('@apollo/subgraph/package.json'),
-    );
+    const apolloSubgraphVersion = (
+      await import('@apollo/subgraph/package.json')
+    ).version;
 
     const isaApolloSubgraph2 = Number(apolloSubgraphVersion.split('.')[0]) >= 2;
     const printSubgraphSchema = apolloSubgraph.printSubgraphSchema;
