@@ -1,4 +1,4 @@
-import { getNumberOfArguments } from '../../lib/utils';
+import { getNumberOfArguments, stringifyWithoutQuotes } from '../../lib/utils';
 
 describe('getNumberOfArguments', () => {
   describe('when using function', () => {
@@ -143,5 +143,16 @@ describe('getNumberOfArguments', () => {
 
       expect(getNumberOfArguments(functionWithArray)).toBe(2);
     });
+  });
+});
+
+describe('stringifyWithoutQuotes', () => {
+  it('should stringify object correctly', () => {
+    const obj = {
+      name: '@tag',
+      as: '@mytag',
+    };
+
+    expect(stringifyWithoutQuotes(obj)).toBe('{ name: "@tag", as: "@mytag" }');
   });
 });

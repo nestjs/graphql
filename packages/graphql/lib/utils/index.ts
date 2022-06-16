@@ -4,3 +4,4 @@ export * from './generate-token.util';
 export * from './get-number-of-arguments.util';
 export * from './normalize-route-path.util';
 export * from './remove-temp.util';
+export * from './object.util';
