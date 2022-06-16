@@ -15,7 +15,8 @@
     "url": "git+https://github.com/nestjs/graphql.git"
   },
   "scripts": {
-    "test:e2e": "jest --config ./tests/jest-e2e.ts --runInBand",
+    "test:e2e": "jest --config ./tests/jest-e2e.ts --runInBand && yarn test:e2e:fed2",
+    "test:e2e:fed2": "jest --config ./tests/jest-e2e-fed2.ts --runInBand",
     "test:e2e:dev": "jest --config ./tests/jest-e2e.ts --runInBand --watch"
   },
   "bugs": {
@@ -23,6 +24,9 @@
   },
   "devDependencies": {
     "@apollo/gateway": "0.51.0",
+    "@apollo/gateway-v2": "npm:@apollo/gateway@2.0.5",
+    "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.0.5",
+    "graphql-16": "npm:graphql@16.5.0",
     "@nestjs/common": "8.4.7",
     "@nestjs/core": "8.4.7",
     "@nestjs/platform-express": "8.4.7",
