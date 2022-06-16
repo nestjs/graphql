@@ -8,17 +8,22 @@ import { BuildSchemaOptions } from './build-schema-options.interface';
 
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 
+export interface AliasDirectiveImport {
+  name: string;
+  as: string;
+}
+
 export interface Federation2Config {
   /**
    * The imported directives
    * @default ['@key', '@shareable', '@external', '@override', '@requires']
    */
-  directives?: string[];
+  directives?: (string | AliasDirectiveImport)[];
   /**
    * The import link
    * @default 'https://specs.apollo.dev/federation/v2.0'
    */
-  url?: string;
+  importUrl?: string;
 }
 
 /**
@@ -51,7 +56,9 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   include?: Function[];
 
   /**
-   * Defines if wants to federation 2
+   * If enabled, it will use federation 2 schema
+   * 
+   * **Note:** You need to have installed @apollo/subgraph@^2.0.0 and enable `autoSchemaFile`
    * 
    * This will add to your schema:
    * ```graphql

@@ -28,7 +28,7 @@ import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
 import { GraphQLSchemaHost } from '../graphql-schema.host';
 import { GqlModuleOptions, BuildFederatedSchemaOptions } from '../interfaces';
 import { ResolversExplorerService, ScalarsExplorerService } from '../services';
-import { extend } from '../utils';
+import { extend, stringifyWithoutQuotes } from '../utils';
 import { transformSchema } from '../utils/transform-schema.util';
 
 @Injectable()
@@ -122,10 +122,13 @@ export class GraphQLFederationFactory {
           '@override',
           '@requires',
         ],
-        url = 'https://specs.apollo.dev/federation/v2.0',
+        importUrl = 'https://specs.apollo.dev/federation/v2.0',
       } = typeof options.useFed2 === 'boolean' ? {} : options.useFed2;
       const mappedDirectives = directives
         .map((directive) => {
+          if (!isString(directive)) {
+            return stringifyWithoutQuotes(directive);
+          }
           let finalDirective = directive;
           if (!directive.startsWith('@')) {
             finalDirective = `@${directive}`;
@@ -135,7 +138,7 @@ export class GraphQLFederationFactory {
         .join(', ');
 
       typeDefs = `
-        extend schema @link(url: "${url}", import: [${mappedDirectives}])
+        extend schema @link(url: "${importUrl}", import: [${mappedDirectives}])
         ${typeDefs}
       `;
     } else if (options.useFed2 && !isApolloSubgraph2) {
