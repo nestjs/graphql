@@ -10,6 +10,7 @@ const config: Config.InitialOptions = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '../.',
   testRegex: '.spec.ts$',
+  testPathIgnorePatterns: ['.fed2-spec.ts$'],
   moduleNameMapper,
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
