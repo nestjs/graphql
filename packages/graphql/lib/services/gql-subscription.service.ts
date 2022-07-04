@@ -1,4 +1,8 @@
-import { execute, GraphQLSchema, subscribe } from 'graphql';
+import {
+  execute as graphqlExecute,
+  GraphQLSchema,
+  subscribe as graphqlSubscribe,
+} from 'graphql';
 import { GRAPHQL_TRANSPORT_WS_PROTOCOL, ServerOptions } from 'graphql-ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import {
@@ -25,7 +29,7 @@ export type GraphQLWsSubscriptionsConfig = Partial<
 export type GraphQLSubscriptionTransportWsConfig = Partial<
   Pick<
     SubscriptionTransportWsServerOptions,
-    'onConnect' | 'onDisconnect' | 'keepAlive'
+    'onConnect' | 'onDisconnect' | 'onOperation' | 'keepAlive'
   >
 > & {
   path?: string;
@@ -38,6 +42,8 @@ export type SubscriptionConfig = {
 
 export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
   schema: GraphQLSchema;
+  execute?: typeof graphqlExecute;
+  subscribe?: typeof graphqlSubscribe;
   path?: string;
   context?: ServerOptions['context'];
 }
@@ -70,6 +76,8 @@ export class GqlSubscriptionService {
 
   private initialize() {
     const supportedProtocols = [];
+    const { execute = graphqlExecute, subscribe = graphqlSubscribe } =
+      this.options;
 
     if ('graphql-ws' in this.options) {
       const graphqlWsOptions =

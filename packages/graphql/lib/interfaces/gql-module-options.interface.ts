@@ -13,6 +13,11 @@ export type Enhancer = 'guards' | 'interceptors' | 'filters';
  */
 export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   /**
+   * Path to mount GraphQL API
+   */
+  path?: string;
+
+  /**
    * Type definitions
    */
   typeDefs?: string | string[];
@@ -87,6 +92,11 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
    * Resolver validation options.
    */
   resolverValidationOptions?: IResolverValidationOptions;
+
+  /**
+   * Inherit missing resolvers from their interface types defined in the resolvers object.
+   */
+  inheritResolversFromInterfaces?: boolean;
 
   /**
    * Function to be applied to the schema letting you register custom transformations.

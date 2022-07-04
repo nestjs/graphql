@@ -8,6 +8,7 @@ import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
 
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
@@ -29,6 +30,7 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
   public async start(options: MercuriusDriverConfig) {
     const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
       options,
+      buildMercuriusFederatedSchema,
     );
 
     if (adapterOptions.definitions && adapterOptions.definitions.path) {

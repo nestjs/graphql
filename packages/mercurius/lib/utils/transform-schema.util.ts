@@ -145,11 +145,19 @@ export function transformFederatedSchema(schema: GraphQLSchema) {
             throw new MER_ERR_GQL_GATEWAY_INVALID_SCHEMA(__typename);
           }
 
-          const resolveReference = (type as any).resolveReference
-            ? (type as any).resolveReference
-            : function defaultResolveReference() {
-                return reference;
-              };
+          const resolveReference =
+            type.extensions?.apollo?.subgraph?.resolveReference ??
+            /**
+             * Backcompat for old versions of @apollo/subgraph which didn't use
+             * `extensions` This can be removed when support for
+             * @apollo/subgraph < 0.4.2 is dropped Reference:
+             * https://github.com/apollographql/federation/pull/1747
+             */
+            // @ts-expect-error (explanation above)
+            type.resolveReference ??
+            function defaultResolveReference() {
+              return reference;
+            };
 
           const result = resolveReference(reference, {}, context, info);
 

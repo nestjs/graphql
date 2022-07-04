@@ -13,14 +13,20 @@ export class ResolveTypeFactory {
   public getResolveTypeFunction<TSource = any, TContext = any>(
     resolveType: ResolveTypeFn<TSource, TContext>,
   ): GraphQLTypeResolver<TSource, TContext> {
-    return async (...args) => {
-      const resolvedType = await resolveType(...args);
-      if (isString(resolvedType)) {
-        return resolvedType;
-      }
-      const typeDef =
-        this.typeDefinitionsStorage.getObjectTypeByTarget(resolvedType);
-      return typeDef?.type;
+    return (...args) => {
+      const typeToString = (resolvedType: Function | string) => {
+        if (isString(resolvedType)) {
+          return resolvedType;
+        }
+        const typeDef =
+          this.typeDefinitionsStorage.getObjectTypeByTarget(resolvedType);
+        return typeDef?.type?.name;
+      };
+
+      const resolvedTypeOrPromise = resolveType(...args);
+      return resolvedTypeOrPromise && resolvedTypeOrPromise instanceof Promise
+        ? resolvedTypeOrPromise.then(typeToString)
+        : typeToString(resolvedTypeOrPromise);
     };
   }
 }

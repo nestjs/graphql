@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
+  ContextIdFactory,
   createContextId,
   MetadataScanner,
   ModuleRef,
@@ -34,10 +35,19 @@ import {
 } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
+import { getNumberOfArguments } from '../utils';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
+
+// TODO remove in the next version (backward-compatibility layer)
+// "ContextIdFactory.getByRequest.length" returns an incorrent number
+// as parameters with default values do not count in.
+// @ref https://github.com/nestjs/graphql/pull/2214
+const getByRequestNumberOfArguments = getNumberOfArguments(
+  ContextIdFactory.getByRequest,
+);
 
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
@@ -172,25 +182,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           undefined,
           args,
         );
-        let contextId: ContextId;
-        if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
-          contextId = gqlContext[REQUEST_CONTEXT_ID];
-        } else if (
-          gqlContext &&
-          gqlContext.req &&
-          gqlContext.req[REQUEST_CONTEXT_ID]
-        ) {
-          contextId = gqlContext.req[REQUEST_CONTEXT_ID];
-        } else {
-          contextId = createContextId();
-          Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-            value: contextId,
-            enumerable: false,
-            configurable: false,
-            writable: false,
-          });
-        }
-
+        const contextId = this.getContextId(gqlContext);
         this.registerContextProvider(gqlContext, contextId);
         const contextInstance = await this.injector.loadPerContext(
           instance,
@@ -345,5 +337,44 @@ export class ResolversExplorerService extends BaseExplorerService {
       TArgs,
       TOutput
     >(originalResolveFnFactory, middlewareFunctions);
+  }
+
+  private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
+    if (getByRequestNumberOfArguments === 2) {
+      const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
+      if (!gqlContext[REQUEST_CONTEXT_ID as any]) {
+        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+          value: contextId,
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
+      }
+      return contextId;
+    } else {
+      // TODO remove in the next version (backward-compatibility layer)
+      // Left for backward compatibility purposes
+      let contextId: ContextId;
+
+      if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
+        contextId = gqlContext[REQUEST_CONTEXT_ID];
+      } else if (
+        gqlContext &&
+        gqlContext.req &&
+        gqlContext.req[REQUEST_CONTEXT_ID]
+      ) {
+        contextId = gqlContext.req[REQUEST_CONTEXT_ID];
+      } else {
+        contextId = createContextId();
+        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+          value: contextId,
+          enumerable: false,
+          configurable: false,
+          writable: false,
+        });
+      }
+
+      return contextId;
+    }
   }
 }

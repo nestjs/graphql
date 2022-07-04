@@ -1,5 +1,6 @@
 {
   "semanticCommits": true,
+  "labels": ["dependencies"],
   "packageRules": [{
     "depTypeList": ["devDependencies"],
     "automerge": true

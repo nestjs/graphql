@@ -1,8 +1,9 @@
-// This file is copied from `apollo-tooling`. The only difference is that it has a hack to not remove federation specific properties.
-// The changed lines are 31-40 and 85-87 and the original file can be found here:
-// https://github.com/apollographql/apollo-tooling/blob/master/packages/apollo-graphql/src/schema/transformSchema.ts
+// This file is copied from `apollographql/federation`. The only difference is
+// that it has a hack to not remove federation specific properties.
+// https://github.com/apollographql/federation/blob/main/subgraph-js/src/schema-helper/transformSchema.ts
 
 import {
+  GraphQLDirective,
   GraphQLFieldConfigArgumentMap,
   GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
@@ -14,6 +15,7 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLOutputType,
+  GraphQLResolveInfo,
   GraphQLSchema,
   GraphQLType,
   GraphQLUnionType,
@@ -26,13 +28,33 @@ import {
   isUnionType,
 } from 'graphql';
 
+type GraphQLReferenceResolver<TContext> = (
+  reference: object,
+  context: TContext,
+  info: GraphQLResolveInfo,
+) => any;
+
+interface ApolloSubgraphExtensions<TContext> {
+  resolveReference?: GraphQLReferenceResolver<TContext>;
+}
+
 declare module 'graphql/type/definition' {
-  interface GraphQLObjectType {
-    resolveReference?: any;
+  interface GraphQLObjectTypeExtensions<_TSource = any, _TContext = any> {
+    apollo?: {
+      subgraph?: ApolloSubgraphExtensions<_TContext>;
+    };
   }
 
-  interface GraphQLObjectTypeConfig<TSource, TContext> {
-    resolveReference?: any;
+  interface GraphQLInterfaceTypeExtensions<_TSource = any, _TContext = any> {
+    apollo?: {
+      subgraph?: ApolloSubgraphExtensions<_TContext>;
+    };
+  }
+
+  interface GraphQLUnionTypeExtensions<_TSource = any, _TContext = any> {
+    apollo?: {
+      subgraph?: ApolloSubgraphExtensions<_TContext>;
+    };
   }
 }
 
@@ -67,6 +89,7 @@ export function transformSchema(
     query: replaceMaybeType(schemaConfig.query),
     mutation: replaceMaybeType(schemaConfig.mutation),
     subscription: replaceMaybeType(schemaConfig.subscription),
+    directives: replaceDirectives(schemaConfig.directives),
   });
 
   function recreateNamedType(type: GraphQLNamedType): GraphQLNamedType {
@@ -79,7 +102,27 @@ export function transformSchema(
         fields: () => replaceFields(config.fields),
       });
 
-      if (type.resolveReference) {
+      if (type.extensions?.apollo?.subgraph?.resolveReference) {
+        objectType.extensions = {
+          ...objectType.extensions,
+          apollo: {
+            ...objectType.extensions.apollo,
+            subgraph: {
+              ...objectType.extensions.apollo.subgraph,
+              resolveReference:
+                type.extensions.apollo.subgraph.resolveReference,
+            },
+          },
+        };
+        /**
+         * Backcompat for old versions of @apollo/subgraph which didn't use
+         * `extensions` This can be removed when support for @apollo/subgraph <
+         * 0.4.2 is dropped Reference:
+         * https://github.com/apollographql/federation/pull/1747
+         */
+        // @ts-expect-error (explanation above)
+      } else if (type.resolveReference) {
+        // @ts-expect-error (explanation above)
         objectType.resolveReference = type.resolveReference;
       }
 
@@ -163,6 +206,16 @@ export function transformSchema(
       ...arg,
       type: replaceType(arg.type),
     }));
+  }
+
+  function replaceDirectives(directives: GraphQLDirective[]) {
+    return directives.map((directive) => {
+      const config = directive.toConfig();
+      return new GraphQLDirective({
+        ...config,
+        args: replaceArgs(config.args),
+      });
+    });
   }
 }
 

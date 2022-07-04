@@ -1,6 +1,7 @@
 import { ContextType, ExecutionContext } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { GraphQLArgumentsHost } from './gql-arguments-host';
+import { normalizeResolverArgs } from '../utils/normalize-resolver-args';
 
 export type GqlContextType = 'graphql' | ContextType;
 export type GraphQLExecutionContext = GqlExecutionContext;
@@ -11,10 +12,8 @@ export class GqlExecutionContext
 {
   static create(context: ExecutionContext): GqlExecutionContext {
     const type = context.getType();
-    const args = context.getArgs();
     const gqlContext = new GqlExecutionContext(
-      // Reference resolver args don't have root argument
-      args.length === 3 ? [undefined, ...args] : args,
+      normalizeResolverArgs(context.getArgs()),
       context.getClass(),
       context.getHandler(),
     );

@@ -49,7 +49,7 @@ export class UnionDefinitionFactory {
           }
           const objectDef =
             this.typeDefinitionsStorage.getObjectTypeByTarget(target);
-          return objectDef.type;
+          return objectDef.type?.name;
         };
   }
 }

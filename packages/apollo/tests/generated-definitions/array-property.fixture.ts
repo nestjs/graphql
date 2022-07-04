@@ -12,6 +12,9 @@ export interface Foo {
     b?: Nullable<string[]>;
     c: Nullable<string>[];
     d?: Nullable<Nullable<string>[]>;
+    e: string[][];
+    f: string[][][];
+    g?: Nullable<Nullable<Nullable<Nullable<string>[]>[]>[]>;
 }
 
 type Nullable<T> = T | null;

@@ -59,6 +59,7 @@ export class GraphQLFactory {
           ...(options.resolverValidationOptions || {}),
           requireResolversForResolveType: 'ignore',
         },
+        inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
       });
       let schema = options.schema
         ? mergeSchemas({
@@ -98,6 +99,7 @@ export class GraphQLFactory {
         ${options.typeDefs}
       `,
       resolverValidationOptions: options.resolverValidationOptions,
+      inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
     });
     let schema = options.schema
       ? mergeSchemas({

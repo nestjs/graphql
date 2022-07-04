@@ -5,6 +5,7 @@ import {
   graphql,
   GraphQLError,
   GraphQLSchema,
+  specifiedDirectives,
   version as GraphQLPackageVersion,
 } from 'graphql';
 import {
@@ -70,7 +71,7 @@ export class GraphQLSchemaFactory {
       query: this.queryTypeFactory.create(resolvers, options),
       subscription: this.subscriptionTypeFactory.create(resolvers, options),
       types: this.orphanedTypesFactory.create(options.orphanedTypes),
-      directives: options.directives,
+      directives: [...specifiedDirectives, ...(options.directives ?? [])],
     });
 
     if (!options.skipCheck) {

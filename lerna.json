@@ -2,17 +2,15 @@
   "packages": [
     "packages/*"
   ],
-  "version": "10.0.2",
+  "version": "10.0.16",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "changelog": {
-    "ignoreCommitters": [
-      "allcontributors"
-    ],
     "labels": {
-      "enhancement": ":rocket: New Feature",
-      "core": ":earth_asia: Core",
-      "bug": ":bug: Bug Fix"
+      "feature": "Features",
+      "bug": "Bug fixes",
+      "enhancement": "Enhancements",
+      "dependencies": "Dependencies"
     }
   }
 }
