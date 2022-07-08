@@ -43,8 +43,8 @@
   },
   "peerDependencies": {
     "@apollo/gateway": "^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0",
-    "@nestjs/common": "^8.2.3",
-    "@nestjs/core": "^8.2.3",
+    "@nestjs/common": "^8.2.3 || ^9.0.0",
+    "@nestjs/core": "^8.2.3 || ^9.0.0",
     "@nestjs/graphql": "^10.0.0",
     "apollo-server-core": "^3.5.0",
     "apollo-server-express": "^3.5.0",
