@@ -291,6 +291,7 @@ export type PrimitiveObject = {
 function isNode(value: any): value is ts.Node {
   return typeof value === 'object' && value.constructor.name === 'NodeObject';
 }
+
 export function serializePrimitiveObjectToAst(
   f: ts.NodeFactory,
   object: PrimitiveObject,
@@ -344,5 +345,48 @@ export function safelyMergeObjects(
       f.createSpreadAssignment(a),
       f.createSpreadAssignment(b),
     ]);
+  }
+}
+
+export function updateDecoratorArguments<T extends ts.ClassDeclaration | ts.PropertyDeclaration | ts.GetAccessorDeclaration>(
+  f: ts.NodeFactory,
+  node: T,
+  decoratorName: string,
+  replaceFn: (decoratorArguments: ts.NodeArray<ts.Expression>) => ts.Expression[]
+): T {
+  let updated = false;
+
+  const decorators = node.decorators.map((decorator) => {
+    if (getDecoratorName(decorator) !== decoratorName) {
+      return decorator;
+    }
+
+    const decoratorExpression = decorator.expression as ts.CallExpression;
+    updated = true;
+    return f.updateDecorator(
+      decorator,
+      f.updateCallExpression(
+        decoratorExpression,
+        decoratorExpression.expression,
+        decoratorExpression.typeArguments,
+        replaceFn(decoratorExpression.arguments),
+      ),
+    );
+  });
+
+  if (!updated) {
+    return node;
+  }
+
+  if (ts.isClassDeclaration(node)) {
+    return f.updateClassDeclaration(node, decorators, node.modifiers, node.name, node.typeParameters, node.heritageClauses, node.members) as T;
+  }
+
+  if (ts.isPropertyDeclaration(node)) {
+    return f.updatePropertyDeclaration(node, decorators, node.modifiers, node.name, node.questionToken, node.type, node.initializer) as T;
+  }
+
+  if (ts.isGetAccessorDeclaration(node)) {
+    return f.updateGetAccessorDeclaration(node, decorators, node.modifiers, node.name, node.parameters, node.type, node.body) as T;
   }
 }

@@ -208,35 +208,35 @@ class NotAModel {
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-let ObjectTypeModel = class ObjectTypeModel {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return { prop: { type: () => String } };
-    }
-};
-ObjectTypeModel = __decorate([
-    ObjectType()
-], ObjectTypeModel);
-let InputTypeModel = class InputTypeModel {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return { prop: { type: () => String } };
-    }
-};
-InputTypeModel = __decorate([
-    InputType()
-], InputTypeModel);
-let InterfaceTypeModel = class InterfaceTypeModel {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return { prop: { type: () => String } };
-    }
-};
-InterfaceTypeModel = __decorate([
-    InterfaceType()
-], InterfaceTypeModel);
-class NotAModel {
-}
-"
-`);
+      "\\"use strict\\";
+      let ObjectTypeModel = class ObjectTypeModel {
+          static _GRAPHQL_METADATA_FACTORY() {
+              return { prop: { type: () => String } };
+          }
+      };
+      ObjectTypeModel = __decorate([
+          ObjectType()
+      ], ObjectTypeModel);
+      let InputTypeModel = class InputTypeModel {
+          static _GRAPHQL_METADATA_FACTORY() {
+              return { prop: { type: () => String } };
+          }
+      };
+      InputTypeModel = __decorate([
+          InputType()
+      ], InputTypeModel);
+      let InterfaceTypeModel = class InterfaceTypeModel {
+          static _GRAPHQL_METADATA_FACTORY() {
+              return { prop: { type: () => String } };
+          }
+      };
+      InterfaceTypeModel = __decorate([
+          InterfaceType()
+      ], InterfaceTypeModel);
+      class NotAModel {
+      }
+      "
+    `);
   });
 
   it('should process fields declared as getters ', () => {
@@ -249,21 +249,21 @@ class ObjectTypeModel {
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-let ObjectTypeModel = class ObjectTypeModel {
-    get prop() { }
-    static _GRAPHQL_METADATA_FACTORY() {
-        return { prop: { type: () => String } };
-    }
-};
-ObjectTypeModel = __decorate([
-    ObjectType()
-], ObjectTypeModel);
-"
-`);
+      "\\"use strict\\";
+      let ObjectTypeModel = class ObjectTypeModel {
+          get prop() { }
+          static _GRAPHQL_METADATA_FACTORY() {
+              return { prop: { type: () => String } };
+          }
+      };
+      ObjectTypeModel = __decorate([
+          ObjectType()
+      ], ObjectTypeModel);
+      "
+    `);
   });
 
-  describe('Should add description from JSDoc to decorators argument', () => {
+  describe('Should add description from JSDoc to class decorators argument', () => {
     it('when there are no arguments on decorator', () => {
       const source = `
 /** Test Description */
@@ -272,18 +272,18 @@ class ObjectTypeModel {}
 `;
       const actual = transpile(source, { introspectComments: true });
       expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-/** Test Description */
-let ObjectTypeModel = class ObjectTypeModel {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return {};
-    }
-};
-ObjectTypeModel = __decorate([
-    ObjectType({ description: \\"Test Description\\" })
-], ObjectTypeModel);
-"
-`);
+        "\\"use strict\\";
+        /** Test Description */
+        let ObjectTypeModel = class ObjectTypeModel {
+            static _GRAPHQL_METADATA_FACTORY() {
+                return {};
+            }
+        };
+        ObjectTypeModel = __decorate([
+            ObjectType({ description: \\"Test Description\\" })
+        ], ObjectTypeModel);
+        "
+      `);
     });
 
     it('when there are arguments on decorator', () => {
@@ -298,27 +298,27 @@ class Test2Model {}
 `;
       const actual = transpile(source, { introspectComments: true });
       expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-/** Test1 Description */
-let Test1Model = class Test1Model {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return {};
-    }
-};
-Test1Model = __decorate([
-    ObjectType({ description: \\"Test1 Description\\", isAbstract: true })
-], Test1Model);
-/** Test2 Description */
-let Test2Model = class Test2Model {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return {};
-    }
-};
-Test2Model = __decorate([
-    ObjectType('name', { description: \\"Test2 Description\\", isAbstract: true })
-], Test2Model);
-"
-`);
+        "\\"use strict\\";
+        /** Test1 Description */
+        let Test1Model = class Test1Model {
+            static _GRAPHQL_METADATA_FACTORY() {
+                return {};
+            }
+        };
+        Test1Model = __decorate([
+            ObjectType({ description: \\"Test1 Description\\", isAbstract: true })
+        ], Test1Model);
+        /** Test2 Description */
+        let Test2Model = class Test2Model {
+            static _GRAPHQL_METADATA_FACTORY() {
+                return {};
+            }
+        };
+        Test2Model = __decorate([
+            ObjectType('name', { description: \\"Test2 Description\\", isAbstract: true })
+        ], Test2Model);
+        "
+      `);
     });
 
     it('should work if parameters passed as variable reference or function', () => {
@@ -333,27 +333,27 @@ class Test2 {}
 `;
       const actual = transpile(source, { introspectComments: true });
       expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-/** test1 description */
-let Test1 = class Test1 {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return {};
-    }
-};
-Test1 = __decorate([
-    ObjectType('name', { ...{ description: \\"test1 description\\" }, ...getOptions() })
-], Test1);
-/** test2 description */
-let Test2 = class Test2 {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return {};
-    }
-};
-Test2 = __decorate([
-    ObjectType('name', { ...{ description: \\"test2 description\\" }, ...options })
-], Test2);
-"
-`);
+        "\\"use strict\\";
+        /** test1 description */
+        let Test1 = class Test1 {
+            static _GRAPHQL_METADATA_FACTORY() {
+                return {};
+            }
+        };
+        Test1 = __decorate([
+            ObjectType('name', { ...{ description: \\"test1 description\\" }, ...getOptions() })
+        ], Test1);
+        /** test2 description */
+        let Test2 = class Test2 {
+            static _GRAPHQL_METADATA_FACTORY() {
+                return {};
+            }
+        };
+        Test2 = __decorate([
+            ObjectType('name', { ...{ description: \\"test2 description\\" }, ...options })
+        ], Test2);
+        "
+      `);
     });
   });
 
@@ -370,21 +370,21 @@ class ObjectTypeModel {
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-import { registerEnumType } from \\"@nestjs/graphql\\";
-registerEnumType({ aaa: \\"aaa\\", bbb: \\"bbb\\", ccc: \\"ccc\\" }, { name: \\"ObjectTypeModelTestEnum\\" });
-registerEnumType({ foo: \\"foo\\", bar: \\"bar\\", baz: \\"baz\\" }, { name: \\"ObjectTypeModelWithNullEnum\\" });
-registerEnumType({ with_space: \\"with space\\", bar: \\"bar\\" }, { name: \\"ObjectTypeModelWithSpaceEnum\\" });
-let ObjectTypeModel = class ObjectTypeModel {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return { test: { type: () => ObjectTypeModelTestEnum }, withNull: { nullable: true, type: () => ObjectTypeModelWithNullEnum }, withSpace: { type: () => ObjectTypeModelWithSpaceEnum }, test3: { type: () => String } };
-    }
-};
-ObjectTypeModel = __decorate([
-    ObjectType()
-], ObjectTypeModel);
-"
-`);
+      "\\"use strict\\";
+      import { registerEnumType } from \\"@nestjs/graphql\\";
+      registerEnumType({ aaa: \\"aaa\\", bbb: \\"bbb\\", ccc: \\"ccc\\" }, { name: \\"ObjectTypeModelTestEnum\\" });
+      registerEnumType({ foo: \\"foo\\", bar: \\"bar\\", baz: \\"baz\\" }, { name: \\"ObjectTypeModelWithNullEnum\\" });
+      registerEnumType({ with_space: \\"with space\\", bar: \\"bar\\" }, { name: \\"ObjectTypeModelWithSpaceEnum\\" });
+      let ObjectTypeModel = class ObjectTypeModel {
+          static _GRAPHQL_METADATA_FACTORY() {
+              return { test: { type: () => ObjectTypeModelTestEnum }, withNull: { nullable: true, type: () => ObjectTypeModelWithNullEnum }, withSpace: { type: () => ObjectTypeModelWithSpaceEnum }, test3: { type: () => String } };
+          }
+      };
+      ObjectTypeModel = __decorate([
+          ObjectType()
+      ], ObjectTypeModel);
+      "
+    `);
   });
 
   it('Should add enum name if it not specified in registerEnumType call', () => {
@@ -398,12 +398,12 @@ registerEnumType(Type, {name: 'AnotherName'});
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"import { registerEnumType } from '@nestjs/graphql';
-registerEnumType(Type, { name: \\"Type\\" });
-registerEnumType(Type, { name: \\"Type\\", description: 'description' });
-registerEnumType(Type, { name: 'AnotherName' });
-"
-`);
+      "import { registerEnumType } from '@nestjs/graphql';
+      registerEnumType(Type, { name: \\"Type\\" });
+      registerEnumType(Type, { name: \\"Type\\", description: 'description' });
+      registerEnumType(Type, { name: 'AnotherName' });
+      "
+    `);
   });
 
   it('Should infer name for union type from variable name', () => {
@@ -416,11 +416,11 @@ const MyAwesomeUnion = createUnionType({types: [Foo, Bar, Baz], name: 'JustUnion
 
     const actual = transpile(source, {});
     expect(actual).toMatchInlineSnapshot(`
-"import { createUnionType } from '@nestjs/graphql';
-const MyAwesomeUnion = createUnionType({ name: \\"MyAwesomeUnion\\", types: [Foo, Bar, Baz] });
-const MyAwesomeUnion = createUnionType({ name: 'JustUnion', types: [Foo, Bar, Baz] });
-"
-`);
+      "import { createUnionType } from '@nestjs/graphql';
+      const MyAwesomeUnion = createUnionType({ name: \\"MyAwesomeUnion\\", types: [Foo, Bar, Baz] });
+      const MyAwesomeUnion = createUnionType({ name: 'JustUnion', types: [Foo, Bar, Baz] });
+      "
+    `);
   });
 
   describe('Enum Discovering', () => {
@@ -445,25 +445,25 @@ enum Status2 {
 
       const actual = transpile(source, { autoRegisterEnums: true });
       expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-/**
-* @private
-*/
-var Status;
-(function (Status) {
-    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status || (Status = {}));
-/**
-* @HideEnum
-*/
-var Status2;
-(function (Status2) {
-    Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status2 || (Status2 = {}));
-"
-`);
+        "\\"use strict\\";
+        /**
+        * @private
+        */
+        var Status;
+        (function (Status) {
+            Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status || (Status = {}));
+        /**
+        * @HideEnum
+        */
+        var Status2;
+        (function (Status2) {
+            Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status2 || (Status2 = {}));
+        "
+      `);
     });
 
     it('Should introspect comments for enums', () => {
@@ -488,25 +488,25 @@ enum Status {
         introspectComments: true,
       });
       expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-import { registerEnumType } from \\"@nestjs/graphql\\";
-/**
-* Description for Enum
-*/
-var Status;
-(function (Status) {
-    /**
-    * @deprecated this one is deprecated
-    */
-    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    /**
-    * This is a enum field!
-    */
-    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status || (Status = {}));
-registerEnumType(Status, { name: \\"Status\\", description: \\"Description for Enum\\", valuesMap: { ENABLED: { deprecationReason: \\"this one is deprecated\\" }, DISABLED: { description: \\"This is a enum field!\\" } } });
-"
-`);
+        "\\"use strict\\";
+        import { registerEnumType } from \\"@nestjs/graphql\\";
+        /**
+        * Description for Enum
+        */
+        var Status;
+        (function (Status) {
+            /**
+            * @deprecated this one is deprecated
+            */
+            Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            /**
+            * This is a enum field!
+            */
+            Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status || (Status = {}));
+        registerEnumType(Status, { name: \\"Status\\", description: \\"Description for Enum\\", valuesMap: { ENABLED: { deprecationReason: \\"this one is deprecated\\" }, DISABLED: { description: \\"This is a enum field!\\" } } });
+        "
+      `);
     });
 
     it('Should not add additional import if there is one in ES Modules', () => {
@@ -536,25 +536,25 @@ registerEnumType(Status2, {name: 'Status2'});
         { module: ModuleKind.ES2015 },
       );
       expect(actual).toMatchInlineSnapshot(`
-"import { registerEnumType, otherPackage } from '@nestjs/graphql';
-var Status;
-(function (Status) {
-    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status || (Status = {}));
-registerEnumType(Status, { name: \\"Status\\", valuesMap: {} });
-/**
-* @private
-*/
-var Status2;
-(function (Status2) {
-    Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status2 || (Status2 = {}));
-otherPackage();
-registerEnumType(Status2, { name: 'Status2' });
-"
-`);
+        "import { registerEnumType, otherPackage } from '@nestjs/graphql';
+        var Status;
+        (function (Status) {
+            Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status || (Status = {}));
+        registerEnumType(Status, { name: \\"Status\\", valuesMap: {} });
+        /**
+        * @private
+        */
+        var Status2;
+        (function (Status2) {
+            Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status2 || (Status2 = {}));
+        otherPackage();
+        registerEnumType(Status2, { name: 'Status2' });
+        "
+      `);
     });
 
     it('Should create eager namespaced import and call registerEnumType from this import in CommonJs', () => {
@@ -584,34 +584,36 @@ registerEnumType(Status2, {name: 'Status2'});
         { module: ModuleKind.CommonJS },
       );
       expect(actual).toMatchInlineSnapshot(`
-"\\"use strict\\";
-Object.defineProperty(exports, \\"__esModule\\", { value: true });
-var nestjs_graphql_1 = require(\\"@nestjs/graphql\\");
-var graphql_1 = require(\\"@nestjs/graphql\\");
-var Status;
-(function (Status) {
-    Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status || (Status = {}));
-nestjs_graphql_1.registerEnumType(Status, { name: \\"Status\\", valuesMap: {} });
-/**
-* @private
-*/
-var Status2;
-(function (Status2) {
-    Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
-    Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
-})(Status2 || (Status2 = {}));
-(0, graphql_1.otherPackage)();
-(0, graphql_1.registerEnumType)(Status2, { name: 'Status2' });
-"
-`);
+        "\\"use strict\\";
+        Object.defineProperty(exports, \\"__esModule\\", { value: true });
+        var nestjs_graphql_1 = require(\\"@nestjs/graphql\\");
+        var graphql_1 = require(\\"@nestjs/graphql\\");
+        var Status;
+        (function (Status) {
+            Status[Status[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            Status[Status[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status || (Status = {}));
+        nestjs_graphql_1.registerEnumType(Status, { name: \\"Status\\", valuesMap: {} });
+        /**
+        * @private
+        */
+        var Status2;
+        (function (Status2) {
+            Status2[Status2[\\"ENABLED\\"] = 0] = \\"ENABLED\\";
+            Status2[Status2[\\"DISABLED\\"] = 1] = \\"DISABLED\\";
+        })(Status2 || (Status2 = {}));
+        (0, graphql_1.otherPackage)();
+        (0, graphql_1.registerEnumType)(Status2, { name: 'Status2' });
+        "
+      `);
     });
   });
 
-  it('Should use type defined in explicit decorator instead of introspection', () => {
+  it('Should amend Field decorator with introspection data', () => {
     const source = `
 import { ID } from '@nestjs/graphql';
+
+const field3Options = {nullable: true};
 
 @ObjectType()
 class Model {
@@ -621,25 +623,53 @@ class Model {
    @Field(() => ID)
    field: string;
 
+   /**
+   * Description
+   */
+   @Field(() => ID, {nullable: true})
+   field1: string;
+
+   /**
+   * Description
+   */
+   @Field({nullable: false})
+   field2?: string;
+   
+   /**
+   * Description
+   */
+   @Field(field3Options)
+   field3: string;
+   
    name: string;
 }
 `;
 
-    const actual = transpile(source, {});
+    const actual = transpile(source, { introspectComments: true });
     expect(actual).toMatchInlineSnapshot(`
-"import { ID } from '@nestjs/graphql';
-let Model = class Model {
-    static _GRAPHQL_METADATA_FACTORY() {
-        return { field: { type: () => ID }, name: { type: () => String } };
-    }
-};
-__decorate([
-    Field(() => ID)
-], Model.prototype, \\"field\\", void 0);
-Model = __decorate([
-    ObjectType()
-], Model);
-"
-`);
+      "import { ID } from '@nestjs/graphql';
+      const field3Options = { nullable: true };
+      let Model = class Model {
+          static _GRAPHQL_METADATA_FACTORY() {
+              return { name: { type: () => String } };
+          }
+      };
+      __decorate([
+          Field(() => ID, { description: \\"Description\\" })
+      ], Model.prototype, \\"field\\", void 0);
+      __decorate([
+          Field(() => ID, { description: \\"Description\\", nullable: true })
+      ], Model.prototype, \\"field1\\", void 0);
+      __decorate([
+          Field(() => String, { nullable: false, description: \\"Description\\" })
+      ], Model.prototype, \\"field2\\", void 0);
+      __decorate([
+          Field(() => String, { ...{ description: \\"Description\\" }, ...field3Options })
+      ], Model.prototype, \\"field3\\", void 0);
+      Model = __decorate([
+          ObjectType()
+      ], Model);
+      "
+    `);
   });
 });

@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "sourceMap": true,
     "outDir": "./dist/tests",
     "rootDir": ".",
     "types": ["jest", "node"]

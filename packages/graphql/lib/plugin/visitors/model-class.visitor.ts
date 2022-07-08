@@ -25,7 +25,7 @@ import {
   PrimitiveObject,
   createImportEquals,
   hasImport,
-  createNamedImport,
+  createNamedImport, updateDecoratorArguments,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
@@ -34,7 +34,7 @@ import {
 import { EnumMetadataValuesMapOptions } from '../../schema-builder/metadata';
 import { EnumOptions } from '../../type-factories';
 
-const ALLOWED_DECORATORS = [
+const CLASS_DECORATORS = [
   ObjectType.name,
   InterfaceType.name,
   InputType.name,
@@ -77,11 +77,19 @@ export class ModelClassVisitor {
     const visitNode = (node: ts.Node): ts.Node => {
       if (
         ts.isClassDeclaration(node) &&
-        hasDecorators(node.decorators, ALLOWED_DECORATORS)
+        hasDecorators(node.decorators, CLASS_DECORATORS)
       ) {
-        const metadata = this.collectMetadataFromClassMembers(
+        const members = this.amendFieldsDecorators(
           factory,
           node.members,
+          pluginOptions,
+          sourceFile.fileName,
+          typeChecker,
+        );
+
+        const metadata = this.collectMetadataFromClassMembers(
+          factory,
+          members,
           pluginOptions,
           sourceFile.fileName,
           typeChecker,
@@ -90,6 +98,7 @@ export class ModelClassVisitor {
         return this.updateClassDeclaration(
           factory,
           node,
+          members,
           metadata,
           pluginOptions,
         );
@@ -273,7 +282,7 @@ export class ModelClassVisitor {
 
     // get one of allowed decorators from list
     return node.decorators.map((decorator) => {
-      if (!ALLOWED_DECORATORS.includes(getDecoratorName(decorator))) {
+      if (!CLASS_DECORATORS.includes(getDecoratorName(decorator))) {
         return decorator;
       }
 
@@ -399,9 +408,46 @@ export class ModelClassVisitor {
     return inlineEnumName;
   }
 
-  private collectMetadataFromClassMembers(
+  private amendFieldsDecorators(
     f: ts.NodeFactory,
     members: ts.NodeArray<ts.ClassElement>,
+    pluginOptions: PluginOptions,
+    hostFilename: string, // sourceFile.fileName,
+    typeChecker: ts.TypeChecker | undefined,
+  ): ts.ClassElement[] {
+    return members.map((member) => {
+      if (
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member))
+        && hasDecorators(member.decorators, [Field.name])
+      ) {
+        try {
+          return updateDecoratorArguments(f, member, Field.name, (decoratorArguments) => {
+            const options = this.getOptionsFromFieldDecoratorOrUndefined(decoratorArguments);
+
+            const { type, ...metadata } = this.createFieldMetadata(
+              f,
+              member,
+              typeChecker,
+              hostFilename,
+              pluginOptions,
+              this.getTypeFromFieldDecoratorOrUndefined(decoratorArguments),
+            );
+
+            const serializedMetadata = serializePrimitiveObjectToAst(f, metadata as any);
+            return [type, options ? safelyMergeObjects(f, serializedMetadata, options) : serializedMetadata]
+          })
+        } catch (e) {
+          // omit error
+        }
+      }
+
+      return member;
+    });
+  }
+
+  private collectMetadataFromClassMembers(
+    f: ts.NodeFactory,
+    members: ts.ClassElement[],
     pluginOptions: PluginOptions,
     hostFilename: string, // sourceFile.fileName,
     typeChecker: ts.TypeChecker | undefined,
@@ -415,10 +461,10 @@ export class ModelClassVisitor {
           ts.SyntaxKind.StaticKeyword,
           ts.SyntaxKind.PrivateKeyword,
         ]) &&
-        !hasDecorators(member.decorators, [HideField.name])
+        !hasDecorators(member.decorators, [HideField.name, Field.name])
       ) {
         try {
-          const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
+          const metadata = this.createFieldMetadata(
             f,
             member,
             typeChecker,
@@ -429,7 +475,7 @@ export class ModelClassVisitor {
           properties.push(
             f.createPropertyAssignment(
               f.createIdentifier(member.name.getText()),
-              objectLiteralExpr,
+              serializePrimitiveObjectToAst(f, metadata),
             ),
           );
         } catch (e) {
@@ -444,6 +490,7 @@ export class ModelClassVisitor {
   private updateClassDeclaration(
     f: ts.NodeFactory,
     node: ts.ClassDeclaration,
+    members: ts.ClassElement[],
     propsMetadata: ts.ObjectLiteralExpression,
     pluginOptions: PluginOptions,
   ) {
@@ -470,54 +517,49 @@ export class ModelClassVisitor {
       node.name,
       node.typeParameters,
       node.heritageClauses,
-      [...node.members, method],
+      [...members, method],
     );
   }
 
-  private getExplicitTypeInDecoratorOrNull(
-    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
-  ): ts.ArrowFunction {
-    const fieldDecorator = member.decorators?.find(
-      (decorator) => getDecoratorName(decorator) === Field.name,
-    );
-
-    if (!fieldDecorator) {
-      return null;
+  private getOptionsFromFieldDecoratorOrUndefined(
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ): ts.Expression | undefined {
+    if (decoratorArguments.length > 1) {
+      return decoratorArguments[1];
     }
 
-    const expression = fieldDecorator.expression as ts.CallExpression;
+    if (decoratorArguments.length === 1 && !ts.isArrowFunction(decoratorArguments[0])) {
+      return decoratorArguments[0];
+    }
+  }
 
+  private getTypeFromFieldDecoratorOrUndefined(
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ): ts.ArrowFunction | undefined {
     if (
-      expression.arguments.length > 0
-      && ts.isArrowFunction(expression.arguments[0])
+      decoratorArguments.length > 0 && ts.isArrowFunction(decoratorArguments[0])
     ) {
-      return expression.arguments[0];
+      return decoratorArguments[0];
     }
-
-    return null
   }
 
-  private createDecoratorObjectLiteralExpr(
+  private createFieldMetadata(
     f: ts.NodeFactory,
     node: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
     typeChecker: ts.TypeChecker,
     hostFilename = '',
     pluginOptions?: PluginOptions,
-  ): ts.ObjectLiteralExpression {
+    typeArrowFunction?: ts.ArrowFunction,
+  ) {
     const type = typeChecker.getTypeAtLocation(node);
     const isNullable =
       !!node.questionToken || isNull(type) || isUndefined(type);
 
-    let typeArrowFunction: ts.ArrowFunction;
-    const t = this.getExplicitTypeInDecoratorOrNull(node);
-
-    if (t) {
-      typeArrowFunction = t;
-    } else {
+    if (!typeArrowFunction) {
       const inlineStringEnumTypeName =
         this.getInlineStringEnumTypeOrUndefined(node);
 
-      typeArrowFunction = f.createArrowFunction(
+      typeArrowFunction = typeArrowFunction || f.createArrowFunction(
         undefined,
         undefined,
         [],
@@ -542,14 +584,13 @@ export class ModelClassVisitor {
       ? getJsDocDeprecation(node)
       : undefined;
 
-    const objectLiteral = serializePrimitiveObjectToAst(f, {
+
+    return {
       nullable: isNullable || undefined,
       type: typeArrowFunction,
       description,
       deprecationReason,
-    });
-
-    return objectLiteral;
+    };
   }
 
   private getTypeUsingTypeChecker(
