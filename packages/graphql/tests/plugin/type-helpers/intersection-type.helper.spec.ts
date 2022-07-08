@@ -29,6 +29,9 @@ describe('IntersectionType', () => {
 
     firstName?: string;
 
+    @Field(() => [String])
+    hobbies?: string[];
+
     static [METADATA_FACTORY_NAME]() {
       return {
         firstName: { nullable: true, type: () => String },
@@ -41,11 +44,13 @@ describe('IntersectionType', () => {
   it('should inherit all fields from two types', () => {
     const prototype = Object.getPrototypeOf(UpdateUserDto);
     const { fields } = getFieldsAndDecoratorForType(prototype);
-    expect(fields.length).toEqual(4);
+    expect(fields.length).toEqual(5);
     expect(fields[0].name).toEqual('login');
     expect(fields[1].name).toEqual('password');
     expect(fields[2].name).toEqual('lastName');
-    expect(fields[3].name).toEqual('firstName');
+    expect(fields[3].name).toEqual('hobbies');
+    expect(fields[3].options).toEqual({ isArray: true, arrayDepth: 1 });
+    expect(fields[4].name).toEqual('firstName');
     expect(fields[0].directives.length).toEqual(1);
     expect(fields[0].directives).toContainEqual({
       fieldName: 'login',
