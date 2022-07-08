@@ -474,22 +474,27 @@ export class ModelClassVisitor {
     );
   }
 
-  private hasExplicitTypeInDecorator(
+  private getExplicitTypeInDecoratorOrNull(
     member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
-  ) {
+  ): ts.ArrowFunction {
     const fieldDecorator = member.decorators?.find(
       (decorator) => getDecoratorName(decorator) === Field.name,
     );
 
     if (!fieldDecorator) {
-      return false;
+      return null;
     }
 
     const expression = fieldDecorator.expression as ts.CallExpression;
-    return (
-      expression.arguments.length > 0 &&
-      ts.isArrowFunction(expression.arguments[0])
-    );
+
+    if (
+      expression.arguments.length > 0
+      && ts.isArrowFunction(expression.arguments[0])
+    ) {
+      return expression.arguments[0];
+    }
+
+    return null
   }
 
   private createDecoratorObjectLiteralExpr(
@@ -504,8 +509,11 @@ export class ModelClassVisitor {
       !!node.questionToken || isNull(type) || isUndefined(type);
 
     let typeArrowFunction: ts.ArrowFunction;
-    const t = this.hasExplicitTypeInDecorator(node);
-    if (!t) {
+    const t = this.getExplicitTypeInDecoratorOrNull(node);
+
+    if (t) {
+      typeArrowFunction = t;
+    } else {
       const inlineStringEnumTypeName =
         this.getInlineStringEnumTypeOrUndefined(node);
 
@@ -518,11 +526,11 @@ export class ModelClassVisitor {
         inlineStringEnumTypeName
           ? f.createIdentifier(inlineStringEnumTypeName)
           : this.getTypeUsingTypeChecker(
-              f,
-              node.type,
-              typeChecker,
-              hostFilename,
-            ),
+            f,
+            node.type,
+            typeChecker,
+            hostFilename,
+          ),
       );
     }
 

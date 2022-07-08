@@ -609,7 +609,7 @@ var Status2;
     });
   });
 
-  it('Should not introspect type for field if user explicitly wrote a type', () => {
+  it('Should use type defined in explicit decorator instead of introspection', () => {
     const source = `
 import { ID } from '@nestjs/graphql';
 
@@ -620,7 +620,7 @@ class Model {
    */
    @Field(() => ID)
    field: string;
-   
+
    name: string;
 }
 `;
@@ -630,7 +630,7 @@ class Model {
 "import { ID } from '@nestjs/graphql';
 let Model = class Model {
     static _GRAPHQL_METADATA_FACTORY() {
-        return { field: {}, name: { type: () => String } };
+        return { field: { type: () => ID }, name: { type: () => String } };
     }
 };
 __decorate([
