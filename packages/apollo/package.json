@@ -48,7 +48,8 @@
     "@nestjs/graphql": "^10.0.0",
     "apollo-server-core": "^3.5.0",
     "apollo-server-express": "^3.5.0",
-    "apollo-server-fastify": "^3.5.0"
+    "apollo-server-fastify": "^3.5.0",
+    "graphql": "^15.8.0 || ^16.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/gateway": {
