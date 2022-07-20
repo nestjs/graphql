@@ -6,10 +6,11 @@ import {
   Provider,
 } from '@nestjs/common/interfaces';
 import { HttpAdapterHost } from '@nestjs/core';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { ROUTE_MAPPED_MESSAGE } from '@nestjs/core/helpers/messages';
+import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver';
 import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
+import { TypeDefsDecoratorFactory } from './federation/type-defs-decorator.factory';
 import { GraphQLAstExplorer } from './graphql-ast.explorer';
 import { GraphQLSchemaBuilder } from './graphql-schema.builder';
 import { GraphQLSchemaHost } from './graphql-schema.host';
@@ -37,6 +38,7 @@ import { extend, generateString } from './utils';
     GraphQLSchemaBuilder,
     GraphQLSchemaHost,
     GraphQLFederationFactory,
+    TypeDefsDecoratorFactory,
   ],
   exports: [
     GraphQLTypesLoader,
@@ -49,7 +51,9 @@ export class GraphQLModule<
   TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
 > implements OnModuleInit, OnModuleDestroy
 {
-  private static readonly logger = new Logger(GraphQLModule.name, { timestamp: true });
+  private static readonly logger = new Logger(GraphQLModule.name, {
+    timestamp: true,
+  });
 
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
@@ -160,7 +164,9 @@ export class GraphQLModule<
     });
 
     if (options.path) {
-      GraphQLModule.logger.log(ROUTE_MAPPED_MESSAGE(options.path, RequestMethod.POST));
+      GraphQLModule.logger.log(
+        ROUTE_MAPPED_MESSAGE(options.path, RequestMethod.POST),
+      );
     }
   }
 

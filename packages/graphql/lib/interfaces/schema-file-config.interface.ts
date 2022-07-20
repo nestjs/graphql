@@ -3,7 +3,11 @@ export interface AliasDirectiveImport {
   as: string;
 }
 
+export type FederationVersion = 1 | 2;
+export type FederationConfig = Federation2Config;
+
 export interface Federation2Config {
+  version: 2;
   /**
    * The imported directives
    * @default ['@key', '@shareable', '@external', '@override', '@requires']
@@ -16,23 +20,16 @@ export interface Federation2Config {
   importUrl?: string;
 }
 
-export type UseFed2Value = boolean | Federation2Config;
-
 export interface SchemaFileConfig {
   /**
-   * If enabled, it will use federation 2 schema
-   * 
-   * **Note:** You need to have installed @apollo/subgraph@^2.0.0 and enable `autoSchemaFile`
-   * 
-   * This will add to your schema:
-   * ```graphql
-      extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable", "@external", "@override", "@requires"])
-   * ```
-  */
-  useFed2?: UseFed2Value;
+   * Federation version and its configuration,
+   *
+   * @default 1
+   */
+  federation?: FederationVersion | FederationConfig;
 
   /**
-   * The path to the schema file
+   * Path to the schema file.
    */
   path?: string;
 }

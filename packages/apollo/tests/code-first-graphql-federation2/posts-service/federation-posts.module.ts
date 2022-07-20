@@ -11,7 +11,7 @@ import { User } from './posts/user.entity';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
-        useFed2: true,
+        federation: 2,
       },
       buildSchemaOptions: {
         orphanedTypes: [User],

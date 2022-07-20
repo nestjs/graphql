@@ -1,5 +1,5 @@
-import { isString, isObject } from '@nestjs/common/utils/shared.utils';
-import { AutoSchemaFileValue, UseFed2Value } from '../interfaces';
+import { isObject, isString } from '@nestjs/common/utils/shared.utils';
+import { AutoSchemaFileValue } from '../interfaces';
 
 export function getPathForAutoSchemaFile(
   autoSchemaFile: AutoSchemaFileValue,
@@ -11,13 +11,4 @@ export function getPathForAutoSchemaFile(
     return autoSchemaFile.path;
   }
   return null;
-}
-
-export function getFederation2Info(
-  autoSchemaFile: AutoSchemaFileValue,
-): UseFed2Value {
-  if (isObject(autoSchemaFile)) {
-    return autoSchemaFile.useFed2;
-  }
-  return false;
 }

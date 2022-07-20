@@ -10,7 +10,7 @@ import { UsersModule } from './users/users.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
-        useFed2: true,
+        federation: 2,
       },
       plugins: [ApolloServerPluginInlineTraceDisabled()],
     }),
