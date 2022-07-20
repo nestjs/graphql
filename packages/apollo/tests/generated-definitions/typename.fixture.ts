@@ -7,6 +7,7 @@
 
 /* tslint:disable */
 /* eslint-disable */
+
 export interface Cat {
     __typename?: 'Cat';
     id: number;

@@ -9,7 +9,6 @@ import {
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
   InterfaceTypeExtensionNode,
-  NamedTypeNode,
   ObjectTypeDefinitionNode,
   ObjectTypeExtensionNode,
   OperationTypeDefinitionNode,
@@ -23,12 +22,18 @@ import {
 } from 'graphql';
 import { get, map, sortBy, upperFirst } from 'lodash';
 import {
-  ClassDeclaration,
   ClassDeclarationStructure,
-  InterfaceDeclaration,
+  EnumDeclarationStructure,
   InterfaceDeclarationStructure,
+  MethodDeclarationStructure,
+  MethodSignatureStructure,
+  OptionalKind,
   ParameterDeclarationStructure,
+  PropertyDeclarationStructure,
+  PropertySignatureStructure,
   SourceFile,
+  StructureKind,
+  TypeAliasDeclarationStructure,
 } from 'ts-morph';
 import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
 
@@ -110,20 +115,28 @@ export class GraphQLAstExplorer {
     let { definitions } = documentNode;
     definitions = sortBy(definitions, ['kind', 'name']);
 
-    definitions.forEach((item) =>
-      this.lookupDefinition(
-        item as Readonly<TypeSystemDefinitionNode>,
-        tsFile,
-        mode,
-        options,
-      ),
-    );
+    const fileStructure = tsFile.getStructure();
 
     const header = options.additionalHeader
-      ? `${DEFINITIONS_FILE_HEADER}\n${options.additionalHeader}\n\n`
+      ? `${DEFINITIONS_FILE_HEADER}\n\n${options.additionalHeader}`
       : DEFINITIONS_FILE_HEADER;
-    tsFile.insertText(0, header);
-    tsFile.addTypeAlias({
+
+    fileStructure.statements = [header];
+
+    fileStructure.statements.push(
+      ...definitions
+        .map((item) =>
+          this.toDefinitionStructures(
+            item as Readonly<TypeSystemDefinitionNode>,
+            mode,
+            options,
+          ),
+        )
+        .filter(Boolean),
+    );
+
+    fileStructure.statements.push({
+      kind: StructureKind.TypeAlias,
       name: 'Nullable',
       isExported: false,
       type: 'T | null',
@@ -134,76 +147,70 @@ export class GraphQLAstExplorer {
       ],
     });
 
+    tsFile.set(fileStructure);
+
     return tsFile;
   }
 
-  lookupDefinition(
+  toDefinitionStructures(
     item: Readonly<TypeSystemDefinitionNode | TypeSystemExtensionNode>,
-    tsFile: SourceFile,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
   ) {
     switch (item.kind) {
       case 'SchemaDefinition':
-        return this.lookupRootSchemaDefinition(
-          item.operationTypes,
-          tsFile,
-          mode,
-        );
+        return this.toRootSchemaDefinitionStructure(item.operationTypes, mode);
       case 'ObjectTypeDefinition':
       case 'ObjectTypeExtension':
       case 'InputObjectTypeDefinition':
       case 'InputObjectTypeExtension':
-        return this.addObjectTypeDefinition(item, tsFile, mode, options);
+        return this.toObjectTypeDefinitionStructure(item, mode, options);
       case 'InterfaceTypeDefinition':
       case 'InterfaceTypeExtension':
-        return this.addObjectTypeDefinition(item, tsFile, 'interface', options);
+        return this.toObjectTypeDefinitionStructure(item, 'interface', options);
       case 'ScalarTypeDefinition':
       case 'ScalarTypeExtension':
-        return this.addScalarDefinition(item, tsFile, options);
+        return this.toScalarDefinitionStructure(item, options);
       case 'EnumTypeDefinition':
       case 'EnumTypeExtension':
-        return this.addEnumDefinition(item, tsFile, options);
+        return this.toEnumDefinitionStructure(item, options);
       case 'UnionTypeDefinition':
       case 'UnionTypeExtension':
-        return this.addUnionDefinition(item, tsFile);
+        return this.toUnionDefinitionStructure(item);
     }
   }
 
-  lookupRootSchemaDefinition(
+  toRootSchemaDefinitionStructure(
     operationTypes: ReadonlyArray<OperationTypeDefinitionNode>,
-    tsFile: SourceFile,
     mode: 'class' | 'interface',
-  ) {
+  ): ClassDeclarationStructure | InterfaceDeclarationStructure {
     const structureKind =
       mode === 'class'
         ? tsMorphLib.StructureKind.Class
         : tsMorphLib.StructureKind.Interface;
-    const rootInterface = this.addClassOrInterface(tsFile, mode, {
+
+    const properties = operationTypes
+      .filter(Boolean)
+      .map((item) => {
+        const tempOperationName = item.operation;
+        const typeName = get(item, 'type.name.value');
+        const interfaceName = typeName || tempOperationName;
+        return {
+          name: interfaceName,
+          type: this.addSymbolIfRoot(upperFirst(interfaceName)),
+        };
+      })
+      .filter(Boolean);
+
+    return {
       name: 'ISchema',
       isExported: true,
       kind: structureKind,
-    });
-    operationTypes.forEach((item) => {
-      if (!item) {
-        return;
-      }
-      const tempOperationName = item.operation;
-      const typeName = get(item, 'type.name.value');
-      const interfaceName = typeName || tempOperationName;
-      const interfaceRef = this.addClassOrInterface(tsFile, mode, {
-        name: this.addSymbolIfRoot(upperFirst(interfaceName)),
-        isExported: true,
-        kind: structureKind,
-      });
-      (rootInterface as InterfaceDeclaration).addProperty({
-        name: interfaceName,
-        type: interfaceRef.getName(),
-      });
-    });
+      properties: properties,
+    };
   }
 
-  addObjectTypeDefinition(
+  toObjectTypeDefinitionStructure(
     item:
       | ObjectTypeDefinitionNode
       | ObjectTypeExtensionNode
@@ -211,73 +218,113 @@ export class GraphQLAstExplorer {
       | InputObjectTypeExtensionNode
       | InterfaceTypeDefinitionNode
       | InterfaceTypeExtensionNode,
-    tsFile: SourceFile,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
-  ) {
+  ): ClassDeclarationStructure | InterfaceDeclarationStructure {
     const parentName = get(item, 'name.value');
     if (!parentName) {
       return;
     }
-    let parentRef = this.getClassOrInterface(
-      tsFile,
-      mode,
-      this.addSymbolIfRoot(parentName),
-    );
-    if (!parentRef) {
-      const structureKind =
-        mode === 'class'
-          ? tsMorphLib.StructureKind.Class
-          : tsMorphLib.StructureKind.Interface;
-      const isRoot = this.root.indexOf(parentName) >= 0;
-      parentRef = this.addClassOrInterface(tsFile, mode, {
-        name: this.addSymbolIfRoot(upperFirst(parentName)),
-        isExported: true,
-        isAbstract: isRoot && mode === 'class',
-        kind: structureKind,
-      });
-    }
+    const structureKind =
+      mode === 'class'
+        ? tsMorphLib.StructureKind.Class
+        : tsMorphLib.StructureKind.Interface;
+    const isRoot = this.root.indexOf(parentName) >= 0;
+    const parentStructure:
+      | ClassDeclarationStructure
+      | InterfaceDeclarationStructure = {
+      name: this.addSymbolIfRoot(upperFirst(parentName)),
+      isExported: true,
+      isAbstract: isRoot && mode === 'class',
+      kind: structureKind,
+      properties: [],
+      methods: [],
+    };
+
     const interfaces = get(item, 'interfaces');
     if (interfaces) {
       if (mode === 'class') {
-        this.addImplementsInterfaces(interfaces, parentRef as ClassDeclaration);
+        (parentStructure as ClassDeclarationStructure).implements = interfaces
+          .map((element) => get(element, 'name.value'))
+          .filter(Boolean);
       } else {
-        this.addExtendInterfaces(interfaces, parentRef as InterfaceDeclaration);
+        parentStructure.extends = interfaces
+          .map((element) => get(element, 'name.value'))
+          .filter(Boolean);
       }
     }
 
     const isObjectType = item.kind === 'ObjectTypeDefinition';
     if (isObjectType && options.emitTypenameField) {
-      parentRef.addProperty({
+      parentStructure.properties.push({
         name: '__typename',
-        type: `'${parentRef.getName()}'`,
+        type: `'${parentStructure.name}'`,
         hasQuestionToken: true,
       });
     }
-    ((item.fields || []) as any).forEach((element) => {
-      this.lookupFieldDefiniton(element, parentRef, mode, options);
-    });
-  }
 
-  lookupFieldDefiniton(
-    item: FieldDefinitionNode | InputValueDefinitionNode,
-    parentRef: InterfaceDeclaration | ClassDeclaration,
-    mode: 'class' | 'interface',
-    options: DefinitionsGeneratorOptions,
-  ) {
-    switch (item.kind) {
-      case 'FieldDefinition':
-      case 'InputValueDefinition':
-        return this.lookupField(item, parentRef, mode, options);
+    if (!this.isRoot(parentStructure.name) || options.skipResolverArgs) {
+      const properties: readonly (OptionalKind<PropertyDeclarationStructure> &
+        OptionalKind<PropertySignatureStructure>)[] = (
+        (item.fields || []) as (
+          | FieldDefinitionNode
+          | InputValueDefinitionNode
+        )[]
+      )
+        .map((element) => this.toPropertyDeclarationStructure(element, options))
+        .filter(Boolean);
+
+      parentStructure.properties.push(...properties);
+    } else {
+      const methods: readonly (OptionalKind<MethodDeclarationStructure> &
+        OptionalKind<MethodSignatureStructure>)[] = (
+        (item.fields || []) as (
+          | FieldDefinitionNode
+          | InputValueDefinitionNode
+        )[]
+      )
+        .map((element) =>
+          this.toMethodDeclarationStructure(element, mode, options),
+        )
+        .filter(Boolean);
+
+      parentStructure.methods.push(...methods);
     }
+    return parentStructure;
   }
 
-  lookupField(
+  toPropertyDeclarationStructure(
     item: FieldDefinitionNode | InputValueDefinitionNode,
-    parentRef: InterfaceDeclaration | ClassDeclaration,
+    options: DefinitionsGeneratorOptions,
+  ): OptionalKind<PropertyDeclarationStructure> &
+    OptionalKind<PropertySignatureStructure> {
+    const propertyName = get(item, 'name.value');
+    if (!propertyName) {
+      return undefined;
+    }
+    const federatedFields = ['_entities', '_service'];
+    if (federatedFields.includes(propertyName)) {
+      return undefined;
+    }
+
+    const { name: type, required } = this.getFieldTypeDefinition(
+      item.type,
+      options,
+    );
+
+    return {
+      name: propertyName,
+      type: this.addSymbolIfRoot(type),
+      hasQuestionToken: !required,
+    };
+  }
+
+  toMethodDeclarationStructure(
+    item: FieldDefinitionNode | InputValueDefinitionNode,
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
-  ) {
+  ): OptionalKind<MethodDeclarationStructure> &
+    OptionalKind<MethodSignatureStructure> {
     const propertyName = get(item, 'name.value');
     if (!propertyName) {
       return;
@@ -287,36 +334,17 @@ export class GraphQLAstExplorer {
       return;
     }
 
-    const { name: type, required } = this.getFieldTypeDefinition(
-      item.type,
-      options,
-    );
-    if (!this.isRoot(parentRef.getName())) {
-      (parentRef as InterfaceDeclaration).addProperty({
-        name: propertyName,
-        type,
-        hasQuestionToken: !required,
-      });
-      return;
-    }
+    const { name: type } = this.getFieldTypeDefinition(item.type, options);
 
-    if (options.skipResolverArgs) {
-      (parentRef as ClassDeclaration).addProperty({
-        name: propertyName,
-        type: this.addSymbolIfRoot(type),
-        hasQuestionToken: !required,
-      });
-    } else {
-      (parentRef as ClassDeclaration).addMethod({
-        isAbstract: mode === 'class',
-        name: propertyName,
-        returnType: `${type} | Promise<${type}>`,
-        parameters: this.getFunctionParameters(
-          (item as FieldDefinitionNode).arguments,
-          options,
-        ),
-      });
-    }
+    return {
+      isAbstract: mode === 'class',
+      name: propertyName,
+      returnType: `${type} | Promise<${type}>`,
+      parameters: this.getFunctionParameters(
+        (item as FieldDefinitionNode).arguments,
+        options,
+      ),
+    };
   }
 
   getFieldTypeDefinition(
@@ -402,103 +430,75 @@ export class GraphQLAstExplorer {
     });
   }
 
-  addScalarDefinition(
+  toScalarDefinitionStructure(
     item: ScalarTypeDefinitionNode | ScalarTypeExtensionNode,
-    tsFile: SourceFile,
     options: DefinitionsGeneratorOptions,
-  ) {
+  ): TypeAliasDeclarationStructure {
     const name = get(item, 'name.value');
     if (!name || name === 'Date') {
-      return;
+      return undefined;
     }
 
     const typeMapping = options.customScalarTypeMapping?.[name];
     const mappedTypeName =
       typeof typeMapping === 'string' ? typeMapping : typeMapping?.name;
 
-    tsFile.addTypeAlias({
+    return {
+      kind: StructureKind.TypeAlias,
       name,
       type: mappedTypeName ?? options.defaultScalarType ?? 'any',
       isExported: true,
-    });
+    };
   }
 
-  addExtendInterfaces(
-    interfaces: NamedTypeNode[],
-    parentRef: InterfaceDeclaration,
-  ) {
-    if (!interfaces) {
-      return;
-    }
-    interfaces.forEach((element) => {
-      const interfaceName = get(element, 'name.value');
-      if (interfaceName) {
-        parentRef.addExtends(interfaceName);
-      }
-    });
-  }
-
-  addImplementsInterfaces(
-    interfaces: NamedTypeNode[],
-    parentRef: ClassDeclaration,
-  ) {
-    if (!interfaces) {
-      return;
-    }
-    interfaces.forEach((element) => {
-      const interfaceName = get(element, 'name.value');
-      if (interfaceName) {
-        parentRef.addImplements(interfaceName);
-      }
-    });
-  }
-
-  addEnumDefinition(
+  toEnumDefinitionStructure(
     item: EnumTypeDefinitionNode | EnumTypeExtensionNode,
-    tsFile: SourceFile,
     options: DefinitionsGeneratorOptions,
-  ) {
+  ): TypeAliasDeclarationStructure | EnumDeclarationStructure {
     const name = get(item, 'name.value');
     if (!name) {
-      return;
+      return undefined;
     }
     if (options.enumsAsTypes) {
       const values = item.values.map(
         (value) => `"${get(value, 'name.value')}"`,
       );
-      return tsFile.addTypeAlias({
+      return {
+        kind: StructureKind.TypeAlias,
         name,
         type: values.join(' | '),
         isExported: true,
-      });
+      };
     }
     const members = map(item.values, (value) => ({
       name: get(value, 'name.value'),
       value: get(value, 'name.value'),
     }));
-    tsFile.addEnum({
+    return {
+      kind: StructureKind.Enum,
       name,
       members,
       isExported: true,
-    });
+    };
   }
 
-  addUnionDefinition(
+  toUnionDefinitionStructure(
     item: UnionTypeDefinitionNode | UnionTypeExtensionNode,
-    tsFile: SourceFile,
-  ) {
+  ): TypeAliasDeclarationStructure {
     const name = get(item, 'name.value');
     if (!name) {
-      return;
+      return undefined;
     }
     const types: string[] = map(item.types, (value) =>
       get(value, 'name.value'),
     );
-    tsFile.addTypeAlias({
+
+    return {
+      kind: StructureKind.TypeAlias,
       name,
       type: types.join(' | '),
       isExported: true,
-    });
+    };
   }
 
   addSymbolIfRoot(name: string): string {
@@ -507,23 +507,5 @@ export class GraphQLAstExplorer {
 
   isRoot(name: string): boolean {
     return ['IQuery', 'IMutation', 'ISubscription'].indexOf(name) >= 0;
-  }
-
-  addClassOrInterface(
-    tsFile: SourceFile,
-    mode: 'class' | 'interface',
-    options: InterfaceDeclarationStructure | ClassDeclarationStructure,
-  ): InterfaceDeclaration | ClassDeclaration {
-    return mode === 'class'
-      ? tsFile.addClass(options as ClassDeclarationStructure)
-      : tsFile.addInterface(options as InterfaceDeclarationStructure);
-  }
-
-  getClassOrInterface(
-    tsFile: SourceFile,
-    mode: 'class' | 'interface',
-    name: string,
-  ): InterfaceDeclaration | ClassDeclaration {
-    return mode === 'class' ? tsFile.getClass(name) : tsFile.getInterface(name);
   }
 }
