@@ -9,9 +9,18 @@ const moduleNameMapper = pathsToModuleNameMapper(compilerOptions.paths, {
 const config: Config.InitialOptions = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '../.',
-  testRegex: '.spec.ts$',
-  testPathIgnorePatterns: ['.fed2-spec.ts$'],
-  moduleNameMapper,
+  testRegex: '.fed2-spec.ts$',
+  moduleNameMapper: {
+    ...moduleNameMapper,
+    '^@apollo/subgraph$': '<rootDir>/../../node_modules/@apollo/subgraph-v2',
+    '^@apollo/subgraph/(.*)$':
+      '<rootDir>/../../node_modules/@apollo/subgraph-v2/$1',
+    '^@apollo/gateway$': '<rootDir>/../../node_modules/@apollo/gateway-v2',
+    '^@apollo/gateway/(.*)$':
+      '<rootDir>/../../node_modules/@apollo/gateway-v2/$1',
+    '^graphql$': '<rootDir>/../../node_modules/graphql-16',
+    '^graphql/(.*)$': '<rootDir>/../../node_modules/graphql-16/$1',
+  },
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
