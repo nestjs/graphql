@@ -1,5 +1,5 @@
 export class MetadataByNameCollection<T> {
-  protected map = new Map<string, T>();
+  protected internalCollection = new Map<string, T>();
   protected all: (T extends any[] ? T[number] : T)[] = [];
 
   getAll() {
@@ -7,20 +7,23 @@ export class MetadataByNameCollection<T> {
   }
 
   getByName(name: string) {
-    return this.map.get(name);
+    return this.internalCollection.get(name);
   }
 
   add(value: T extends any[] ? T[number] : T, name: string) {
-    if (this.map.has(name)) return;
+    if (this.internalCollection.has(name)) {
+      return;
+    }
 
-    this.map.set(name, value);
+    this.internalCollection.set(name, value);
     this.all.push(value);
   }
 
   unshift(value: T extends any[] ? T[number] : T, name: string) {
-    if (this.map.has(name)) return;
-
-    this.map.set(name, value);
+    if (this.internalCollection.has(name)) {
+      return;
+    }
+    this.internalCollection.set(name, value);
     this.all.unshift(value);
   }
 }

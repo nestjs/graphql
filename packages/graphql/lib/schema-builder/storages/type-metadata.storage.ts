@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { addFieldMetadata } from '../../decorators';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
+import { MetadataByTargetCollection } from '../collections/';
 import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
 import {
@@ -22,23 +23,16 @@ import {
 import { InterfaceMetadata } from '../metadata/interface.metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { isThrowing } from '../utils/is-throwing.util';
-import { MetadataStorageCollectionList } from '../collections/';
 
 export class TypeMetadataStorageHost {
-  /**
-   * The implementation of this class has been heavily inspired by the following code:
-   * @ref https://github.com/MichalLytek/type-graphql/blob/master/src/metadata/metadata-storage.ts
-   * -
-   * 1.6.22 Implementation was modified to use Maps instead of Arrays for better performance
-   */
   private queries = new Array<ResolverTypeMetadata>();
   private mutations = new Array<ResolverTypeMetadata>();
   private subscriptions = new Array<ResolverTypeMetadata>();
   private fieldResolvers = new Array<FieldResolverMetadata>();
   private readonly enums = new Array<EnumMetadata>();
   private readonly unions = new Array<UnionMetadata>();
-
-  targets = new MetadataStorageCollectionList();
+  private readonly metadataByTargetCollection =
+    new MetadataByTargetCollection();
 
   addMutationMetadata(metadata: ResolverTypeMetadata) {
     this.mutations.push(metadata);
@@ -69,59 +63,60 @@ export class TypeMetadataStorageHost {
   }
 
   addArgsMetadata(metadata: ClassMetadata) {
-    this.targets.get(metadata.target).argumentType = metadata;
+    this.metadataByTargetCollection.get(metadata.target).argumentType =
+      metadata;
   }
 
   getArgumentsMetadata(): ClassMetadata[] {
-    return this.targets.all.argumentType;
+    return this.metadataByTargetCollection.all.argumentType;
   }
 
   getArgumentsMetadataByTarget(
     target: Type<unknown>,
   ): ClassMetadata | undefined {
-    return this.targets.get(target).argumentType;
+    return this.metadataByTargetCollection.get(target).argumentType;
   }
 
   addInterfaceMetadata(metadata: InterfaceMetadata) {
-    this.targets.get(metadata.target).interface = metadata;
+    this.metadataByTargetCollection.get(metadata.target).interface = metadata;
   }
 
   getInterfacesMetadata(): InterfaceMetadata[] {
-    return this.targets.all.interface;
+    return this.metadataByTargetCollection.all.interface;
   }
 
   getInterfaceMetadataByTarget(
     target: Type<unknown>,
   ): InterfaceMetadata | undefined {
-    return this.targets.get(target).interface;
+    return this.metadataByTargetCollection.get(target).interface;
   }
 
   addInputTypeMetadata(metadata: ClassMetadata) {
-    this.targets.get(metadata.target).inputType = metadata;
+    this.metadataByTargetCollection.get(metadata.target).inputType = metadata;
   }
 
   getInputTypesMetadata(): ClassMetadata[] {
-    return this.targets.all.inputType;
+    return this.metadataByTargetCollection.all.inputType;
   }
 
   getInputTypeMetadataByTarget(
     target: Type<unknown>,
   ): ObjectTypeMetadata | undefined {
-    return this.targets.get(target).inputType;
+    return this.metadataByTargetCollection.get(target).inputType;
   }
 
   addObjectTypeMetadata(metadata: ObjectTypeMetadata) {
-    this.targets.get(metadata.target).objectType = metadata;
+    this.metadataByTargetCollection.get(metadata.target).objectType = metadata;
   }
 
   getObjectTypesMetadata(): ObjectTypeMetadata[] {
-    return this.targets.all.objectType;
+    return this.metadataByTargetCollection.all.objectType;
   }
 
   getObjectTypeMetadataByTarget(
     target: Type<unknown>,
   ): ObjectTypeMetadata | undefined {
-    return this.targets.get(target).objectType;
+    return this.metadataByTargetCollection.get(target).objectType;
   }
 
   addEnumMetadata(metadata: EnumMetadata) {
@@ -141,32 +136,36 @@ export class TypeMetadataStorageHost {
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
-    const classMetadata = this.targets.get(metadata.target);
+    const classMetadata = this.metadataByTargetCollection.get(metadata.target);
     if (!classMetadata.fieldDirectives.sdls.has(metadata.sdl)) {
       classMetadata.classDirectives.push(metadata);
     }
   }
 
   addDirectivePropertyMetadata(metadata: PropertyDirectiveMetadata) {
-    this.targets.get(metadata.target).fieldDirectives.add(metadata);
+    this.metadataByTargetCollection
+      .get(metadata.target)
+      .fieldDirectives.add(metadata);
   }
 
   addExtensionsMetadata(metadata: ClassExtensionsMetadata) {
-    this.targets.get(metadata.target).classExtensions.push(metadata);
+    this.metadataByTargetCollection
+      .get(metadata.target)
+      .classExtensions.push(metadata);
   }
 
   addExtensionsPropertyMetadata(metadata: PropertyExtensionsMetadata) {
-    this.targets
+    this.metadataByTargetCollection
       .get(metadata.target)
       .fieldExtensions.add(metadata, metadata.fieldName);
   }
 
   addResolverMetadata(metadata: ResolverClassMetadata) {
-    this.targets.get(metadata.target).resolver = metadata;
+    this.metadataByTargetCollection.get(metadata.target).resolver = metadata;
   }
 
   addClassFieldMetadata(metadata: PropertyMetadata) {
-    const existingMetadata = this.targets
+    const existingMetadata = this.metadataByTargetCollection
       .get(metadata.target)
       .fields.getByName(metadata.name);
 
@@ -177,24 +176,26 @@ export class TypeMetadataStorageHost {
         options.nullable = metadata.options.nullable;
       }
     } else {
-      this.targets.get(metadata.target).fields.add(metadata, metadata.name);
+      this.metadataByTargetCollection
+        .get(metadata.target)
+        .fields.add(metadata, metadata.name);
     }
   }
 
   addMethodParamMetadata(metadata: MethodArgsMetadata) {
-    this.targets
+    this.metadataByTargetCollection
       .get(metadata.target)
       .params.unshift(metadata, metadata.methodName);
   }
 
   compile(orphanedTypes: (Function | object)[] = []) {
-    this.targets.compile();
+    this.metadataByTargetCollection.compile();
 
     const classMetadata = [
-      ...this.targets.all.objectType,
-      ...this.targets.all.inputType,
-      ...this.targets.all.argumentType,
-      ...this.targets.all.interface,
+      ...this.metadataByTargetCollection.all.objectType,
+      ...this.metadataByTargetCollection.all.inputType,
+      ...this.metadataByTargetCollection.all.argumentType,
+      ...this.metadataByTargetCollection.all.interface,
     ];
     this.loadClassPluginMetadata(classMetadata);
     this.compileClassMetadata(classMetadata);
@@ -257,12 +258,12 @@ export class TypeMetadataStorageHost {
         item.properties = this.getClassFieldsByPredicate(item);
       }
       if (!item.directives) {
-        item.directives = this.targets
+        item.directives = this.metadataByTargetCollection
           .get(item.target)
           .classDirectives.getAll();
       }
       if (!item.extensions) {
-        item.extensions = this.targets
+        item.extensions = this.metadataByTargetCollection
           .get(item.target)
           .classExtensions.reduce(
             (curr, acc) => ({ ...curr, ...acc.value }),
@@ -277,15 +278,17 @@ export class TypeMetadataStorageHost {
   }
 
   private getClassFieldsByPredicate(item: ClassMetadata) {
-    const fields = this.targets.get(item.target).fields.getAll();
+    const fields = this.metadataByTargetCollection
+      .get(item.target)
+      .fields.getAll();
     fields.forEach((field) => {
-      field.methodArgs = this.targets
+      field.methodArgs = this.metadataByTargetCollection
         .get(item.target)
         .params.getByName(field.name);
-      field.directives = this.targets
+      field.directives = this.metadataByTargetCollection
         .get(item.target)
         .fieldDirectives.getByName(field.name);
-      field.extensions = this.targets
+      field.extensions = this.metadataByTargetCollection
         .get(item.target)
         .fieldExtensions.getByName(field.name)
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
@@ -295,14 +298,16 @@ export class TypeMetadataStorageHost {
 
   private compileResolversMetadata(metadata: BaseResolverMetadata[]) {
     metadata.forEach((item) => {
-      item.classMetadata = this.targets.get(item.target).resolver;
-      item.methodArgs = this.targets
+      item.classMetadata = this.metadataByTargetCollection.get(
+        item.target,
+      ).resolver;
+      item.methodArgs = this.metadataByTargetCollection
         .get(item.target)
         .params.getByName(item.methodName);
-      item.directives = this.targets
+      item.directives = this.metadataByTargetCollection
         .get(item.target)
         .fieldDirectives.getByName(item.methodName);
-      item.extensions = this.targets
+      item.extensions = this.metadataByTargetCollection
         .get(item.target)
         .fieldExtensions.getByName(item.methodName)
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
@@ -313,17 +318,17 @@ export class TypeMetadataStorageHost {
     this.compileResolversMetadata(metadata);
 
     metadata.forEach((item) => {
-      item.directives = this.targets
+      item.directives = this.metadataByTargetCollection
         .get(item.target)
         .fieldDirectives.getByName(item.methodName);
-      item.extensions = this.targets
+      item.extensions = this.metadataByTargetCollection
         .get(item.target)
         .fieldExtensions.getByName(item.methodName)
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
 
       item.objectTypeFn =
         item.kind === 'external'
-          ? this.targets.get(item.target).resolver.typeFn
+          ? this.metadataByTargetCollection.get(item.target).resolver.typeFn
           : () => item.target as Type<unknown>;
 
       if (item.kind === 'external') {
@@ -333,11 +338,13 @@ export class TypeMetadataStorageHost {
   }
 
   private compileExternalFieldResolverMetadata(item: FieldResolverMetadata) {
-    const objectTypeRef = this.targets.get(item.target).resolver.typeFn();
+    const objectTypeRef = this.metadataByTargetCollection
+      .get(item.target)
+      .resolver.typeFn();
 
     const objectOrInterfaceTypeMetadata =
-      this.targets.get(objectTypeRef).objectType ||
-      this.targets.get(objectTypeRef).interface;
+      this.metadataByTargetCollection.get(objectTypeRef).objectType ||
+      this.metadataByTargetCollection.get(objectTypeRef).interface;
 
     if (!objectOrInterfaceTypeMetadata) {
       throw new CannotDetermineHostTypeError(
@@ -388,11 +395,13 @@ export class TypeMetadataStorageHost {
   }
 
   private compileExtendedResolversMetadata() {
-    this.targets.all.resolver.forEach((item) => {
+    this.metadataByTargetCollection.all.resolver.forEach((item) => {
       let parentClass = Object.getPrototypeOf(item.target);
 
       while (parentClass.prototype) {
-        const parentMetadata = this.targets.get(item.target).resolver;
+        const parentMetadata = this.metadataByTargetCollection.get(
+          item.target,
+        ).resolver;
 
         if (parentMetadata) {
           this.queries = this.mergeParentResolverHandlers(

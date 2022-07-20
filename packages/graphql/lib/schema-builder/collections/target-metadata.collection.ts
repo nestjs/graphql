@@ -1,4 +1,3 @@
-import { MetadataByNameCollection } from './metadata-by-name.collection';
 import {
   ClassDirectiveMetadata,
   ClassExtensionsMetadata,
@@ -8,14 +7,15 @@ import {
   PropertyMetadata,
   ResolverClassMetadata,
 } from '../metadata';
-import { MetadataListByNameCollection } from './metadata-list-by-name.collection';
-import { FieldDirectiveCollection } from './field-directive.collection';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { ArrayWithGlobalCacheCollection } from './array-with-global-cache.collection';
-import { MetadataCollectionModelInterface } from './metada.collection.model.interface';
+import { FieldDirectiveCollection } from './field-directive.collection';
+import { MetadataCollectionModel } from './metada-collection-model.interface';
+import { MetadataByNameCollection } from './metadata-by-name.collection';
+import { MetadataListByNameCollection } from './metadata-list-by-name.collection';
 
-export class MetadataStorageCollection {
-  constructor(private all: MetadataCollectionModelInterface) {}
+export class TargetMetadataCollection {
+  constructor(private readonly all: MetadataCollectionModel) {}
 
   fields = new MetadataByNameCollection<PropertyMetadata>();
   params = new MetadataListByNameCollection<MethodArgsMetadata>();
@@ -30,6 +30,12 @@ export class MetadataStorageCollection {
   classExtensions = new ArrayWithGlobalCacheCollection<ClassExtensionsMetadata>(
     this.all.classExtensions,
   );
+
+  private _argumentType: ClassMetadata;
+  private _interface: ClassMetadata;
+  private _inputType: ClassMetadata;
+  private _objectType: ObjectTypeMetadata;
+  private _resolver: ResolverClassMetadata;
 
   set argumentType(val: ClassMetadata) {
     this._argumentType = val;
@@ -75,10 +81,4 @@ export class MetadataStorageCollection {
   get resolver() {
     return this._resolver;
   }
-
-  _argumentType: ClassMetadata;
-  _interface: ClassMetadata;
-  _inputType: ClassMetadata;
-  _objectType: ObjectTypeMetadata;
-  _resolver: ResolverClassMetadata;
 }

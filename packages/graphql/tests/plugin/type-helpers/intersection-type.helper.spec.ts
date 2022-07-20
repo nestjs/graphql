@@ -51,7 +51,7 @@ describe('IntersectionType', () => {
       hobbiesField,
       firstNameField,
     ] = fields;
-    expect(fields.length).toEqual(4);
+    expect(fields.length).toEqual(5);
     expect(loginField.name).toEqual('login');
     expect(passwordField.name).toEqual('password');
     expect(lastNameField.name).toEqual('lastName');

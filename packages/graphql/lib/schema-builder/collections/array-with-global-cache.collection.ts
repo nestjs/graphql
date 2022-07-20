@@ -1,24 +1,24 @@
 export class ArrayWithGlobalCacheCollection<T> {
-  private readonly array: T[] = [];
+  private readonly internalArray: T[] = [];
 
   constructor(private globalArray: Array<T>) {}
 
   getAll() {
-    return this.array;
+    return this.internalArray;
   }
 
-  push(...items): number {
+  push(...items: T[]): number {
     this.globalArray.push(...items);
-    return this.array.push(...items);
+    return this.internalArray.push(...items);
   }
 
-  unshift(...items): number {
+  unshift(...items: T[]): number {
     this.globalArray.unshift(...items);
-    return this.array.unshift(...items);
+    return this.internalArray.unshift(...items);
   }
 
   reverse() {
-    return this.array.reverse();
+    return this.internalArray.reverse();
   }
 
   reduce<U>(
@@ -30,6 +30,6 @@ export class ArrayWithGlobalCacheCollection<T> {
     ) => U,
     initialValue: U,
   ): U {
-    return this.array.reduce(callbackfn, initialValue);
+    return this.internalArray.reduce(callbackfn, initialValue);
   }
 }

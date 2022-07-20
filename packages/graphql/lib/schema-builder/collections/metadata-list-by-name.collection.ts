@@ -15,7 +15,7 @@ export class MetadataListByNameCollection<T> extends MetadataByNameCollection<
     let arrayResult = super.getByName(name);
     if (!arrayResult) {
       arrayResult = [];
-      this.map.set(name, arrayResult);
+      this.internalCollection.set(name, arrayResult);
     }
 
     arrayResult.push(value);
@@ -27,7 +27,7 @@ export class MetadataListByNameCollection<T> extends MetadataByNameCollection<
     let arrayResult = super.getByName(name);
     if (!arrayResult) {
       arrayResult = [];
-      this.map.set(name, arrayResult);
+      this.internalCollection.set(name, arrayResult);
     }
 
     arrayResult.unshift(value);

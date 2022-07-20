@@ -1,11 +1,8 @@
-import { MetadataStorageCollection } from './metadata.storage.collection';
-import { MetadataCollectionModelInterface } from './metada.collection.model.interface';
+import { MetadataCollectionModel } from './metada-collection-model.interface';
+import { TargetMetadataCollection } from './target-metadata.collection';
 
-export class MetadataStorageCollectionList {
-  private storageMap = new Map<Function, MetadataStorageCollection>();
-  private storageList = new Array<MetadataStorageCollection>();
-
-  public all: MetadataCollectionModelInterface = {
+export class MetadataByTargetCollection {
+  public readonly all: MetadataCollectionModel = {
     argumentType: [],
     interface: [],
     inputType: [],
@@ -17,11 +14,14 @@ export class MetadataStorageCollectionList {
     fieldExtensions: [],
   };
 
+  private readonly storageMap = new Map<Function, TargetMetadataCollection>();
+  private readonly storageList = new Array<TargetMetadataCollection>();
+
   get(target: Function) {
     let metadata = this.storageMap.get(target);
 
     if (!metadata) {
-      metadata = new MetadataStorageCollection(this.all);
+      metadata = new TargetMetadataCollection(this.all);
       this.storageMap.set(target, metadata);
       this.storageList.push(metadata);
     }
@@ -37,7 +37,7 @@ export class MetadataStorageCollectionList {
   }
 
   private reversePredicate<V>(
-    predicate: (t: MetadataStorageCollection) => Array<V>,
+    predicate: (t: TargetMetadataCollection) => Array<V>,
   ) {
     this.storageList.forEach((t) => predicate(t).reverse());
   }
