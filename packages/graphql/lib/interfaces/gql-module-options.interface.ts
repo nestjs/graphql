@@ -5,6 +5,7 @@ import { GraphQLSchema } from 'graphql';
 import { GraphQLDriver } from '.';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { BuildSchemaOptions } from './build-schema-options.interface';
+import { AutoSchemaFileValue } from './schema-file-config.interface';
 
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 
@@ -63,7 +64,7 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   /**
    * If enabled, GraphQL schema will be generated automatically
    */
-  autoSchemaFile?: string | boolean;
+  autoSchemaFile?: AutoSchemaFileValue;
 
   /**
    * Sort the schema lexicographically
