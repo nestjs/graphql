@@ -18,7 +18,7 @@ export class TypeDefsDecoratorFactory {
       case 2: {
         if (apolloSubgraphVersion === 1) {
           this.logger.error(
-            'You are trying to use Apollo Federation 2 but you are not using @apollo/subgraph@^2.0.0, please upgrade',
+            'To use Apollo Federation v2, you have to install the @apollo/subgraph@^2.0.0.',
           );
           return;
         }
