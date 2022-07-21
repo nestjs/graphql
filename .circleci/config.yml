@@ -44,8 +44,14 @@ jobs:
       - *restore-cache
       - *install-deps
       - run:
-          name: E2E tests
-          command: yarn test:e2e
+          name: E2E tests (graphql)
+          command: yarn test:e2e:graphql
+      - run:
+          name: E2E tests (apollo)
+          command: yarn test:e2e:apollo
+      - run:
+          name: E2E tests (mercurius)
+          command: yarn test:e2e:mercurius
 
 workflows:
   version: 2

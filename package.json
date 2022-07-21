@@ -20,6 +20,9 @@
     "publish:next": "lerna publish --dist-tag next",
     "test:e2e": "lerna run test:e2e --parallel",
     "test:e2e:dev": "lerna run test:e2e:dev --parallel",
+    "test:e2e:apollo": "lerna run test:e2e --scope @nestjs/apollo --stream",
+    "test:e2e:graphql": "lerna run test:e2e --scope @nestjs/graphql --stream",
+    "test:e2e:mercurius": "lerna run test:e2e --scope @nestjs/mercurius --stream",
     "prepare": "husky install"
   },
   "resolutions": {
