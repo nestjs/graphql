@@ -21,7 +21,7 @@ import {
   UnionTypeExtensionNode,
 } from 'graphql';
 import { get, map, sortBy, upperFirst } from 'lodash';
-import {
+import type {
   ClassDeclarationStructure,
   EnumDeclarationStructure,
   InterfaceDeclarationStructure,
@@ -32,7 +32,6 @@ import {
   PropertyDeclarationStructure,
   PropertySignatureStructure,
   SourceFile,
-  StructureKind,
   TypeAliasDeclarationStructure,
 } from 'ts-morph';
 import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
@@ -136,7 +135,7 @@ export class GraphQLAstExplorer {
     );
 
     fileStructure.statements.push({
-      kind: StructureKind.TypeAlias,
+      kind: tsMorphLib.StructureKind.TypeAlias,
       name: 'Nullable',
       isExported: false,
       type: 'T | null',
@@ -444,7 +443,7 @@ export class GraphQLAstExplorer {
       typeof typeMapping === 'string' ? typeMapping : typeMapping?.name;
 
     return {
-      kind: StructureKind.TypeAlias,
+      kind: tsMorphLib.StructureKind.TypeAlias,
       name,
       type: mappedTypeName ?? options.defaultScalarType ?? 'any',
       isExported: true,
@@ -464,7 +463,7 @@ export class GraphQLAstExplorer {
         (value) => `"${get(value, 'name.value')}"`,
       );
       return {
-        kind: StructureKind.TypeAlias,
+        kind: tsMorphLib.StructureKind.TypeAlias,
         name,
         type: values.join(' | '),
         isExported: true,
@@ -475,7 +474,7 @@ export class GraphQLAstExplorer {
       value: get(value, 'name.value'),
     }));
     return {
-      kind: StructureKind.Enum,
+      kind: tsMorphLib.StructureKind.Enum,
       name,
       members,
       isExported: true,
@@ -494,7 +493,7 @@ export class GraphQLAstExplorer {
     );
 
     return {
-      kind: StructureKind.TypeAlias,
+      kind: tsMorphLib.StructureKind.TypeAlias,
       name,
       type: types.join(' | '),
       isExported: true,
