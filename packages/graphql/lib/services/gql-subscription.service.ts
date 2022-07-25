@@ -132,9 +132,11 @@ export class GqlSubscriptionService {
           ? this.subTransWs
           : this.wss;
 
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit('connection', ws, req);
-      });
+      if (req.url?.startsWith(wss.options.path)) {
+        wss.handleUpgrade(req, socket, head, (ws) => {
+          wss.emit('connection', ws, req);
+        });
+      }
     });
   }
 
