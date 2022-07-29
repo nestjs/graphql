@@ -31,7 +31,7 @@
     "@nestjs/platform-fastify": "8.4.7",
     "@nestjs/testing": "8.4.7",
     "fastify": "4.3.0",
-    "mercurius": "8.12.2",
+    "mercurius": "8.13.0",
     "mercurius-integration-testing": "5.0.0"
   },
   "peerDependencies": {

@@ -992,6 +992,27 @@
   dependencies:
     fast-json-stringify "^5.0.0"
 
+"@fastify/static@^5.0.0":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@fastify/static/-/static-5.0.2.tgz#46cee887393b422f4b10a46a14e970a64dd086d4"
+  integrity sha512-HvyXZ5a7hUHoSBRq9jKUuKIUCkHMkCDcmiAeEmixXlGOx8pEWx3NYOIaiivcjWa6/NLvfdUT+t/jzfVQ2PA7Gw==
+  dependencies:
+    content-disposition "^0.5.3"
+    encoding-negotiator "^2.0.1"
+    fastify-plugin "^3.0.0"
+    glob "^7.1.4"
+    p-limit "^3.1.0"
+    readable-stream "^3.4.0"
+    send "^0.17.1"
+
+"@fastify/websocket@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-5.0.0.tgz#1fe62743c7663fb71d18953e6f62873a5b9cf448"
+  integrity sha512-ngZo5rchmhRZaML4MkAY/ClGs8Iyp0+rL97EIP0QsU2N4ICqBKEBG/wGL21ImAhha1RFixEzz8+CB/Ad/W50yw==
+  dependencies:
+    fastify-plugin "^3.0.0"
+    ws "^8.0.0"
+
 "@gar/promisify@^1.0.1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.2.tgz#30aa825f11d438671d585bd44e7fd564535fc210"
@@ -5436,11 +5457,6 @@ fastify-cors@6.1.0:
     fastify-cors-deprecated "npm:fastify-cors@6.0.3"
     process-warning "^1.0.0"
 
-fastify-error@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-0.3.1.tgz#8eb993e15e3cf57f0357fc452af9290f1c1278d2"
-  integrity sha512-oCfpcsDndgnDVgiI7bwFKAun2dO+4h84vBlkWsWnz/OUK9Reff5UFoFl241xTiLeHWX/vU9zkDVXqYUxjOwHcQ==
-
 "fastify-formbody-deprecated@npm:fastify-formbody@5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/fastify-formbody/-/fastify-formbody-5.2.0.tgz#942f0847f106888cad419812590cfff7ffb61f92"
@@ -5461,31 +5477,10 @@ fastify-plugin@^3.0.0:
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-3.0.0.tgz#cf1b8c8098e3b5a7c8c30e6aeb06903370c054ca"
   integrity sha512-ZdCvKEEd92DNLps5n0v231Bha8bkz1DjnPP/aEz37rz/q42Z5JVLmgnqR4DYuNn3NXAO3IDCPyRvgvxtJ4Ym4w==
 
-fastify-static@^4.2.2:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/fastify-static/-/fastify-static-4.5.0.tgz#0d3feff5373f5ed9c4e4cf31a2b84c2f70c35bb2"
-  integrity sha512-Q7Tgl55AjsmBwiO4hKYib2BUCt+XTWLJ6Xp8YPPHU3EsrKNpevJ4cz8pjf1Ey1QhHw9O8Y2FDKdu+IC74oHvqw==
-  dependencies:
-    content-disposition "^0.5.3"
-    encoding-negotiator "^2.0.1"
-    fastify-plugin "^3.0.0"
-    glob "^7.1.4"
-    p-limit "^3.1.0"
-    readable-stream "^3.4.0"
-    send "^0.17.1"
-
 fastify-warning@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/fastify-warning/-/fastify-warning-0.2.0.tgz#e717776026a4493dc9a2befa44db6d17f618008f"
   integrity sha512-s1EQguBw/9qtc1p/WTY4eq9WMRIACkj+HTcOIK1in4MV5aFaQC9ZCIt0dJ7pr5bIf4lPpHvAtP2ywpTNgs7hqw==
-
-fastify-websocket@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/fastify-websocket/-/fastify-websocket-4.0.0.tgz#7d22e0fbd15cf64628b3fb77010f65e4880942b5"
-  integrity sha512-XeeE2r4SkkLBp83NZ3BKCEdR6KFPEtiiIAUrvJhsvLJFRCV6BCnF5ZdchZ6ghPQ5rJ1VwcWlajuXHlQWwXX/YQ==
-  dependencies:
-    fastify-plugin "^3.0.0"
-    ws "^8.0.0"
 
 fastify@3.29.0:
   version "3.29.0"
@@ -7930,17 +7925,17 @@ mercurius-integration-testing@5.0.0:
     cookie "^0.4.2"
     ws "^8.4.2"
 
-mercurius@8.12.2:
-  version "8.12.2"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-8.12.2.tgz#78a94c764d987f9efb9ade43ff4c79891131fe91"
-  integrity sha512-3bLLjGapSsYStSDNgcGOkz2biSzHIHVCMi7ecGBVXLS8uBGCb1dlruYS83rq74AhOLdpWMwWReZ6jqyuc8SZNw==
+mercurius@8.13.0:
+  version "8.13.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-8.13.0.tgz#67c51137b27ada000ac7385aba9028a1e706ab50"
+  integrity sha512-Dgbe/Dv/MI7LoUM5KedNdS8l0xtYAOXnrdrnIc/zOY2/2RvDoCwObizw3S4GrS7iosxi3AIf1mvZahMg6NHffw==
   dependencies:
+    "@fastify/error" "^2.0.0"
+    "@fastify/static" "^5.0.0"
+    "@fastify/websocket" "^5.0.0"
     "@types/isomorphic-form-data" "^2.0.0"
     events.on "^1.0.1"
-    fastify-error "^0.3.1"
     fastify-plugin "^3.0.0"
-    fastify-static "^4.2.2"
-    fastify-websocket "^4.0.0"
     graphql "^15.5.1"
     graphql-jit "^0.7.0"
     mqemitter "^4.4.1"
