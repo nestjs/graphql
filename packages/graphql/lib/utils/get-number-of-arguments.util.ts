@@ -7,26 +7,78 @@
  */
 export function getNumberOfArguments(fn: Function): number | undefined {
   // Removing newlines is necessary to use easier regex and handle multi-line functions
-  const functionAsStringWithouNewLines = fn.toString().replace(/\n/g, '');
+  const functionAsStringWithoutNewLines = fn.toString().replace(/\n/g, '');
 
-  const anythingEnclosedInParenthesesRegex = /\(.+\)/;
-
-  const regexMatchedArray = functionAsStringWithouNewLines.match(
-    new RegExp(anythingEnclosedInParenthesesRegex),
+  const [firstParenthesisIndex, lastParenthesisIndex] = getSubstring(
+    functionAsStringWithoutNewLines,
+    '(',
+    ')',
   );
 
-  if (regexMatchedArray) {
-    const functionParametersAsString = regexMatchedArray[0];
+  if (lastParenthesisIndex != null && firstParenthesisIndex != null) {
+    let functionParametersAsString = functionAsStringWithoutNewLines.substring(
+      firstParenthesisIndex + 1,
+      lastParenthesisIndex,
+    );
+
+    if (functionParametersAsString === '') {
+      return 0;
+    }
 
     // Removing arrays and objects is also necessary because we count the number of commas in the string,
     // and both could have commas and confuse the split process below.
-    const parametersWithReplacedArraysAndObjects = functionParametersAsString
-      .replace(/\[.+\]/g, '"array"')
-      .replace(/(\{.+\})/g, '"object"');
+    let res;
+    while ((res = getSubstring(functionParametersAsString, '[', ']')) != null) {
+      functionParametersAsString = cut(functionParametersAsString, res);
+    }
 
-    const argumentsArray = parametersWithReplacedArraysAndObjects.split(',');
+    while ((res = getSubstring(functionParametersAsString, '{', '}')) != null) {
+      functionParametersAsString = cut(functionParametersAsString, res);
+    }
+
+    const argumentsArray = functionParametersAsString.split(',');
     return argumentsArray.length;
   }
 
   return 0;
+}
+
+function cut(
+  value: string,
+  [startIndex, endIndex]: [number, number] | [] = [],
+): string {
+  if (startIndex == null || endIndex == null) {
+    return value;
+  }
+
+  return value.substring(0, startIndex) + value.substring(endIndex + 1);
+}
+
+function getSubstring(
+  value: string,
+  startChar: string,
+  endChar: string,
+): [number, number] | undefined {
+  const firstParenthesisIndex = value.indexOf(startChar);
+  let lastParenthesisIndex;
+  let nestedParenthesis = 0;
+  for (let i = firstParenthesisIndex + 1; i <= value.length; i++) {
+    const char = value[i];
+    if (char === endChar && nestedParenthesis === 0) {
+      lastParenthesisIndex = i;
+      break;
+    }
+    if (char === startChar) {
+      nestedParenthesis++;
+    }
+    if (char === endChar) {
+      nestedParenthesis--;
+    }
+  }
+
+  if (lastParenthesisIndex > firstParenthesisIndex) {
+    return [firstParenthesisIndex, lastParenthesisIndex];
+  }
+
+  return undefined;
 }

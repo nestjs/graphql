@@ -86,6 +86,22 @@ describe('getNumberOfArguments', () => {
       static methodTwoArguments(_arg1: any, _arg2: any) {}
 
       static methodTwoArgumentsOneOptional(_arg1: any, _arg2 = ['raw']) {}
+
+      static methodTwoArgumentsOneOptionalAndBody(_arg1: any, _arg2 = ['raw']) {
+        let a = 1,
+          b = 2;
+        console.log(a, b);
+      }
+
+      static methodTheeArgumentsOneOptionalOneFunctionAndBody(
+        _arg1: any,
+        _arg2 = () => {},
+        _arg3 = ['raw'],
+      ) {
+        let a = 1,
+          b = 2;
+        console.log(a, b);
+      }
     }
 
     it('should return 0 for a 0-argument function', () => {
@@ -104,6 +120,22 @@ describe('getNumberOfArguments', () => {
       expect(
         getNumberOfArguments(TestStaticClass.methodTwoArgumentsOneOptional),
       ).toBe(2);
+    });
+
+    it('should return 2 for a 2-argument function, even if it has a default parameter and body', () => {
+      expect(
+        getNumberOfArguments(
+          TestStaticClass.methodTwoArgumentsOneOptionalAndBody,
+        ),
+      ).toBe(2);
+    });
+
+    it('should return 3 for a 2-argument function, even if it has a function default parameter and body', () => {
+      expect(
+        getNumberOfArguments(
+          TestStaticClass.methodTheeArgumentsOneOptionalOneFunctionAndBody,
+        ),
+      ).toBe(3);
     });
   });
 
@@ -142,6 +174,26 @@ describe('getNumberOfArguments', () => {
       function functionWithArray(_arg1 = [1, 2, 3], _arg2 = { a: 1, b: 2 }) {}
 
       expect(getNumberOfArguments(functionWithArray)).toBe(2);
+    });
+
+    it('should count correctly for functions containing complex arrays as default values', () => {
+      function methodThreeArgumentsTwoArrays(
+        _arg1 = ['raw'],
+        _arg2 = true,
+        _arg3 = [['raw'], ['raw']],
+      ) {}
+
+      expect(getNumberOfArguments(methodThreeArgumentsTwoArrays)).toBe(3);
+    });
+
+    it('should count correctly for functions containing complex objects as default values', () => {
+      function functionThreeArgumentsTwoObjects(
+        _arg1 = { raw: ['raw'] },
+        _arg2 = true,
+        _arg3 = { raw: [['raw'], ['raw']], raw2: [['raw'], ['raw']] },
+      ) {}
+
+      expect(getNumberOfArguments(functionThreeArgumentsTwoObjects)).toBe(3);
     });
   });
 });
