@@ -3347,10 +3347,10 @@ apollo-reporting-protobuf@^3.3.2:
   dependencies:
     lru-cache "^6.0.0"
 
-apollo-server-core@3.10.0, apollo-server-core@^3.10.0:
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.0.tgz#6680b4eb4699829ed50d8a592721ee5e5e11e041"
-  integrity sha512-ln5drIk3oW/ycYhcYL9TvM7vRf7OZwJrgHWlnjnMakozBQIBSumdMi4pN001DhU9mVBWTfnmBv3CdcxJdGXIvA==
+apollo-server-core@3.10.1:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.1.tgz#01f9ffc57c7d15c27bd7f89d65f45522aa3f3c3d"
+  integrity sha512-UFFziv6h15QbKRZOA6wLyr1Sle9kns3JuQ5DEB7OYe5AIoOJNjZkWXX/tmLFUrSmlnDDryi6Sf5pDzpYmUC/UA==
   dependencies:
     "@apollo/utils.keyvaluecache" "^1.0.1"
     "@apollo/utils.logger" "^1.0.0"
@@ -3401,6 +3401,34 @@ apollo-server-core@3.10.0, apollo-server-core@^3.10.0:
     lru-cache "^6.0.0"
     sha.js "^2.4.11"
     uuid "^8.0.0"
+
+apollo-server-core@^3.10.0:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.0.tgz#6680b4eb4699829ed50d8a592721ee5e5e11e041"
+  integrity sha512-ln5drIk3oW/ycYhcYL9TvM7vRf7OZwJrgHWlnjnMakozBQIBSumdMi4pN001DhU9mVBWTfnmBv3CdcxJdGXIvA==
+  dependencies:
+    "@apollo/utils.keyvaluecache" "^1.0.1"
+    "@apollo/utils.logger" "^1.0.0"
+    "@apollo/utils.usagereporting" "^1.0.0"
+    "@apollographql/apollo-tools" "^0.5.3"
+    "@apollographql/graphql-playground-html" "1.6.29"
+    "@graphql-tools/mock" "^8.1.2"
+    "@graphql-tools/schema" "^8.0.0"
+    "@josephg/resolvable" "^1.0.0"
+    apollo-datasource "^3.3.2"
+    apollo-reporting-protobuf "^3.3.2"
+    apollo-server-env "^4.2.1"
+    apollo-server-errors "^3.3.1"
+    apollo-server-plugin-base "^3.6.2"
+    apollo-server-types "^3.6.2"
+    async-retry "^1.2.1"
+    fast-json-stable-stringify "^2.1.0"
+    graphql-tag "^2.11.0"
+    loglevel "^1.6.8"
+    lru-cache "^6.0.0"
+    sha.js "^2.4.11"
+    uuid "^8.0.0"
+    whatwg-mimetype "^3.0.0"
 
 apollo-server-env@^4.1.0:
   version "4.1.0"
