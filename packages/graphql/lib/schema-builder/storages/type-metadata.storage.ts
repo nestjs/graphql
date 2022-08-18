@@ -338,24 +338,8 @@ export class TypeMetadataStorageHost {
   }
 
   private compileExternalFieldResolverMetadata(item: FieldResolverMetadata) {
-    const objectTypeRef = this.metadataByTargetCollection
-      .get(item.target)
-      .resolver.typeFn();
-
-    const objectOrInterfaceTypeMetadata =
-      this.metadataByTargetCollection.get(objectTypeRef).objectType ||
-      this.metadataByTargetCollection.get(objectTypeRef).interface;
-
-    if (!objectOrInterfaceTypeMetadata) {
-      throw new CannotDetermineHostTypeError(
-        item.schemaName,
-        objectTypeRef?.name,
-      );
-    }
-    const objectOrInterfaceTypeField =
-      objectOrInterfaceTypeMetadata.properties.find(
-        (fieldDef) => fieldDef.name === item.methodName,
-      );
+    const [target, objectOrInterfaceTypeMetadata, objectOrInterfaceTypeField] =
+      this.findModelFieldMetadata(item);
     if (!objectOrInterfaceTypeField) {
       if (!item.typeFn || !item.typeOptions) {
         throw new UndefinedTypeError(item.target.name, item.methodName);
@@ -366,7 +350,7 @@ export class TypeMetadataStorageHost {
         deprecationReason: item.deprecationReason,
         description: item.description,
         typeFn: item.typeFn,
-        target: objectTypeRef,
+        target,
         options: item.typeOptions,
         methodArgs: item.methodArgs,
         directives: item.directives,
@@ -392,6 +376,49 @@ export class TypeMetadataStorageHost {
           ? objectOrInterfaceTypeField.complexity
           : item.complexity;
     }
+  }
+
+  private findModelFieldMetadata(
+    item: FieldResolverMetadata,
+  ): [Function, ClassMetadata, PropertyMetadata | undefined] {
+    let objectTypeRef = this.metadataByTargetCollection
+      .get(item.target)
+      .resolver.typeFn();
+    const getTypeMetadata = (target: any) => {
+      const metadata = this.metadataByTargetCollection.get(target);
+      return metadata.objectType || metadata.interface;
+    };
+    let objectOrInterfaceTypeMetadata = getTypeMetadata(objectTypeRef);
+    if (!objectOrInterfaceTypeMetadata) {
+      throw new CannotDetermineHostTypeError(
+        item.schemaName,
+        objectTypeRef?.name,
+      );
+    }
+    let objectOrInterfaceTypeField =
+      objectOrInterfaceTypeMetadata.properties.find(
+        (fieldDef) => fieldDef.name === item.methodName,
+      );
+    for (
+      let _objectTypeRef = objectTypeRef;
+      !objectOrInterfaceTypeField && _objectTypeRef?.prototype;
+      _objectTypeRef = Object.getPrototypeOf(_objectTypeRef)
+    ) {
+      const possibleTypeMetadata = getTypeMetadata(_objectTypeRef);
+      objectOrInterfaceTypeField = possibleTypeMetadata?.properties.find(
+        (fieldDef) => fieldDef.name === item.methodName,
+      );
+      if (objectOrInterfaceTypeField) {
+        objectTypeRef = _objectTypeRef;
+        objectOrInterfaceTypeMetadata = possibleTypeMetadata;
+        break;
+      }
+    }
+    return [
+      objectTypeRef,
+      objectOrInterfaceTypeMetadata,
+      objectOrInterfaceTypeField,
+    ];
   }
 
   private compileExtendedResolversMetadata() {
