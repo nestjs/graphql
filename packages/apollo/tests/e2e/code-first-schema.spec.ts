@@ -17,6 +17,7 @@ import { DirectionsResolver } from '../code-first/directions/directions.resolver
 import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
 import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
+import { IngredientsResolver } from '../code-first/recipes/ingredients.resolver';
 import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
 import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
@@ -48,6 +49,7 @@ describe('Code-first - schema factory', () => {
     beforeAll(async () => {
       schema = await schemaFactory.create(
         [
+          IngredientsResolver,
           RecipesResolver,
           DirectionsResolver,
           AbstractResolver,
@@ -206,6 +208,18 @@ describe('Code-first - schema factory', () => {
               description: 'ingredient name',
               isDeprecated: true,
               name: 'name',
+              type: {
+                kind: TypeKind.SCALAR,
+                name: 'String',
+                ofType: null,
+              },
+            },
+            {
+              args: [],
+              deprecationReason: 'is deprecated',
+              description: 'ingredient base name',
+              isDeprecated: true,
+              name: 'baseName',
               type: {
                 kind: TypeKind.SCALAR,
                 name: 'String',
