@@ -2,7 +2,6 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { transformSchema } from '@nestjs/graphql';
 import { BuildFederatedSchemaOptions } from '@nestjs/graphql';
 import { GraphQLSchema, isObjectType, buildASTSchema } from 'graphql';
-import { forEach } from 'lodash';
 
 export function buildMercuriusFederatedSchema({
   typeDefs,
@@ -22,7 +21,7 @@ export function buildMercuriusFederatedSchema({
   executableSchema = transformSchema(executableSchema, (type) => {
     if (isObjectType(type)) {
       const isSubscription = type.name === 'Subscription';
-      forEach(type.getFields(), (value, key) => {
+      for (const [key, value] of Object.entries(type.getFields())) {
         if (isSubscription && subscriptionResolvers) {
           const resolver = subscriptionResolvers[key];
           if (resolver && !value.subscribe) {
@@ -43,7 +42,7 @@ export function buildMercuriusFederatedSchema({
             };
           };
         }
-      });
+      }
     }
     return type;
   });
