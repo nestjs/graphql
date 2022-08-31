@@ -24,8 +24,8 @@
   },
   "devDependencies": {
     "@apollo/gateway": "0.52.1",
-    "@apollo/gateway-v2": "npm:@apollo/gateway@2.1.0",
-    "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.1.0",
+    "@apollo/gateway-v2": "npm:@apollo/gateway@2.1.1",
+    "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.1.1",
     "@nestjs/common": "8.4.7",
     "@nestjs/core": "8.4.7",
     "@nestjs/platform-express": "8.4.7",
