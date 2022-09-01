@@ -3,11 +3,13 @@ import { isString } from '@nestjs/common/utils/shared.utils';
 export interface PluginOptions {
   typeFileNameSuffix?: string | string[];
   introspectComments?: boolean;
+  autoRegisterEnums?: boolean;
 }
 
 const defaultOptions: PluginOptions = {
   typeFileNameSuffix: ['.input.ts', '.args.ts', '.entity.ts', '.model.ts'],
   introspectComments: false,
+  autoRegisterEnums: false,
 };
 
 export const mergePluginOptions = (

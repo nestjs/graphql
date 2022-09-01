@@ -1,228 +1,615 @@
-import { compact, flatten } from 'lodash';
 import * as ts from 'typescript';
-import { HideField } from '../../decorators';
+import { ModuleKind } from 'typescript';
+import {
+  HideField,
+  ObjectType,
+  InterfaceType,
+  InputType,
+  Field,
+} from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
 import {
   findNullableTypeFromUnion,
-  getDescriptionOfNode,
   isNull,
   isUndefined,
+  getJSDocDescription,
+  getJsDocDeprecation,
+  hasDecorators,
+  hasModifiers,
+  getDecoratorName,
+  isCallExpressionOf,
+  serializePrimitiveObjectToAst,
+  safelyMergeObjects,
+  hasJSDocTags,
+  PrimitiveObject,
+  createImportEquals,
+  hasImport,
+  createNamedImport, updateDecoratorArguments,
 } from '../utils/ast-utils';
 import {
-  getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
-  hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
+import { EnumMetadataValuesMapOptions } from '../../schema-builder/metadata';
+import { EnumOptions } from '../../type-factories';
 
-const metadataHostMap = new Map();
-const importsToAddPerFile = new Map<string, Set<string>>();
+const CLASS_DECORATORS = [
+  ObjectType.name,
+  InterfaceType.name,
+  InputType.name,
+];
+
+type EnumMetadata = {
+  name: string;
+  description: string;
+  properties: { [name: string]: EnumMetadataValuesMapOptions };
+};
+
+function capitalizeFirstLetter(word: string) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
 
 export class ModelClassVisitor {
+  importsToAdd: Set<string>;
+
+  inlineEnumsMap: { name: string; values: { [name: string]: string } }[];
+  enumsMetadata: Map<ts.EnumDeclaration, EnumMetadata>;
+  packageVarIdentifier: ts.Identifier;
+  isCommonJs: boolean;
+
   visit(
     sourceFile: ts.SourceFile,
     ctx: ts.TransformationContext,
     program: ts.Program,
     pluginOptions: PluginOptions,
   ) {
+    this.inlineEnumsMap = [];
+    this.enumsMetadata = new Map();
+    this.importsToAdd = new Set<string>();
+    this.isCommonJs = ctx.getCompilerOptions().module === ModuleKind.CommonJS;
+
     const typeChecker = program.getTypeChecker();
+    const factory = ctx.factory;
+
+    this.packageVarIdentifier = factory.createUniqueName('nestjs_graphql');
 
     const visitNode = (node: ts.Node): ts.Node => {
-      if (ts.isClassDeclaration(node)) {
-        this.clearMetadataOnRestart(node);
+      if (
+        ts.isClassDeclaration(node) &&
+        hasDecorators(node.decorators, CLASS_DECORATORS)
+      ) {
+        const members = this.amendFieldsDecorators(
+          factory,
+          node.members,
+          pluginOptions,
+          sourceFile.fileName,
+          typeChecker,
+        );
 
-        node = ts.visitEachChild(node, visitNode, ctx);
-        return this.addMetadataFactory(node as ts.ClassDeclaration);
-      } else if (ts.isPropertyDeclaration(node)) {
-        const decorators = node.decorators;
-        const hideField = getDecoratorOrUndefinedByNames(
-          [HideField.name],
-          decorators,
+        const metadata = this.collectMetadataFromClassMembers(
+          factory,
+          members,
+          pluginOptions,
+          sourceFile.fileName,
+          typeChecker,
         );
-        if (hideField) {
-          return node;
-        }
-        const isPropertyStatic = (node.modifiers || []).some(
-          (modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword,
+
+        return this.updateClassDeclaration(
+          factory,
+          node,
+          members,
+          metadata,
+          pluginOptions,
         );
-        if (isPropertyStatic) {
-          return node;
-        }
-        try {
-          this.inspectPropertyDeclaration(
-            node,
-            typeChecker,
-            sourceFile.fileName,
-            sourceFile,
-            pluginOptions,
-          );
-        } catch (err) {
-          return node;
-        }
+      } else if (
+        ts.isEnumDeclaration(node) &&
+        !hasJSDocTags(node, ['private', 'HideEnum']) &&
+        pluginOptions.autoRegisterEnums
+      ) {
+        this.enumsMetadata.set(
+          node,
+          this.collectMetadataFromEnum(node, pluginOptions),
+        );
         return node;
+      } else if (ts.isCallExpression(node)) {
+        if (isCallExpressionOf('registerEnumType', node)) {
+          return this.amendRegisterEnumTypeCall(factory, node);
+        }
+
+        if (isCallExpressionOf('createUnionType', node)) {
+          return this.amendCreateUnionTypeCall(factory, node);
+        }
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
-        const importsToAdd = importsToAddPerFile.get(node.fileName);
-        if (!importsToAdd) {
-          return visitedNode;
+
+        const importStatements: ts.Statement[] =
+          this.createEagerImports(factory);
+
+        const implicitEnumsStatements = this.createImplicitEnums(factory);
+
+        if (implicitEnumsStatements.length || this.enumsMetadata.size) {
+          if (this.isCommonJs) {
+            importStatements.push(
+              createImportEquals(
+                factory,
+                this.packageVarIdentifier,
+                '@nestjs/graphql',
+              ),
+            );
+          } else if (!hasImport(sourceFile, 'registerEnumType')) {
+            importStatements.push(
+              createNamedImport(
+                factory,
+                ['registerEnumType'],
+                '@nestjs/graphql',
+              ),
+            );
+          }
         }
-        return this.updateImports(visitedNode, Array.from(importsToAdd));
+
+        const existingStatements = Array.from(visitedNode.statements);
+
+        this.enumsMetadata.forEach((metadata, enumDeclaration) => {
+          const registration = this.createEnumRegistration(factory, metadata);
+          const enumIndex = existingStatements.indexOf(enumDeclaration);
+          existingStatements.splice(enumIndex + 1, 0, registration);
+        });
+
+        return factory.updateSourceFile(visitedNode, [
+          ...importStatements,
+          ...implicitEnumsStatements,
+          ...existingStatements,
+        ]);
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
     return ts.visitNode(sourceFile, visitNode);
   }
 
-  clearMetadataOnRestart(node: ts.ClassDeclaration) {
-    const classMetadata = this.getClassMetadata(node);
-    if (classMetadata) {
-      metadataHostMap.delete(node.name.getText());
+  private collectMetadataFromEnum(
+    node: ts.EnumDeclaration,
+    pluginOptions: PluginOptions,
+  ): EnumMetadata {
+    let properties: EnumMetadata['properties'] = {};
+    let description: string;
+
+    if (pluginOptions.introspectComments) {
+      properties = node.members.reduce<EnumMetadata['properties']>(
+        (acc, member) => {
+          const deprecationReason = getJsDocDeprecation(member);
+          const description = getJSDocDescription(member);
+
+          if (deprecationReason || description) {
+            acc[(member.name as ts.Identifier).text] = {
+              deprecationReason: getJsDocDeprecation(member),
+              description: getJSDocDescription(member),
+            };
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+      description = getJSDocDescription(node);
     }
+
+    return {
+      name: node.name.text,
+      description,
+      properties,
+    };
   }
 
-  addMetadataFactory(node: ts.ClassDeclaration) {
-    const classMutableNode = ts.getMutableClone(node);
-    const classMetadata = this.getClassMetadata(node as ts.ClassDeclaration);
-    const returnValue = classMetadata
-      ? ts.createObjectLiteral(
-          Object.keys(classMetadata).map((key) =>
-            ts.createPropertyAssignment(
-              ts.createIdentifier(key),
-              classMetadata[key],
-            ),
-          ),
-        )
-      : ts.createObjectLiteral([], false);
+  private createEnumRegistration(f: ts.NodeFactory, metadata: EnumMetadata) {
+    const registerEnumTypeOptions: EnumOptions = {
+      name: metadata.name,
+      description: metadata.description,
+      valuesMap: metadata.properties,
+    };
 
-    const method = ts.createMethod(
+    return this.createRegisterEnumTypeFnCall(f, [
+      // create enum itself as object literal
+      f.createIdentifier(metadata.name),
+      // create an options with name of enum
+      serializePrimitiveObjectToAst(
+        f,
+        registerEnumTypeOptions as unknown as PrimitiveObject,
+      ),
+    ]);
+  }
+
+  private amendCreateUnionTypeCall(f: ts.NodeFactory, node: ts.CallExpression) {
+    if (!ts.isVariableDeclaration(node.parent) || node.arguments.length != 1) {
+      return node;
+    }
+
+    const unionName = (node.parent.name as ts.Identifier).text;
+
+    return f.updateCallExpression(node, node.expression, node.typeArguments, [
+      safelyMergeObjects(
+        f,
+        serializePrimitiveObjectToAst(f, {
+          name: unionName,
+        }),
+        node.arguments[0],
+      ),
+    ]);
+  }
+
+  private amendRegisterEnumTypeCall(
+    f: ts.NodeFactory,
+    node: ts.CallExpression,
+  ) {
+    if (node.arguments.length === 0 || !ts.isIdentifier(node.arguments[0])) {
+      return node;
+    }
+
+    const enumName = node.arguments[0].text;
+    const objectLiteralExpression = serializePrimitiveObjectToAst(f, {
+      name: enumName,
+    });
+
+    let newArgumentsArray: ts.Expression[];
+
+    if (node.arguments.length === 1) {
+      newArgumentsArray = [node.arguments[0], objectLiteralExpression];
+    } else {
+      newArgumentsArray = [
+        node.arguments[0],
+        safelyMergeObjects(f, objectLiteralExpression, node.arguments[1]),
+      ];
+    }
+
+    return f.updateCallExpression(
+      node,
+      node.expression,
+      node.typeArguments,
+      newArgumentsArray,
+    );
+  }
+
+  private addDescriptionToClassDecorators(
+    f: ts.NodeFactory,
+    node: ts.ClassDeclaration,
+  ) {
+    const description = getJSDocDescription(node);
+
+    if (!description) {
+      return node.decorators;
+    }
+
+    // get one of allowed decorators from list
+    return node.decorators.map((decorator) => {
+      if (!CLASS_DECORATORS.includes(getDecoratorName(decorator))) {
+        return decorator;
+      }
+
+      const decoratorExpression = decorator.expression as ts.CallExpression;
+      const objectLiteralExpression = serializePrimitiveObjectToAst(f, {
+        description,
+      });
+
+      let newArgumentsArray: ts.Expression[] = [];
+
+      if (decoratorExpression.arguments.length === 0) {
+        newArgumentsArray = [objectLiteralExpression];
+      } else {
+        // Options always a last parameter:
+        // @ObjectType('name', {description: ''});
+        // @ObjectType({description: ''});
+
+        newArgumentsArray = decoratorExpression.arguments.map(
+          (argument, index) => {
+            if (index + 1 != decoratorExpression.arguments.length) {
+              return argument;
+            }
+
+            // merge existing props with new props
+            return safelyMergeObjects(f, objectLiteralExpression, argument);
+          },
+        );
+      }
+
+      return f.updateDecorator(
+        decorator,
+        f.updateCallExpression(
+          decoratorExpression,
+          decoratorExpression.expression,
+          decoratorExpression.typeArguments,
+          newArgumentsArray,
+        ),
+      );
+    });
+  }
+
+  private isMemberHasInlineStringEnum(
+    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
+  ): false | { [name: string]: string } {
+    if (!member.type || !ts.isUnionTypeNode(member.type)) {
+      return false;
+    }
+
+    const values: { [name: string]: string } = {};
+
+    for (const type of member.type.types) {
+      if (!ts.isLiteralTypeNode(type)) {
+        return false;
+      }
+
+      if (type.literal.kind === ts.SyntaxKind.StringLiteral) {
+        values[type.literal.text.replace(/\s/g, '_')] = type.literal.text;
+        continue;
+      }
+
+      if (type.literal.kind !== ts.SyntaxKind.NullKeyword) {
+        return false;
+      }
+    }
+
+    return values;
+  }
+
+  private createRegisterEnumTypeFnCall(
+    f: ts.NodeFactory,
+    argumentsArray: ts.Expression[],
+  ) {
+    const FN_NAME = 'registerEnumType';
+    let callee: ts.Expression;
+
+    // https://stackoverflow.com/questions/69617562/adding-a-function-call-in-typescript-transform-compiler-api
+    if (this.isCommonJs) {
+      callee = f.createPropertyAccessExpression(
+        this.packageVarIdentifier,
+        FN_NAME,
+      );
+    } else {
+      callee = f.createIdentifier(FN_NAME);
+    }
+
+    return f.createExpressionStatement(
+      f.createCallExpression(callee, undefined, argumentsArray),
+    );
+  }
+
+  private createImplicitEnums(f: ts.NodeFactory): ts.ExpressionStatement[] {
+    return this.inlineEnumsMap.map(({ name, values }) => {
+      return this.createRegisterEnumTypeFnCall(f, [
+        // create enum itself as object literal
+        serializePrimitiveObjectToAst(f, values),
+        // create an options with name of enum
+        serializePrimitiveObjectToAst(f, { name }),
+      ]);
+    });
+  }
+
+  private getInlineStringEnumTypeOrUndefined(
+    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
+  ): string {
+    let inlineEnumName: string;
+
+    const membersStringEnumValues = this.isMemberHasInlineStringEnum(member);
+
+    if (membersStringEnumValues) {
+      const memberName = member.name.getText();
+
+      inlineEnumName =
+        (member.parent as ts.ClassLikeDeclaration).name.getText() +
+        capitalizeFirstLetter(memberName) +
+        'Enum';
+
+      this.inlineEnumsMap.push({
+        name: inlineEnumName,
+        values: membersStringEnumValues,
+      });
+    }
+
+    return inlineEnumName;
+  }
+
+  private amendFieldsDecorators(
+    f: ts.NodeFactory,
+    members: ts.NodeArray<ts.ClassElement>,
+    pluginOptions: PluginOptions,
+    hostFilename: string, // sourceFile.fileName,
+    typeChecker: ts.TypeChecker | undefined,
+  ): ts.ClassElement[] {
+    return members.map((member) => {
+      if (
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member))
+        && hasDecorators(member.decorators, [Field.name])
+      ) {
+        try {
+          return updateDecoratorArguments(f, member, Field.name, (decoratorArguments) => {
+            const options = this.getOptionsFromFieldDecoratorOrUndefined(decoratorArguments);
+
+            const { type, ...metadata } = this.createFieldMetadata(
+              f,
+              member,
+              typeChecker,
+              hostFilename,
+              pluginOptions,
+              this.getTypeFromFieldDecoratorOrUndefined(decoratorArguments),
+            );
+
+            const serializedMetadata = serializePrimitiveObjectToAst(f, metadata as any);
+            return [type, options ? safelyMergeObjects(f, serializedMetadata, options) : serializedMetadata]
+          })
+        } catch (e) {
+          // omit error
+        }
+      }
+
+      return member;
+    });
+  }
+
+  private collectMetadataFromClassMembers(
+    f: ts.NodeFactory,
+    members: ts.ClassElement[],
+    pluginOptions: PluginOptions,
+    hostFilename: string, // sourceFile.fileName,
+    typeChecker: ts.TypeChecker | undefined,
+  ): ts.ObjectLiteralExpression {
+    const properties: ts.PropertyAssignment[] = [];
+
+    members.forEach((member) => {
+      if (
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
+        !hasModifiers(member.modifiers, [
+          ts.SyntaxKind.StaticKeyword,
+          ts.SyntaxKind.PrivateKeyword,
+        ]) &&
+        !hasDecorators(member.decorators, [HideField.name, Field.name])
+      ) {
+        try {
+          const metadata = this.createFieldMetadata(
+            f,
+            member,
+            typeChecker,
+            hostFilename,
+            pluginOptions,
+          );
+
+          properties.push(
+            f.createPropertyAssignment(
+              f.createIdentifier(member.name.getText()),
+              serializePrimitiveObjectToAst(f, metadata),
+            ),
+          );
+        } catch (e) {
+          // omit error
+        }
+      }
+    });
+
+    return f.createObjectLiteralExpression(properties);
+  }
+
+  private updateClassDeclaration(
+    f: ts.NodeFactory,
+    node: ts.ClassDeclaration,
+    members: ts.ClassElement[],
+    propsMetadata: ts.ObjectLiteralExpression,
+    pluginOptions: PluginOptions,
+  ) {
+    const method = f.createMethodDeclaration(
       undefined,
-      [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
+      [f.createModifier(ts.SyntaxKind.StaticKeyword)],
       undefined,
-      ts.createIdentifier(METADATA_FACTORY_NAME),
+      f.createIdentifier(METADATA_FACTORY_NAME),
       undefined,
       undefined,
       [],
       undefined,
-      ts.createBlock([ts.createReturn(returnValue)], true),
+      f.createBlock([f.createReturnStatement(propsMetadata)], true),
     );
-    (classMutableNode as any).members = ts.createNodeArray([
-      ...(classMutableNode as ts.ClassDeclaration).members,
-      method,
-    ]);
-    return classMutableNode;
+
+    const decorators = pluginOptions.introspectComments
+      ? this.addDescriptionToClassDecorators(f, node)
+      : node.decorators;
+
+    return f.updateClassDeclaration(
+      node,
+      decorators,
+      node.modifiers,
+      node.name,
+      node.typeParameters,
+      node.heritageClauses,
+      [...members, method],
+    );
   }
 
-  inspectPropertyDeclaration(
-    compilerNode: ts.PropertyDeclaration,
-    typeChecker: ts.TypeChecker,
-    hostFilename: string,
-    sourceFile: ts.SourceFile,
-    pluginOptions: PluginOptions,
-  ) {
-    const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
-      compilerNode,
-      typeChecker,
-      ts.createNodeArray(),
-      hostFilename,
-      sourceFile,
-      pluginOptions,
-    );
-    this.addClassMetadata(compilerNode, objectLiteralExpr, sourceFile);
+  private getOptionsFromFieldDecoratorOrUndefined(
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ): ts.Expression | undefined {
+    if (decoratorArguments.length > 1) {
+      return decoratorArguments[1];
+    }
+
+    if (decoratorArguments.length === 1 && !ts.isArrowFunction(decoratorArguments[0])) {
+      return decoratorArguments[0];
+    }
   }
 
-  createDecoratorObjectLiteralExpr(
-    node: ts.PropertyDeclaration | ts.PropertySignature,
+  private getTypeFromFieldDecoratorOrUndefined(
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ): ts.ArrowFunction | undefined {
+    if (
+      decoratorArguments.length > 0 && ts.isArrowFunction(decoratorArguments[0])
+    ) {
+      return decoratorArguments[0];
+    }
+  }
+
+  private createFieldMetadata(
+    f: ts.NodeFactory,
+    node: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
     typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
     hostFilename = '',
-    sourceFile?: ts.SourceFile,
     pluginOptions?: PluginOptions,
-  ): ts.ObjectLiteralExpression {
+    typeArrowFunction?: ts.ArrowFunction,
+  ) {
     const type = typeChecker.getTypeAtLocation(node);
     const isNullable =
       !!node.questionToken || isNull(type) || isUndefined(type);
 
-    const properties = [
-      ...existingProperties,
-      !hasPropertyKey('nullable', existingProperties) &&
-        isNullable &&
-        ts.createPropertyAssignment('nullable', ts.createLiteral(isNullable)),
-      this.createTypePropertyAssignment(
-        node.type,
-        typeChecker,
-        existingProperties,
-        hostFilename,
-        sourceFile,
-        pluginOptions,
-      ),
-      this.createDescriptionPropertyAssigment(
-        node,
-        existingProperties,
-        pluginOptions,
-        sourceFile,
-      ),
-    ];
-    const objectLiteral = ts.createObjectLiteral(compact(flatten(properties)));
-    return objectLiteral;
-  }
+    if (!typeArrowFunction) {
+      const inlineStringEnumTypeName =
+        this.getInlineStringEnumTypeOrUndefined(node);
 
-  createTypePropertyAssignment(
-    node: ts.TypeNode,
-    typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
-    hostFilename: string,
-    sourceFile?: ts.SourceFile,
-    pluginOptions?: PluginOptions,
-  ): ts.PropertyAssignment {
-    const key = 'type';
-    if (hasPropertyKey(key, existingProperties)) {
-      return undefined;
+      typeArrowFunction = typeArrowFunction || f.createArrowFunction(
+        undefined,
+        undefined,
+        [],
+        undefined,
+        undefined,
+        inlineStringEnumTypeName
+          ? f.createIdentifier(inlineStringEnumTypeName)
+          : this.getTypeUsingTypeChecker(
+            f,
+            node.type,
+            typeChecker,
+            hostFilename,
+          ),
+      );
     }
 
-    if (node) {
-      if (ts.isTypeLiteralNode(node)) {
-        const propertyAssignments = Array.from(node.members || []).map(
-          (member) => {
-            const literalExpr = this.createDecoratorObjectLiteralExpr(
-              member as ts.PropertySignature,
-              typeChecker,
-              existingProperties,
-              hostFilename,
-              sourceFile,
-              pluginOptions,
-            );
-            return ts.createPropertyAssignment(
-              ts.createIdentifier(member.name.getText()),
-              literalExpr,
-            );
-          },
-        );
-        return ts.createPropertyAssignment(
-          key,
-          ts.createArrowFunction(
-            undefined,
-            undefined,
-            [],
-            undefined,
-            undefined,
-            ts.createParen(ts.createObjectLiteral(propertyAssignments)),
-          ),
-        );
-      } else if (ts.isUnionTypeNode(node)) {
-        const nullableType = findNullableTypeFromUnion(node, typeChecker);
-        const remainingTypes = node.types.filter(
-          (item) => item !== nullableType,
-        );
+    const description = pluginOptions.introspectComments
+      ? getJSDocDescription(node)
+      : undefined;
 
-        if (remainingTypes.length === 1) {
-          return this.createTypePropertyAssignment(
-            remainingTypes[0],
-            typeChecker,
-            existingProperties,
-            hostFilename,
-          );
-        }
+    const deprecationReason = pluginOptions.introspectComments
+      ? getJsDocDeprecation(node)
+      : undefined;
+
+
+    return {
+      nullable: isNullable || undefined,
+      type: typeArrowFunction,
+      description,
+      deprecationReason,
+    };
+  }
+
+  private getTypeUsingTypeChecker(
+    f: ts.NodeFactory,
+    node: ts.TypeNode,
+    typeChecker: ts.TypeChecker,
+    hostFilename: string,
+  ) {
+    if (node && ts.isUnionTypeNode(node)) {
+      const nullableType = findNullableTypeFromUnion(node, typeChecker);
+      const remainingTypes = node.types.filter((item) => item !== nullableType);
+
+      if (remainingTypes.length === 1) {
+        return this.getTypeUsingTypeChecker(
+          f,
+          remainingTypes[0],
+          typeChecker,
+          hostFilename,
+        );
       }
     }
 
@@ -231,116 +618,32 @@ export class ModelClassVisitor {
       return undefined;
     }
 
-    let typeReference = getTypeReferenceAsString(type, typeChecker);
-    if (!typeReference) {
+    const _typeReference = getTypeReferenceAsString(type, typeChecker);
+
+    if (!_typeReference) {
       return undefined;
     }
-    typeReference = replaceImportPath(typeReference, hostFilename);
-    if (typeReference && typeReference.includes('require')) {
-      // add top-level import to eagarly load class metadata
-      const importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
-      if (importPath) {
-        let importsToAdd = importsToAddPerFile.get(hostFilename);
-        if (!importsToAdd) {
-          importsToAdd = new Set();
-          importsToAddPerFile.set(hostFilename, importsToAdd);
-        }
-        importsToAdd.add(importPath.slice(2, importPath.length - 1));
-      }
-    }
 
-    return ts.createPropertyAssignment(
-      key,
-      ts.createArrowFunction(
-        undefined,
-        undefined,
-        [],
-        undefined,
-        undefined,
-        ts.createIdentifier(typeReference),
-      ),
+    const { typeReference, importPath } = replaceImportPath(
+      _typeReference,
+      hostFilename,
     );
+
+    if (importPath) {
+      // add top-level import to eagarly load class metadata
+      this.importsToAdd.add(importPath);
+    }
+
+    return f.createIdentifier(typeReference);
   }
 
-  addClassMetadata(
-    node: ts.PropertyDeclaration,
-    objectLiteral: ts.ObjectLiteralExpression,
-    sourceFile: ts.SourceFile,
-  ) {
-    const hostClass = node.parent;
-    const className = hostClass.name && hostClass.name.getText();
-    if (!className) {
-      return;
+  private createEagerImports(f: ts.NodeFactory): ts.ImportEqualsDeclaration[] {
+    if (!this.importsToAdd.size) {
+      return [];
     }
-    const existingMetadata = metadataHostMap.get(className) || {};
-    const propertyName = node.name && node.name.getText(sourceFile);
-    if (
-      !propertyName ||
-      (node.name && node.name.kind === ts.SyntaxKind.ComputedPropertyName)
-    ) {
-      return;
-    }
-    metadataHostMap.set(className, {
-      ...existingMetadata,
-      [propertyName]: objectLiteral,
+
+    return Array.from(this.importsToAdd).map((path, index) => {
+      return createImportEquals(f, 'eager_import_' + index, path);
     });
-  }
-
-  getClassMetadata(node: ts.ClassDeclaration) {
-    if (!node.name) {
-      return;
-    }
-    return metadataHostMap.get(node.name.getText());
-  }
-
-  updateImports(
-    sourceFile: ts.SourceFile,
-    pathsToImport: string[],
-  ): ts.SourceFile {
-    const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
-    const IMPORT_PREFIX = 'eager_import_';
-    const importDeclarations = pathsToImport.map((path, index) => {
-      if (major == 4 && minor >= 2) {
-        // support TS v4.2+
-        return (ts.createImportEqualsDeclaration as any)(
-          undefined,
-          undefined,
-          false,
-          IMPORT_PREFIX + index,
-          ts.createExternalModuleReference(ts.createLiteral(path)),
-        );
-      }
-      return (ts.createImportEqualsDeclaration as any)(
-        undefined,
-        undefined,
-        IMPORT_PREFIX + index,
-        ts.createExternalModuleReference(ts.createLiteral(path)),
-      );
-    });
-    return ts.updateSourceFileNode(sourceFile, [
-      ...importDeclarations,
-      ...sourceFile.statements,
-    ]);
-  }
-
-  createDescriptionPropertyAssigment(
-    node: ts.PropertyDeclaration | ts.PropertySignature,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
-    options: PluginOptions = {},
-    sourceFile?: ts.SourceFile,
-  ): ts.PropertyAssignment {
-    if (!options.introspectComments || !sourceFile) {
-      return;
-    }
-    const description = getDescriptionOfNode(node, sourceFile);
-
-    const keyOfComment = 'description';
-    if (!hasPropertyKey(keyOfComment, existingProperties) && description) {
-      const descriptionPropertyAssignment = ts.createPropertyAssignment(
-        keyOfComment,
-        ts.createLiteral(description),
-      );
-      return descriptionPropertyAssignment;
-    }
   }
 }
