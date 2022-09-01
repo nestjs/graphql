@@ -169,7 +169,7 @@ describe('Use graphql-ws + subscriptions-transport-ws', () => {
     try {
       await wsClient?.dispose();
     } catch {}
-    await subWsClient?.close();
+    subWsClient?.close();
     await app.close();
     jest.clearAllMocks();
   });
