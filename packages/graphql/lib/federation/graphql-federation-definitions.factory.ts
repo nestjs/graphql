@@ -37,9 +37,9 @@ export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFacto
       },
     ]);
 
-    // buildSubgraphSchema fills empty Query definition if there is `extend type Query` definition without original `type Query` definition.
-    // This causes duplicate IQuery interfaces.
-    // see: https://github.com/nestjs/graphql/issues/2344
+    // "buildSubgraphSchema" generates an empty Query definition if there is the `extend type Query` statement
+    // This leads to duplicated IQuery interfaces
+    // see: https://github.com//issues/2344
     const mergedDefinition = mergeTypeDefs([printSubgraphSchema(schema)], {
       useSchemaDefinition: false,
       throwOnConflict: true,
