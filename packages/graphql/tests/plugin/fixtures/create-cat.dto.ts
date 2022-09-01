@@ -12,6 +12,7 @@ interface Node {
     id: number;
 }
 
+@ObjectType()
 export class CreateCatDto {
   name: string;
   age: number = 3;
@@ -32,14 +33,14 @@ export class CreateCatDto {
 
 export const createCatDtoTextTranspiled = `var Status;
 (function (Status) {
-    Status[Status[\"ENABLED\"] = 0] = \"ENABLED\";
-    Status[Status[\"DISABLED\"] = 1] = \"DISABLED\";
+    Status[Status["ENABLED"] = 0] = "ENABLED";
+    Status[Status["DISABLED"] = 1] = "DISABLED";
 })(Status || (Status = {}));
 var OneValueEnum;
 (function (OneValueEnum) {
-    OneValueEnum[OneValueEnum[\"ONE\"] = 0] = \"ONE\";
+    OneValueEnum[OneValueEnum["ONE"] = 0] = "ONE";
 })(OneValueEnum || (OneValueEnum = {}));
-export class CreateCatDto {
+let CreateCatDto = class CreateCatDto {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -47,8 +48,12 @@ export class CreateCatDto {
     static _GRAPHQL_METADATA_FACTORY() {
         return { name: { type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { type: () => Date } };
     }
-}
+};
 __decorate([
     HideField()
-], CreateCatDto.prototype, \"hidden\", void 0);
+], CreateCatDto.prototype, "hidden", void 0);
+CreateCatDto = __decorate([
+    ObjectType()
+], CreateCatDto);
+export { CreateCatDto };
 `;

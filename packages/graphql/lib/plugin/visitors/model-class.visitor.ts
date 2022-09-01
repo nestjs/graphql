@@ -1,228 +1,387 @@
-import { compact, flatten } from 'lodash';
 import * as ts from 'typescript';
-import { HideField } from '../../decorators';
+import {
+  Field,
+  HideField,
+  InputType,
+  InterfaceType,
+  ObjectType,
+} from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
 import {
+  createImportEquals,
   findNullableTypeFromUnion,
-  getDescriptionOfNode,
+  getDecoratorName,
+  getDecorators,
+  getJsDocDeprecation,
+  getJSDocDescription,
+  getModifiers,
+  hasDecorators,
+  hasModifiers,
+  isInUpdatedAstContext,
   isNull,
   isUndefined,
+  safelyMergeObjects,
+  serializePrimitiveObjectToAst,
+  updateDecoratorArguments,
 } from '../utils/ast-utils';
 import {
-  getDecoratorOrUndefinedByNames,
   getTypeReferenceAsString,
-  hasPropertyKey,
   replaceImportPath,
 } from '../utils/plugin-utils';
 
-const metadataHostMap = new Map();
-const importsToAddPerFile = new Map<string, Set<string>>();
+const CLASS_DECORATORS = [ObjectType.name, InterfaceType.name, InputType.name];
 
 export class ModelClassVisitor {
+  private importsToAdd: Set<string>;
+
   visit(
     sourceFile: ts.SourceFile,
     ctx: ts.TransformationContext,
     program: ts.Program,
     pluginOptions: PluginOptions,
   ) {
+    this.importsToAdd = new Set<string>();
+
     const typeChecker = program.getTypeChecker();
+    const factory = ctx.factory;
 
     const visitNode = (node: ts.Node): ts.Node => {
-      if (ts.isClassDeclaration(node)) {
-        this.clearMetadataOnRestart(node);
+      const decorators = getDecorators(node);
+      if (
+        ts.isClassDeclaration(node) &&
+        hasDecorators(decorators, CLASS_DECORATORS)
+      ) {
+        const members = this.amendFieldsDecorators(
+          factory,
+          node.members,
+          pluginOptions,
+          sourceFile.fileName,
+          typeChecker,
+        );
 
-        node = ts.visitEachChild(node, visitNode, ctx);
-        return this.addMetadataFactory(node as ts.ClassDeclaration);
-      } else if (ts.isPropertyDeclaration(node)) {
-        const decorators = node.decorators;
-        const hideField = getDecoratorOrUndefinedByNames(
-          [HideField.name],
-          decorators,
+        const metadata = this.collectMetadataFromClassMembers(
+          factory,
+          members,
+          pluginOptions,
+          sourceFile.fileName,
+          typeChecker,
         );
-        if (hideField) {
-          return node;
-        }
-        const isPropertyStatic = (node.modifiers || []).some(
-          (modifier) => modifier.kind === ts.SyntaxKind.StaticKeyword,
+
+        return this.updateClassDeclaration(
+          factory,
+          node,
+          members,
+          metadata,
+          pluginOptions,
         );
-        if (isPropertyStatic) {
-          return node;
-        }
-        try {
-          this.inspectPropertyDeclaration(
-            node,
-            typeChecker,
-            sourceFile.fileName,
-            sourceFile,
-            pluginOptions,
-          );
-        } catch (err) {
-          return node;
-        }
-        return node;
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
-        const importsToAdd = importsToAddPerFile.get(node.fileName);
-        if (!importsToAdd) {
-          return visitedNode;
-        }
-        return this.updateImports(visitedNode, Array.from(importsToAdd));
+
+        const importStatements: ts.Statement[] =
+          this.createEagerImports(factory);
+
+        const existingStatements = Array.from(visitedNode.statements);
+        return factory.updateSourceFile(visitedNode, [
+          ...importStatements,
+          ...existingStatements,
+        ]);
       }
       return ts.visitEachChild(node, visitNode, ctx);
     };
     return ts.visitNode(sourceFile, visitNode);
   }
 
-  clearMetadataOnRestart(node: ts.ClassDeclaration) {
-    const classMetadata = this.getClassMetadata(node);
-    if (classMetadata) {
-      metadataHostMap.delete(node.name.getText());
+  private addDescriptionToClassDecorators(
+    f: ts.NodeFactory,
+    node: ts.ClassDeclaration,
+  ) {
+    const description = getJSDocDescription(node);
+    const decorators = getDecorators(node);
+    if (!description) {
+      return decorators;
+    }
+
+    // get one of allowed decorators from list
+    return decorators.map((decorator) => {
+      if (!CLASS_DECORATORS.includes(getDecoratorName(decorator))) {
+        return decorator;
+      }
+
+      const decoratorExpression = decorator.expression as ts.CallExpression;
+      const objectLiteralExpression = serializePrimitiveObjectToAst(f, {
+        description,
+      });
+
+      let newArgumentsArray: ts.Expression[] = [];
+
+      if (decoratorExpression.arguments.length === 0) {
+        newArgumentsArray = [objectLiteralExpression];
+      } else {
+        // Options always a last parameter:
+        // @ObjectType('name', {description: ''});
+        // @ObjectType({description: ''});
+
+        newArgumentsArray = decoratorExpression.arguments.map(
+          (argument, index) => {
+            if (index + 1 != decoratorExpression.arguments.length) {
+              return argument;
+            }
+
+            // merge existing props with new props
+            return safelyMergeObjects(f, objectLiteralExpression, argument);
+          },
+        );
+      }
+
+      return f.updateDecorator(
+        decorator,
+        f.updateCallExpression(
+          decoratorExpression,
+          decoratorExpression.expression,
+          decoratorExpression.typeArguments,
+          newArgumentsArray,
+        ),
+      );
+    });
+  }
+
+  private amendFieldsDecorators(
+    f: ts.NodeFactory,
+    members: ts.NodeArray<ts.ClassElement>,
+    pluginOptions: PluginOptions,
+    hostFilename: string, // sourceFile.fileName,
+    typeChecker: ts.TypeChecker | undefined,
+  ): ts.ClassElement[] {
+    return members.map((member) => {
+      const decorators = getDecorators(member);
+      if (
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
+        hasDecorators(decorators, [Field.name])
+      ) {
+        try {
+          return updateDecoratorArguments(
+            f,
+            member,
+            Field.name,
+            (decoratorArguments) => {
+              const options =
+                this.getOptionsFromFieldDecoratorOrUndefined(
+                  decoratorArguments,
+                );
+
+              const { type, ...metadata } = this.createFieldMetadata(
+                f,
+                member,
+                typeChecker,
+                hostFilename,
+                pluginOptions,
+                this.getTypeFromFieldDecoratorOrUndefined(decoratorArguments),
+              );
+
+              const serializedMetadata = serializePrimitiveObjectToAst(
+                f,
+                metadata as any,
+              );
+              return [
+                type,
+                options
+                  ? safelyMergeObjects(f, serializedMetadata, options)
+                  : serializedMetadata,
+              ];
+            },
+          );
+        } catch (e) {
+          // omit error
+        }
+      }
+
+      return member;
+    });
+  }
+
+  private collectMetadataFromClassMembers(
+    f: ts.NodeFactory,
+    members: ts.ClassElement[],
+    pluginOptions: PluginOptions,
+    hostFilename: string, // sourceFile.fileName,
+    typeChecker: ts.TypeChecker | undefined,
+  ): ts.ObjectLiteralExpression {
+    const properties: ts.PropertyAssignment[] = [];
+
+    members.forEach((member) => {
+      const decorators = getDecorators(member);
+      const modifiers = getModifiers(member);
+      if (
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
+        !hasModifiers(modifiers as readonly ts.Modifier[], [
+          ts.SyntaxKind.StaticKeyword,
+          ts.SyntaxKind.PrivateKeyword,
+        ]) &&
+        !hasDecorators(decorators, [HideField.name, Field.name])
+      ) {
+        try {
+          const metadata = this.createFieldMetadata(
+            f,
+            member,
+            typeChecker,
+            hostFilename,
+            pluginOptions,
+          );
+
+          properties.push(
+            f.createPropertyAssignment(
+              f.createIdentifier(member.name.getText()),
+              serializePrimitiveObjectToAst(f, metadata),
+            ),
+          );
+        } catch (e) {
+          // omit error
+        }
+      }
+    });
+
+    return f.createObjectLiteralExpression(properties);
+  }
+
+  private updateClassDeclaration(
+    f: ts.NodeFactory,
+    node: ts.ClassDeclaration,
+    members: ts.ClassElement[],
+    propsMetadata: ts.ObjectLiteralExpression,
+    pluginOptions: PluginOptions,
+  ) {
+    const method = isInUpdatedAstContext
+      ? f.createMethodDeclaration(
+          [f.createModifier(ts.SyntaxKind.StaticKeyword)],
+          undefined,
+          f.createIdentifier(METADATA_FACTORY_NAME),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          f.createBlock([f.createReturnStatement(propsMetadata)], true),
+        )
+      : f.createMethodDeclaration(
+          undefined,
+          [f.createModifier(ts.SyntaxKind.StaticKeyword)],
+          undefined,
+          f.createIdentifier(METADATA_FACTORY_NAME),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          f.createBlock([f.createReturnStatement(propsMetadata)], true),
+        );
+
+    const decorators = pluginOptions.introspectComments
+      ? this.addDescriptionToClassDecorators(f, node)
+      : getDecorators(node);
+
+    return isInUpdatedAstContext
+      ? f.updateClassDeclaration(
+          node,
+          [...decorators, ...getModifiers(node)],
+          node.name,
+          node.typeParameters,
+          node.heritageClauses,
+          [...members, method],
+        )
+      : (f.updateClassDeclaration as any)(
+          node,
+          decorators,
+          node.modifiers,
+          node.name,
+          node.typeParameters,
+          node.heritageClauses,
+          [...members, method],
+        );
+  }
+
+  private getOptionsFromFieldDecoratorOrUndefined(
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ): ts.Expression | undefined {
+    if (decoratorArguments.length > 1) {
+      return decoratorArguments[1];
+    }
+
+    if (
+      decoratorArguments.length === 1 &&
+      !ts.isArrowFunction(decoratorArguments[0])
+    ) {
+      return decoratorArguments[0];
     }
   }
 
-  addMetadataFactory(node: ts.ClassDeclaration) {
-    const classMutableNode = ts.getMutableClone(node);
-    const classMetadata = this.getClassMetadata(node as ts.ClassDeclaration);
-    const returnValue = classMetadata
-      ? ts.createObjectLiteral(
-          Object.keys(classMetadata).map((key) =>
-            ts.createPropertyAssignment(
-              ts.createIdentifier(key),
-              classMetadata[key],
-            ),
-          ),
-        )
-      : ts.createObjectLiteral([], false);
-
-    const method = ts.createMethod(
-      undefined,
-      [ts.createModifier(ts.SyntaxKind.StaticKeyword)],
-      undefined,
-      ts.createIdentifier(METADATA_FACTORY_NAME),
-      undefined,
-      undefined,
-      [],
-      undefined,
-      ts.createBlock([ts.createReturn(returnValue)], true),
-    );
-    (classMutableNode as any).members = ts.createNodeArray([
-      ...(classMutableNode as ts.ClassDeclaration).members,
-      method,
-    ]);
-    return classMutableNode;
+  private getTypeFromFieldDecoratorOrUndefined(
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ): ts.ArrowFunction | undefined {
+    if (
+      decoratorArguments.length > 0 &&
+      ts.isArrowFunction(decoratorArguments[0])
+    ) {
+      return decoratorArguments[0];
+    }
   }
 
-  inspectPropertyDeclaration(
-    compilerNode: ts.PropertyDeclaration,
+  private createFieldMetadata(
+    f: ts.NodeFactory,
+    node: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
     typeChecker: ts.TypeChecker,
-    hostFilename: string,
-    sourceFile: ts.SourceFile,
-    pluginOptions: PluginOptions,
-  ) {
-    const objectLiteralExpr = this.createDecoratorObjectLiteralExpr(
-      compilerNode,
-      typeChecker,
-      ts.createNodeArray(),
-      hostFilename,
-      sourceFile,
-      pluginOptions,
-    );
-    this.addClassMetadata(compilerNode, objectLiteralExpr, sourceFile);
-  }
-
-  createDecoratorObjectLiteralExpr(
-    node: ts.PropertyDeclaration | ts.PropertySignature,
-    typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
     hostFilename = '',
-    sourceFile?: ts.SourceFile,
     pluginOptions?: PluginOptions,
-  ): ts.ObjectLiteralExpression {
+    typeArrowFunction?: ts.ArrowFunction,
+  ) {
     const type = typeChecker.getTypeAtLocation(node);
     const isNullable =
       !!node.questionToken || isNull(type) || isUndefined(type);
 
-    const properties = [
-      ...existingProperties,
-      !hasPropertyKey('nullable', existingProperties) &&
-        isNullable &&
-        ts.createPropertyAssignment('nullable', ts.createLiteral(isNullable)),
-      this.createTypePropertyAssignment(
-        node.type,
-        typeChecker,
-        existingProperties,
-        hostFilename,
-        sourceFile,
-        pluginOptions,
-      ),
-      this.createDescriptionPropertyAssigment(
-        node,
-        existingProperties,
-        pluginOptions,
-        sourceFile,
-      ),
-    ];
-    const objectLiteral = ts.createObjectLiteral(compact(flatten(properties)));
-    return objectLiteral;
-  }
-
-  createTypePropertyAssignment(
-    node: ts.TypeNode,
-    typeChecker: ts.TypeChecker,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment>,
-    hostFilename: string,
-    sourceFile?: ts.SourceFile,
-    pluginOptions?: PluginOptions,
-  ): ts.PropertyAssignment {
-    const key = 'type';
-    if (hasPropertyKey(key, existingProperties)) {
-      return undefined;
+    if (!typeArrowFunction) {
+      typeArrowFunction =
+        typeArrowFunction ||
+        f.createArrowFunction(
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined,
+          this.getTypeUsingTypeChecker(f, node.type, typeChecker, hostFilename),
+        );
     }
 
-    if (node) {
-      if (ts.isTypeLiteralNode(node)) {
-        const propertyAssignments = Array.from(node.members || []).map(
-          (member) => {
-            const literalExpr = this.createDecoratorObjectLiteralExpr(
-              member as ts.PropertySignature,
-              typeChecker,
-              existingProperties,
-              hostFilename,
-              sourceFile,
-              pluginOptions,
-            );
-            return ts.createPropertyAssignment(
-              ts.createIdentifier(member.name.getText()),
-              literalExpr,
-            );
-          },
-        );
-        return ts.createPropertyAssignment(
-          key,
-          ts.createArrowFunction(
-            undefined,
-            undefined,
-            [],
-            undefined,
-            undefined,
-            ts.createParen(ts.createObjectLiteral(propertyAssignments)),
-          ),
-        );
-      } else if (ts.isUnionTypeNode(node)) {
-        const nullableType = findNullableTypeFromUnion(node, typeChecker);
-        const remainingTypes = node.types.filter(
-          (item) => item !== nullableType,
-        );
+    const description = pluginOptions.introspectComments
+      ? getJSDocDescription(node)
+      : undefined;
 
-        if (remainingTypes.length === 1) {
-          return this.createTypePropertyAssignment(
-            remainingTypes[0],
-            typeChecker,
-            existingProperties,
-            hostFilename,
-          );
-        }
+    const deprecationReason = pluginOptions.introspectComments
+      ? getJsDocDeprecation(node)
+      : undefined;
+
+    return {
+      nullable: isNullable || undefined,
+      type: typeArrowFunction,
+      description,
+      deprecationReason,
+    };
+  }
+
+  private getTypeUsingTypeChecker(
+    f: ts.NodeFactory,
+    node: ts.TypeNode,
+    typeChecker: ts.TypeChecker,
+    hostFilename: string,
+  ) {
+    if (node && ts.isUnionTypeNode(node)) {
+      const nullableType = findNullableTypeFromUnion(node, typeChecker);
+      const remainingTypes = node.types.filter((item) => item !== nullableType);
+
+      if (remainingTypes.length === 1) {
+        return this.getTypeUsingTypeChecker(
+          f,
+          remainingTypes[0],
+          typeChecker,
+          hostFilename,
+        );
       }
     }
 
@@ -231,116 +390,32 @@ export class ModelClassVisitor {
       return undefined;
     }
 
-    let typeReference = getTypeReferenceAsString(type, typeChecker);
-    if (!typeReference) {
+    const _typeReference = getTypeReferenceAsString(type, typeChecker);
+
+    if (!_typeReference) {
       return undefined;
     }
-    typeReference = replaceImportPath(typeReference, hostFilename);
-    if (typeReference && typeReference.includes('require')) {
-      // add top-level import to eagarly load class metadata
-      const importPath = /\(\"([^)]).+(\")/.exec(typeReference)[0];
-      if (importPath) {
-        let importsToAdd = importsToAddPerFile.get(hostFilename);
-        if (!importsToAdd) {
-          importsToAdd = new Set();
-          importsToAddPerFile.set(hostFilename, importsToAdd);
-        }
-        importsToAdd.add(importPath.slice(2, importPath.length - 1));
-      }
-    }
 
-    return ts.createPropertyAssignment(
-      key,
-      ts.createArrowFunction(
-        undefined,
-        undefined,
-        [],
-        undefined,
-        undefined,
-        ts.createIdentifier(typeReference),
-      ),
+    const { typeReference, importPath } = replaceImportPath(
+      _typeReference,
+      hostFilename,
     );
+
+    if (importPath) {
+      // add top-level import to eagarly load class metadata
+      this.importsToAdd.add(importPath);
+    }
+
+    return f.createIdentifier(typeReference);
   }
 
-  addClassMetadata(
-    node: ts.PropertyDeclaration,
-    objectLiteral: ts.ObjectLiteralExpression,
-    sourceFile: ts.SourceFile,
-  ) {
-    const hostClass = node.parent;
-    const className = hostClass.name && hostClass.name.getText();
-    if (!className) {
-      return;
+  private createEagerImports(f: ts.NodeFactory): ts.ImportEqualsDeclaration[] {
+    if (!this.importsToAdd.size) {
+      return [];
     }
-    const existingMetadata = metadataHostMap.get(className) || {};
-    const propertyName = node.name && node.name.getText(sourceFile);
-    if (
-      !propertyName ||
-      (node.name && node.name.kind === ts.SyntaxKind.ComputedPropertyName)
-    ) {
-      return;
-    }
-    metadataHostMap.set(className, {
-      ...existingMetadata,
-      [propertyName]: objectLiteral,
+
+    return Array.from(this.importsToAdd).map((path, index) => {
+      return createImportEquals(f, 'eager_import_' + index, path);
     });
-  }
-
-  getClassMetadata(node: ts.ClassDeclaration) {
-    if (!node.name) {
-      return;
-    }
-    return metadataHostMap.get(node.name.getText());
-  }
-
-  updateImports(
-    sourceFile: ts.SourceFile,
-    pathsToImport: string[],
-  ): ts.SourceFile {
-    const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
-    const IMPORT_PREFIX = 'eager_import_';
-    const importDeclarations = pathsToImport.map((path, index) => {
-      if (major == 4 && minor >= 2) {
-        // support TS v4.2+
-        return (ts.createImportEqualsDeclaration as any)(
-          undefined,
-          undefined,
-          false,
-          IMPORT_PREFIX + index,
-          ts.createExternalModuleReference(ts.createLiteral(path)),
-        );
-      }
-      return (ts.createImportEqualsDeclaration as any)(
-        undefined,
-        undefined,
-        IMPORT_PREFIX + index,
-        ts.createExternalModuleReference(ts.createLiteral(path)),
-      );
-    });
-    return ts.updateSourceFileNode(sourceFile, [
-      ...importDeclarations,
-      ...sourceFile.statements,
-    ]);
-  }
-
-  createDescriptionPropertyAssigment(
-    node: ts.PropertyDeclaration | ts.PropertySignature,
-    existingProperties: ts.NodeArray<ts.PropertyAssignment> = ts.createNodeArray(),
-    options: PluginOptions = {},
-    sourceFile?: ts.SourceFile,
-  ): ts.PropertyAssignment {
-    if (!options.introspectComments || !sourceFile) {
-      return;
-    }
-    const description = getDescriptionOfNode(node, sourceFile);
-
-    const keyOfComment = 'description';
-    if (!hasPropertyKey(keyOfComment, existingProperties) && description) {
-      const descriptionPropertyAssignment = ts.createPropertyAssignment(
-        keyOfComment,
-        ts.createLiteral(description),
-      );
-      return descriptionPropertyAssignment;
-    }
   }
 }
