@@ -1,9 +1,16 @@
+import * as ts from 'typescript';
 import {
   CallExpression,
   Decorator,
+  getJSDocDeprecatedTag,
+  getJSDocTags,
+  getTextOfJSDocComment,
   Identifier,
+  JSDoc,
   LeftHandSideExpression,
+  ModifiersArray,
   Node,
+  NodeArray,
   ObjectFlags,
   ObjectType,
   PropertyAccessExpression,
@@ -12,17 +19,27 @@ import {
   TypeChecker,
   TypeFlags,
   TypeFormatFlags,
-  UnionTypeNode,
   TypeNode,
-  JSDoc,
-  getTextOfJSDocComment,
-  getJSDocDeprecatedTag,
-  ModifiersArray,
-  NodeArray,
-  getJSDocTags,
+  UnionTypeNode,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
-import * as ts from 'typescript';
+
+const [tsVersionMajor, tsVersionMinor] = ts.versionMajorMinor
+  ?.split('.')
+  .map((x) => +x);
+export const isInUpdatedAstContext = tsVersionMinor >= 8 || tsVersionMajor > 4;
+
+export function getDecorators(node: ts.Node) {
+  return isInUpdatedAstContext
+    ? (ts.canHaveDecorators(node) && ts.getDecorators(node)) ?? []
+    : node.decorators;
+}
+
+export function getModifiers(node: ts.Node) {
+  return isInUpdatedAstContext
+    ? (ts.canHaveModifiers(node) && ts.getModifiers(node)) ?? []
+    : node.modifiers;
+}
 
 export function isArray(type: Type) {
   const symbol = type.getSymbol();
@@ -194,7 +211,7 @@ export function findNullableTypeFromUnion(
 }
 
 export function hasModifiers(
-  modifiers: ModifiersArray,
+  modifiers: ModifiersArray | readonly ts.Modifier[],
   toCheck: SyntaxKind[],
 ): boolean {
   if (!modifiers) {
@@ -204,7 +221,7 @@ export function hasModifiers(
 }
 
 export function hasDecorators(
-  decorators: NodeArray<Decorator>,
+  decorators: NodeArray<Decorator> | readonly Decorator[],
   toCheck: string[],
 ): boolean {
   if (!decorators) {
@@ -241,15 +258,22 @@ export function createImportEquals(
 ): ts.ImportEqualsDeclaration {
   const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
 
-  if (major == 4 && minor >= 2) {
+  if (major >= 4 && minor >= 2) {
     // support TS v4.2+
-    return f.createImportEqualsDeclaration(
-      undefined,
-      undefined,
-      false,
-      identifier,
-      f.createExternalModuleReference(f.createStringLiteral(from)),
-    );
+    return minor >= 8
+      ? f.createImportEqualsDeclaration(
+          undefined,
+          false,
+          identifier,
+          f.createExternalModuleReference(f.createStringLiteral(from)),
+        )
+      : f.createImportEqualsDeclaration(
+          undefined,
+          undefined,
+          false,
+          identifier,
+          f.createExternalModuleReference(f.createStringLiteral(from)),
+        );
   }
   return (f.createImportEqualsDeclaration as any)(
     undefined,
@@ -264,20 +288,27 @@ export function createNamedImport(
   what: string[],
   from: string,
 ) {
-  return f.createImportDeclaration(
+  const importClause = f.createImportClause(
+    false,
     undefined,
-    undefined,
-    f.createImportClause(
-      false,
-      undefined,
-      f.createNamedImports(
-        what.map((name) =>
-          f.createImportSpecifier(false, undefined, f.createIdentifier(name)),
-        ),
+    f.createNamedImports(
+      what.map((name) =>
+        f.createImportSpecifier(false, undefined, f.createIdentifier(name)),
       ),
     ),
-    f.createStringLiteral(from),
   );
+  return isInUpdatedAstContext
+    ? f.createImportDeclaration(
+        undefined,
+        importClause,
+        f.createStringLiteral(from),
+      )
+    : f.createImportDeclaration(
+        undefined,
+        undefined,
+        importClause,
+        f.createStringLiteral(from),
+      );
 }
 
 export function isCallExpressionOf(name: string, node: ts.CallExpression) {
@@ -348,15 +379,23 @@ export function safelyMergeObjects(
   }
 }
 
-export function updateDecoratorArguments<T extends ts.ClassDeclaration | ts.PropertyDeclaration | ts.GetAccessorDeclaration>(
+export function updateDecoratorArguments<
+  T extends
+    | ts.ClassDeclaration
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration,
+>(
   f: ts.NodeFactory,
   node: T,
   decoratorName: string,
-  replaceFn: (decoratorArguments: ts.NodeArray<ts.Expression>) => ts.Expression[]
+  replaceFn: (
+    decoratorArguments: ts.NodeArray<ts.Expression>,
+  ) => ts.Expression[],
 ): T {
   let updated = false;
 
-  const decorators = node.decorators.map((decorator) => {
+  const nodeOriginalDecorators = getDecorators(node);
+  const decorators = nodeOriginalDecorators.map((decorator) => {
     if (getDecoratorName(decorator) !== decoratorName) {
       return decorator;
     }
@@ -379,14 +418,71 @@ export function updateDecoratorArguments<T extends ts.ClassDeclaration | ts.Prop
   }
 
   if (ts.isClassDeclaration(node)) {
-    return f.updateClassDeclaration(node, decorators, node.modifiers, node.name, node.typeParameters, node.heritageClauses, node.members) as T;
+    return (
+      isInUpdatedAstContext
+        ? f.updateClassDeclaration(
+            node,
+            [...decorators, ...getModifiers(node)],
+            node.name,
+            node.typeParameters,
+            node.heritageClauses,
+            node.members,
+          )
+        : (f.updateClassDeclaration as any)(
+            node,
+            decorators,
+            node.modifiers,
+            node.name,
+            node.typeParameters,
+            node.heritageClauses,
+            node.members,
+          )
+    ) as T;
   }
 
   if (ts.isPropertyDeclaration(node)) {
-    return f.updatePropertyDeclaration(node, decorators, node.modifiers, node.name, node.questionToken, node.type, node.initializer) as T;
+    return (
+      isInUpdatedAstContext
+        ? f.updatePropertyDeclaration(
+            node,
+            [...decorators, ...getModifiers(node)],
+            node.name,
+            node.questionToken,
+            node.type,
+            node.initializer,
+          )
+        : (f.updatePropertyDeclaration as any)(
+            node,
+            decorators,
+            node.modifiers,
+            node.name,
+            node.questionToken,
+            node.type,
+            node.initializer,
+          )
+    ) as T;
   }
 
   if (ts.isGetAccessorDeclaration(node)) {
-    return f.updateGetAccessorDeclaration(node, decorators, node.modifiers, node.name, node.parameters, node.type, node.body) as T;
+    return (
+      isInUpdatedAstContext
+        ? f.updateGetAccessorDeclaration(
+            node,
+            [...decorators, ...getModifiers(node)],
+            node.name,
+            node.parameters,
+            node.type,
+            node.body,
+          )
+        : (f.updateGetAccessorDeclaration as any)(
+            node,
+            decorators,
+            node.modifiers,
+            node.name,
+            node.parameters,
+            node.type,
+            node.body,
+          )
+    ) as T;
   }
 }

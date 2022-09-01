@@ -1,62 +1,39 @@
 import * as ts from 'typescript';
-import { ModuleKind } from 'typescript';
 import {
-  HideField,
-  ObjectType,
-  InterfaceType,
-  InputType,
   Field,
+  HideField,
+  InputType,
+  InterfaceType,
+  ObjectType,
 } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
 import {
+  createImportEquals,
   findNullableTypeFromUnion,
-  isNull,
-  isUndefined,
-  getJSDocDescription,
+  getDecoratorName,
+  getDecorators,
   getJsDocDeprecation,
+  getJSDocDescription,
+  getModifiers,
   hasDecorators,
   hasModifiers,
-  getDecoratorName,
-  isCallExpressionOf,
-  serializePrimitiveObjectToAst,
+  isInUpdatedAstContext,
+  isNull,
+  isUndefined,
   safelyMergeObjects,
-  hasJSDocTags,
-  PrimitiveObject,
-  createImportEquals,
-  hasImport,
-  createNamedImport, updateDecoratorArguments,
+  serializePrimitiveObjectToAst,
+  updateDecoratorArguments,
 } from '../utils/ast-utils';
 import {
   getTypeReferenceAsString,
   replaceImportPath,
 } from '../utils/plugin-utils';
-import { EnumMetadataValuesMapOptions } from '../../schema-builder/metadata';
-import { EnumOptions } from '../../type-factories';
 
-const CLASS_DECORATORS = [
-  ObjectType.name,
-  InterfaceType.name,
-  InputType.name,
-];
-
-type EnumMetadata = {
-  name: string;
-  description: string;
-  properties: { [name: string]: EnumMetadataValuesMapOptions };
-};
-
-function capitalizeFirstLetter(word: string) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
-}
+const CLASS_DECORATORS = [ObjectType.name, InterfaceType.name, InputType.name];
 
 export class ModelClassVisitor {
-  importsToAdd: Set<string>;
-
-  inlineEnumsMap: { name: string; values: { [name: string]: string } }[];
-  enumsMetadata: Map<ts.EnumDeclaration, EnumMetadata>;
-  packageVarIdentifier: ts.Identifier;
-  isCommonJs: boolean;
+  private importsToAdd: Set<string>;
 
   visit(
     sourceFile: ts.SourceFile,
@@ -64,20 +41,16 @@ export class ModelClassVisitor {
     program: ts.Program,
     pluginOptions: PluginOptions,
   ) {
-    this.inlineEnumsMap = [];
-    this.enumsMetadata = new Map();
     this.importsToAdd = new Set<string>();
-    this.isCommonJs = ctx.getCompilerOptions().module === ModuleKind.CommonJS;
 
     const typeChecker = program.getTypeChecker();
     const factory = ctx.factory;
 
-    this.packageVarIdentifier = factory.createUniqueName('nestjs_graphql');
-
     const visitNode = (node: ts.Node): ts.Node => {
+      const decorators = getDecorators(node);
       if (
         ts.isClassDeclaration(node) &&
-        hasDecorators(node.decorators, CLASS_DECORATORS)
+        hasDecorators(decorators, CLASS_DECORATORS)
       ) {
         const members = this.amendFieldsDecorators(
           factory,
@@ -102,63 +75,15 @@ export class ModelClassVisitor {
           metadata,
           pluginOptions,
         );
-      } else if (
-        ts.isEnumDeclaration(node) &&
-        !hasJSDocTags(node, ['private', 'HideEnum']) &&
-        pluginOptions.autoRegisterEnums
-      ) {
-        this.enumsMetadata.set(
-          node,
-          this.collectMetadataFromEnum(node, pluginOptions),
-        );
-        return node;
-      } else if (ts.isCallExpression(node)) {
-        if (isCallExpressionOf('registerEnumType', node)) {
-          return this.amendRegisterEnumTypeCall(factory, node);
-        }
-
-        if (isCallExpressionOf('createUnionType', node)) {
-          return this.amendCreateUnionTypeCall(factory, node);
-        }
       } else if (ts.isSourceFile(node)) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
         const importStatements: ts.Statement[] =
           this.createEagerImports(factory);
 
-        const implicitEnumsStatements = this.createImplicitEnums(factory);
-
-        if (implicitEnumsStatements.length || this.enumsMetadata.size) {
-          if (this.isCommonJs) {
-            importStatements.push(
-              createImportEquals(
-                factory,
-                this.packageVarIdentifier,
-                '@nestjs/graphql',
-              ),
-            );
-          } else if (!hasImport(sourceFile, 'registerEnumType')) {
-            importStatements.push(
-              createNamedImport(
-                factory,
-                ['registerEnumType'],
-                '@nestjs/graphql',
-              ),
-            );
-          }
-        }
-
         const existingStatements = Array.from(visitedNode.statements);
-
-        this.enumsMetadata.forEach((metadata, enumDeclaration) => {
-          const registration = this.createEnumRegistration(factory, metadata);
-          const enumIndex = existingStatements.indexOf(enumDeclaration);
-          existingStatements.splice(enumIndex + 1, 0, registration);
-        });
-
         return factory.updateSourceFile(visitedNode, [
           ...importStatements,
-          ...implicitEnumsStatements,
           ...existingStatements,
         ]);
       }
@@ -167,121 +92,18 @@ export class ModelClassVisitor {
     return ts.visitNode(sourceFile, visitNode);
   }
 
-  private collectMetadataFromEnum(
-    node: ts.EnumDeclaration,
-    pluginOptions: PluginOptions,
-  ): EnumMetadata {
-    let properties: EnumMetadata['properties'] = {};
-    let description: string;
-
-    if (pluginOptions.introspectComments) {
-      properties = node.members.reduce<EnumMetadata['properties']>(
-        (acc, member) => {
-          const deprecationReason = getJsDocDeprecation(member);
-          const description = getJSDocDescription(member);
-
-          if (deprecationReason || description) {
-            acc[(member.name as ts.Identifier).text] = {
-              deprecationReason: getJsDocDeprecation(member),
-              description: getJSDocDescription(member),
-            };
-          }
-
-          return acc;
-        },
-        {},
-      );
-
-      description = getJSDocDescription(node);
-    }
-
-    return {
-      name: node.name.text,
-      description,
-      properties,
-    };
-  }
-
-  private createEnumRegistration(f: ts.NodeFactory, metadata: EnumMetadata) {
-    const registerEnumTypeOptions: EnumOptions = {
-      name: metadata.name,
-      description: metadata.description,
-      valuesMap: metadata.properties,
-    };
-
-    return this.createRegisterEnumTypeFnCall(f, [
-      // create enum itself as object literal
-      f.createIdentifier(metadata.name),
-      // create an options with name of enum
-      serializePrimitiveObjectToAst(
-        f,
-        registerEnumTypeOptions as unknown as PrimitiveObject,
-      ),
-    ]);
-  }
-
-  private amendCreateUnionTypeCall(f: ts.NodeFactory, node: ts.CallExpression) {
-    if (!ts.isVariableDeclaration(node.parent) || node.arguments.length != 1) {
-      return node;
-    }
-
-    const unionName = (node.parent.name as ts.Identifier).text;
-
-    return f.updateCallExpression(node, node.expression, node.typeArguments, [
-      safelyMergeObjects(
-        f,
-        serializePrimitiveObjectToAst(f, {
-          name: unionName,
-        }),
-        node.arguments[0],
-      ),
-    ]);
-  }
-
-  private amendRegisterEnumTypeCall(
-    f: ts.NodeFactory,
-    node: ts.CallExpression,
-  ) {
-    if (node.arguments.length === 0 || !ts.isIdentifier(node.arguments[0])) {
-      return node;
-    }
-
-    const enumName = node.arguments[0].text;
-    const objectLiteralExpression = serializePrimitiveObjectToAst(f, {
-      name: enumName,
-    });
-
-    let newArgumentsArray: ts.Expression[];
-
-    if (node.arguments.length === 1) {
-      newArgumentsArray = [node.arguments[0], objectLiteralExpression];
-    } else {
-      newArgumentsArray = [
-        node.arguments[0],
-        safelyMergeObjects(f, objectLiteralExpression, node.arguments[1]),
-      ];
-    }
-
-    return f.updateCallExpression(
-      node,
-      node.expression,
-      node.typeArguments,
-      newArgumentsArray,
-    );
-  }
-
   private addDescriptionToClassDecorators(
     f: ts.NodeFactory,
     node: ts.ClassDeclaration,
   ) {
     const description = getJSDocDescription(node);
-
+    const decorators = getDecorators(node);
     if (!description) {
-      return node.decorators;
+      return decorators;
     }
 
     // get one of allowed decorators from list
-    return node.decorators.map((decorator) => {
+    return decorators.map((decorator) => {
       if (!CLASS_DECORATORS.includes(getDecoratorName(decorator))) {
         return decorator;
       }
@@ -324,90 +146,6 @@ export class ModelClassVisitor {
     });
   }
 
-  private isMemberHasInlineStringEnum(
-    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
-  ): false | { [name: string]: string } {
-    if (!member.type || !ts.isUnionTypeNode(member.type)) {
-      return false;
-    }
-
-    const values: { [name: string]: string } = {};
-
-    for (const type of member.type.types) {
-      if (!ts.isLiteralTypeNode(type)) {
-        return false;
-      }
-
-      if (type.literal.kind === ts.SyntaxKind.StringLiteral) {
-        values[type.literal.text.replace(/\s/g, '_')] = type.literal.text;
-        continue;
-      }
-
-      if (type.literal.kind !== ts.SyntaxKind.NullKeyword) {
-        return false;
-      }
-    }
-
-    return values;
-  }
-
-  private createRegisterEnumTypeFnCall(
-    f: ts.NodeFactory,
-    argumentsArray: ts.Expression[],
-  ) {
-    const FN_NAME = 'registerEnumType';
-    let callee: ts.Expression;
-
-    // https://stackoverflow.com/questions/69617562/adding-a-function-call-in-typescript-transform-compiler-api
-    if (this.isCommonJs) {
-      callee = f.createPropertyAccessExpression(
-        this.packageVarIdentifier,
-        FN_NAME,
-      );
-    } else {
-      callee = f.createIdentifier(FN_NAME);
-    }
-
-    return f.createExpressionStatement(
-      f.createCallExpression(callee, undefined, argumentsArray),
-    );
-  }
-
-  private createImplicitEnums(f: ts.NodeFactory): ts.ExpressionStatement[] {
-    return this.inlineEnumsMap.map(({ name, values }) => {
-      return this.createRegisterEnumTypeFnCall(f, [
-        // create enum itself as object literal
-        serializePrimitiveObjectToAst(f, values),
-        // create an options with name of enum
-        serializePrimitiveObjectToAst(f, { name }),
-      ]);
-    });
-  }
-
-  private getInlineStringEnumTypeOrUndefined(
-    member: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
-  ): string {
-    let inlineEnumName: string;
-
-    const membersStringEnumValues = this.isMemberHasInlineStringEnum(member);
-
-    if (membersStringEnumValues) {
-      const memberName = member.name.getText();
-
-      inlineEnumName =
-        (member.parent as ts.ClassLikeDeclaration).name.getText() +
-        capitalizeFirstLetter(memberName) +
-        'Enum';
-
-      this.inlineEnumsMap.push({
-        name: inlineEnumName,
-        values: membersStringEnumValues,
-      });
-    }
-
-    return inlineEnumName;
-  }
-
   private amendFieldsDecorators(
     f: ts.NodeFactory,
     members: ts.NodeArray<ts.ClassElement>,
@@ -416,26 +154,43 @@ export class ModelClassVisitor {
     typeChecker: ts.TypeChecker | undefined,
   ): ts.ClassElement[] {
     return members.map((member) => {
+      const decorators = getDecorators(member);
       if (
-        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member))
-        && hasDecorators(member.decorators, [Field.name])
+        (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
+        hasDecorators(decorators, [Field.name])
       ) {
         try {
-          return updateDecoratorArguments(f, member, Field.name, (decoratorArguments) => {
-            const options = this.getOptionsFromFieldDecoratorOrUndefined(decoratorArguments);
+          return updateDecoratorArguments(
+            f,
+            member,
+            Field.name,
+            (decoratorArguments) => {
+              const options =
+                this.getOptionsFromFieldDecoratorOrUndefined(
+                  decoratorArguments,
+                );
 
-            const { type, ...metadata } = this.createFieldMetadata(
-              f,
-              member,
-              typeChecker,
-              hostFilename,
-              pluginOptions,
-              this.getTypeFromFieldDecoratorOrUndefined(decoratorArguments),
-            );
+              const { type, ...metadata } = this.createFieldMetadata(
+                f,
+                member,
+                typeChecker,
+                hostFilename,
+                pluginOptions,
+                this.getTypeFromFieldDecoratorOrUndefined(decoratorArguments),
+              );
 
-            const serializedMetadata = serializePrimitiveObjectToAst(f, metadata as any);
-            return [type, options ? safelyMergeObjects(f, serializedMetadata, options) : serializedMetadata]
-          })
+              const serializedMetadata = serializePrimitiveObjectToAst(
+                f,
+                metadata as any,
+              );
+              return [
+                type,
+                options
+                  ? safelyMergeObjects(f, serializedMetadata, options)
+                  : serializedMetadata,
+              ];
+            },
+          );
         } catch (e) {
           // omit error
         }
@@ -455,13 +210,15 @@ export class ModelClassVisitor {
     const properties: ts.PropertyAssignment[] = [];
 
     members.forEach((member) => {
+      const decorators = getDecorators(member);
+      const modifiers = getModifiers(member);
       if (
         (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
-        !hasModifiers(member.modifiers, [
+        !hasModifiers(modifiers as readonly ts.Modifier[], [
           ts.SyntaxKind.StaticKeyword,
           ts.SyntaxKind.PrivateKeyword,
         ]) &&
-        !hasDecorators(member.decorators, [HideField.name, Field.name])
+        !hasDecorators(decorators, [HideField.name, Field.name])
       ) {
         try {
           const metadata = this.createFieldMetadata(
@@ -494,31 +251,51 @@ export class ModelClassVisitor {
     propsMetadata: ts.ObjectLiteralExpression,
     pluginOptions: PluginOptions,
   ) {
-    const method = f.createMethodDeclaration(
-      undefined,
-      [f.createModifier(ts.SyntaxKind.StaticKeyword)],
-      undefined,
-      f.createIdentifier(METADATA_FACTORY_NAME),
-      undefined,
-      undefined,
-      [],
-      undefined,
-      f.createBlock([f.createReturnStatement(propsMetadata)], true),
-    );
+    const method = isInUpdatedAstContext
+      ? f.createMethodDeclaration(
+          [f.createModifier(ts.SyntaxKind.StaticKeyword)],
+          undefined,
+          f.createIdentifier(METADATA_FACTORY_NAME),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          f.createBlock([f.createReturnStatement(propsMetadata)], true),
+        )
+      : f.createMethodDeclaration(
+          undefined,
+          [f.createModifier(ts.SyntaxKind.StaticKeyword)],
+          undefined,
+          f.createIdentifier(METADATA_FACTORY_NAME),
+          undefined,
+          undefined,
+          [],
+          undefined,
+          f.createBlock([f.createReturnStatement(propsMetadata)], true),
+        );
 
     const decorators = pluginOptions.introspectComments
       ? this.addDescriptionToClassDecorators(f, node)
-      : node.decorators;
+      : getDecorators(node);
 
-    return f.updateClassDeclaration(
-      node,
-      decorators,
-      node.modifiers,
-      node.name,
-      node.typeParameters,
-      node.heritageClauses,
-      [...members, method],
-    );
+    return isInUpdatedAstContext
+      ? f.updateClassDeclaration(
+          node,
+          [...decorators, ...getModifiers(node)],
+          node.name,
+          node.typeParameters,
+          node.heritageClauses,
+          [...members, method],
+        )
+      : (f.updateClassDeclaration as any)(
+          node,
+          decorators,
+          node.modifiers,
+          node.name,
+          node.typeParameters,
+          node.heritageClauses,
+          [...members, method],
+        );
   }
 
   private getOptionsFromFieldDecoratorOrUndefined(
@@ -528,7 +305,10 @@ export class ModelClassVisitor {
       return decoratorArguments[1];
     }
 
-    if (decoratorArguments.length === 1 && !ts.isArrowFunction(decoratorArguments[0])) {
+    if (
+      decoratorArguments.length === 1 &&
+      !ts.isArrowFunction(decoratorArguments[0])
+    ) {
       return decoratorArguments[0];
     }
   }
@@ -537,7 +317,8 @@ export class ModelClassVisitor {
     decoratorArguments: ts.NodeArray<ts.Expression>,
   ): ts.ArrowFunction | undefined {
     if (
-      decoratorArguments.length > 0 && ts.isArrowFunction(decoratorArguments[0])
+      decoratorArguments.length > 0 &&
+      ts.isArrowFunction(decoratorArguments[0])
     ) {
       return decoratorArguments[0];
     }
@@ -556,24 +337,16 @@ export class ModelClassVisitor {
       !!node.questionToken || isNull(type) || isUndefined(type);
 
     if (!typeArrowFunction) {
-      const inlineStringEnumTypeName =
-        this.getInlineStringEnumTypeOrUndefined(node);
-
-      typeArrowFunction = typeArrowFunction || f.createArrowFunction(
-        undefined,
-        undefined,
-        [],
-        undefined,
-        undefined,
-        inlineStringEnumTypeName
-          ? f.createIdentifier(inlineStringEnumTypeName)
-          : this.getTypeUsingTypeChecker(
-            f,
-            node.type,
-            typeChecker,
-            hostFilename,
-          ),
-      );
+      typeArrowFunction =
+        typeArrowFunction ||
+        f.createArrowFunction(
+          undefined,
+          undefined,
+          [],
+          undefined,
+          undefined,
+          this.getTypeUsingTypeChecker(f, node.type, typeChecker, hostFilename),
+        );
     }
 
     const description = pluginOptions.introspectComments
@@ -583,7 +356,6 @@ export class ModelClassVisitor {
     const deprecationReason = pluginOptions.introspectComments
       ? getJsDocDeprecation(node)
       : undefined;
-
 
     return {
       nullable: isNullable || undefined,
