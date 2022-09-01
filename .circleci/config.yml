@@ -52,6 +52,9 @@ jobs:
       - run:
           name: E2E tests (mercurius)
           command: yarn test:e2e:mercurius
+      - run:
+          name: CLI Plugin & TypeScript <= v4.7 compatibility test 
+          command: yarn add -D -W typescript@4.7.4 && cd packages/graphql && yarn test:e2e .visitor.spec.ts
 
 workflows:
   version: 2
