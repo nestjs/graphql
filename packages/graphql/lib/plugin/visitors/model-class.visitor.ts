@@ -1,5 +1,6 @@
 import * as ts from 'typescript';
 import {
+  ArgsType,
   Field,
   HideField,
   InputType,
@@ -30,7 +31,12 @@ import {
   replaceImportPath,
 } from '../utils/plugin-utils';
 
-const CLASS_DECORATORS = [ObjectType.name, InterfaceType.name, InputType.name];
+const CLASS_DECORATORS = [
+  ObjectType.name,
+  InterfaceType.name,
+  InputType.name,
+  ArgsType.name,
+];
 
 export class ModelClassVisitor {
   private importsToAdd: Set<string>;
