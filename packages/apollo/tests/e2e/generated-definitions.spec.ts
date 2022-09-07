@@ -339,4 +339,23 @@ describe('Generated Definitions', () => {
   afterEach(async () => {
     await app.close();
   });
+
+  it('should generate for a federated graph with partial query definition', async () => {
+    const outputFile = generatedDefinitions(
+      'federation-partial-query.test-definitions.ts',
+    );
+    const factory = new GraphQLFederationDefinitionsFactory();
+    await factory.generate({
+      typePaths: [generatedDefinitions('federation-partial-query.graphql')],
+      path: outputFile,
+      outputAs: 'interface',
+    });
+
+    expect(
+      await readFile(
+        generatedDefinitions('federation-partial-query.fixture.ts'),
+        'utf8',
+      ),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
 });

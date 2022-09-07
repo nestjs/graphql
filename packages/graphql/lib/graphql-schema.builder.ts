@@ -3,11 +3,12 @@ import { isString } from '@nestjs/common/utils/shared.utils';
 import { GraphQLSchema, lexicographicSortSchema, printSchema } from 'graphql';
 import { resolve } from 'path';
 import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
-import { GqlModuleOptions } from './interfaces';
+import { AutoSchemaFileValue, GqlModuleOptions } from './interfaces';
 import { BuildSchemaOptions } from './interfaces/build-schema-options.interface';
 import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
 import { FileSystemHelper } from './schema-builder/helpers/file-system.helper';
 import { ScalarsExplorerService } from './services';
+import { getPathForAutoSchemaFile } from './utils';
 
 @Injectable()
 export class GraphQLSchemaBuilder {
@@ -18,7 +19,7 @@ export class GraphQLSchemaBuilder {
   ) {}
 
   public async build(
-    autoSchemaFile: string | boolean,
+    autoSchemaFile: AutoSchemaFileValue,
     options: GqlModuleOptions,
     resolvers: Function[],
   ): Promise<any> {
@@ -45,7 +46,7 @@ export class GraphQLSchemaBuilder {
 
   public async generateSchema(
     resolvers: Function[],
-    autoSchemaFile: boolean | string,
+    autoSchemaFile: AutoSchemaFileValue,
     options: BuildSchemaOptions = {},
     sortSchema?: boolean,
     transformSchema?: (
@@ -53,11 +54,9 @@ export class GraphQLSchemaBuilder {
     ) => GraphQLSchema | Promise<GraphQLSchema>,
   ): Promise<GraphQLSchema> {
     const schema = await this.gqlSchemaFactory.create(resolvers, options);
-    if (typeof autoSchemaFile !== 'boolean') {
-      const filename = isString(autoSchemaFile)
-        ? autoSchemaFile
-        : resolve(process.cwd(), 'schema.gql');
+    const filename = getPathForAutoSchemaFile(autoSchemaFile);
 
+    if (filename) {
       const transformedSchema = transformSchema
         ? await transformSchema(schema)
         : schema;

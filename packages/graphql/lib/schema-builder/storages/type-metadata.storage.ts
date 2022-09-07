@@ -1,53 +1,38 @@
 import { Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { addFieldMetadata } from '../../decorators/field.decorator';
+import { addFieldMetadata } from '../../decorators';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
+import { MetadataByTargetCollection } from '../collections/';
 import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error';
 import { UndefinedTypeError } from '../errors/undefined-type.error';
 import {
   BaseResolverMetadata,
+  ClassDirectiveMetadata,
   ClassExtensionsMetadata,
   ClassMetadata,
   EnumMetadata,
   FieldResolverMetadata,
   MethodArgsMetadata,
+  PropertyDirectiveMetadata,
   PropertyExtensionsMetadata,
   PropertyMetadata,
   ResolverClassMetadata,
   ResolverTypeMetadata,
   UnionMetadata,
 } from '../metadata';
-import {
-  ClassDirectiveMetadata,
-  PropertyDirectiveMetadata,
-} from '../metadata/directive.metadata';
 import { InterfaceMetadata } from '../metadata/interface.metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
-import { isTargetEqual } from '../utils/is-target-equal-util';
 import { isThrowing } from '../utils/is-throwing.util';
 
 export class TypeMetadataStorageHost {
-  /**
-   * The implementation of this class has been heavily inspired by the following code:
-   * @ref https://github.com/MichalLytek/type-graphql/blob/master/src/metadata/metadata-storage.ts
-   */
   private queries = new Array<ResolverTypeMetadata>();
   private mutations = new Array<ResolverTypeMetadata>();
   private subscriptions = new Array<ResolverTypeMetadata>();
   private fieldResolvers = new Array<FieldResolverMetadata>();
-  private readonly resolvers = new Array<ResolverClassMetadata>();
-  private readonly fields = new Array<PropertyMetadata>();
-  private readonly params = new Array<MethodArgsMetadata>();
-  private readonly interfaces = new Array<InterfaceMetadata>();
   private readonly enums = new Array<EnumMetadata>();
   private readonly unions = new Array<UnionMetadata>();
-  private readonly classDirectives = new Array<ClassDirectiveMetadata>();
-  private readonly fieldDirectives = new Array<PropertyDirectiveMetadata>();
-  private readonly classExtensions = new Array<ClassExtensionsMetadata>();
-  private readonly fieldExtensions = new Array<PropertyExtensionsMetadata>();
-  private readonly objectTypes = new Array<ObjectTypeMetadata>();
-  private readonly inputTypes = new Array<ClassMetadata>();
-  private readonly argumentTypes = new Array<ClassMetadata>();
+  private readonly metadataByTargetCollection =
+    new MetadataByTargetCollection();
 
   addMutationMetadata(metadata: ResolverTypeMetadata) {
     this.mutations.push(metadata);
@@ -78,59 +63,60 @@ export class TypeMetadataStorageHost {
   }
 
   addArgsMetadata(metadata: ClassMetadata) {
-    this.argumentTypes.push(metadata);
+    this.metadataByTargetCollection.get(metadata.target).argumentType =
+      metadata;
   }
 
   getArgumentsMetadata(): ClassMetadata[] {
-    return this.argumentTypes;
+    return this.metadataByTargetCollection.all.argumentType;
   }
 
   getArgumentsMetadataByTarget(
     target: Type<unknown>,
   ): ClassMetadata | undefined {
-    return this.argumentTypes.find((item) => item.target === target);
+    return this.metadataByTargetCollection.get(target).argumentType;
   }
 
   addInterfaceMetadata(metadata: InterfaceMetadata) {
-    this.interfaces.push(metadata);
+    this.metadataByTargetCollection.get(metadata.target).interface = metadata;
   }
 
   getInterfacesMetadata(): InterfaceMetadata[] {
-    return this.interfaces;
+    return this.metadataByTargetCollection.all.interface;
   }
 
   getInterfaceMetadataByTarget(
     target: Type<unknown>,
   ): InterfaceMetadata | undefined {
-    return this.interfaces.find((item) => item.target === target);
+    return this.metadataByTargetCollection.get(target).interface;
   }
 
   addInputTypeMetadata(metadata: ClassMetadata) {
-    this.inputTypes.push(metadata);
+    this.metadataByTargetCollection.get(metadata.target).inputType = metadata;
   }
 
   getInputTypesMetadata(): ClassMetadata[] {
-    return this.inputTypes;
+    return this.metadataByTargetCollection.all.inputType;
   }
 
   getInputTypeMetadataByTarget(
     target: Type<unknown>,
   ): ObjectTypeMetadata | undefined {
-    return this.inputTypes.find((item) => item.target === target);
+    return this.metadataByTargetCollection.get(target).inputType;
   }
 
   addObjectTypeMetadata(metadata: ObjectTypeMetadata) {
-    this.objectTypes.push(metadata);
+    this.metadataByTargetCollection.get(metadata.target).objectType = metadata;
   }
 
   getObjectTypesMetadata(): ObjectTypeMetadata[] {
-    return this.objectTypes;
+    return this.metadataByTargetCollection.all.objectType;
   }
 
   getObjectTypeMetadataByTarget(
     target: Type<unknown>,
   ): ObjectTypeMetadata | undefined {
-    return this.objectTypes.find((item) => item.target === target);
+    return this.metadataByTargetCollection.get(target).objectType;
   }
 
   addEnumMetadata(metadata: EnumMetadata) {
@@ -150,46 +136,39 @@ export class TypeMetadataStorageHost {
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
-    const exist = this.fieldDirectives.some((directiveMetadata) => {
-      return (
-        directiveMetadata.sdl === metadata.sdl &&
-        directiveMetadata.target === metadata.target
-      );
-    });
-    if (!exist) {
-      this.classDirectives.push(metadata);
+    const classMetadata = this.metadataByTargetCollection.get(metadata.target);
+    if (!classMetadata.fieldDirectives.sdls.has(metadata.sdl)) {
+      classMetadata.classDirectives.push(metadata);
     }
   }
 
   addDirectivePropertyMetadata(metadata: PropertyDirectiveMetadata) {
-    const exist = this.fieldDirectives.some((directiveMetadata) => {
-      return (
-        directiveMetadata.fieldName === metadata.fieldName &&
-        directiveMetadata.sdl === metadata.sdl &&
-        directiveMetadata.target === metadata.target
-      );
-    });
-    if (!exist) {
-      this.fieldDirectives.push(metadata);
-    }
+    this.metadataByTargetCollection
+      .get(metadata.target)
+      .fieldDirectives.add(metadata);
   }
 
   addExtensionsMetadata(metadata: ClassExtensionsMetadata) {
-    this.classExtensions.push(metadata);
+    this.metadataByTargetCollection
+      .get(metadata.target)
+      .classExtensions.push(metadata);
   }
 
   addExtensionsPropertyMetadata(metadata: PropertyExtensionsMetadata) {
-    this.fieldExtensions.push(metadata);
+    this.metadataByTargetCollection
+      .get(metadata.target)
+      .fieldExtensions.add(metadata, metadata.fieldName);
   }
 
   addResolverMetadata(metadata: ResolverClassMetadata) {
-    this.resolvers.push(metadata);
+    this.metadataByTargetCollection.get(metadata.target).resolver = metadata;
   }
 
   addClassFieldMetadata(metadata: PropertyMetadata) {
-    const existingMetadata = this.fields.find(
-      (item) => item.target === metadata.target && item.name === metadata.name,
-    );
+    const existingMetadata = this.metadataByTargetCollection
+      .get(metadata.target)
+      .fields.getByName(metadata.name);
+
     if (existingMetadata) {
       const options = existingMetadata.options;
       // inherit nullable option
@@ -197,25 +176,26 @@ export class TypeMetadataStorageHost {
         options.nullable = metadata.options.nullable;
       }
     } else {
-      this.fields.push(metadata);
+      this.metadataByTargetCollection
+        .get(metadata.target)
+        .fields.add(metadata, metadata.name);
     }
   }
 
   addMethodParamMetadata(metadata: MethodArgsMetadata) {
-    this.params.unshift(metadata);
+    this.metadataByTargetCollection
+      .get(metadata.target)
+      .params.unshift(metadata, metadata.methodName);
   }
 
   compile(orphanedTypes: (Function | object)[] = []) {
-    this.classDirectives.reverse();
-    this.classExtensions.reverse();
-    this.fieldDirectives.reverse();
-    this.fieldExtensions.reverse();
+    this.metadataByTargetCollection.compile();
 
     const classMetadata = [
-      ...this.objectTypes,
-      ...this.inputTypes,
-      ...this.argumentTypes,
-      ...this.interfaces,
+      ...this.metadataByTargetCollection.all.objectType,
+      ...this.metadataByTargetCollection.all.inputType,
+      ...this.metadataByTargetCollection.all.argumentType,
+      ...this.metadataByTargetCollection.all.interface,
     ];
     this.loadClassPluginMetadata(classMetadata);
     this.compileClassMetadata(classMetadata);
@@ -274,18 +254,21 @@ export class TypeMetadataStorageHost {
 
   compileClassMetadata(metadata: ClassMetadata[]) {
     metadata.forEach((item) => {
-      const belongsToClass = isTargetEqual.bind(undefined, item);
-
       if (!item.properties) {
-        item.properties = this.getClassFieldsByPredicate(belongsToClass);
+        item.properties = this.getClassFieldsByPredicate(item);
       }
       if (!item.directives) {
-        item.directives = this.classDirectives.filter(belongsToClass);
+        item.directives = this.metadataByTargetCollection
+          .get(item.target)
+          .classDirectives.getAll();
       }
       if (!item.extensions) {
-        item.extensions = this.classExtensions
-          .filter(belongsToClass)
-          .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
+        item.extensions = this.metadataByTargetCollection
+          .get(item.target)
+          .classExtensions.reduce(
+            (curr, acc) => ({ ...curr, ...acc.value }),
+            {},
+          );
       }
     });
   }
@@ -294,20 +277,20 @@ export class TypeMetadataStorageHost {
     Object.assign(this, new TypeMetadataStorageHost());
   }
 
-  private getClassFieldsByPredicate(
-    belongsToClass: (item: PropertyMetadata) => boolean,
-  ) {
-    const fields = this.fields.filter(belongsToClass);
+  private getClassFieldsByPredicate(item: ClassMetadata) {
+    const fields = this.metadataByTargetCollection
+      .get(item.target)
+      .fields.getAll();
     fields.forEach((field) => {
-      const isHostEqual = isTargetEqual.bind(undefined, field);
-      field.methodArgs = this.params.filter(
-        (param) => isHostEqual(param) && field.name === param.methodName,
-      );
-      field.directives = this.fieldDirectives.filter(
-        this.isFieldDirectiveOrExtension.bind(this, field),
-      );
-      field.extensions = this.fieldExtensions
-        .filter(this.isFieldDirectiveOrExtension.bind(this, field))
+      field.methodArgs = this.metadataByTargetCollection
+        .get(item.target)
+        .params.getByName(field.name);
+      field.directives = this.metadataByTargetCollection
+        .get(item.target)
+        .fieldDirectives.getByName(field.name);
+      field.extensions = this.metadataByTargetCollection
+        .get(item.target)
+        .fieldExtensions.getByName(field.name)
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
     return fields;
@@ -315,18 +298,18 @@ export class TypeMetadataStorageHost {
 
   private compileResolversMetadata(metadata: BaseResolverMetadata[]) {
     metadata.forEach((item) => {
-      const isTypeEqual = isTargetEqual.bind(undefined, item);
-      const resolverMetadata = this.resolvers.find(isTypeEqual);
-
-      item.classMetadata = resolverMetadata;
-      item.methodArgs = this.params.filter(
-        (param) => isTypeEqual(param) && item.methodName === param.methodName,
-      );
-      item.directives = this.fieldDirectives.filter(
-        this.isFieldDirectiveOrExtension.bind(this, item),
-      );
-      item.extensions = this.fieldExtensions
-        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+      item.classMetadata = this.metadataByTargetCollection.get(
+        item.target,
+      ).resolver;
+      item.methodArgs = this.metadataByTargetCollection
+        .get(item.target)
+        .params.getByName(item.methodName);
+      item.directives = this.metadataByTargetCollection
+        .get(item.target)
+        .fieldDirectives.getByName(item.methodName);
+      item.extensions = this.metadataByTargetCollection
+        .get(item.target)
+        .fieldExtensions.getByName(item.methodName)
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
     });
   }
@@ -335,17 +318,17 @@ export class TypeMetadataStorageHost {
     this.compileResolversMetadata(metadata);
 
     metadata.forEach((item) => {
-      const belongsToClass = isTargetEqual.bind(undefined, item);
-      item.directives = this.fieldDirectives.filter(
-        this.isFieldDirectiveOrExtension.bind(this, item),
-      );
-      item.extensions = this.fieldExtensions
-        .filter(this.isFieldDirectiveOrExtension.bind(this, item))
+      item.directives = this.metadataByTargetCollection
+        .get(item.target)
+        .fieldDirectives.getByName(item.methodName);
+      item.extensions = this.metadataByTargetCollection
+        .get(item.target)
+        .fieldExtensions.getByName(item.methodName)
         .reduce((curr, acc) => ({ ...curr, ...acc.value }), {});
 
       item.objectTypeFn =
         item.kind === 'external'
-          ? this.resolvers.find(belongsToClass).typeFn
+          ? this.metadataByTargetCollection.get(item.target).resolver.typeFn
           : () => item.target as Type<unknown>;
 
       if (item.kind === 'external') {
@@ -355,27 +338,8 @@ export class TypeMetadataStorageHost {
   }
 
   private compileExternalFieldResolverMetadata(item: FieldResolverMetadata) {
-    const objectTypeRef = this.resolvers
-      .find((el) => isTargetEqual(el, item))
-      .typeFn();
-
-    const objectOrInterfaceTypeMetadata =
-      this.objectTypes.find(
-        (objTypeDef) => objTypeDef.target === objectTypeRef,
-      ) ||
-      this.interfaces.find(
-        (interfaceTypeDef) => interfaceTypeDef.target === objectTypeRef,
-      );
-    if (!objectOrInterfaceTypeMetadata) {
-      throw new CannotDetermineHostTypeError(
-        item.schemaName,
-        objectTypeRef?.name,
-      );
-    }
-    const objectOrInterfaceTypeField =
-      objectOrInterfaceTypeMetadata.properties.find(
-        (fieldDef) => fieldDef.name === item.methodName,
-      );
+    const [target, objectOrInterfaceTypeMetadata, objectOrInterfaceTypeField] =
+      this.findModelFieldMetadata(item);
     if (!objectOrInterfaceTypeField) {
       if (!item.typeFn || !item.typeOptions) {
         throw new UndefinedTypeError(item.target.name, item.methodName);
@@ -386,7 +350,7 @@ export class TypeMetadataStorageHost {
         deprecationReason: item.deprecationReason,
         description: item.description,
         typeFn: item.typeFn,
-        target: objectTypeRef,
+        target,
         options: item.typeOptions,
         methodArgs: item.methodArgs,
         directives: item.directives,
@@ -414,14 +378,58 @@ export class TypeMetadataStorageHost {
     }
   }
 
+  private findModelFieldMetadata(
+    item: FieldResolverMetadata,
+  ): [Function, ClassMetadata, PropertyMetadata | undefined] {
+    let objectTypeRef = this.metadataByTargetCollection
+      .get(item.target)
+      .resolver.typeFn();
+    const getTypeMetadata = (target: any) => {
+      const metadata = this.metadataByTargetCollection.get(target);
+      return metadata.objectType || metadata.interface;
+    };
+    let objectOrInterfaceTypeMetadata = getTypeMetadata(objectTypeRef);
+    if (!objectOrInterfaceTypeMetadata) {
+      throw new CannotDetermineHostTypeError(
+        item.schemaName,
+        objectTypeRef?.name,
+      );
+    }
+    let objectOrInterfaceTypeField =
+      objectOrInterfaceTypeMetadata.properties.find(
+        (fieldDef) => fieldDef.name === item.methodName,
+      );
+    for (
+      let _objectTypeRef = objectTypeRef;
+      !objectOrInterfaceTypeField && _objectTypeRef?.prototype;
+      _objectTypeRef = Object.getPrototypeOf(_objectTypeRef)
+    ) {
+      const possibleTypeMetadata = getTypeMetadata(_objectTypeRef);
+      objectOrInterfaceTypeField = possibleTypeMetadata?.properties.find(
+        (fieldDef) => fieldDef.name === item.methodName,
+      );
+      if (objectOrInterfaceTypeField) {
+        objectTypeRef = _objectTypeRef;
+        objectOrInterfaceTypeMetadata = possibleTypeMetadata;
+        break;
+      }
+    }
+    return [
+      objectTypeRef,
+      objectOrInterfaceTypeMetadata,
+      objectOrInterfaceTypeField,
+    ];
+  }
+
   private compileExtendedResolversMetadata() {
-    this.resolvers.forEach((item) => {
+    this.metadataByTargetCollection.all.resolver.forEach((item) => {
       let parentClass = Object.getPrototypeOf(item.target);
 
       while (parentClass.prototype) {
-        const parentMetadata = this.resolvers.find(
-          (item) => item.target === parentClass,
-        );
+        const parentMetadata = this.metadataByTargetCollection.get(
+          item.target,
+        ).resolver;
+
         if (parentMetadata) {
           this.queries = this.mergeParentResolverHandlers(
             this.queries,
@@ -449,16 +457,6 @@ export class TypeMetadataStorageHost {
     });
   }
 
-  private isFieldDirectiveOrExtension(
-    host: Record<'target' | 'methodName' | 'name', any>,
-    metadata: PropertyDirectiveMetadata | PropertyExtensionsMetadata,
-  ): boolean {
-    return (
-      metadata.target === host.target &&
-      metadata.fieldName === (host.methodName || host.name)
-    );
-  }
-
   private mergeParentResolverHandlers<
     T extends ResolverTypeMetadata | FieldResolverMetadata,
   >(
@@ -466,7 +464,7 @@ export class TypeMetadataStorageHost {
     parentClass: Function,
     classMetadata: ResolverClassMetadata,
   ): T[] {
-    const mergedMetadata = metadata.map((metadata) => {
+    return metadata.map((metadata) => {
       return metadata.target !== parentClass
         ? metadata
         : {
@@ -475,7 +473,6 @@ export class TypeMetadataStorageHost {
             classMetadata,
           };
     });
-    return mergedMetadata;
   }
 
   private mergeParentFieldHandlers(
@@ -488,7 +485,7 @@ export class TypeMetadataStorageHost {
       parentClass,
       classMetadata,
     );
-    const mergedMetadata = parentMetadata.map((metadata) => {
+    return parentMetadata.map((metadata) => {
       return metadata.target === parentClass
         ? metadata
         : {
@@ -498,7 +495,6 @@ export class TypeMetadataStorageHost {
               : metadata.objectTypeFn,
           };
     });
-    return mergedMetadata;
   }
 }
 

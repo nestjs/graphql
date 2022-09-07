@@ -3,7 +3,11 @@ import {
   GraphQLSchema,
   subscribe as graphqlSubscribe,
 } from 'graphql';
-import { GRAPHQL_TRANSPORT_WS_PROTOCOL, ServerOptions } from 'graphql-ws';
+import {
+  Disposable,
+  GRAPHQL_TRANSPORT_WS_PROTOCOL,
+  ServerOptions,
+} from 'graphql-ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import {
   GRAPHQL_WS,
@@ -51,6 +55,8 @@ export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
 export class GqlSubscriptionService {
   private readonly wss: ws.Server;
   private readonly subTransWs: ws.Server;
+  private wsGqlDisposable: Disposable;
+  private subServer: SubscriptionServer;
 
   constructor(
     private readonly options: GqlSubscriptionServiceOptions,
@@ -83,7 +89,7 @@ export class GqlSubscriptionService {
       const graphqlWsOptions =
         this.options['graphql-ws'] === true ? {} : this.options['graphql-ws'];
       supportedProtocols.push(GRAPHQL_TRANSPORT_WS_PROTOCOL);
-      useServer(
+      this.wsGqlDisposable = useServer(
         {
           schema: this.options.schema,
           execute,
@@ -102,7 +108,7 @@ export class GqlSubscriptionService {
           : this.options['subscriptions-transport-ws'];
 
       supportedProtocols.push(GRAPHQL_WS);
-      SubscriptionServer.create(
+      this.subServer = SubscriptionServer.create(
         {
           schema: this.options.schema,
           execute,
@@ -132,18 +138,16 @@ export class GqlSubscriptionService {
           ? this.subTransWs
           : this.wss;
 
-      wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit('connection', ws, req);
-      });
+      if (req.url?.startsWith(wss.options.path)) {
+        wss.handleUpgrade(req, socket, head, (ws) => {
+          wss.emit('connection', ws, req);
+        });
+      }
     });
   }
 
   async stop() {
-    for (const client of this.wss.clients) {
-      client.close(1001, 'Going away');
-    }
-    for (const client of this.subTransWs.clients) {
-      client.close(1001, 'Going away');
-    }
+    await this.wsGqlDisposable?.dispose();
+    this.subServer?.close();
   }
 }

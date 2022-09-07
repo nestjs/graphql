@@ -3,6 +3,7 @@ import { gql } from 'graphql-tag';
 import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
 import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory';
 import { extend } from '../utils';
+import { mergeTypeDefs } from '@graphql-tools/merge';
 
 export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFactory {
   protected async exploreAndEmit(
@@ -35,9 +36,20 @@ export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFacto
         resolvers: {},
       },
     ]);
+
+    // "buildSubgraphSchema" generates an empty Query definition if there is the `extend type Query` statement
+    // This leads to duplicated IQuery interfaces
+    // see: https://github.com//issues/2344
+    const mergedDefinition = mergeTypeDefs([printSubgraphSchema(schema)], {
+      useSchemaDefinition: false,
+      throwOnConflict: true,
+      commentDescriptions: true,
+      reverseDirectives: true,
+    });
+
     const tsFile = await this.gqlAstExplorer.explore(
       gql`
-        ${printSubgraphSchema(schema)}
+        ${mergedDefinition}
       `,
       path,
       outputAs,
