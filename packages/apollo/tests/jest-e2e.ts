@@ -13,15 +13,10 @@ const config: Config.InitialOptions = {
   testPathIgnorePatterns: ['.fed([1-9]).spec.ts$'],
   moduleNameMapper,
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
 };
 
 export default config;
