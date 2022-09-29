@@ -9,7 +9,7 @@ import {
 import { RootTypeFactory } from '../../../lib/schema-builder/factories/root-type.factory';
 import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage';
 import { MultipleFieldsWithSameNameError } from '../../../lib/schema-builder/errors/multiple-fields-with-same-name.error';
-import { GraphQLNonNull } from 'graphql';
+import { ResolverTypeMetadata } from '../../../lib/schema-builder/metadata';
 
 describe('RootTypeFactory', () => {
   let rootTypeFactory: RootTypeFactory;
@@ -27,41 +27,58 @@ describe('RootTypeFactory', () => {
   });
 
   describe('generateFields', () => {
-    describe('when duplicate queries are defined', () => {
-      beforeEach(() => {
-        LazyMetadataStorage.load([
-          booleanResolverFactory(Query),
-          booleanResolverFactory(Query),
-        ]);
-        TypeMetadataStorage.compile();
-      });
+    describe.each([
+      ['queries', Query, 'Query', TypeMetadataStorage.getQueriesMetadata],
+      [
+        'mutations',
+        Mutation,
+        'Mutation',
+        TypeMetadataStorage.getMutationsMetadata,
+      ],
+    ])(
+      'when duplicate %s are defined',
+      (_, Decorator, objectTypeName, metadataFn) => {
+        let metadata: ResolverTypeMetadata[];
 
-      it('should throw an error', () => {
-        const queriesMetadata = TypeMetadataStorage.getQueriesMetadata();
+        beforeEach(() => {
+          LazyMetadataStorage.load([
+            booleanResolverFactory(Decorator),
+            booleanResolverFactory(Decorator),
+          ]);
+          TypeMetadataStorage.compile();
 
-        expect(() =>
-          rootTypeFactory.generateFields(queriesMetadata, {}, 'Query'),
-        ).toThrow(MultipleFieldsWithSameNameError);
-      });
-    });
+          metadata = metadataFn.apply(TypeMetadataStorage);
+        });
 
-    describe('when duplicate mutations are defined', () => {
-      beforeEach(() => {
-        LazyMetadataStorage.load([
-          booleanResolverFactory(Mutation),
-          booleanResolverFactory(Mutation),
-        ]);
-        TypeMetadataStorage.compile();
-      });
+        it('should throw an error with noDuplicateFields: true', () => {
+          expect(() =>
+            rootTypeFactory.generateFields(
+              metadata,
+              { noDuplicateFields: true },
+              objectTypeName,
+            ),
+          ).toThrow(MultipleFieldsWithSameNameError);
+        });
 
-      it('should throw an error', () => {
-        const mutationsMetadata = TypeMetadataStorage.getMutationsMetadata();
+        it('should create GraphQL fields with noDuplicateFields: false', () => {
+          const fields = rootTypeFactory.generateFields(
+            metadata,
+            { noDuplicateFields: false },
+            objectTypeName,
+          );
+          expect(fields).toHaveProperty('bool');
+        });
 
-        expect(() =>
-          rootTypeFactory.generateFields(mutationsMetadata, {}, 'Mutation'),
-        ).toThrow(MultipleFieldsWithSameNameError);
-      });
-    });
+        it('should create GraphQL fields with noDuplicateFields undefined', () => {
+          const fields = rootTypeFactory.generateFields(
+            metadata,
+            {},
+            objectTypeName,
+          );
+          expect(fields).toHaveProperty('bool');
+        });
+      },
+    );
 
     describe('when no duplicate queries are found', () => {
       beforeEach(() => {
@@ -77,22 +94,12 @@ describe('RootTypeFactory', () => {
 
         const fields = rootTypeFactory.generateFields(
           queriesMetadata,
-          {},
+          { noDuplicateFields: true },
           'Query',
         );
 
-        expect(fields).toMatchObject({
-          bool: {
-            type: expect.any(GraphQLNonNull),
-            args: {},
-            resolve: undefined,
-          },
-          str: {
-            type: expect.any(GraphQLNonNull),
-            args: {},
-            resolve: undefined,
-          },
-        });
+        expect(fields).toHaveProperty('bool');
+        expect(fields).toHaveProperty('str');
       });
     });
   });

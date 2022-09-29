@@ -46,4 +46,9 @@ export interface BuildSchemaOptions {
    * Array of global field middleware functions
    */
   fieldMiddleware?: FieldMiddleware[];
+
+  /**
+   * Set to true if it should throw an error when the same Query / Mutation field is defined more than once
+   */
+  noDuplicateFields?: boolean;
 }

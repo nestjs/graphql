@@ -69,7 +69,7 @@ export class RootTypeFactory {
 
         const key = handler.schemaName;
 
-        if (fieldConfigMap[key]) {
+        if (fieldConfigMap[key] && options.noDuplicateFields) {
           throw new MultipleFieldsWithSameNameError(key, objectTypeName);
         }
 
