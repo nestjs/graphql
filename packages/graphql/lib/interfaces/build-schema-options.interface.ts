@@ -50,5 +50,5 @@ export interface BuildSchemaOptions {
   /**
    * Set to true if it should throw an error when the same Query / Mutation field is defined more than once
    */
-  noDuplicateFields?: boolean;
+  noDuplicatedFields?: boolean;
 }

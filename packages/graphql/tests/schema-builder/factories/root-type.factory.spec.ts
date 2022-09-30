@@ -54,7 +54,7 @@ describe('RootTypeFactory', () => {
           expect(() =>
             rootTypeFactory.generateFields(
               metadata,
-              { noDuplicateFields: true },
+              { noDuplicatedFields: true },
               objectTypeName,
             ),
           ).toThrow(MultipleFieldsWithSameNameError);
@@ -63,7 +63,7 @@ describe('RootTypeFactory', () => {
         it('should create GraphQL fields with noDuplicateFields: false', () => {
           const fields = rootTypeFactory.generateFields(
             metadata,
-            { noDuplicateFields: false },
+            { noDuplicatedFields: false },
             objectTypeName,
           );
           expect(fields).toHaveProperty('bool');
@@ -94,7 +94,7 @@ describe('RootTypeFactory', () => {
 
         const fields = rootTypeFactory.generateFields(
           queriesMetadata,
-          { noDuplicateFields: true },
+          { noDuplicatedFields: true },
           'Query',
         );
 
