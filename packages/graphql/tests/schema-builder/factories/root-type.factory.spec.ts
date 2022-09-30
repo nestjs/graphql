@@ -1,15 +1,35 @@
 import { Test } from '@nestjs/testing';
 import {
   GraphQLSchemaBuilderModule,
-  Query,
   Mutation,
+  Query,
   Resolver,
   TypeMetadataStorage,
 } from '../../../lib';
-import { RootTypeFactory } from '../../../lib/schema-builder/factories/root-type.factory';
-import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage';
 import { MultipleFieldsWithSameNameError } from '../../../lib/schema-builder/errors/multiple-fields-with-same-name.error';
+import { RootTypeFactory } from '../../../lib/schema-builder/factories/root-type.factory';
 import { ResolverTypeMetadata } from '../../../lib/schema-builder/metadata';
+import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage';
+
+function booleanResolverFactory(Decorator: typeof Query | typeof Mutation) {
+  @Resolver()
+  class BooleanResolver {
+    @Decorator(() => Boolean)
+    bool() {
+      return true;
+    }
+  }
+
+  return BooleanResolver;
+}
+
+@Resolver()
+class StringResolver {
+  @Query(() => String)
+  str() {
+    return '';
+  }
+}
 
 describe('RootTypeFactory', () => {
   let rootTypeFactory: RootTypeFactory;
@@ -104,23 +124,3 @@ describe('RootTypeFactory', () => {
     });
   });
 });
-
-function booleanResolverFactory(Decorator: typeof Query | typeof Mutation) {
-  @Resolver()
-  class BooleanResolver {
-    @Decorator(() => Boolean)
-    bool() {
-      return true;
-    }
-  }
-
-  return BooleanResolver;
-}
-
-@Resolver()
-class StringResolver {
-  @Query(() => String)
-  str() {
-    return '';
-  }
-}
