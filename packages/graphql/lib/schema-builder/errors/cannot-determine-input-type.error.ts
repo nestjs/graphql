@@ -6,8 +6,8 @@ export class CannotDetermineInputTypeError extends Error {
       typeof typeRef === 'function' && typeRef.name;
     super(
       `Cannot determine a GraphQL input type ${
-        inputObjectName ? `("${inputObjectName}") ` : null
-      }for the "${hostType}". Make sure your class is decorated with an appropriate decorator.`,
+        inputObjectName ? `("${inputObjectName}")` : null
+      } for the "${hostType}". Make sure your class is decorated with an appropriate decorator.`,
     );
   }
 }
