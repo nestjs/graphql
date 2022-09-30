@@ -12,7 +12,10 @@ const config: Config.InitialOptions = {
   testRegex: '.spec.ts$',
   moduleNameMapper,
   transform: {
-    '^.+\\.(t|j)s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^.+\\.(t|j)s$': [
+      'ts-jest',
+      { tsconfig: '<rootDir>/tsconfig.spec.json', isolatedModules: true },
+    ],
   },
   coverageDirectory: '../coverage',
   testEnvironment: 'node',

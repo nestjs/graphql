@@ -22,7 +22,10 @@ const config: Config.InitialOptions = {
     '^graphql/(.*)$': '<rootDir>/../../node_modules/graphql-16/$1',
   },
   transform: {
-    '^.+\\.(t|j)s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^.+\\.(t|j)s$': [
+      'ts-jest',
+      { tsconfig: '<rootDir>/tsconfig.spec.json', isolatedModules: true },
+    ],
   },
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
