@@ -63,6 +63,9 @@ enum SampleOrphanedEnum {
   White
 }
 
+"""A sample scalar"""
+scalar SampleScalar
+
 type Query {
   """get recipe by id"""
   recipe(
