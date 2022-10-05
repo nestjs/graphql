@@ -18,10 +18,7 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
   }
 
   public async start(mercuriusOptions: MercuriusDriverConfig) {
-    const { plugins, ...options } =
-      await this.graphQlFactory.mergeWithSchema<MercuriusDriverConfig>(
-        mercuriusOptions,
-      );
+    const { plugins, ...options } = mercuriusOptions;
 
     if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(

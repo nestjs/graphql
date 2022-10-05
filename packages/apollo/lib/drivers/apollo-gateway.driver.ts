@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ModulesContainer } from '@nestjs/core';
 import { extend } from '@nestjs/graphql';
+import { GraphQLSchema } from 'graphql';
 import { ApolloGatewayDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
@@ -13,6 +14,12 @@ export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverCon
   constructor(modulesContainer: ModulesContainer) {
     super();
     this.pluginsExplorerService = new PluginsExplorerService(modulesContainer);
+  }
+
+  public async generateSchema(
+    options: ApolloGatewayDriverConfig,
+  ): Promise<GraphQLSchema> {
+    return new GraphQLSchema({});
   }
 
   public async start(options: ApolloGatewayDriverConfig): Promise<void> {

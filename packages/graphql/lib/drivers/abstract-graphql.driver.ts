@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
+import { GraphQLSchema } from 'graphql';
 import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
 import { normalizeRoutePath } from '../utils';
@@ -34,6 +35,10 @@ export abstract class AbstractGraphQLDriver<
     (clonedOptions as Record<string, unknown>).path =
       this.getNormalizedPath(clonedOptions);
     return clonedOptions;
+  }
+
+  public async generateSchema(options: TOptions): Promise<GraphQLSchema> {
+    return await this.graphQlFactory.mergeWithSchema(options);
   }
 
   public subscriptionWithFilter(

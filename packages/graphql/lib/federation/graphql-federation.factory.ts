@@ -25,7 +25,6 @@ import {
 import { gql } from 'graphql-tag';
 import { forEach, isEmpty } from 'lodash';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
-import { GraphQLSchemaHost } from '../graphql-schema.host';
 import {
   AutoSchemaFileValue,
   BuildFederatedSchemaOptions,
@@ -46,7 +45,6 @@ export class GraphQLFederationFactory {
     private readonly resolversExplorerService: ResolversExplorerService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly gqlSchemaBuilder: GraphQLSchemaBuilder,
-    private readonly gqlSchemaHost: GraphQLSchemaHost,
     private readonly typeDefsDecoratorFactory: TypeDefsDecoratorFactory,
   ) {}
 
@@ -55,9 +53,9 @@ export class GraphQLFederationFactory {
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
     ) => GraphQLSchema,
-  ): Promise<T> {
-    const transformSchema = async (schema: GraphQLSchema) =>
-      options.transformSchema ? options.transformSchema(schema) : schema;
+  ): Promise<GraphQLSchema> {
+    const transformSchema =
+      options.transformSchema ?? ((schema: GraphQLSchema) => schema);
 
     let schema: GraphQLSchema;
     if (options.autoSchemaFile) {
@@ -68,13 +66,7 @@ export class GraphQLFederationFactory {
       schema = this.buildSchemaFromTypeDefs(options);
     }
 
-    this.gqlSchemaHost.schema = schema;
-
-    return {
-      ...options,
-      schema: await transformSchema(schema),
-      typeDefs: undefined,
-    };
+    return await transformSchema(schema);
   }
 
   private buildSchemaFromTypeDefs<T extends GqlModuleOptions>(options: T) {

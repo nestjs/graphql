@@ -1,5 +1,6 @@
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
+import { GraphQLSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
@@ -15,6 +16,12 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
+  public async generateSchema(
+    options: MercuriusDriverConfig,
+  ): Promise<GraphQLSchema> {
+    return new GraphQLSchema({});
+  }
+
   public async start(options: MercuriusDriverConfig) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
@@ -23,7 +30,11 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
 
-    const { plugins, ...mercuriusOptions } = options;
+    const {
+      plugins,
+      schema: _, // Schema stubbed to be compatible with other drivers, ignore.
+      ...mercuriusOptions
+    } = options;
     const app = httpAdapter.getInstance<FastifyInstance>();
     await app.register(mercurius, {
       ...mercuriusOptions,
