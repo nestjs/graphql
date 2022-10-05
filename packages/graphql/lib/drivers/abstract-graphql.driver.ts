@@ -13,7 +13,7 @@ export abstract class AbstractGraphQLDriver<
   protected readonly httpAdapterHost: HttpAdapterHost;
 
   @Inject()
-  protected readonly applicationConfig: ApplicationConfig;
+  protected readonly applicationConfig?: ApplicationConfig;
 
   @Inject()
   protected readonly graphQlFactory: GraphQLFactory;
@@ -54,7 +54,7 @@ export abstract class AbstractGraphQLDriver<
   }
 
   protected getNormalizedPath(options: TOptions): string {
-    const prefix = this.applicationConfig.getGlobalPrefix();
+    const prefix = this.applicationConfig?.getGlobalPrefix() ?? '';
     const useGlobalPrefix = prefix && options.useGlobalPrefix;
     const gqlOptionsPath = normalizeRoutePath(options.path);
     return useGlobalPrefix

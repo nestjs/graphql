@@ -146,11 +146,6 @@ export class GraphQLModule<
   }
 
   async onModuleInit() {
-    const httpAdapter = this.httpAdapterHost?.httpAdapter;
-    if (!httpAdapter) {
-      return;
-    }
-
     const options = await this._graphQlAdapter.mergeDefaultOptions(
       this.options,
     );
@@ -171,6 +166,11 @@ export class GraphQLModule<
       schema: gqlSchema,
       typeDefs: undefined,
     };
+
+    const httpAdapter = this.httpAdapterHost?.httpAdapter;
+    if (!httpAdapter) {
+      return;
+    }
 
     await this._graphQlAdapter.start(completeOptions);
 
