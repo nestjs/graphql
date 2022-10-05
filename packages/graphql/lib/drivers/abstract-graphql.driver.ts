@@ -38,7 +38,7 @@ export abstract class AbstractGraphQLDriver<
   }
 
   public async generateSchema(options: TOptions): Promise<GraphQLSchema> {
-    return await this.graphQlFactory.mergeWithSchema(options);
+    return await this.graphQlFactory.generateSchema(options);
   }
 
   public subscriptionWithFilter(

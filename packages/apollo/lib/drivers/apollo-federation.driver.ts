@@ -20,7 +20,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
   }
 
   async generateSchema(options: ApolloDriverConfig): Promise<GraphQLSchema> {
-    return await this.graphqlFederationFactory.mergeWithSchema(options);
+    return await this.graphqlFederationFactory.generateSchema(options);
   }
 
   public async start(options: ApolloDriverConfig): Promise<void> {

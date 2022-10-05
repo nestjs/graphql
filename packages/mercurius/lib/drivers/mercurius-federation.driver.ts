@@ -31,7 +31,7 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
   public override async generateSchema(
     options: MercuriusDriverConfig,
   ): Promise<GraphQLSchema> {
-    return await this.graphqlFederationFactory.mergeWithSchema(
+    return await this.graphqlFederationFactory.generateSchema(
       options,
       buildMercuriusFederatedSchema,
     );

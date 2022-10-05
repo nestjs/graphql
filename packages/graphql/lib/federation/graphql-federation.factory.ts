@@ -48,7 +48,7 @@ export class GraphQLFederationFactory {
     private readonly typeDefsDecoratorFactory: TypeDefsDecoratorFactory,
   ) {}
 
-  async mergeWithSchema<T extends GqlModuleOptions>(
+  async generateSchema<T extends GqlModuleOptions>(
     options: T = {} as T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
@@ -59,7 +59,10 @@ export class GraphQLFederationFactory {
 
     let schema: GraphQLSchema;
     if (options.autoSchemaFile) {
-      schema = await this.generateSchema(options, buildFederatedSchema);
+      schema = await this.generateSchemaFromCodeFirst(
+        options,
+        buildFederatedSchema,
+      );
     } else if (isEmpty(options.typeDefs)) {
       schema = options.schema;
     } else {
@@ -85,7 +88,7 @@ export class GraphQLFederationFactory {
     ]);
   }
 
-  private async generateSchema<T extends GqlModuleOptions>(
+  private async generateSchemaFromCodeFirst<T extends GqlModuleOptions>(
     options: T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
