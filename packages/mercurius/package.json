@@ -30,7 +30,7 @@
     "@nestjs/common": "8.4.7",
     "@nestjs/platform-fastify": "8.4.7",
     "@nestjs/testing": "8.4.7",
-    "fastify": "4.7.0",
+    "fastify": "4.8.1",
     "mercurius": "8.13.1",
     "mercurius-integration-testing": "5.0.0"
   },
