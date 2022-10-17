@@ -32,7 +32,7 @@
     "@nestjs/testing": "8.4.7",
     "fastify": "4.8.1",
     "mercurius": "8.13.1",
-    "mercurius-integration-testing": "6.0.0"
+    "mercurius-integration-testing": "6.0.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.2.3 || ^9.0.0",
