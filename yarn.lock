@@ -5642,10 +5642,10 @@ fastify@3.29.0:
     semver "^7.3.2"
     tiny-lru "^8.0.1"
 
-fastify@4.8.1:
-  version "4.8.1"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.8.1.tgz#45a341daa47e87e295ede5de31868ced2a1728c5"
-  integrity sha512-3an6yyXg7j5XPHTRxgFqUwIRaJPR7F8OPR8Uboo0SIgHx1orOqc9Y8Sl5Kz8+xK7JCy3c3mfRujskDjMu/nFfA==
+fastify@4.9.0:
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.9.0.tgz#4bd589a968ffca5b3a2c4d28b9128d044cde3035"
+  integrity sha512-q7/UE8NVdxIeHTpaFOXbavGH+AhX7qN/t601bCsTlW5baN+Anzb9MJ3lFctJVCnMDe29YNqU0htoXbJAkVLVmA==
   dependencies:
     "@fastify/ajv-compiler" "^3.3.1"
     "@fastify/error" "^3.0.0"
