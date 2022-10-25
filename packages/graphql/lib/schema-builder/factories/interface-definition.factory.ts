@@ -113,7 +113,22 @@ export class InterfaceDefinitionFactory {
 
     return () => {
       let fields: GraphQLFieldConfigMap<any, any> = {};
-      metadata.properties.forEach((field) => {
+
+      let properties = [];
+      if (metadata.interfaces) {
+        const implementedInterfaces =
+          TypeMetadataStorage.getInterfacesMetadata()
+            .filter((it) =>
+              getInterfacesArray(metadata.interfaces).includes(it.target),
+            )
+            .map((it) => it.properties);
+        implementedInterfaces.forEach((fields) =>
+          properties.push(...(fields || [])),
+        );
+      }
+      properties = properties.concat(metadata.properties);
+
+      properties.forEach((field) => {
         const type = this.outputTypeFactory.create(
           field.name,
           field.typeFn(),

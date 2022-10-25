@@ -17,7 +17,7 @@ export interface UnionOptions<T extends readonly Type<unknown>[] = Type<unknown>
   /**
    * Name of the union.
    */
-  name: string;
+  name?: string;
   /**
    * Description of the union.
    */

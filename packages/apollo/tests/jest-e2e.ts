@@ -10,17 +10,16 @@ const config: Config.InitialOptions = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '../.',
   testRegex: '.spec.ts$',
+  testPathIgnorePatterns: ['.fed([1-9]).spec.ts$'],
   moduleNameMapper,
   transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
+    '^.+\\.(t|j)s$': [
+      'ts-jest',
+      { tsconfig: '<rootDir>/tsconfig.spec.json', isolatedModules: true },
+    ],
   },
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
 };
 
 export default config;

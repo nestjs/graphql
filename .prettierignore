@@ -1,2 +1,5 @@
 packages/**/tests/generated-definitions/*.ts
 packages/**/tests/**/*.fixture.ts
+
+packages/**/tests/cases/**/*.ts
+packages/**/tests/cases/**/*.ts

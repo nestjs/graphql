@@ -2,11 +2,11 @@ import {
   Directive,
   Extensions,
   Field,
+  IntersectionType,
   ObjectType,
-} from '../../../lib/decorators';
+} from '../../../lib';
 import { METADATA_FACTORY_NAME } from '../../../lib/plugin/plugin-constants';
 import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
-import { IntersectionType } from '../../../lib/type-helpers';
 
 describe('IntersectionType', () => {
   @ObjectType()
@@ -29,6 +29,9 @@ describe('IntersectionType', () => {
 
     firstName?: string;
 
+    @Field(() => [String])
+    hobbies?: string[];
+
     static [METADATA_FACTORY_NAME]() {
       return {
         firstName: { nullable: true, type: () => String },
@@ -41,27 +44,36 @@ describe('IntersectionType', () => {
   it('should inherit all fields from two types', () => {
     const prototype = Object.getPrototypeOf(UpdateUserDto);
     const { fields } = getFieldsAndDecoratorForType(prototype);
-    expect(fields.length).toEqual(4);
-    expect(fields[0].name).toEqual('login');
-    expect(fields[1].name).toEqual('password');
-    expect(fields[2].name).toEqual('lastName');
-    expect(fields[3].name).toEqual('firstName');
-    expect(fields[0].directives.length).toEqual(1);
-    expect(fields[0].directives).toContainEqual({
+    const [
+      loginField,
+      passwordField,
+      lastNameField,
+      hobbiesField,
+      firstNameField,
+    ] = fields;
+    expect(fields.length).toEqual(5);
+    expect(loginField.name).toEqual('login');
+    expect(passwordField.name).toEqual('password');
+    expect(lastNameField.name).toEqual('lastName');
+    expect(hobbiesField.name).toEqual('hobbies');
+    expect(hobbiesField.options).toEqual({ isArray: true, arrayDepth: 1 });
+    expect(firstNameField.name).toEqual('firstName');
+    expect(loginField.directives.length).toEqual(1);
+    expect(loginField.directives).toContainEqual({
       fieldName: 'login',
       sdl: '@upper',
       target: prototype,
     });
-    expect(fields[0].extensions).toEqual({
+    expect(loginField.extensions).toEqual({
       extension: true,
     });
-    expect(fields[2].directives.length).toEqual(1);
-    expect(fields[2].directives).toContainEqual({
+    expect(lastNameField.directives.length).toEqual(1);
+    expect(lastNameField.directives).toContainEqual({
       fieldName: 'lastName',
       sdl: '@upper',
       target: prototype,
     });
-    expect(fields[2].extensions).toEqual({
+    expect(lastNameField.extensions).toEqual({
       extension: true,
     });
   });

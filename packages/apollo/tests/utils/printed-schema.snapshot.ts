@@ -40,17 +40,19 @@ type SampleOrphanedType {
   averageRating: Float!
 }
 
+type Ingredient {
+  """ingredient base name"""
+  baseName: String @deprecated(reason: "is deprecated")
+
+  """ingredient name"""
+  name: String @deprecated(reason: "is deprecated")
+  id: ID!
+}
+
 type Category {
   name: String!
   description: String!
   tags: [String!]!
-}
-
-type Ingredient {
-  id: ID!
-
-  """ingredient name"""
-  name: String @deprecated(reason: "is deprecated")
 }
 
 """orphaned enum"""
@@ -60,6 +62,9 @@ enum SampleOrphanedEnum {
   Black
   White
 }
+
+"""A sample scalar"""
+scalar SampleScalar
 
 type Query {
   """get recipe by id"""
@@ -141,6 +146,8 @@ interface IRecipe {
 }
 
 type Ingredient {
+  """ingredient base name"""
+  baseName: String @deprecated(reason: "is deprecated")
   id: ID!
 
   """ingredient name"""

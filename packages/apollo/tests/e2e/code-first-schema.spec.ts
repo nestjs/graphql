@@ -17,6 +17,8 @@ import { DirectionsResolver } from '../code-first/directions/directions.resolver
 import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
 import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
+import { SampleScalar } from '../code-first/other/sample-scalar';
+import { IngredientsResolver } from '../code-first/recipes/ingredients.resolver';
 import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
 import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
@@ -48,11 +50,13 @@ describe('Code-first - schema factory', () => {
     beforeAll(async () => {
       schema = await schemaFactory.create(
         [
+          IngredientsResolver,
           RecipesResolver,
           DirectionsResolver,
           AbstractResolver,
           IRecipesResolver,
         ],
+        [SampleScalar],
         { orphanedTypes: [SampleOrphanedType, SampleOrphanedEnum] },
       );
 
@@ -66,6 +70,21 @@ describe('Code-first - schema factory', () => {
     it('should match schema snapshot', () => {
       expect(GRAPHQL_SDL_FILE_HEADER + printSchema(schema)).toEqual(
         printedSchemaSnapshot,
+      );
+    });
+    it('should add scalar to schema', () => {
+      // makeExecutableSchema throws if a resolver is defined without being
+      // present in the schema. We should include scalars even if they're not
+      // used by any field (yet)
+      const type = introspectionSchema.types.find(
+        ({ name }) => name === 'SampleScalar',
+      );
+      expect(type).toEqual(
+        expect.objectContaining({
+          description: 'A sample scalar',
+          kind: 'SCALAR',
+          name: 'SampleScalar',
+        }),
       );
     });
     it('should define 5 queries', async () => {
@@ -206,6 +225,18 @@ describe('Code-first - schema factory', () => {
               description: 'ingredient name',
               isDeprecated: true,
               name: 'name',
+              type: {
+                kind: TypeKind.SCALAR,
+                name: 'String',
+                ofType: null,
+              },
+            },
+            {
+              args: [],
+              deprecationReason: 'is deprecated',
+              description: 'ingredient base name',
+              isDeprecated: true,
+              name: 'baseName',
               type: {
                 kind: TypeKind.SCALAR,
                 name: 'String',

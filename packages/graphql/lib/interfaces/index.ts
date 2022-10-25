@@ -14,3 +14,4 @@ export * from './graphql-driver.interface';
 export * from './resolve-type-fn.interface';
 export * from './return-type-func.interface';
 export * from './build-federated-schema-options.interface';
+export * from './schema-file-config.interface';

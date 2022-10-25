@@ -6,6 +6,7 @@ import { OrphanedReferenceRegistry } from '../services/orphaned-reference.regist
 import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
+import { MultipleFieldsWithSameNameError } from '../errors/multiple-fields-with-same-name.error';
 
 export type FieldsFactory<T = any, U = any> = (
   handlers: ResolverTypeMetadata[],
@@ -27,7 +28,7 @@ export class RootTypeFactory {
     objectTypeName: 'Subscription' | 'Mutation' | 'Query',
     options: BuildSchemaOptions,
     fieldsFactory: FieldsFactory = (handlers) =>
-      this.generateFields(handlers, options),
+      this.generateFields(handlers, options, objectTypeName),
   ): GraphQLObjectType {
     const handlers = typeRefs
       ? resolversMetadata.filter((query) => typeRefs.includes(query.target))
@@ -45,6 +46,7 @@ export class RootTypeFactory {
   generateFields<T = any, U = any>(
     handlers: ResolverTypeMetadata[],
     options: BuildSchemaOptions,
+    objectTypeName: string,
   ): GraphQLFieldConfigMap<T, U> {
     const fieldConfigMap: GraphQLFieldConfigMap<T, U> = {};
 
@@ -66,6 +68,11 @@ export class RootTypeFactory {
         );
 
         const key = handler.schemaName;
+
+        if (fieldConfigMap[key] && options.noDuplicatedFields) {
+          throw new MultipleFieldsWithSameNameError(key, objectTypeName);
+        }
+
         fieldConfigMap[key] = {
           type,
           args: this.argsFactory.create(handler.methodArgs, options),

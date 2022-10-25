@@ -302,7 +302,10 @@ export class ResolversExplorerService extends BaseExplorerService {
     }
     const wrapper = coreModuleRef.getProviderByKey(REQUEST);
     wrapper.setInstanceByContextId(contextId, {
-      instance: request,
+      // TODO: remove "as any" in the next major release (backward compatibility)
+      instance: (contextId as any).getParent
+        ? (contextId as any).payload
+        : request,
       isResolved: true,
     });
   }
