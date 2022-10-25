@@ -17,6 +17,7 @@ import { DirectionsResolver } from '../code-first/directions/directions.resolver
 import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
 import { AbstractResolver } from '../code-first/other/abstract.resolver';
 import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
+import { SampleScalar } from '../code-first/other/sample-scalar';
 import { IngredientsResolver } from '../code-first/recipes/ingredients.resolver';
 import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
 import { Recipe } from '../code-first/recipes/models/recipe';
@@ -55,6 +56,7 @@ describe('Code-first - schema factory', () => {
           AbstractResolver,
           IRecipesResolver,
         ],
+        [SampleScalar],
         { orphanedTypes: [SampleOrphanedType, SampleOrphanedEnum] },
       );
 
@@ -68,6 +70,21 @@ describe('Code-first - schema factory', () => {
     it('should match schema snapshot', () => {
       expect(GRAPHQL_SDL_FILE_HEADER + printSchema(schema)).toEqual(
         printedSchemaSnapshot,
+      );
+    });
+    it('should add scalar to schema', () => {
+      // makeExecutableSchema throws if a resolver is defined without being
+      // present in the schema. We should include scalars even if they're not
+      // used by any field (yet)
+      const type = introspectionSchema.types.find(
+        ({ name }) => name === 'SampleScalar',
+      );
+      expect(type).toEqual(
+        expect.objectContaining({
+          description: 'A sample scalar',
+          kind: 'SCALAR',
+          name: 'SampleScalar',
+        }),
       );
     });
     it('should define 5 queries', async () => {

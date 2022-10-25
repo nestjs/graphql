@@ -70,7 +70,10 @@ export class GraphQLSchemaFactory {
       mutation: this.mutationTypeFactory.create(resolvers, options),
       query: this.queryTypeFactory.create(resolvers, options),
       subscription: this.subscriptionTypeFactory.create(resolvers, options),
-      types: this.orphanedTypesFactory.create(options.orphanedTypes),
+      types: [
+        ...this.orphanedTypesFactory.create(options.orphanedTypes),
+        ...(options.scalarsMap ?? []).map(({ scalar }) => scalar),
+      ],
       directives: [...specifiedDirectives, ...(options.directives ?? [])],
     });
 
