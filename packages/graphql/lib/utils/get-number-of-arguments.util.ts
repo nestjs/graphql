@@ -7,15 +7,20 @@
  */
 export function getNumberOfArguments(fn: Function): number | undefined {
   // Removing newlines is necessary to use easier regex and handle multi-line functions
-  const functionAsStringWithouNewLines = fn.toString().replace(/\n/g, '');
+  const functionAsStringWithoutNewLines = fn.toString().replace(/\n/g, '');
 
-  const anythingEnclosedInParenthesesRegex = /\(.+\)/;
+  /* The RegExp below uses a non-greedy match (the question mark), meaning that it tries to find
+   * the smallest possible match. This ensures that we don't accidentally
+   * consider the function's body as part of the regex match, since we aim
+   * to get only the parameters section.
+   */
+  const anythingEnclosedInParenthesesRegex = /\(.*?\)/;
 
-  const regexMatchedArray = functionAsStringWithouNewLines.match(
+  const regexMatchedArray = functionAsStringWithoutNewLines.match(
     new RegExp(anythingEnclosedInParenthesesRegex),
   );
 
-  if (regexMatchedArray) {
+  if (functionHasOneOrMoreArguments(regexMatchedArray)) {
     const functionParametersAsString = regexMatchedArray[0];
 
     // Removing arrays and objects is also necessary because we count the number of commas in the string,
@@ -29,4 +34,10 @@ export function getNumberOfArguments(fn: Function): number | undefined {
   }
 
   return 0;
+}
+
+function functionHasOneOrMoreArguments(
+  functionRegexMatchArray: RegExpMatchArray,
+) {
+  return functionRegexMatchArray && functionRegexMatchArray[0] !== '()';
 }

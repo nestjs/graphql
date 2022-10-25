@@ -7,6 +7,17 @@ describe('getNumberOfArguments', () => {
       expect(getNumberOfArguments(zeroArgFunction)).toBe(0);
     });
 
+    it('should return 0 for a 0-argument function with body', () => {
+      function zeroArgFunction() {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
+      expect(getNumberOfArguments(zeroArgFunction)).toBe(0);
+    });
+
     it('should return 1 for a 1-argument function', () => {
       function oneArgFunction(_arg1: any) {}
       expect(getNumberOfArguments(oneArgFunction)).toBe(1);
