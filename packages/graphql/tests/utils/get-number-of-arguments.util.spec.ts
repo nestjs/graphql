@@ -23,6 +23,17 @@ describe('getNumberOfArguments', () => {
       expect(getNumberOfArguments(oneArgFunction)).toBe(1);
     });
 
+    it('should return 1 for a 1-argument function with body', () => {
+      function oneArgFunction(_arg1: any) {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
+      expect(getNumberOfArguments(oneArgFunction)).toBe(1);
+    });
+
     it('should return 2 for a 2-argument function', () => {
       function twoArgFunction(_arg1: any, _arg2: any) {}
       expect(getNumberOfArguments(twoArgFunction)).toBe(2);
@@ -92,7 +103,23 @@ describe('getNumberOfArguments', () => {
     class TestStaticClass {
       static methodZeroArguments() {}
 
+      static methodZeroArgumentsWithBody() {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
+
       static methodOneArgument(_arg: any) {}
+
+      static methodOneArgumentWithBody(_arg: any) {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
 
       static methodTwoArguments(_arg1: any, _arg2: any) {}
 
@@ -103,8 +130,20 @@ describe('getNumberOfArguments', () => {
       expect(getNumberOfArguments(TestStaticClass.methodZeroArguments)).toBe(0);
     });
 
+    it('should return 0 for a 0-argument function with body', () => {
+      expect(
+        getNumberOfArguments(TestStaticClass.methodZeroArgumentsWithBody),
+      ).toBe(0);
+    });
+
     it('should return 1 for a 1-argument function', () => {
       expect(getNumberOfArguments(TestStaticClass.methodOneArgument)).toBe(1);
+    });
+
+    it('should return 1 for a 1-argument function with body', () => {
+      expect(
+        getNumberOfArguments(TestStaticClass.methodOneArgumentWithBody),
+      ).toBe(1);
     });
 
     it('should return 2 for a 2-argument function', () => {
