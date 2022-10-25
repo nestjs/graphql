@@ -193,5 +193,13 @@ describe('getNumberOfArguments', () => {
 
       expect(getNumberOfArguments(functionWithArray)).toBe(2);
     });
+
+    // This test is skipped because we don't support it yet.
+    it.skip('should count correctly for arrow functions without parenthesis', () => {
+      // prettier-ignore
+      const leanArrowFunction = x => x + 2;
+
+      expect(getNumberOfArguments(leanArrowFunction)).toBe(1);
+    });
   });
 });
