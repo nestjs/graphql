@@ -7,8 +7,30 @@ describe('getNumberOfArguments', () => {
       expect(getNumberOfArguments(zeroArgFunction)).toBe(0);
     });
 
+    it('should return 0 for a 0-argument function with body', () => {
+      function zeroArgFunction() {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
+      expect(getNumberOfArguments(zeroArgFunction)).toBe(0);
+    });
+
     it('should return 1 for a 1-argument function', () => {
       function oneArgFunction(_arg1: any) {}
+      expect(getNumberOfArguments(oneArgFunction)).toBe(1);
+    });
+
+    it('should return 1 for a 1-argument function with body', () => {
+      function oneArgFunction(_arg1: any) {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
       expect(getNumberOfArguments(oneArgFunction)).toBe(1);
     });
 
@@ -81,7 +103,23 @@ describe('getNumberOfArguments', () => {
     class TestStaticClass {
       static methodZeroArguments() {}
 
+      static methodZeroArgumentsWithBody() {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
+
       static methodOneArgument(_arg: any) {}
+
+      static methodOneArgumentWithBody(_arg: any) {
+        if (1 == +'2') {
+          return false;
+        }
+
+        return true;
+      }
 
       static methodTwoArguments(_arg1: any, _arg2: any) {}
 
@@ -92,8 +130,20 @@ describe('getNumberOfArguments', () => {
       expect(getNumberOfArguments(TestStaticClass.methodZeroArguments)).toBe(0);
     });
 
+    it('should return 0 for a 0-argument function with body', () => {
+      expect(
+        getNumberOfArguments(TestStaticClass.methodZeroArgumentsWithBody),
+      ).toBe(0);
+    });
+
     it('should return 1 for a 1-argument function', () => {
       expect(getNumberOfArguments(TestStaticClass.methodOneArgument)).toBe(1);
+    });
+
+    it('should return 1 for a 1-argument function with body', () => {
+      expect(
+        getNumberOfArguments(TestStaticClass.methodOneArgumentWithBody),
+      ).toBe(1);
     });
 
     it('should return 2 for a 2-argument function', () => {
@@ -142,6 +192,14 @@ describe('getNumberOfArguments', () => {
       function functionWithArray(_arg1 = [1, 2, 3], _arg2 = { a: 1, b: 2 }) {}
 
       expect(getNumberOfArguments(functionWithArray)).toBe(2);
+    });
+
+    // This test is skipped because we don't support it yet.
+    it.skip('should count correctly for arrow functions without parenthesis', () => {
+      // prettier-ignore
+      const leanArrowFunction = x => x + 2;
+
+      expect(getNumberOfArguments(leanArrowFunction)).toBe(1);
     });
   });
 });
