@@ -34,9 +34,9 @@
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-link-ws": "1.0.20",
-    "apollo-server-core": "3.10.3",
-    "apollo-server-express": "3.10.3",
-    "apollo-server-fastify": "3.10.3",
+    "apollo-server-core": "3.10.4",
+    "apollo-server-express": "3.10.4",
+    "apollo-server-fastify": "3.10.4",
     "apollo-server-plugin-response-cache": "3.7.1",
     "graphql-16": "npm:graphql@16.6.0"
   },

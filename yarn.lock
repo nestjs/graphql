@@ -3469,10 +3469,10 @@ apollo-server-caching@^3.2.0:
   dependencies:
     lru-cache "^6.0.0"
 
-apollo-server-core@3.10.3, apollo-server-core@^3.10.3:
-  version "3.10.3"
-  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.3.tgz#64db45703785e9e79e7c5dadb6df2f7ee6fcbecc"
-  integrity sha512-PiTirlcaszgnJGzSsGui9XWh0KAh0BUW+GvRKN6O0H0qOSXSLmoqqyL83J+u+HaUZGyyiE0+VOkyCcuF+kKbEw==
+apollo-server-core@3.10.4, apollo-server-core@^3.10.4:
+  version "3.10.4"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.4.tgz#0ea596a65f30eeb476f3a9d98a4340336a67fe29"
+  integrity sha512-eh5AH4b8savvw/9Fd0uH8WIV5EydIS55y5v3Xuu7Ztfdjjd0w1vuc7+4iV+C0w6/KyKQkOnFZCP/sWk2CQCNIQ==
   dependencies:
     "@apollo/utils.keyvaluecache" "^1.0.1"
     "@apollo/utils.logger" "^1.0.0"
@@ -3493,6 +3493,7 @@ apollo-server-core@3.10.3, apollo-server-core@^3.10.3:
     graphql-tag "^2.11.0"
     loglevel "^1.6.8"
     lru-cache "^6.0.0"
+    node-abort-controller "^3.0.1"
     sha.js "^2.4.11"
     uuid "^9.0.0"
     whatwg-mimetype "^3.0.0"
@@ -3516,10 +3517,10 @@ apollo-server-errors@^3.3.1:
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-3.3.1.tgz#ba5c00cdaa33d4cbd09779f8cb6f47475d1cd655"
   integrity sha512-xnZJ5QWs6FixHICXHxUfm+ZWqqxrNuPlQ+kj5m6RtEgIpekOPssH/SD9gf2B4HuWV0QozorrygwZnux8POvyPA==
 
-apollo-server-express@3.10.3:
-  version "3.10.3"
-  resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-3.10.3.tgz#946b857c7d8516235a757e853966dd1189f247e1"
-  integrity sha512-Z8m0r10mX8KlGS3noYeRPcWxWR2hX6NHJicjuwZ62PeTZlrDJF5cwGmXqbUg/sCTPx7Ny//ZEASBTwFFp8DOeQ==
+apollo-server-express@3.10.4:
+  version "3.10.4"
+  resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-3.10.4.tgz#8f27fe044b4a5d4d3714d2b14935832fa9d53aed"
+  integrity sha512-BU067/SBCxj5hAxbiCTQa34eiQkLGEtv+u3Cq0ocWl8Zt8th9ye4sbIWpO3jiYDpdo8CLUw6j03iz6ZluN1MDw==
   dependencies:
     "@types/accepts" "^1.3.5"
     "@types/body-parser" "1.19.2"
@@ -3527,20 +3528,20 @@ apollo-server-express@3.10.3:
     "@types/express" "4.17.14"
     "@types/express-serve-static-core" "4.17.31"
     accepts "^1.3.5"
-    apollo-server-core "^3.10.3"
+    apollo-server-core "^3.10.4"
     apollo-server-types "^3.6.3"
     body-parser "^1.19.0"
     cors "^2.8.5"
     parseurl "^1.3.3"
 
-apollo-server-fastify@3.10.3:
-  version "3.10.3"
-  resolved "https://registry.yarnpkg.com/apollo-server-fastify/-/apollo-server-fastify-3.10.3.tgz#8a066287934572a0eeaabea89a4608a0200783b4"
-  integrity sha512-cCcoDM/PaXWPRGjZvvU3JEipoDs24lB/QKMA0jiWpo5yfseRN6VygFKMdiQuo8RJEtpzQ6A5L8omQkhs6reDNw==
+apollo-server-fastify@3.10.4:
+  version "3.10.4"
+  resolved "https://registry.yarnpkg.com/apollo-server-fastify/-/apollo-server-fastify-3.10.4.tgz#7b5bb540f8c0a4806f332bec0e42e80c92f826c3"
+  integrity sha512-ZSOfHy6R7PjTTPHabPm/mv1gpBTlLvhLRAN4n9O5scwu/KiCekqchHgE1EkTzicZ3jjnMfMffVgDSt7s5mIUDA==
   dependencies:
     "@fastify/accepts" "^3.0.0"
     "@fastify/cors" "^7.0.0"
-    apollo-server-core "^3.10.3"
+    apollo-server-core "^3.10.4"
     apollo-server-types "^3.6.3"
 
 apollo-server-plugin-base@^3.6.3:
