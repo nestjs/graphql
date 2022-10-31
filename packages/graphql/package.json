@@ -29,7 +29,7 @@
     "lodash": "4.17.21",
     "normalize-path": "3.0.0",
     "subscriptions-transport-ws": "0.11.0",
-    "tslib": "2.4.0",
+    "tslib": "2.4.1",
     "uuid": "9.0.0",
     "ws": "8.10.0"
   },
