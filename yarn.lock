@@ -3469,7 +3469,36 @@ apollo-server-caching@^3.2.0:
   dependencies:
     lru-cache "^6.0.0"
 
-apollo-server-core@3.10.4, apollo-server-core@^3.10.4:
+apollo-server-core@3.11.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.11.0.tgz#dbbf4c03ac0fdd8774e03c1f4f0d1ea1448b743c"
+  integrity sha512-5iRlkbilXpQeY66/F2/t2oNO0YSqb+kFb5lyMUIqK9VLuBfI/hILQDa5H71ar7hhexKwoDzIDfSJRg5ASNmnQw==
+  dependencies:
+    "@apollo/utils.keyvaluecache" "^1.0.1"
+    "@apollo/utils.logger" "^1.0.0"
+    "@apollo/utils.usagereporting" "^1.0.0"
+    "@apollographql/apollo-tools" "^0.5.3"
+    "@apollographql/graphql-playground-html" "1.6.29"
+    "@graphql-tools/mock" "^8.1.2"
+    "@graphql-tools/schema" "^8.0.0"
+    "@josephg/resolvable" "^1.0.0"
+    apollo-datasource "^3.3.2"
+    apollo-reporting-protobuf "^3.3.3"
+    apollo-server-env "^4.2.1"
+    apollo-server-errors "^3.3.1"
+    apollo-server-plugin-base "^3.7.0"
+    apollo-server-types "^3.7.0"
+    async-retry "^1.2.1"
+    fast-json-stable-stringify "^2.1.0"
+    graphql-tag "^2.11.0"
+    loglevel "^1.6.8"
+    lru-cache "^6.0.0"
+    node-abort-controller "^3.0.1"
+    sha.js "^2.4.11"
+    uuid "^9.0.0"
+    whatwg-mimetype "^3.0.0"
+
+apollo-server-core@^3.10.4:
   version "3.10.4"
   resolved "https://registry.yarnpkg.com/apollo-server-core/-/apollo-server-core-3.10.4.tgz#0ea596a65f30eeb476f3a9d98a4340336a67fe29"
   integrity sha512-eh5AH4b8savvw/9Fd0uH8WIV5EydIS55y5v3Xuu7Ztfdjjd0w1vuc7+4iV+C0w6/KyKQkOnFZCP/sWk2CQCNIQ==
@@ -3551,6 +3580,13 @@ apollo-server-plugin-base@^3.6.3:
   dependencies:
     apollo-server-types "^3.6.3"
 
+apollo-server-plugin-base@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-plugin-base/-/apollo-server-plugin-base-3.7.0.tgz#b7170c2be0344d5f4382fea951f6d1dd274d6635"
+  integrity sha512-YRPjqFHvWK9eM4gN3D4ArrAtPY7Mb1FL+YoXXwq2GxdrsZSolnDYQkqZ6BhK11J8lUmAQpnpunK91IPZshWluA==
+  dependencies:
+    apollo-server-types "^3.7.0"
+
 apollo-server-plugin-response-cache@3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/apollo-server-plugin-response-cache/-/apollo-server-plugin-response-cache-3.7.1.tgz#ee48637ff487880d97fb7311838e6e9eea01233e"
@@ -3573,6 +3609,16 @@ apollo-server-types@^3.6.3:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/apollo-server-types/-/apollo-server-types-3.6.3.tgz#7818cab914c865dafa53ea263ca6cb1854b4f05a"
   integrity sha512-+7caNTLdevpWI2dGKSa7CWdyudO3NBuJ3HzcrYxjBei6Bth9YdRUNzPSFmBjlm2baHF0GsrMwLpjO+HStJzm3A==
+  dependencies:
+    "@apollo/utils.keyvaluecache" "^1.0.1"
+    "@apollo/utils.logger" "^1.0.0"
+    apollo-reporting-protobuf "^3.3.3"
+    apollo-server-env "^4.2.1"
+
+apollo-server-types@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-types/-/apollo-server-types-3.7.0.tgz#5a6f6f05a3c2ed937ad339b91665248dad957733"
+  integrity sha512-Y2wx7eH/dqqYDdzt0KBJRbVKR10bLiup2aT8huoBbp/u3nbCN88jo1yW+FvlETeV+iKuoY3RiZDlHIvcDQ5/lA==
   dependencies:
     "@apollo/utils.keyvaluecache" "^1.0.1"
     "@apollo/utils.logger" "^1.0.0"
