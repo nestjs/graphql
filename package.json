@@ -47,7 +47,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "graphql": "15.8.0",
     "graphql-subscriptions": "2.0.0",
-    "husky": "8.0.1",
+    "husky": "8.0.2",
     "jest": "29.3.0",
     "lerna": "6.0.3",
     "lerna-changelog": "2.2.0",
