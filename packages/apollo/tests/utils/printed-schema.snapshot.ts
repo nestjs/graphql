@@ -105,6 +105,7 @@ input NewRecipeInput {
   """recipe title"""
   title: String!
   description: String
+  status: String! = "published"
   ingredients: [String!]!
 }
 
@@ -163,6 +164,7 @@ type Mutation {
 input NewRecipeInput {
   description: String
   ingredients: [String!]!
+  status: String! = "published"
 
   """recipe title"""
   title: String!

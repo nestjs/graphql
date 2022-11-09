@@ -31,6 +31,7 @@ export class RecipesResolver {
     @Args('id', {
       defaultValue: '1',
       description: 'recipe id',
+      nullable: true,
     })
     id: string,
   ): Promise<IRecipe> {

@@ -67,18 +67,7 @@ export class TypeMapperSevice {
       );
     }
 
-    let isNotNullable: boolean;
-    if (isInputTypeCtx) {
-      /**
-       * The input values (e.g., args) remain "nullable"
-       * even if the "defaultValue" is specified.
-       */
-      isNotNullable =
-        isUndefined(options.defaultValue) &&
-        (!options.nullable || options.nullable === 'items');
-    } else {
-      isNotNullable = !options.nullable || options.nullable === 'items';
-    }
+    const isNotNullable = !options.nullable || options.nullable === 'items';
     return isNotNullable
       ? (new GraphQLNonNull(graphqlType) as T)
       : (graphqlType as T);
