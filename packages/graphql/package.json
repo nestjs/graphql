@@ -20,7 +20,7 @@
   "dependencies": {
     "@graphql-tools/merge": "8.3.6",
     "@graphql-tools/schema": "9.0.4",
-    "@graphql-tools/utils": "8.12.0",
+    "@graphql-tools/utils": "9.1.0",
     "@nestjs/mapped-types": "1.2.0",
     "chokidar": "3.5.3",
     "fast-glob": "3.2.12",
@@ -29,9 +29,9 @@
     "lodash": "4.17.21",
     "normalize-path": "3.0.0",
     "subscriptions-transport-ws": "0.11.0",
-    "tslib": "2.4.0",
+    "tslib": "2.4.1",
     "uuid": "9.0.0",
-    "ws": "8.10.0"
+    "ws": "8.11.0"
   },
   "devDependencies": {
     "@apollo/subgraph": "0.5.1",
