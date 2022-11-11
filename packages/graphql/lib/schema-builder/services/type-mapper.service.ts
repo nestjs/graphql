@@ -54,7 +54,6 @@ export class TypeMapperSevice {
     hostType: string,
     typeRef: T,
     options: TypeOptions,
-    isInputTypeCtx: boolean,
   ): T {
     this.validateTypeOptions(hostType, options);
     let graphqlType: T | GraphQLList<T> | GraphQLNonNull<T> = typeRef;
