@@ -10,7 +10,7 @@ export interface Federation2Config {
   version: 2;
   /**
    * The imported directives
-   * @default ['@key', '@shareable', '@external', '@override', '@requires']
+   * @default ['@key', '@shareable', '@external', '@override', '@requires', '@tag', '@inaccessible', '@extends', '@provides']
    */
   directives?: (string | AliasDirectiveImport)[];
   /**
