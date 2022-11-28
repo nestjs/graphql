@@ -5,10 +5,10 @@ import {
   SubscriptionConfig,
 } from '@nestjs/graphql';
 import {
-  ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
-  Config,
-  GraphQLExecutor,
-} from 'apollo-server-core';
+  ApolloServerOptions, BaseContext,
+} from '@apollo/server';
+import { GatewayExecutor } from '@apollo/server-gateway-interface'
+import { ApolloServerPluginLandingPageGraphQLPlaygroundOptions } from '@apollo/server-plugin-landing-page-graphql-playground'
 import { GraphQLSchema } from 'graphql';
 
 export interface ServerRegistration {
@@ -39,15 +39,15 @@ export interface ServerRegistration {
 }
 
 export interface ApolloDriverConfig
-  extends Omit<Config, 'typeDefs'>,
+  extends Omit<ApolloServerOptions<BaseContext>, 'typeDefs'>,
     ServerRegistration,
-    Omit<GqlModuleOptions, 'context'> {
+    Omit<GqlModuleOptions, 'resolvers'> {
   /**
    * Executor factory function
    */
   executorFactory?: (
     schema: GraphQLSchema,
-  ) => GraphQLExecutor | Promise<GraphQLExecutor>;
+  ) => GatewayExecutor | Promise<GatewayExecutor>;
 
   /**
    * If enabled, "subscriptions-transport-ws" will be automatically registered.

@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.build.json",
   "compilerOptions": {
+    "esModuleInterop": true,
     "types": ["node"],
     "paths": {
       "@nestjs/graphql": ["../graphql/lib"],

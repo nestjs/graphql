@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.build.json",
   "compilerOptions": {
+    "esModuleInterop": true,
     "outDir": "./dist",
     "rootDir": "./lib",
     "paths": {

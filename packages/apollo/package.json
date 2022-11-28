@@ -25,6 +25,9 @@
   "devDependencies": {
     "@apollo/gateway": "0.54.1",
     "@apollo/gateway-v2": "npm:@apollo/gateway@2.2.1",
+    "@apollo/server": "^4.2.1",
+    "@apollo/server-gateway-interface": "^1.0.7",
+    "@apollo/server-plugin-landing-page-graphql-playground": "^4.0.0",
     "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.2.1",
     "@nestjs/common": "8.4.7",
     "@nestjs/core": "8.4.7",
@@ -38,6 +41,9 @@
     "apollo-server-express": "3.11.1",
     "apollo-server-fastify": "3.11.1",
     "apollo-server-plugin-response-cache": "3.8.1",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "graphql-16": "npm:graphql@16.6.0"
   },
   "dependencies": {

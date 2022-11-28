@@ -2,20 +2,21 @@ import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import {
-  ApolloError,
-  ApolloServerBase,
-  ApolloServerPluginLandingPageDisabled,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-  AuthenticationError,
-  ForbiddenError,
-  PluginDefinition,
-  UserInputError,
-} from 'apollo-server-core';
+import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground'
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled'
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { expressMiddleware } from '@apollo/server/express4';
+import express from 'express';
+import * as http from 'node:http';
+import * as Cors from 'cors';
+import { json } from 'body-parser';
+
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
+import { ApolloError, AuthenticationError, ForbiddenError, UserInputError } from './apollo-errors.driver';
+
 
 const apolloPredefinedExceptions: Partial<
   Record<HttpStatus, typeof ApolloError | typeof UserInputError>
@@ -28,9 +29,9 @@ const apolloPredefinedExceptions: Partial<
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
 > extends AbstractGraphQLDriver<T> {
-  protected _apolloServer: ApolloServerBase;
+  protected _apolloServer: ApolloServer;
 
-  get instance(): ApolloServerBase {
+  get instance(): ApolloServer {
     return this._apolloServer;
   }
 
@@ -70,7 +71,7 @@ export abstract class ApolloBaseDriver<
         plugins: [
           ApolloServerPluginLandingPageGraphQLPlayground(
             playgroundOptions,
-          ) as PluginDefinition,
+          ),
         ],
       };
     } else if (
@@ -80,7 +81,7 @@ export abstract class ApolloBaseDriver<
     ) {
       defaults = {
         ...defaults,
-        plugins: [ApolloServerPluginLandingPageDisabled() as PluginDefinition],
+        plugins: [ApolloServerPluginLandingPageDisabled()],
       };
     }
 
@@ -120,9 +121,9 @@ export abstract class ApolloBaseDriver<
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
     const { ApolloServer } = loadPackage(
-      'apollo-server-express',
+      '@apollo/server/express4',
       'GraphQLModule',
-      () => require('apollo-server-express'),
+      () => require('@apollo/server/express4'),
     );
     const { disableHealthCheck, path, onHealthCheck, cors, bodyParserConfig } =
       apolloOptions;
@@ -132,15 +133,16 @@ export abstract class ApolloBaseDriver<
 
     preStartHook?.();
 
-    const apolloServer = new ApolloServer(apolloOptions as any);
+    const apolloServer = new ApolloServer(apolloOptions);
     await apolloServer.start();
 
-    apolloServer.applyMiddleware({
+    // app.use ?
+    apolloServer.use({
       app,
       path,
       disableHealthCheck,
       onHealthCheck,
-      cors,
+      Cors(cors),
       bodyParserConfig,
     });
 
