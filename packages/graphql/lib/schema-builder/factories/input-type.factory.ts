@@ -38,7 +38,6 @@ export class InputTypeFactory {
       hostType,
       inputType,
       typeOptions,
-      true,
     );
   }
 }

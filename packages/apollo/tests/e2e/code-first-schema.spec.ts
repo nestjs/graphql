@@ -652,6 +652,20 @@ describe('Code-first - schema factory', () => {
               type: { kind: TypeKind.SCALAR, name: 'String', ofType: null },
             },
             {
+              defaultValue: '"published"',
+              description: null,
+              name: 'status',
+              type: {
+                kind: TypeKind.NON_NULL,
+                name: null,
+                ofType: {
+                  kind: TypeKind.SCALAR,
+                  name: 'String',
+                  ofType: null,
+                },
+              },
+            },
+            {
               defaultValue: null,
               description: null,
               name: 'ingredients',

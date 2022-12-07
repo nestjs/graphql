@@ -12,6 +12,9 @@ export class NewRecipeInput {
   @Length(30, 255)
   description?: string;
 
+  @Field({ nullable: false, defaultValue: 'published' })
+  status: string;
+
   @Type(() => String)
   @Field((type) => [String])
   ingredients: string[];
