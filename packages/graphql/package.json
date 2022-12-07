@@ -46,12 +46,20 @@
     "@apollo/subgraph": "^0.1.5 || ^0.3.0 || ^0.4.0 || ^2.0.0",
     "@nestjs/common": "^8.2.3 || ^9.0.0",
     "@nestjs/core": "^8.2.3 || ^9.0.0",
+    "class-transformer": "*",
+    "class-validator": "*",
     "graphql": "^15.8.0 || ^16.0.0",
     "reflect-metadata": "^0.1.13",
     "ts-morph": "^13.0.2 || ^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/subgraph": {
+      "optional": true
+    },
+    "class-transformer": {
+      "optional": true
+    },
+    "class-validator": {
       "optional": true
     },
     "ts-morph": {
