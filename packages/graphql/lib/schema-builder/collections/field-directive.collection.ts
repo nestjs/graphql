@@ -8,9 +8,7 @@ export class FieldDirectiveCollection extends MetadataListByNameCollection<Prope
 
   add(value: PropertyDirectiveMetadata) {
     const combinationKey = `${value.sdl}${value.fieldName}`;
-    if (this.uniqueCombinations.has(combinationKey)) {
-      return;
-    }
+    if (this.uniqueCombinations.has(combinationKey))   return;
 
     super.add(value, value.fieldName);
 
