@@ -4,11 +4,11 @@ import {
   GqlOptionsFactory,
   SubscriptionConfig,
 } from '@nestjs/graphql';
-import {
+/* import {
   ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
   Config,
   GraphQLExecutor,
-} from 'apollo-server-core';
+} from 'apollo-server-core'; */
 import { GraphQLSchema } from 'graphql';
 import { CorsOptions } from 'cors';
 
@@ -40,7 +40,7 @@ export interface ServerRegistration {
 }
 
 export interface ApolloDriverConfig
-  extends Omit<Config, 'typeDefs'>,
+  extends Omit</*Config*/ any, 'typeDefs'>,
     ServerRegistration,
     Omit<GqlModuleOptions, 'context'> {
   /**
@@ -48,7 +48,7 @@ export interface ApolloDriverConfig
    */
   executorFactory?: (
     schema: GraphQLSchema,
-  ) => GraphQLExecutor | Promise<GraphQLExecutor>;
+  ) => /*GraphQLExecutor | Promise<GraphQLExecutor>*/ any;
 
   /**
    * If enabled, "subscriptions-transport-ws" will be automatically registered.
@@ -63,7 +63,7 @@ export interface ApolloDriverConfig
   /**
    * GraphQL playground options.
    */
-  playground?: boolean | ApolloServerPluginLandingPageGraphQLPlaygroundOptions;
+  playground?: boolean;
 
   /**
    * If enabled, will register a global interceptor that automatically maps

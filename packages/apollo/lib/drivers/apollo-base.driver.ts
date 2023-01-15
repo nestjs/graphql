@@ -1,8 +1,8 @@
-import { HttpStatus } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
+//import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import {
+
+/* import {
   ApolloError,
   ApolloServerBase,
   ApolloServerPluginLandingPageDisabled,
@@ -11,14 +11,17 @@ import {
   ForbiddenError,
   PluginDefinition,
   UserInputError,
-} from 'apollo-server-core';
+} from 'apollo-server-core'; */
+
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
+import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { ApolloServer, type BaseContext } from '@apollo/server';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { expressMiddleware } from '@apollo/server/express4';
 import * as express from 'express';
 import * as http from 'node:http';
@@ -29,20 +32,12 @@ import fastifyApollo, {
   fastifyApolloDrainPlugin,
 } from '@as-integrations/fastify';
 
-const apolloPredefinedExceptions: Partial<
-  Record<HttpStatus, typeof ApolloError | typeof UserInputError>
-> = {
-  [HttpStatus.BAD_REQUEST]: UserInputError,
-  [HttpStatus.UNAUTHORIZED]: AuthenticationError,
-  [HttpStatus.FORBIDDEN]: ForbiddenError,
-};
-
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
 > extends AbstractGraphQLDriver<T> {
-  protected apolloServer: ApolloServerBase | ApolloServer<BaseContext>;
+  protected apolloServer: ApolloServer<BaseContext>;
 
-  get instance(): ApolloServerBase | ApolloServer<BaseContext> {
+  get instance(): ApolloServer<BaseContext> {
     return this.apolloServer;
   }
 
@@ -79,11 +74,7 @@ export abstract class ApolloBaseDriver<
         typeof options.playground === 'object' ? options.playground : undefined;
       defaults = {
         ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(
-            playgroundOptions,
-          ) as PluginDefinition,
-        ],
+        plugins: [ApolloServerPluginLandingPageLocalDefault(playgroundOptions)],
       };
     } else if (
       (options.playground === undefined &&
@@ -92,7 +83,7 @@ export abstract class ApolloBaseDriver<
     ) {
       defaults = {
         ...defaults,
-        plugins: [ApolloServerPluginLandingPageDisabled() as PluginDefinition],
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
       };
     }
 
@@ -221,10 +212,11 @@ export abstract class ApolloBaseDriver<
       if (!isHttpException) {
         return originalError as GraphQLFormattedError;
       }
-      let error: ApolloError;
+      let error: ApolloServerErrorCode;
 
       const httpStatus = exceptionRef?.status;
-      if (httpStatus in apolloPredefinedExceptions) {
+      console.log('httpStatus', httpStatus);
+      /* if (httpStatus in apolloPredefinedExceptions) {
         error = new apolloPredefinedExceptions[httpStatus](
           exceptionRef?.message,
         );
@@ -234,7 +226,7 @@ export abstract class ApolloBaseDriver<
 
       error.stack = exceptionRef?.stacktrace;
       error.extensions['response'] = exceptionRef?.response;
-      return error;
+      return error; */
     };
   }
 
