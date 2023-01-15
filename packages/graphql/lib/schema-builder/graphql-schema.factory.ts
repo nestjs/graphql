@@ -79,17 +79,12 @@ export class GraphQLSchemaFactory {
 
     if (!options.skipCheck) {
       const introspectionQuery = getIntrospectionQuery();
-      let errors: readonly GraphQLError[];
-      if (GraphQLPackageVersion.startsWith('15')) {
-        const executionResult = await graphql(schema, introspectionQuery);
-        errors = executionResult.errors;
-      } else {
-        const executionResult = await graphql({
-          schema,
-          source: introspectionQuery,
-        });
-        errors = executionResult.errors;
-      }
+      const executionResult = await graphql({
+        schema,
+        source: introspectionQuery,
+      });
+
+      const errors = executionResult.errors;
       if (errors) {
         throw new SchemaGenerationError(errors);
       }
