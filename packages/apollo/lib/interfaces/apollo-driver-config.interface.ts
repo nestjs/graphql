@@ -10,6 +10,7 @@ import {
   GraphQLExecutor,
 } from 'apollo-server-core';
 import { GraphQLSchema } from 'graphql';
+import { CorsOptions } from 'cors';
 
 export interface ServerRegistration {
   /**
@@ -20,7 +21,7 @@ export interface ServerRegistration {
   /**
    * CORS configuration
    */
-  cors?: any | boolean;
+  cors?: CorsOptions;
 
   /**
    * Body-parser configuration

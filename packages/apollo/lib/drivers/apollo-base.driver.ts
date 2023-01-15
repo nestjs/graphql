@@ -17,6 +17,18 @@ import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
+import { ApolloServer, type BaseContext } from '@apollo/server';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { expressMiddleware } from '@apollo/server/express4';
+import * as express from 'express';
+import * as http from 'node:http';
+import * as cors from 'cors';
+
+import fastifyApollo, {
+  fastifyApolloHandler,
+  fastifyApolloDrainPlugin,
+} from '@as-integrations/fastify';
+
 const apolloPredefinedExceptions: Partial<
   Record<HttpStatus, typeof ApolloError | typeof UserInputError>
 > = {
@@ -28,10 +40,10 @@ const apolloPredefinedExceptions: Partial<
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
 > extends AbstractGraphQLDriver<T> {
-  protected _apolloServer: ApolloServerBase;
+  protected apolloServer: ApolloServerBase | ApolloServer<BaseContext>;
 
-  get instance(): ApolloServerBase {
-    return this._apolloServer;
+  get instance(): ApolloServerBase | ApolloServer<BaseContext> {
+    return this.apolloServer;
   }
 
   public async start(apolloOptions: T) {
@@ -48,7 +60,7 @@ export abstract class ApolloBaseDriver<
   }
 
   public stop() {
-    return this._apolloServer?.stop();
+    return this.apolloServer?.stop();
   }
 
   public async mergeDefaultOptions(options: T): Promise<T> {
@@ -115,68 +127,72 @@ export abstract class ApolloBaseDriver<
       );
   }
 
-  protected async registerExpress(
-    apolloOptions: T,
-    { preStartHook }: { preStartHook?: () => void } = {},
-  ) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-express',
-      'GraphQLModule',
-      () => require('apollo-server-express'),
-    );
-    const { disableHealthCheck, path, onHealthCheck, cors, bodyParserConfig } =
-      apolloOptions;
+  protected async registerExpress(options: T, hooks?: any) {
+    if (hooks?.preStartHook) {
+      hooks?.preStartHook();
+    }
+
+    const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
+    const httpServer = http.createServer(app);
 
-    preStartHook?.();
-
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    await apolloServer.start();
-
-    apolloServer.applyMiddleware({
-      app,
-      path,
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
+    // Set up Apollo Server
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers,
+      schema,
+      ...options,
+      /**
+       * @TODO
+       * should remove serverWillStart from default plugins.
+       * after include plugins here
+       */
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     });
 
-    this._apolloServer = apolloServer;
+    await server.start();
+
+    app.use(
+      path,
+      cors(options.cors),
+      express.json(),
+      expressMiddleware(server),
+    );
+
+    this.apolloServer = server;
   }
 
-  protected async registerFastify(
-    apolloOptions: T,
-    { preStartHook }: { preStartHook?: () => void } = {},
-  ) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-fastify',
-      'GraphQLModule',
-      () => require('apollo-server-fastify'),
-    );
+  protected async registerFastify(options: T, hooks?: any) {
+    if (hooks?.preStartHook) {
+      hooks?.preStartHook();
+    }
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
 
-    preStartHook?.();
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    await apolloServer.start();
+    const { path, typeDefs, resolvers, schema } = options;
 
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
-      apolloOptions;
-    await app.register(
-      apolloServer.createHandler({
-        disableHealthCheck,
-        onHealthCheck,
-        cors,
-        bodyParserConfig,
-        path,
-      }),
-    );
+    const server = new ApolloServer<BaseContext>({
+      typeDefs,
+      resolvers,
+      schema,
+      plugins: [fastifyApolloDrainPlugin(app)],
+    });
 
-    this._apolloServer = apolloServer;
+    await server.start();
+
+    app.route({
+      url: path,
+      method: ['POST', 'OPTIONS'],
+      handler: fastifyApolloHandler(server),
+    });
+
+    await app.register(fastifyApollo(server));
+    await app.register(cors, options.cors);
+
+    this.apolloServer = server;
   }
 
   private wrapFormatErrorFn(options: T) {
