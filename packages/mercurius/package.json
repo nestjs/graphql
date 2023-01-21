@@ -31,7 +31,7 @@
     "@nestjs/platform-fastify": "8.4.7",
     "@nestjs/testing": "8.4.7",
     "fastify": "4.12.0",
-    "mercurius": "8.13.2",
+    "mercurius": "11.5.0",
     "mercurius-integration-testing": "6.0.1"
   },
   "peerDependencies": {
@@ -39,6 +39,6 @@
     "@nestjs/graphql": "^10.0.0",
     "fastify": "^3.25.0 || ^4.0.0",
     "graphql": "^15.8.0 || ^16.0.0",
-    "mercurius": "^8.12.0 || ^9.0.0 || ^10.0.0"
+    "mercurius": "^8.12.0 || ^9.0.0 || ^10.0.0 || ^11.0.0"
   }
 }
