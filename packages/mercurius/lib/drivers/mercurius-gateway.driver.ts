@@ -1,5 +1,5 @@
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
+import { FastifyInstance, FastifyBaseLogger } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
@@ -9,7 +9,7 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
     Server,
     IncomingMessage,
     ServerResponse,
-    FastifyLoggerInstance
+    FastifyBaseLogger
   > {
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
