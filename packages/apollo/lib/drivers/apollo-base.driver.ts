@@ -13,6 +13,8 @@ import { AbstractGraphQLDriver } from '@nestjs/graphql';
   UserInputError,
 } from 'apollo-server-core'; */
 
+import { loadPackage } from '@nestjs/common/utils/load-package.util';
+
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
@@ -25,9 +27,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { expressMiddleware } from '@apollo/server/express4';
 import * as express from 'express';
 import * as http from 'node:http';
-import * as cors from 'cors';
 
-import fastifyApollo, {
+import {
   fastifyApolloHandler,
   fastifyApolloDrainPlugin,
 } from '@as-integrations/fastify';
@@ -123,6 +124,8 @@ export abstract class ApolloBaseDriver<
       hooks?.preStartHook();
     }
 
+    const cors = loadPackage('cors', null, () => require('cors'));
+
     const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
@@ -160,6 +163,10 @@ export abstract class ApolloBaseDriver<
       hooks?.preStartHook();
     }
 
+    const cors = loadPackage('@fastify/cors', null, () =>
+      require('@fastify/cors'),
+    );
+
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
 
@@ -176,11 +183,10 @@ export abstract class ApolloBaseDriver<
 
     app.route({
       url: path,
-      method: ['POST', 'OPTIONS'],
+      method: ['GET', 'POST', 'OPTIONS'],
       handler: fastifyApolloHandler(server),
     });
 
-    await app.register(fastifyApollo(server));
     await app.register(cors, options.cors);
 
     this.apolloServer = server;
