@@ -1,9 +1,9 @@
 import { GraphQLError } from 'graphql';
 
-import type { ExpcetionOptions } from '../interfaces/graphql-exception.interface';
+import type { ExceptionOptions } from '../interfaces/graphql-exception.interface';
 
 export class GraphQLException extends GraphQLError {
-  constructor(message: string, options: ExpcetionOptions) {
+  constructor(message: string, options: ExceptionOptions) {
     super(message, options);
   }
 }

@@ -22,7 +22,7 @@ import { IRecipeResolver } from '../code-first-federation/recipe/irecipe.resolve
 import { UserResolver } from '../code-first-federation/user/user.resolver';
 import { printedSchemaSnapshot } from '../utils/printed-schema-with-cache-control.snapshot';
 import { INestApplication } from '@nestjs/common';
-import { ApolloServerBase } from 'apollo-server-core';
+import { ApolloServer } from '@apollo/server';
 import { ApolloFederationDriver } from '../../lib';
 import { gql } from 'graphql-tag';
 import { CachingApplicationModule } from '../code-first-federation/caching.module';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
+import { ApolloServerPluginInlineTraceDisabled } from '@apollo/server/plugin/disabled';
 import { join } from 'path';
 import { ApolloDriverConfig, ApolloDriverConfigFactory } from '../../../../lib';
 
