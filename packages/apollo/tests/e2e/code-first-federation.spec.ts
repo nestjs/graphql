@@ -1,14 +1,14 @@
+import { ApolloServer } from '@apollo/server';
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'graphql-tag';
 import { ApolloFederationDriver } from '../../lib';
 import { ApplicationModule } from '../code-first-federation/app.module';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerBase;
+  let apolloClient: ApolloServer;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({

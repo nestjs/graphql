@@ -1,27 +1,18 @@
 //import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-
-/* import {
-  ApolloError,
-  ApolloServerBase,
-  ApolloServerPluginLandingPageDisabled,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-  AuthenticationError,
-  ForbiddenError,
-  PluginDefinition,
-  UserInputError,
-} from 'apollo-server-core'; */
-
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 
-import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { GraphQLError, GraphQLFormattedError, Kind } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
-import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { ApolloServer, type BaseContext } from '@apollo/server';
+import {
+  ApolloServerErrorCode,
+  unwrapResolverError,
+} from '@apollo/server/errors';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { expressMiddleware } from '@apollo/server/express4';
@@ -32,6 +23,13 @@ import {
   fastifyApolloHandler,
   fastifyApolloDrainPlugin,
 } from '@as-integrations/fastify';
+import { HttpStatus } from '@nestjs/common';
+
+const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
+  [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_USER_INPUT,
+  [HttpStatus.UNAUTHORIZED]: 'UNAUTHENTICATED',
+  [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
+};
 
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
@@ -171,11 +169,11 @@ export abstract class ApolloBaseDriver<
     const app = httpAdapter.getInstance();
 
     const { path, typeDefs, resolvers, schema } = options;
-
     const server = new ApolloServer<BaseContext>({
       typeDefs,
       resolvers,
       schema,
+      ...options,
       plugins: [fastifyApolloDrainPlugin(app)],
     });
 
@@ -214,25 +212,28 @@ export abstract class ApolloBaseDriver<
       const exceptionRef = originalError?.extensions?.exception;
       const isHttpException =
         exceptionRef?.response?.statusCode && exceptionRef?.status;
-
       if (!isHttpException) {
         return originalError as GraphQLFormattedError;
       }
-      let error: ApolloServerErrorCode;
+      let error: GraphQLError;
 
       const httpStatus = exceptionRef?.status;
-      console.log('httpStatus', httpStatus);
-      /* if (httpStatus in apolloPredefinedExceptions) {
-        error = new apolloPredefinedExceptions[httpStatus](
-          exceptionRef?.message,
-        );
+      if (httpStatus in apolloPredefinedExceptions) {
+        error = new GraphQLError(exceptionRef?.message, {
+          extensions: {
+            code: apolloPredefinedExceptions[httpStatus],
+          },
+        });
       } else {
-        error = new ApolloError(exceptionRef.message, httpStatus?.toString());
+        error = new GraphQLError(exceptionRef.message, httpStatus?.toString());
       }
 
       error.stack = exceptionRef?.stacktrace;
+      //TODO: we need to verify if previous behavior is to be kept
+      // if so we must open a PR on Apollo to include response inside the raised exception
+      //https://github.com/apollographql/apollo-server/blob/e6d0d6d9cbd78d4914adf2abb04d84710991849a/packages/server/src/errorNormalize.ts#L58
       error.extensions['response'] = exceptionRef?.response;
-      return error; */
+      return error;
     };
   }
 

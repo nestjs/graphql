@@ -1,14 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
+import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
 import { ApolloDriver } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
+import * as assert from 'assert';
 
 describe('Code-first', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerBase;
+  let apolloClient: ApolloServer;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -33,7 +34,9 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    assert(response.body.kind === 'single');
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
       categories: [
         {
           name: 'Category #1',
@@ -59,7 +62,9 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    assert(response.body.kind === 'single');
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
       search: [
         {
           title: 'recipe',
@@ -88,7 +93,9 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    assert(response.body.kind === 'single');
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
       recipes: [
         {
           id: '1',
@@ -133,7 +140,9 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    assert(response.body.kind === 'single');
+    expect(response.body.singleResult.errors).toBeUndefined();
+    expect(response.body.singleResult.data).toEqual({
       recipes: [
         {
           id: '1',

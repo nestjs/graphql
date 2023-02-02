@@ -4,11 +4,6 @@ import {
   GqlOptionsFactory,
   SubscriptionConfig,
 } from '@nestjs/graphql';
-/* import {
-  ApolloServerPluginLandingPageGraphQLPlaygroundOptions,
-  Config,
-  GraphQLExecutor,
-} from 'apollo-server-core'; */
 import { GraphQLSchema } from 'graphql';
 import { CorsOptions } from 'cors';
 

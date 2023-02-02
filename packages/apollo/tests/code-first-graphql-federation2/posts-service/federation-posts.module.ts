@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
+import { ApolloServerPluginInlineTraceDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloDriverConfig } from '../../../lib';
 import { ApolloFederationDriver } from '../../../lib/drivers';
 import { PostsModule } from './posts/posts.module';
