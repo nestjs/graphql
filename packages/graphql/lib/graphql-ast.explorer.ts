@@ -314,7 +314,8 @@ export class GraphQLAstExplorer {
     return {
       name: propertyName,
       type: this.addSymbolIfRoot(type),
-      hasQuestionToken: !required,
+      hasQuestionToken:
+        !required || (item as FieldDefinitionNode).arguments?.length > 0,
     };
   }
 
