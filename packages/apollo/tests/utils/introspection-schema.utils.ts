@@ -12,7 +12,7 @@ export function getMutation(
   introspectionSchema: IntrospectionSchema,
 ): IntrospectionObjectType {
   return introspectionSchema.types.find(
-    (item) => item.name === introspectionSchema.mutationType.name,
+    (item) => item.name === introspectionSchema.mutationType?.name,
   ) as IntrospectionObjectType;
 }
 
@@ -20,7 +20,7 @@ export function getSubscription(
   introspectionSchema: IntrospectionSchema,
 ): IntrospectionObjectType {
   return introspectionSchema.types.find(
-    (item) => item.name === introspectionSchema.subscriptionType.name,
+    (item) => item.name === introspectionSchema.subscriptionType?.name,
   ) as IntrospectionObjectType;
 }
 
