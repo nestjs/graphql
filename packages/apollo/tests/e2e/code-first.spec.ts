@@ -5,7 +5,7 @@ import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
 import { ApolloDriver } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
-import * as assert from 'assert';
+import { expectSingleResult } from '../utils/assertion-utils';
 
 describe('Code-first', () => {
   let app: INestApplication;
@@ -34,9 +34,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    assert(response.body.kind === 'single');
-    expect(response.body.singleResult.errors).toBeUndefined();
-    expect(response.body.singleResult.data).toEqual({
+    expectSingleResult(response).toEqual({
       categories: [
         {
           name: 'Category #1',
@@ -62,9 +60,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    assert(response.body.kind === 'single');
-    expect(response.body.singleResult.errors).toBeUndefined();
-    expect(response.body.singleResult.data).toEqual({
+    expectSingleResult(response).toEqual({
       search: [
         {
           title: 'recipe',
@@ -93,9 +89,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    assert(response.body.kind === 'single');
-    expect(response.body.singleResult.errors).toBeUndefined();
-    expect(response.body.singleResult.data).toEqual({
+    expectSingleResult(response).toEqual({
       recipes: [
         {
           id: '1',
@@ -140,9 +134,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    assert(response.body.kind === 'single');
-    expect(response.body.singleResult.errors).toBeUndefined();
-    expect(response.body.singleResult.data).toEqual({
+    expectSingleResult(response).toEqual({
       recipes: [
         {
           id: '1',

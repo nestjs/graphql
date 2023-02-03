@@ -55,5 +55,4 @@ type Query {
 
 type Subscription {
   catCreated: Cat
-}
-`;
+}`;

@@ -70,7 +70,7 @@ describe('Code-first - Federation with caching', () => {
       );
 
       introspectionSchema = await (
-        await graphql(schema, getIntrospectionQuery())
+        await graphql({ schema, source: getIntrospectionQuery() })
       ).data.__schema;
     });
 
@@ -87,7 +87,7 @@ describe('Code-first - Federation with caching', () => {
 
   describe('enabled cache', () => {
     let app: INestApplication;
-    let apolloClient: ApolloServerBase;
+    let apolloClient: ApolloServer;
     let postService: PostService;
 
     beforeEach(async () => {

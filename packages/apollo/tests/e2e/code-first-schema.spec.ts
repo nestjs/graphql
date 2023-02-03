@@ -68,7 +68,7 @@ describe('Code-first - schema factory', () => {
       debugger;
       expect(schema).toBeInstanceOf(GraphQLSchema);
     });
-    xit('should match schema snapshot', () => {
+    it('should match schema snapshot', () => {
       expect(GRAPHQL_SDL_FILE_HEADER + printSchema(schema)).toEqual(
         printedSchemaSnapshot,
       );

@@ -210,5 +210,4 @@ union SearchResultUnion = Ingredient | Recipe
 type Subscription {
   """subscription description"""
   recipeAdded: Recipe!
-}
-`;
+}`;

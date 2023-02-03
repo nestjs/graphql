@@ -26,6 +26,7 @@
     "@apollo/gateway": "0.54.1",
     "@apollo/gateway-v2": "npm:@apollo/gateway@2.2.3",
     "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.2.3",
+    "@apollo/server-plugin-response-cache": "^4.1.0",
     "@nestjs/common": "9.2.1",
     "@nestjs/core": "9.2.1",
     "@nestjs/platform-express": "9.2.1",
@@ -34,7 +35,6 @@
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-link-ws": "1.0.20",
-    "apollo-server-plugin-response-cache": "3.8.1",
     "graphql-16": "npm:graphql@16.6.0"
   },
   "dependencies": {
