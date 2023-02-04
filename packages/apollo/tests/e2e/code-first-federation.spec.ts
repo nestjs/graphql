@@ -33,7 +33,7 @@ describe('Code-first - Federation', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       _service: {
         sdl: `interface IRecipe {
   id: ID!
@@ -89,7 +89,7 @@ union FederationSearchResultUnion = Post | User
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       search: [
         {
           id: '1',
