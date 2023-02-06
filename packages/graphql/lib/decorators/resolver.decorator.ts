@@ -20,15 +20,11 @@ function getObjectOrInterfaceTypeNameIfExists(
   nameOrType: Function,
 ): string | undefined {
   const ctor = getClassOrUndefined(nameOrType);
-  const objectTypesMetadata = TypeMetadataStorage.getObjectTypesMetadata();
-  const objectMetadata = objectTypesMetadata.find(
-    (type) => type.target === ctor,
-  );
+  const objectMetadata =
+    TypeMetadataStorage.getObjectTypeMetadataByTarget(ctor);
   if (!objectMetadata) {
-    const interfaceTypesMetadata = TypeMetadataStorage.getInterfacesMetadata();
-    const interfaceMetadata = interfaceTypesMetadata.find(
-      (type) => type.target === ctor,
-    );
+    const interfaceMetadata =
+        TypeMetadataStorage.getInterfacesMetadata(ctor);
     if (!interfaceMetadata) {
       return;
     }
