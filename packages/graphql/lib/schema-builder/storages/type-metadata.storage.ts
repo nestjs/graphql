@@ -82,7 +82,7 @@ export class TypeMetadataStorageHost {
   }
 
   getInterfacesMetadata(): InterfaceMetadata[] {
-    return this.metadataByTargetCollection.all.interface;
+    return [...this.metadataByTargetCollection.all.interface.values()];
   }
 
   getInterfaceMetadataByTarget(
@@ -195,7 +195,7 @@ export class TypeMetadataStorageHost {
       ...this.metadataByTargetCollection.all.objectType,
       ...this.metadataByTargetCollection.all.inputType,
       ...this.metadataByTargetCollection.all.argumentType,
-      ...this.metadataByTargetCollection.all.interface,
+      ...this.metadataByTargetCollection.all.interface.values(),
     ];
     this.loadClassPluginMetadata(classMetadata);
     this.compileClassMetadata(classMetadata);

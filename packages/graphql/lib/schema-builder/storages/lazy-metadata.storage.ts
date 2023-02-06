@@ -48,14 +48,16 @@ export class LazyMetadataStorageHost {
         .filter((metadata) => metadata),
     );
 
-    loadersToExecute = loadersToExecute.concat(
-      ...(this.lazyMetadataByTarget.get(NO_TARGET_METADATA) || []),
-    );
+    loadersToExecute = [
+      loadersToExecute,
+      this.lazyMetadataByTarget.get(NO_TARGET_METADATA) || [],
+    ].flat();
 
     if (!options.skipFieldLazyMetadata) {
-      loadersToExecute = loadersToExecute.concat(
-        ...(this.lazyMetadataByTarget.get(FIELD_LAZY_METADATA) || []),
-      );
+      loadersToExecute = [
+        loadersToExecute,
+        this.lazyMetadataByTarget.get(FIELD_LAZY_METADATA) || [],
+      ].flat();
     }
     loadersToExecute.forEach((func) => func());
   }
@@ -83,10 +85,16 @@ export class LazyMetadataStorageHost {
 
   private updateStorage(key: symbol | Type<unknown>, func: Function) {
     const existingArray = this.lazyMetadataByTarget.get(key);
+    let called = false;
+    const singleCallFunctionWrapper = () => {
+      if (called) return;
+      func();
+      called = true;
+    };
     if (existingArray) {
-      existingArray.push(func);
+      existingArray.push(singleCallFunctionWrapper);
     } else {
-      this.lazyMetadataByTarget.set(key, [func]);
+      this.lazyMetadataByTarget.set(key, [singleCallFunctionWrapper]);
     }
   }
 }

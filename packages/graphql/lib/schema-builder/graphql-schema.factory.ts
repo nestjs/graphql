@@ -60,7 +60,6 @@ export class GraphQLSchemaFactory {
       options = scalarsOrOptions;
     }
 
-    TypeMetadataStorage.clear();
     LazyMetadataStorage.load(resolvers);
     TypeMetadataStorage.compile(options.orphanedTypes);
 

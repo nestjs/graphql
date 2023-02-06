@@ -1,10 +1,11 @@
 import { MetadataCollectionModel } from './metada-collection-model.interface';
 import { TargetMetadataCollection } from './target-metadata.collection';
+import { ClassMetadata } from '../metadata';
 
 export class MetadataByTargetCollection {
   public readonly all: MetadataCollectionModel = {
     argumentType: [],
-    interface: [],
+    interface: new Map<Function, ClassMetadata>(),
     inputType: [],
     objectType: [],
     resolver: [],

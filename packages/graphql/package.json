@@ -18,20 +18,20 @@
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --watch"
   },
   "dependencies": {
-    "@graphql-tools/merge": "8.3.12",
-    "@graphql-tools/schema": "9.0.10",
-    "@graphql-tools/utils": "9.1.1",
-    "@nestjs/mapped-types": "1.2.0",
+    "@graphql-tools/merge": "8.3.18",
+    "@graphql-tools/schema": "9.0.16",
+    "@graphql-tools/utils": "9.2.1",
+    "@nestjs/mapped-types": "1.2.2",
     "chokidar": "3.5.3",
     "fast-glob": "3.2.12",
     "graphql-tag": "2.12.6",
-    "graphql-ws": "5.5.5",
+    "graphql-ws": "5.11.3",
     "lodash": "4.17.21",
     "normalize-path": "3.0.0",
     "subscriptions-transport-ws": "0.11.0",
-    "tslib": "2.4.1",
+    "tslib": "2.5.0",
     "uuid": "9.0.0",
-    "ws": "8.11.0"
+    "ws": "8.12.0"
   },
   "devDependencies": {
     "@apollo/subgraph": "0.6.1",
