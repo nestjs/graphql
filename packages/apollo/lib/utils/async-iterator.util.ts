@@ -1,6 +1,6 @@
 import { $$asyncIterator } from 'iterall';
 
-type AsyncIterator<T> = {
+export type AsyncIterator<T> = {
   next(value?: any): Promise<IteratorResult<T>>;
   return(): any;
   throw(error: any): any;
@@ -12,18 +12,38 @@ export const createAsyncIterator = async <T = any>(
   filterFn: Function,
 ): Promise<AsyncIterator<T>> => {
   const asyncIterator = await lazyFactory;
-  const getNextValue = async () => {
-    if (!asyncIterator || typeof asyncIterator.next !== 'function') {
-      return Promise.reject(asyncIterator);
-    }
+  const getNextValue = () => {
+    return new Promise<IteratorResult<any>>((resolve, reject) => {
+      const inner = () => {
+        if (!asyncIterator || typeof asyncIterator.next !== 'function') {
+          reject(asyncIterator);
+          return;
+        }
 
-    const payload = await asyncIterator.next();
-    if (payload.done === true) {
-      return payload;
-    }
-    return Promise.resolve(filterFn(payload.value))
-      .catch(() => false)
-      .then((result) => (result ? payload : getNextValue()));
+        asyncIterator
+          .next()
+          .then((payload) => {
+            if (payload.done === true) {
+              resolve(payload);
+              return;
+            }
+            Promise.resolve(filterFn(payload.value))
+              .catch(() => false)
+              .then((result) => {
+                if (result === true) {
+                  resolve(payload);
+                  return;
+                }
+
+                inner();
+                return;
+              });
+          })
+          .catch(reject);
+      };
+
+      inner();
+    });
   };
 
   return {
