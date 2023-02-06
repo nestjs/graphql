@@ -48,7 +48,7 @@ export class TargetMetadataCollection {
 
   set interface(val: ClassMetadata) {
     this._interface = val;
-    this.all.interface.push(val);
+    this.all.interface.set(val.target, val);
   }
 
   get interface() {
