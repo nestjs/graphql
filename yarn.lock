@@ -917,7 +917,7 @@
     "@graphql-typed-document-node/core" "^3.1.1"
     tslib "^2.4.0"
 
-"@graphql-tools/utils@9.2.1", "@graphql-tools/utils@9.3.5":
+"@graphql-tools/utils@9.2.1":
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-9.2.1.tgz#1b3df0ef166cfa3eae706e3518b17d5922721c57"
   integrity sha512-WUw506Ql6xzmOORlriNrD6Ugx+HjVgYxt9KCXD9mHAak+eaXSwuGGPyE60hy9xaDEoXKBsG7SkG69ybitaVl6A==
@@ -2014,13 +2014,6 @@
     light-my-request "5.8.0"
     path-to-regexp "3.2.0"
     tslib "2.5.0"
-
-"@nestjs/testing@8.4.7":
-  version "8.4.7"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-8.4.7.tgz#fe4f356c0e081e25fe8c899a65e91dd88947fd13"
-  integrity sha512-aedpeJFicTBeiTCvJWUG45WMMS53f5eu8t2fXsfjsU1t+WdDJqYcZyrlCzA4dL1B7MfbqaTURdvuVVHTmJO8ag==
-  dependencies:
-    tslib "2.4.0"
 
 "@nestjs/testing@9.3.5":
   version "9.3.5"
@@ -10094,11 +10087,6 @@ tsconfig-paths@^4.1.2:
     json5 "^2.2.2"
     minimist "^1.2.6"
     strip-bom "^3.0.0"
-
-tslib@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
-  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 tslib@2.5.0, tslib@^2.0.1, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.4.0:
   version "2.5.0"
