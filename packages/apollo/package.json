@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/apollo",
-  "version": "10.1.7",
+  "version": "10.2.0",
   "description": "Nest - modern, fast, powerful node.js web framework (@apollo)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -24,8 +24,8 @@
   },
   "devDependencies": {
     "@apollo/gateway": "0.54.1",
-    "@apollo/gateway-v2": "npm:@apollo/gateway@2.2.3",
-    "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.2.3",
+    "@apollo/gateway-v2": "npm:@apollo/gateway@2.3.1",
+    "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.3.1",
     "@nestjs/common": "8.4.7",
     "@nestjs/core": "8.4.7",
     "@nestjs/platform-express": "8.4.7",
@@ -43,10 +43,11 @@
   "dependencies": {
     "iterall": "1.3.0",
     "lodash.omit": "4.5.0",
-    "tslib": "2.4.1"
+    "tslib": "2.5.0"
   },
   "peerDependencies": {
     "@apollo/gateway": "^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0",
+    "@apollo/subgraph": "^2.0.0",
     "@nestjs/common": "^8.2.3 || ^9.0.0",
     "@nestjs/core": "^8.2.3 || ^9.0.0",
     "@nestjs/graphql": "^10.0.0",
@@ -57,6 +58,9 @@
   },
   "peerDependenciesMeta": {
     "@apollo/gateway": {
+      "optional": true
+    },
+    "@apollo/subgraph": {
       "optional": true
     },
     "apollo-server-core": {

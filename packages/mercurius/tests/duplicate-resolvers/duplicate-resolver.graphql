@@ -1,0 +1,8 @@
+type Query {
+    _: Boolean
+}
+
+type Mutation {
+    moduleALogin(code: String): String
+    moduleBLogin(username: String): String
+}

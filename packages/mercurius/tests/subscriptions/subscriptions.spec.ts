@@ -4,10 +4,12 @@ import { Test } from '@nestjs/testing';
 import { gql } from 'graphql-tag';
 import { createMercuriusTestClient } from 'mercurius-integration-testing';
 import { EventEmitter } from 'stream';
+import { MockLogger } from '../hooks/mocks/logger.mock';
 import { AppModule } from './app/app.module';
 
 class CustomPubSub {
   emitter: EventEmitter;
+
   constructor() {
     this.emitter = new EventEmitter();
   }
@@ -145,6 +147,96 @@ describe('Subscriptions', () => {
             },
           });
           done();
+        },
+      })
+      .then(() => {
+        // timeout needed to allow the subscription to be established
+        setTimeout(
+          () =>
+            pubsub.publish({
+              topic: 'newNotification',
+              payload: examplePayload,
+            }),
+          1000,
+        );
+      });
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Subscriptions with hooks', () => {
+  let app: INestApplication;
+  let logger: MockLogger;
+
+  beforeEach(async () => {
+    logger = new MockLogger();
+    const module = await Test.createTestingModule({
+      imports: [
+        AppModule.forRootWithHooks({
+          subscription: {
+            pubsub,
+            context: (conn, request: any) => {
+              const { authorization } = request.raw?.headers ?? {};
+              if (authorization) {
+                return { user: authorization.split('Bearer ')[1] };
+              } else {
+                return {};
+              }
+            },
+          },
+          logger,
+        }),
+      ],
+    }).compile();
+    app = module.createNestApplication(new FastifyAdapter(), { logger });
+    await app.listen(3077);
+  });
+
+  it('hooks should be triggered', (done) => {
+    const testClient = createMercuriusTestClient(
+      app.getHttpAdapter().getInstance(),
+    );
+    const examplePayload = {
+      newNotification: {
+        id: '1',
+        recipient: 'test',
+        message: 'Hello ws',
+      },
+    };
+    testClient
+      .subscribe({
+        query: subscriptionQuery,
+        variables: {
+          id: '1',
+        },
+        headers: {
+          authorization: 'Bearer test',
+        },
+        onData(response) {
+          expect(response.data).toEqual({
+            newNotification: {
+              id: examplePayload.newNotification.id,
+              message: examplePayload.newNotification.message,
+            },
+          });
+          done();
+
+          expect(logger.warn).toHaveBeenCalledTimes(3);
+          expect(logger.warn).toHaveBeenNthCalledWith(
+            1,
+            'preSubscriptionParsing',
+          );
+          expect(logger.warn).toHaveBeenNthCalledWith(
+            2,
+            'preSubscriptionExecution',
+          );
+          expect(logger.warn).toHaveBeenNthCalledWith(
+            3,
+            'onSubscriptionResolution',
+          );
         },
       })
       .then(() => {

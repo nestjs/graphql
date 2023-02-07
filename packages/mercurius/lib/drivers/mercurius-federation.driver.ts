@@ -9,9 +9,17 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
+import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
+import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
 
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
+  constructor(
+    private readonly graphqlFederationFactory: GraphQLFederationFactory,
+  ) {
+    super();
+  }
+
   get instance(): FastifyInstance<
     Server,
     IncomingMessage,
@@ -21,17 +29,12 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
-  constructor(
-    private readonly graphqlFederationFactory: GraphQLFederationFactory,
-  ) {
-    super();
-  }
-
   public async start(options: MercuriusDriverConfig) {
-    const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
-      options,
-      buildMercuriusFederatedSchema,
-    );
+    const { plugins, hooks, ...adapterOptions } =
+      await this.graphqlFederationFactory.mergeWithSchema(
+        options,
+        buildMercuriusFederatedSchema,
+      );
 
     if (adapterOptions.definitions && adapterOptions.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
@@ -50,6 +53,8 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     await app.register(mercurius, {
       ...adapterOptions,
     });
+    await registerMercuriusPlugin(app, plugins);
+    await registerMercuriusHooks(app, hooks);
   }
 
   /* eslit-disable-next-line @typescript-eslint/no-empty-function */

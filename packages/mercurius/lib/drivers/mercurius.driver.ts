@@ -5,6 +5,8 @@ import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
+import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
 
 export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   get instance(): FastifyInstance<
@@ -17,7 +19,7 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
   }
 
   public async start(mercuriusOptions: MercuriusDriverConfig) {
-    const options =
+    const { plugins, hooks, ...options } =
       await this.graphQlFactory.mergeWithSchema<MercuriusDriverConfig>(
         mercuriusOptions,
       );
@@ -39,6 +41,8 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
     await app.register(mercurius, {
       ...options,
     });
+    await registerMercuriusPlugin(app, plugins);
+    await registerMercuriusHooks(app, hooks);
   }
 
   public async stop(): Promise<void> {}
