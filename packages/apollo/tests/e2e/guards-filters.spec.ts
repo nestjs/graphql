@@ -27,14 +27,6 @@ describe('GraphQL - Guards', () => {
         errors: [
           {
             message: 'Unauthorized error',
-            // TODO: investigate
-            // extensions: {
-            //   code: 'UNAUTHENTICATED',
-            //   response: {
-            //     statusCode: 401,
-            //     message: 'Unauthorized',
-            //   },
-            // },
             locations: [{ line: 2, column: 3 }],
             path: ['recipe'],
             extensions: { code: 'INTERNAL_SERVER_ERROR' },
