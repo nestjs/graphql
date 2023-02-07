@@ -22,7 +22,7 @@ import { IRecipeResolver } from '../code-first-federation/recipe/irecipe.resolve
 import { UserResolver } from '../code-first-federation/user/user.resolver';
 import { printedSchemaSnapshot } from '../utils/printed-schema-with-cache-control.snapshot';
 import { INestApplication } from '@nestjs/common';
-import { ApolloServerBase } from 'apollo-server-core';
+import { ApolloServer } from '@apollo/server';
 import { ApolloFederationDriver } from '../../lib';
 import { gql } from 'graphql-tag';
 import { CachingApplicationModule } from '../code-first-federation/caching.module';
@@ -70,7 +70,7 @@ describe('Code-first - Federation with caching', () => {
       );
 
       introspectionSchema = await (
-        await graphql(schema, getIntrospectionQuery())
+        await graphql({ schema, source: getIntrospectionQuery() })
       ).data.__schema;
     });
 
@@ -87,7 +87,7 @@ describe('Code-first - Federation with caching', () => {
 
   describe('enabled cache', () => {
     let app: INestApplication;
-    let apolloClient: ApolloServerBase;
+    let apolloClient: ApolloServer;
     let postService: PostService;
 
     beforeEach(async () => {

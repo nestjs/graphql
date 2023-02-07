@@ -20,7 +20,7 @@ export class ResolveTypeFactory {
         }
         const typeDef =
           this.typeDefinitionsStorage.getObjectTypeByTarget(resolvedType);
-        return typeDef?.type?.name;
+        return typeDef.type?.name;
       };
 
       const resolvedTypeOrPromise = resolveType(...args);

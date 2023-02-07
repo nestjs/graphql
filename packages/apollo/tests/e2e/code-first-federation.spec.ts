@@ -1,14 +1,15 @@
+import { ApolloServer, GraphQLResponse } from '@apollo/server';
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'graphql-tag';
 import { ApolloFederationDriver } from '../../lib';
 import { ApplicationModule } from '../code-first-federation/app.module';
+import { expectSingleResult } from '../utils/assertion-utils';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerBase;
+  let apolloClient: ApolloServer;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -32,7 +33,7 @@ describe('Code-first - Federation', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       _service: {
         sdl: `interface IRecipe {
   id: ID!
@@ -88,7 +89,7 @@ union FederationSearchResultUnion = Post | User
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       search: [
         {
           id: '1',
@@ -116,7 +117,7 @@ union FederationSearchResultUnion = Post | User
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       recipe: {
         id: '1',
         title: 'Recipe',

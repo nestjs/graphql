@@ -1,37 +1,43 @@
-import { HttpStatus } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
+//import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import {
-  ApolloError,
-  ApolloServerBase,
-  ApolloServerPluginLandingPageDisabled,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-  AuthenticationError,
-  ForbiddenError,
-  PluginDefinition,
-  UserInputError,
-} from 'apollo-server-core';
-import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { loadPackage } from '@nestjs/common/utils/load-package.util';
+
+import { GraphQLError, GraphQLFormattedError, Kind } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
-const apolloPredefinedExceptions: Partial<
-  Record<HttpStatus, typeof ApolloError | typeof UserInputError>
-> = {
-  [HttpStatus.BAD_REQUEST]: UserInputError,
-  [HttpStatus.UNAUTHORIZED]: AuthenticationError,
-  [HttpStatus.FORBIDDEN]: ForbiddenError,
+import { ApolloServer, type BaseContext } from '@apollo/server';
+import {
+  ApolloServerErrorCode,
+  unwrapResolverError,
+} from '@apollo/server/errors';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { expressMiddleware } from '@apollo/server/express4';
+import * as express from 'express';
+import * as http from 'node:http';
+
+import {
+  fastifyApolloHandler,
+  fastifyApolloDrainPlugin,
+} from '@as-integrations/fastify';
+import { HttpStatus } from '@nestjs/common';
+
+const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
+  [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_USER_INPUT,
+  [HttpStatus.UNAUTHORIZED]: 'UNAUTHENTICATED',
+  [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
 };
 
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
 > extends AbstractGraphQLDriver<T> {
-  protected _apolloServer: ApolloServerBase;
+  protected apolloServer: ApolloServer<BaseContext>;
 
-  get instance(): ApolloServerBase {
-    return this._apolloServer;
+  get instance(): ApolloServer<BaseContext> {
+    return this.apolloServer;
   }
 
   public async start(apolloOptions: T) {
@@ -48,7 +54,7 @@ export abstract class ApolloBaseDriver<
   }
 
   public stop() {
-    return this._apolloServer?.stop();
+    return this.apolloServer?.stop();
   }
 
   public async mergeDefaultOptions(options: T): Promise<T> {
@@ -67,11 +73,7 @@ export abstract class ApolloBaseDriver<
         typeof options.playground === 'object' ? options.playground : undefined;
       defaults = {
         ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(
-            playgroundOptions,
-          ) as PluginDefinition,
-        ],
+        plugins: [ApolloServerPluginLandingPageLocalDefault(playgroundOptions)],
       };
     } else if (
       (options.playground === undefined &&
@@ -80,7 +82,7 @@ export abstract class ApolloBaseDriver<
     ) {
       defaults = {
         ...defaults,
-        plugins: [ApolloServerPluginLandingPageDisabled() as PluginDefinition],
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
       };
     }
 
@@ -115,68 +117,77 @@ export abstract class ApolloBaseDriver<
       );
   }
 
-  protected async registerExpress(
-    apolloOptions: T,
-    { preStartHook }: { preStartHook?: () => void } = {},
-  ) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-express',
-      'GraphQLModule',
-      () => require('apollo-server-express'),
-    );
-    const { disableHealthCheck, path, onHealthCheck, cors, bodyParserConfig } =
-      apolloOptions;
+  protected async registerExpress(options: T, hooks?: any) {
+    if (hooks?.preStartHook) {
+      hooks?.preStartHook();
+    }
+
+    const cors = loadPackage('cors', null, () => require('cors'));
+
+    const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
+    const httpServer = http.createServer(app);
 
-    preStartHook?.();
-
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    await apolloServer.start();
-
-    apolloServer.applyMiddleware({
-      app,
-      path,
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
+    // Set up Apollo Server
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers,
+      schema,
+      ...options,
+      /**
+       * @TODO
+       * should remove serverWillStart from default plugins.
+       * after include plugins here
+       */
+      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     });
 
-    this._apolloServer = apolloServer;
+    await server.start();
+
+    app.use(
+      path,
+      cors(options.cors),
+      express.json(),
+      expressMiddleware(server),
+    );
+
+    this.apolloServer = server;
   }
 
-  protected async registerFastify(
-    apolloOptions: T,
-    { preStartHook }: { preStartHook?: () => void } = {},
-  ) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-fastify',
-      'GraphQLModule',
-      () => require('apollo-server-fastify'),
+  protected async registerFastify(options: T, hooks?: any) {
+    if (hooks?.preStartHook) {
+      hooks?.preStartHook();
+    }
+
+    const cors = loadPackage('@fastify/cors', null, () =>
+      require('@fastify/cors'),
     );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
 
-    preStartHook?.();
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    await apolloServer.start();
+    const { path, typeDefs, resolvers, schema } = options;
+    const server = new ApolloServer<BaseContext>({
+      typeDefs,
+      resolvers,
+      schema,
+      ...options,
+      plugins: [fastifyApolloDrainPlugin(app)],
+    });
 
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
-      apolloOptions;
-    await app.register(
-      apolloServer.createHandler({
-        disableHealthCheck,
-        onHealthCheck,
-        cors,
-        bodyParserConfig,
-        path,
-      }),
-    );
+    await server.start();
 
-    this._apolloServer = apolloServer;
+    app.route({
+      url: path,
+      method: ['GET', 'POST', 'OPTIONS'],
+      handler: fastifyApolloHandler(server),
+    });
+
+    await app.register(cors, options.cors);
+
+    this.apolloServer = server;
   }
 
   private wrapFormatErrorFn(options: T) {
@@ -201,22 +212,26 @@ export abstract class ApolloBaseDriver<
       const exceptionRef = originalError?.extensions?.exception;
       const isHttpException =
         exceptionRef?.response?.statusCode && exceptionRef?.status;
-
       if (!isHttpException) {
         return originalError as GraphQLFormattedError;
       }
-      let error: ApolloError;
+      let error: GraphQLError;
 
       const httpStatus = exceptionRef?.status;
       if (httpStatus in apolloPredefinedExceptions) {
-        error = new apolloPredefinedExceptions[httpStatus](
-          exceptionRef?.message,
-        );
+        error = new GraphQLError(exceptionRef?.message, {
+          extensions: {
+            code: apolloPredefinedExceptions[httpStatus],
+          },
+        });
       } else {
-        error = new ApolloError(exceptionRef.message, httpStatus?.toString());
+        error = new GraphQLError(exceptionRef.message, httpStatus?.toString());
       }
 
       error.stack = exceptionRef?.stacktrace;
+      //TODO: we need to verify if previous behavior is to be kept
+      // if so we must open a PR on Apollo to include response inside the raised exception
+      //https://github.com/apollographql/apollo-server/blob/e6d0d6d9cbd78d4914adf2abb04d84710991849a/packages/server/src/errorNormalize.ts#L58
       error.extensions['response'] = exceptionRef?.response;
       return error;
     };

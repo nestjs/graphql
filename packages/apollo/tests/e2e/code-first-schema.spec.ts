@@ -61,10 +61,11 @@ describe('Code-first - schema factory', () => {
       );
 
       introspectionSchema = await (
-        await graphql(schema, getIntrospectionQuery())
+        await graphql({ schema, source: getIntrospectionQuery() })
       ).data.__schema;
     });
     it('should be valid', async () => {
+      debugger;
       expect(schema).toBeInstanceOf(GraphQLSchema);
     });
     it('should match schema snapshot', () => {

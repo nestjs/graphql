@@ -20,3 +20,5 @@ test-schema.graphql
 # dist
 packages/**/dist
 **/*.tsbuildinfo
+
+.yarn/

@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "10.2.0",
+  "version": "11.1.7",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -35,20 +35,20 @@
   },
   "devDependencies": {
     "@apollo/subgraph": "0.6.1",
-    "@nestjs/common": "8.4.7",
-    "@nestjs/core": "8.4.7",
+    "@nestjs/common": "9.2.1",
+    "@nestjs/core": "9.2.1",
     "@nestjs/testing": "8.4.7",
-    "graphql": "15.8.0",
+    "graphql": "^16.6.0",
     "reflect-metadata": "0.1.13",
     "ts-morph": "17.0.1"
   },
   "peerDependencies": {
     "@apollo/subgraph": "^0.1.5 || ^0.3.0 || ^0.4.0 || ^2.0.0",
-    "@nestjs/common": "^8.2.3 || ^9.0.0",
-    "@nestjs/core": "^8.2.3 || ^9.0.0",
-    "class-transformer": "*",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/core": "^9.2.1",
+    "class-transformer": "0.5.1",
     "class-validator": "*",
-    "graphql": "^15.8.0 || ^16.0.0",
+    "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13",
     "ts-morph": "^13.0.2 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
   },

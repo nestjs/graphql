@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/mercurius",
-  "version": "10.2.0",
+  "version": "11.1.7",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -27,18 +27,17 @@
     "tslib": "2.5.0"
   },
   "devDependencies": {
-    "@nestjs/common": "8.4.7",
-    "@nestjs/platform-fastify": "8.4.7",
+    "@nestjs/common": "9.2.1",
+    "@nestjs/platform-fastify": "9.2.1",
     "@nestjs/testing": "8.4.7",
     "fastify": "4.12.0",
     "mercurius": "8.13.2",
     "mercurius-integration-testing": "6.0.1"
   },
   "peerDependencies": {
-    "@apollo/subgraph": "^2.0.0",
-    "@nestjs/common": "^8.2.3 || ^9.0.0",
-    "@nestjs/graphql": "^10.0.0",
-    "fastify": "^3.25.0 || ^4.0.0",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/graphql": "^10.1.7",
+    "fastify": "^4.12.0",
     "graphql": "^15.8.0 || ^16.0.0",
     "mercurius": "^8.12.0 || ^9.0.0 || ^10.0.0"
   },

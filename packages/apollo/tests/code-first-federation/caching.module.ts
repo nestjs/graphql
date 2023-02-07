@@ -5,8 +5,8 @@ import {
   GraphQLEnumType,
   GraphQLInt,
 } from 'graphql';
-import responseCachePlugin from 'apollo-server-plugin-response-cache';
-import { ApolloServerPluginInlineTraceDisabled } from 'apollo-server-core';
+import responseCachePlugin from '@apollo/server-plugin-response-cache';
+import { ApolloServerPluginInlineTraceDisabled } from '@apollo/server/plugin/disabled';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloFederationDriverConfig } from '../../lib';
