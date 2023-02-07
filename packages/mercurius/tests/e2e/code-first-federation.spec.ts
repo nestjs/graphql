@@ -4,8 +4,8 @@ import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module';
 import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module';
-import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module';
 import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module';
+import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module';
 
 async function createService(Module: Type<any>, port: number) {
   const module = await Test.createTestingModule({

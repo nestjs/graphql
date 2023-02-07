@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { DynamicModule } from '@nestjs/common/interfaces';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusFederationDriver, MercuriusFederationDriverConfig } from '../../../lib';
+import {
+  MercuriusFederationDriver,
+  MercuriusFederationDriverConfig,
+} from '../../../lib';
 import { NotificationModule } from './notification.module';
 
 export type AppModuleConfig = {
@@ -19,7 +22,6 @@ export class AppModule {
         GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
           driver: MercuriusFederationDriver,
           context: options?.context,
-          federationMetadata: true,
           autoSchemaFile: true,
           subscription: options?.subscription,
         }),
