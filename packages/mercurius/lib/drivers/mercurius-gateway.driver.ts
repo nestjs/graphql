@@ -3,6 +3,7 @@ import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
 
 export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
@@ -23,12 +24,13 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
 
-    const { plugins, ...mercuriusOptions } = options;
+    const { plugins, hooks, ...mercuriusOptions } = options;
     const app = httpAdapter.getInstance<FastifyInstance>();
     await app.register(mercurius, {
       ...mercuriusOptions,
     });
     await registerMercuriusPlugin(app, plugins);
+    await registerMercuriusHooks(app, hooks);
   }
 
   public async stop(): Promise<void> {}
