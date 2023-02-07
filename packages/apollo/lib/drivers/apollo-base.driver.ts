@@ -1,21 +1,17 @@
+import { ApolloServer, type BaseContext } from '@apollo/server';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
+import { ApolloServerErrorCode } from '@apollo/server/errors';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
-
-import { ApolloServer, type BaseContext } from '@apollo/server';
-import { ApolloServerErrorCode } from '@apollo/server/errors';
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
-import * as express from 'express';
-import * as http from 'node:http';
-
-import { fastifyApolloHandler } from '@as-integrations/fastify';
-import { HttpStatus } from '@nestjs/common';
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_USER_INPUT,
@@ -65,7 +61,9 @@ export abstract class ApolloBaseDriver<
         typeof options.playground === 'object' ? options.playground : undefined;
       defaults = {
         ...defaults,
-        plugins: [ApolloServerPluginLandingPageLocalDefault(playgroundOptions)],
+        plugins: [
+          ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
+        ],
       };
     } else if (
       (options.playground === undefined &&
@@ -74,7 +72,7 @@ export abstract class ApolloBaseDriver<
     ) {
       defaults = {
         ...defaults,
-        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        plugins: [ApolloServerPluginLandingPageDisabled()],
       };
     }
 
@@ -109,66 +107,63 @@ export abstract class ApolloBaseDriver<
       );
   }
 
-  protected async registerExpress(options: T, hooks?: any) {
-    if (hooks?.preStartHook) {
-      hooks?.preStartHook();
-    }
-
-    const cors = loadPackage('cors', null, () => require('cors'));
-
+  protected async registerExpress(
+    options: T,
+    { preStartHook }: { preStartHook?: () => void } = {},
+  ) {
     const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
-    const httpServer = http.createServer(app);
+    const drainHttpServerPlugin = ApolloServerPluginDrainHttpServer({
+      httpServer: httpAdapter.getHttpServer(),
+    });
 
-    // Set up Apollo Server
+    preStartHook?.();
+
     const server = new ApolloServer({
       typeDefs,
       resolvers,
       schema,
       ...options,
-      /**
-       * @TODO
-       * should remove serverWillStart from default plugins.
-       * after include plugins here
-       */
-      // TODO: fix - dont override plugins
-      // plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+      plugins: options.plugins
+        ? options.plugins.concat([drainHttpServerPlugin])
+        : [drainHttpServerPlugin],
     });
 
     await server.start();
 
-    app.use(
-      path,
-      cors(options.cors),
-      express.json(),
-      expressMiddleware(server),
-    );
+    app.use(path, expressMiddleware(server));
 
     this.apolloServer = server;
   }
 
-  protected async registerFastify(options: T, hooks?: any) {
-    if (hooks?.preStartHook) {
-      hooks?.preStartHook();
-    }
-
-    const cors = loadPackage('@fastify/cors', null, () =>
-      require('@fastify/cors'),
+  protected async registerFastify(
+    options: T,
+    { preStartHook }: { preStartHook?: () => void } = {},
+  ) {
+    const { fastifyApolloDrainPlugin, fastifyApolloHandler } = loadPackage(
+      '@as-integrations/fastify',
+      'GraphQLModule',
+      () => require('@as-integrations/fastify'),
     );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
 
     const { path, typeDefs, resolvers, schema } = options;
+    const apolloDrainPlugin = fastifyApolloDrainPlugin(app);
+
+    preStartHook?.();
+
     const server = new ApolloServer<BaseContext>({
       typeDefs,
       resolvers,
       schema,
       ...options,
-      // TODO: fix - dont override plugin
-      //plugins: [fastifyApolloDrainPlugin(app)],
+      plugins: options.plugins
+        ? options.plugins.concat([apolloDrainPlugin])
+        : [apolloDrainPlugin],
     });
 
     await server.start();
@@ -178,8 +173,6 @@ export abstract class ApolloBaseDriver<
       method: ['GET', 'POST', 'OPTIONS'],
       handler: fastifyApolloHandler(server),
     });
-
-    await app.register(cors, options.cors);
 
     this.apolloServer = server;
   }
@@ -219,13 +212,15 @@ export abstract class ApolloBaseDriver<
           },
         });
       } else {
-        error = new GraphQLError(exceptionRef.message, httpStatus?.toString());
+        error = new GraphQLError(exceptionRef.message, {
+          extensions: {
+            code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+            status: httpStatus,
+          },
+        });
       }
 
       error.stack = exceptionRef?.stacktrace;
-      //TODO: we need to verify if previous behavior is to be kept
-      // if so we must open a PR on Apollo to include response inside the raised exception
-      //https://github.com/apollographql/apollo-server/blob/e6d0d6d9cbd78d4914adf2abb04d84710991849a/packages/server/src/errorNormalize.ts#L58
       error.extensions['response'] = exceptionRef?.response;
       return error;
     };

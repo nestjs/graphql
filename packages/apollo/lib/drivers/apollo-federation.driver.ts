@@ -27,7 +27,6 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
     const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
       options,
     );
-    await this.runExecutorFactoryIfPresent(adapterOptions);
 
     if (options.definitions && options.definitions.path) {
       const { printSubgraphSchema } = loadPackage(
@@ -49,13 +48,5 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
         'No support for subscriptions yet when using Apollo Federation',
       );
     }
-  }
-
-  private async runExecutorFactoryIfPresent(apolloOptions: ApolloDriverConfig) {
-    if (!apolloOptions.executorFactory) {
-      return;
-    }
-    const executor = await apolloOptions.executorFactory(apolloOptions.schema);
-    apolloOptions.executor = executor;
   }
 }
