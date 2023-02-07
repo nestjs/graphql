@@ -6,6 +6,7 @@ import { gql } from 'graphql-tag';
 import { ApolloDriver } from '../../lib';
 import { AppModule as CodeFirstModule } from '../code-first-duplicate-resolvers/app.module';
 import { AppModule as SchemaFirstModule } from '../duplicate-resolvers/app.module';
+import { expectSingleResult } from '../utils/assertion-utils';
 
 describe('Duplicate resolvers', () => {
   let app: INestApplication;
@@ -33,7 +34,7 @@ describe('Duplicate resolvers', () => {
         `,
       });
 
-      expect(response.data).toEqual({
+      expectSingleResult(response).toEqual({
         moduleALogin: 'hello',
         moduleBLogin: 'bye',
       });
@@ -62,7 +63,7 @@ describe('Duplicate resolvers', () => {
         `,
       });
 
-      expect(response.data).toEqual({
+      expectSingleResult(response).toEqual({
         moduleALogin: 'hello',
         moduleBLogin: 'bye',
       });

@@ -41,5 +41,4 @@ type User {
 enum CacheControlScope {
   PUBLIC
   PRIVATE
-}
-`;
+}`;
