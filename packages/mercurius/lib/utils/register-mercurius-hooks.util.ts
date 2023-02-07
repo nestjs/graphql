@@ -1,10 +1,10 @@
 import { FastifyInstance } from 'fastify';
-import { MercuriusGatewayHooksObject } from '../interfaces/mercurius-hook.interface';
+import { MercuriusHooksObject } from '../interfaces/mercurius-hook.interface';
 import { isArray, isNull, isUndefined } from './validation.util';
 
 export function registerMercuriusHooks(
   app: FastifyInstance,
-  hooks?: MercuriusGatewayHooksObject | null,
+  hooks?: MercuriusHooksObject | null,
   key: 'graphql' | 'graphqlGateway' = 'graphql',
 ): void {
   if (isUndefined(hooks) || isNull(hooks)) {
