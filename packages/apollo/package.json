@@ -15,18 +15,17 @@
     "url": "git+https://github.com/nestjs/graphql.git"
   },
   "scripts": {
-    "test:e2e": "jest --config ./tests/jest-e2e.ts --runInBand && yarn test:e2e:fed2",
-    "test:e2e:fed2": "jest --config ./tests/jest-e2e-fed2.ts --runInBand",
+    "test:e2e": "jest --config ./tests/jest-e2e.ts --runInBand",
     "test:e2e:dev": "jest --config ./tests/jest-e2e.ts --runInBand --watch"
   },
   "bugs": {
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "devDependencies": {
-    "@apollo/gateway": "0.54.1",
-    "@apollo/gateway-v2": "npm:@apollo/gateway@2.2.3",
-    "@apollo/subgraph-v2": "npm:@apollo/subgraph@2.2.3",
+    "@apollo/gateway": "2.2.3",
+    "@apollo/subgraph": "2.2.3",
     "@apollo/server-plugin-response-cache": "4.1.0",
+    "@as-integrations/fastify": "1.3.0",
     "@nestjs/common": "9.2.1",
     "@nestjs/core": "9.2.1",
     "@nestjs/platform-express": "9.2.1",
@@ -34,26 +33,28 @@
     "@nestjs/testing": "9.2.1",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
-    "apollo-link-ws": "1.0.20",
-    "graphql-16": "npm:graphql@16.6.0"
+    "apollo-link-ws": "1.0.20"
   },
   "dependencies": {
-    "@apollo/server": "^4.3.2",
-    "@as-integrations/fastify": "^1.3.0",
+    "@apollo/server": "4.3.2",
     "iterall": "1.3.0",
     "lodash.omit": "4.5.0",
     "tslib": "2.5.0"
   },
   "peerDependencies": {
-    "@apollo/gateway": "^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0",
+    "@apollo/gateway": "^2.0.0",
     "@apollo/subgraph": "^2.0.0",
-    "@nestjs/common": "^8.2.3 || ^9.0.0",
+    "@as-integrations/fastify": "^1.3.0",
+    "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.2.1",
     "@nestjs/graphql": "^10.1.7",
     "graphql": "^16.6.0"
   },
   "peerDependenciesMeta": {
     "@apollo/gateway": {
+      "optional": true
+    },
+    "@as-integrations/fastify": {
       "optional": true
     },
     "@fastify/cors": {

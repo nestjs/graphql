@@ -1,28 +1,20 @@
-//import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
 
-import { GraphQLError, GraphQLFormattedError, Kind } from 'graphql';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
 import { ApolloServer, type BaseContext } from '@apollo/server';
-import {
-  ApolloServerErrorCode,
-  unwrapResolverError,
-} from '@apollo/server/errors';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
+import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import * as express from 'express';
 import * as http from 'node:http';
 
-import {
-  fastifyApolloHandler,
-  fastifyApolloDrainPlugin,
-} from '@as-integrations/fastify';
+import { fastifyApolloHandler } from '@as-integrations/fastify';
 import { HttpStatus } from '@nestjs/common';
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
@@ -141,7 +133,8 @@ export abstract class ApolloBaseDriver<
        * should remove serverWillStart from default plugins.
        * after include plugins here
        */
-      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+      // TODO: fix - dont override plugins
+      // plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     });
 
     await server.start();
@@ -174,7 +167,8 @@ export abstract class ApolloBaseDriver<
       resolvers,
       schema,
       ...options,
-      plugins: [fastifyApolloDrainPlugin(app)],
+      // TODO: fix - dont override plugin
+      //plugins: [fastifyApolloDrainPlugin(app)],
     });
 
     await server.start();

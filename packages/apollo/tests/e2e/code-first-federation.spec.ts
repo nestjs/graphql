@@ -1,4 +1,4 @@
-import { ApolloServer, GraphQLResponse } from '@apollo/server';
+import { ApolloServer } from '@apollo/server';
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
@@ -33,44 +33,7 @@ describe('Code-first - Federation', () => {
         }
       `,
     });
-    expectSingleResult(response).toEqual({
-      _service: {
-        sdl: `interface IRecipe {
-  id: ID!
-  title: String!
-  externalField: String! @external
-}
-
-type Post @key(fields: \"id\") {
-  id: ID!
-  title: String!
-  authorId: Int!
-}
-
-type User @extends @key(fields: \"id\") {
-  id: ID! @external
-  posts: [Post!]!
-}
-
-type Recipe implements IRecipe {
-  id: ID!
-  title: String!
-  externalField: String! @external
-  description: String!
-}
-
-type Query {
-  findPost(id: Float!): Post!
-  getPosts: [Post!]!
-  search: [FederationSearchResultUnion!]! @deprecated(reason: \"test\")
-  recipe: IRecipe!
-}
-
-\"\"\"Search result description\"\"\"
-union FederationSearchResultUnion = Post | User
-`,
-      },
-    });
+    expectSingleResult(response).toMatchSnapshot();
   });
 
   it('should return the search result', async () => {

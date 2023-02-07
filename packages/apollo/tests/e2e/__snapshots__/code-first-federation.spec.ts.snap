@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Code-first - Federation should return query result 1`] = `
+{
+  "_service": {
+    "sdl": "directive @key(fields: String!, resolvable: Boolean = true) on OBJECT | INTERFACE
+
+directive @extends on OBJECT | INTERFACE
+
+directive @external on OBJECT | FIELD_DEFINITION
+
+directive @requires(fields: String!) on FIELD_DEFINITION
+
+directive @provides(fields: String!) on FIELD_DEFINITION
+
+directive @shareable on FIELD_DEFINITION | OBJECT
+
+directive @link(url: String!, import: [link__Import]) on SCHEMA
+
+directive @tag(name: String!) repeatable on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @override(from: String!) on FIELD_DEFINITION
+
+interface IRecipe {
+  id: ID!
+  title: String!
+  externalField: String! @external
+}
+
+type Post
+  @key(fields: "id")
+{
+  id: ID!
+  title: String!
+  authorId: Int!
+}
+
+type User
+  @extends
+  @key(fields: "id")
+{
+  id: ID! @external
+  posts: [Post!]!
+}
+
+type Recipe implements IRecipe {
+  id: ID!
+  title: String!
+  externalField: String! @external
+  description: String!
+}
+
+type Query {
+  findPost(id: Float!): Post!
+  getPosts: [Post!]!
+  search: [FederationSearchResultUnion!]! @deprecated(reason: "test")
+  recipe: IRecipe!
+  _entities(representations: [_Any!]!): [_Entity]!
+  _service: _Service!
+}
+
+"""Search result description"""
+union FederationSearchResultUnion = Post | User
+
+scalar link__Import
+
+scalar _FieldSet
+
+scalar _Any
+
+type _Service {
+  sdl: String
+}
+
+union _Entity = Post | User",
+  },
+}
+`;

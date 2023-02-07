@@ -34,23 +34,23 @@
     "ws": "8.12.0"
   },
   "devDependencies": {
-    "@apollo/subgraph": "0.6.1",
+    "@apollo/subgraph": "2.0.0",
     "@nestjs/common": "9.2.1",
     "@nestjs/core": "9.2.1",
     "@nestjs/testing": "8.4.7",
-    "graphql": "^16.6.0",
+    "graphql": "16.6.0",
     "reflect-metadata": "0.1.13",
     "ts-morph": "17.0.1"
   },
   "peerDependencies": {
-    "@apollo/subgraph": "^0.1.5 || ^0.3.0 || ^0.4.0 || ^2.0.0",
+    "@apollo/subgraph": "^2.0.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/core": "^9.2.1",
-    "class-transformer": "0.5.1",
+    "class-transformer": "*",
     "class-validator": "*",
     "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13",
-    "ts-morph": "^13.0.2 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
+    "ts-morph": "^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/subgraph": {

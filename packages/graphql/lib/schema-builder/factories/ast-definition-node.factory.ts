@@ -8,8 +8,8 @@ import {
   InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
-  ObjectTypeDefinitionNode,
   Kind,
+  ObjectTypeDefinitionNode,
   parse,
 } from 'graphql';
 import { head } from 'lodash';
@@ -87,7 +87,6 @@ export class AstDefinitionNodeFactory {
       return;
     }
 
-    //FieldDefinition
     return {
       kind: Kind.FIELD_DEFINITION,
       type: {

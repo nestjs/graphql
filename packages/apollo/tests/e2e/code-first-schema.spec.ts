@@ -65,7 +65,6 @@ describe('Code-first - schema factory', () => {
       ).data.__schema;
     });
     it('should be valid', async () => {
-      debugger;
       expect(schema).toBeInstanceOf(GraphQLSchema);
     });
     it('should match schema snapshot', () => {
