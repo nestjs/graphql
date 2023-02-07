@@ -11,6 +11,8 @@ import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.int
 import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
+// TODO:
+// const { mercuriusFederationPlugin } = require('@mercuriusjs/federation');
 
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
@@ -50,11 +52,12 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
     const app = httpAdapter.getInstance<FastifyInstance>();
+    // TODO: replace with mercuriusFederationPlugin
     await app.register(mercurius, {
       ...adapterOptions,
     });
     await registerMercuriusPlugin(app, plugins);
-    await registerMercuriusHooks(app, hooks);
+    registerMercuriusHooks(app, hooks);
   }
 
   /* eslit-disable-next-line @typescript-eslint/no-empty-function */

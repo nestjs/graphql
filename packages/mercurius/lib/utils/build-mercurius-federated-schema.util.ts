@@ -1,7 +1,6 @@
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { transformSchema } from '@nestjs/graphql';
-import { BuildFederatedSchemaOptions } from '@nestjs/graphql';
-import { GraphQLSchema, isObjectType, buildASTSchema } from 'graphql';
+import { BuildFederatedSchemaOptions, transformSchema } from '@nestjs/graphql';
+import { buildASTSchema, GraphQLSchema, isObjectType } from 'graphql';
 
 export function buildMercuriusFederatedSchema({
   typeDefs,

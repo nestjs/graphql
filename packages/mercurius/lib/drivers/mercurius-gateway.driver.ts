@@ -1,12 +1,12 @@
+import mercuriusGateway from '@mercuriusjs/gateway';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import mercurius from 'mercurius';
-import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
+import { MercuriusGatewayDriverConfig } from '../interfaces';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
 
-export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
+export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatewayDriverConfig> {
   get instance(): FastifyInstance<
     Server,
     IncomingMessage,
@@ -16,7 +16,7 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
-  public async start(options: MercuriusDriverConfig) {
+  public async start(options: MercuriusGatewayDriverConfig) {
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 
@@ -26,11 +26,11 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusDrive
 
     const { plugins, hooks, ...mercuriusOptions } = options;
     const app = httpAdapter.getInstance<FastifyInstance>();
-    await app.register(mercurius, {
+    await app.register(mercuriusGateway, {
       ...mercuriusOptions,
     });
     await registerMercuriusPlugin(app, plugins);
-    await registerMercuriusHooks(app, hooks);
+    registerMercuriusHooks(app, hooks, 'graphqlGateway');
   }
 
   public async stop(): Promise<void> {}

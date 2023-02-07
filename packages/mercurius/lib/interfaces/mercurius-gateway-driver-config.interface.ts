@@ -6,12 +6,12 @@ import {
 } from '@nestjs/graphql';
 import { MercuriusCommonOptions } from 'mercurius';
 import { MercuriusHooks } from './mercurius-hook.interface';
-import { MercuriusPlugin } from './mercurius-plugin.interface';
+import { MercuriusPlugins } from './mercurius-plugin.interface';
 
 export type MercuriusGatewayDriverConfig = GqlModuleOptions &
   MercuriusCommonOptions &
   MercuriusGatewayOptions &
-  MercuriusPlugin &
+  MercuriusPlugins &
   MercuriusHooks;
 
 export type MercuriusGatewayDriverConfigFactory =

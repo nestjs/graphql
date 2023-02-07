@@ -42,7 +42,7 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
       ...options,
     });
     await registerMercuriusPlugin(app, plugins);
-    await registerMercuriusHooks(app, hooks);
+    registerMercuriusHooks(app, hooks);
   }
 
   public async stop(): Promise<void> {}
