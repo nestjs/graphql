@@ -1,12 +1,14 @@
 import {
-  MercuriusContext,
   onGatewayReplaceSchemaHookHandler,
+  preGatewayExecutionHookHandler,
+  preGatewaySubscriptionExecutionHookHandler,
+} from '@mercuriusjs/gateway';
+import {
+  MercuriusContext,
   onResolutionHookHandler,
   onSubscriptionEndHookHandler,
   onSubscriptionResolutionHookHandler,
   preExecutionHookHandler,
-  preGatewayExecutionHookHandler,
-  preGatewaySubscriptionExecutionHookHandler,
   preParsingHookHandler,
   preSubscriptionExecutionHookHandler,
   preSubscriptionParsingHookHandler,
