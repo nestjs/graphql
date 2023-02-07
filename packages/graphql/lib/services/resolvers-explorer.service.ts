@@ -2,7 +2,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   ContextIdFactory,
-  createContextId,
   MetadataScanner,
   ModuleRef,
   ModulesContainer,
@@ -10,14 +9,16 @@ import {
 } from '@nestjs/core';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface';
-import { Injector } from '@nestjs/core/injector/injector';
 import { CONTROLLER_ID_KEY } from '@nestjs/core/injector/constants';
+import { Injector } from '@nestjs/core/injector/injector';
 import {
   ContextId,
   InstanceWrapper,
 } from '@nestjs/core/injector/instance-wrapper';
 import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module';
 import { Module } from '@nestjs/core/injector/module';
+import { Entrypoint } from '@nestjs/core/inspector/interfaces/entrypoint.interface';
+import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
 import { GraphQLResolveInfo } from 'graphql';
 import { head, identity } from 'lodash';
@@ -35,20 +36,12 @@ import {
   SUBSCRIPTION_TYPE,
 } from '../graphql.constants';
 import { GqlModuleOptions } from '../interfaces';
+import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
-import { getNumberOfArguments } from '../utils';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util';
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
-
-// TODO remove in the next version (backward-compatibility layer)
-// "ContextIdFactory.getByRequest.length" returns an incorrent number
-// as parameters with default values do not count in.
-// @ref https://github.com/nestjs/graphql/pull/2214
-const getByRequestNumberOfArguments = getNumberOfArguments(
-  ContextIdFactory.getByRequest,
-);
 
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
@@ -63,6 +56,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     @Inject(GRAPHQL_MODULE_OPTIONS)
     private readonly gqlOptions: GqlModuleOptions,
     private readonly moduleRef: ModuleRef,
+    private readonly serializedGraph: SerializedGraph,
   ) {
     super();
   }
@@ -112,6 +106,20 @@ export class ResolversExplorerService extends BaseExplorerService {
       .filter((resolver) => !!resolver)
       .map((resolver) => {
         this.assignResolverConstructorUniqueId(instance.constructor, moduleRef);
+
+        const entrypointDefinition: Entrypoint<GqlEntrypointMetadata> = {
+          id: `${wrapper.id}_${resolver.methodName}`,
+          type: 'graphql-entrypoint',
+          methodName: resolver.methodName,
+          className: wrapper.name,
+          classNodeId: wrapper.id,
+          metadata: {
+            key: resolver.name,
+            parentType: resolver.type,
+          },
+        };
+
+        this.serializedGraph.insertEntrypoint(entrypointDefinition, wrapper.id);
 
         const createContext = (transform?: Function) =>
           this.createContextCallback(
@@ -305,10 +313,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     }
     const wrapper = coreModuleRef.getProviderByKey(REQUEST);
     wrapper.setInstanceByContextId(contextId, {
-      // TODO: remove "as any" in the next major release (backward compatibility)
-      instance: (contextId as any).getParent
-        ? (contextId as any).payload
-        : request,
+      instance: contextId.getParent ? contextId.payload : request,
       isResolved: true,
     });
   }
@@ -346,42 +351,16 @@ export class ResolversExplorerService extends BaseExplorerService {
   }
 
   private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
-    if (getByRequestNumberOfArguments === 2) {
-      const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
-      if (!gqlContext[REQUEST_CONTEXT_ID as any]) {
-        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-          value: contextId,
-          enumerable: false,
-          configurable: false,
-          writable: false,
-        });
-      }
-      return contextId;
-    } else {
-      // TODO remove in the next version (backward-compatibility layer)
-      // Left for backward compatibility purposes
-      let contextId: ContextId;
-
-      if (gqlContext && gqlContext[REQUEST_CONTEXT_ID]) {
-        contextId = gqlContext[REQUEST_CONTEXT_ID];
-      } else if (
-        gqlContext &&
-        gqlContext.req &&
-        gqlContext.req[REQUEST_CONTEXT_ID]
-      ) {
-        contextId = gqlContext.req[REQUEST_CONTEXT_ID];
-      } else {
-        contextId = createContextId();
-        Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-          value: contextId,
-          enumerable: false,
-          configurable: false,
-          writable: false,
-        });
-      }
-
-      return contextId;
+    const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
+    if (!gqlContext[REQUEST_CONTEXT_ID as any]) {
+      Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
+        value: contextId,
+        enumerable: false,
+        configurable: false,
+        writable: false,
+      });
     }
+    return contextId;
   }
 
   private assignResolverConstructorUniqueId(
