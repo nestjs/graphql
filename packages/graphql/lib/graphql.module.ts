@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common/interfaces';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ROUTE_MAPPED_MESSAGE } from '@nestjs/core/helpers/messages';
+import { InitializeOnPreviewAllowlist } from '@nestjs/core/inspector';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver';
 import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
@@ -193,3 +194,5 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
     }
   }
 }
+
+InitializeOnPreviewAllowlist.add(GraphQLModule);
