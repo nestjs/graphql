@@ -64,6 +64,7 @@ export class GraphQLModule<
     @Inject(GRAPHQL_MODULE_OPTIONS) private readonly options: GqlModuleOptions,
     private readonly _graphQlAdapter: AbstractGraphQLDriver,
     private readonly graphQlTypesLoader: GraphQLTypesLoader,
+    private readonly gqlSchemaHost: GraphQLSchemaHost,
   ) {}
 
   async onModuleDestroy() {
@@ -145,11 +146,6 @@ export class GraphQLModule<
   }
 
   async onModuleInit() {
-    const httpAdapter = this.httpAdapterHost?.httpAdapter;
-    if (!httpAdapter) {
-      return;
-    }
-
     const options = await this._graphQlAdapter.mergeDefaultOptions(
       this.options,
     );
@@ -158,10 +154,25 @@ export class GraphQLModule<
       (await this.graphQlTypesLoader.mergeTypesByPaths(typePaths)) || [];
 
     const mergedTypeDefs = extend(typeDefs, options.typeDefs);
-    await this._graphQlAdapter.start({
+
+    const gqlSchema = await this._graphQlAdapter.generateSchema({
       ...options,
       typeDefs: mergedTypeDefs,
     });
+    this.gqlSchemaHost.schema = gqlSchema;
+
+    const completeOptions = {
+      ...options,
+      schema: gqlSchema,
+      typeDefs: undefined,
+    };
+
+    const httpAdapter = this.httpAdapterHost?.httpAdapter;
+    if (!httpAdapter) {
+      return;
+    }
+
+    await this._graphQlAdapter.start(completeOptions);
 
     if (options.path) {
       GraphQLModule.logger.log(
