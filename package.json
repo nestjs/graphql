@@ -52,7 +52,7 @@
     "lerna": "6.4.1",
     "lerna-changelog": "2.2.0",
     "lint-staged": "13.1.1",
-    "prettier": "2.8.3",
+    "prettier": "2.8.4",
     "reflect-metadata": "0.1.13",
     "release-it": "15.6.0",
     "rimraf": "4.1.2",
