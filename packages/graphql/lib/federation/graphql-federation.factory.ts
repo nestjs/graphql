@@ -25,7 +25,6 @@ import {
 import { gql } from 'graphql-tag';
 import { forEach, isEmpty } from 'lodash';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
-import { GraphQLSchemaHost } from '../graphql-schema.host';
 import {
   AutoSchemaFileValue,
   BuildFederatedSchemaOptions,
@@ -46,35 +45,31 @@ export class GraphQLFederationFactory {
     private readonly resolversExplorerService: ResolversExplorerService,
     private readonly scalarsExplorerService: ScalarsExplorerService,
     private readonly gqlSchemaBuilder: GraphQLSchemaBuilder,
-    private readonly gqlSchemaHost: GraphQLSchemaHost,
     private readonly typeDefsDecoratorFactory: TypeDefsDecoratorFactory,
   ) {}
 
-  async mergeWithSchema<T extends GqlModuleOptions>(
+  async generateSchema<T extends GqlModuleOptions>(
     options: T = {} as T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
     ) => GraphQLSchema,
-  ): Promise<T> {
-    const transformSchema = async (schema: GraphQLSchema) =>
-      options.transformSchema ? options.transformSchema(schema) : schema;
+  ): Promise<GraphQLSchema> {
+    const transformSchema =
+      options.transformSchema ?? ((schema: GraphQLSchema) => schema);
 
     let schema: GraphQLSchema;
     if (options.autoSchemaFile) {
-      schema = await this.generateSchema(options, buildFederatedSchema);
+      schema = await this.generateSchemaFromCodeFirst(
+        options,
+        buildFederatedSchema,
+      );
     } else if (isEmpty(options.typeDefs)) {
       schema = options.schema;
     } else {
       schema = this.buildSchemaFromTypeDefs(options);
     }
 
-    this.gqlSchemaHost.schema = schema;
-
-    return {
-      ...options,
-      schema: await transformSchema(schema),
-      typeDefs: undefined,
-    };
+    return await transformSchema(schema);
   }
 
   private buildSchemaFromTypeDefs<T extends GqlModuleOptions>(options: T) {
@@ -93,7 +88,7 @@ export class GraphQLFederationFactory {
     ]);
   }
 
-  private async generateSchema<T extends GqlModuleOptions>(
+  private async generateSchemaFromCodeFirst<T extends GqlModuleOptions>(
     options: T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,

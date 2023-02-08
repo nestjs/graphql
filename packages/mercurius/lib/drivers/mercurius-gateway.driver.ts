@@ -24,14 +24,24 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatew
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
 
-    const { plugins, hooks, ...mercuriusOptions } = options;
+    const {
+      plugins,
+      hooks,
+      schema: _, // Schema stubbed to be compatible with other drivers, ignore.
+      ...mercuriusOptions
+    } = options;
     const app = httpAdapter.getInstance<FastifyInstance>();
     await app.register(mercuriusGateway, {
       ...mercuriusOptions,
     });
+
     await registerMercuriusPlugin(app, plugins);
     registerMercuriusHooks(app, hooks, 'graphqlGateway');
   }
 
   public async stop(): Promise<void> {}
+
+  public generateSchema(options: MercuriusGatewayDriverConfig) {
+    return null;
+  }
 }

@@ -43,4 +43,8 @@ export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverCon
       server: await super.mergeDefaultOptions(options?.server ?? {}),
     };
   }
+
+  public generateSchema(_: ApolloGatewayDriverConfig) {
+    return null;
+  }
 }

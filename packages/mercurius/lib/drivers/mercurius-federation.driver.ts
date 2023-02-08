@@ -4,7 +4,7 @@ import {
   GraphQLFederationFactory,
 } from '@nestjs/graphql';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
-import { printSchema } from 'graphql';
+import { GraphQLSchema, printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
@@ -32,11 +32,7 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
   }
 
   public async start(options: MercuriusDriverConfig) {
-    const { plugins, hooks, ...adapterOptions } =
-      await this.graphqlFederationFactory.mergeWithSchema(
-        options,
-        buildMercuriusFederatedSchema,
-      );
+    const { plugins, hooks, ...adapterOptions } = options;
 
     if (adapterOptions.definitions && adapterOptions.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
@@ -60,6 +56,15 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     registerMercuriusHooks(app, hooks);
   }
 
-  /* eslit-disable-next-line @typescript-eslint/no-empty-function */
+  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   public async stop(): Promise<void> {}
+
+  public generateSchema(
+    options: MercuriusDriverConfig,
+  ): Promise<GraphQLSchema> {
+    return this.graphqlFederationFactory.generateSchema(
+      options,
+      buildMercuriusFederatedSchema,
+    );
+  }
 }

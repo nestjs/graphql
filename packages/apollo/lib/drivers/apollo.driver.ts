@@ -20,16 +20,11 @@ export class ApolloDriver extends ApolloBaseDriver {
     this.pluginsExplorerService = new PluginsExplorerService(modulesContainer);
   }
 
-  public async start(apolloOptions: ApolloDriverConfig) {
-    apolloOptions.plugins = extend(
-      apolloOptions.plugins || [],
-      this.pluginsExplorerService.explore(apolloOptions),
+  public async start(options: ApolloDriverConfig) {
+    options.plugins = extend(
+      options.plugins || [],
+      this.pluginsExplorerService.explore(options),
     );
-
-    const options =
-      await this.graphQlFactory.mergeWithSchema<ApolloDriverConfig>(
-        apolloOptions,
-      );
 
     if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
