@@ -95,67 +95,64 @@ export class ResolversExplorerService extends BaseExplorerService {
           (type) => type === resolverType,
         ));
 
-    const resolvers = this.metadataScanner.scanFromPrototype(
-      instance,
-      prototype,
-      (name) => extractMetadata(instance, prototype, name, predicate),
-    );
+    const resolvers = this.metadataScanner
+      .getAllMethodNames(prototype)
+      .map((name) => extractMetadata(instance, prototype, name, predicate))
+      .filter((resolver) => !!resolver);
 
     const isRequestScoped = !wrapper.isDependencyTreeStatic();
-    return resolvers
-      .filter((resolver) => !!resolver)
-      .map((resolver) => {
-        this.assignResolverConstructorUniqueId(instance.constructor, moduleRef);
+    return resolvers.map((resolver) => {
+      this.assignResolverConstructorUniqueId(instance.constructor, moduleRef);
 
-        const entrypointDefinition: Entrypoint<GqlEntrypointMetadata> = {
-          id: `${wrapper.id}_${resolver.methodName}`,
-          type: 'graphql-entrypoint',
-          methodName: resolver.methodName,
-          className: wrapper.name,
-          classNodeId: wrapper.id,
-          metadata: {
-            key: resolver.name,
-            parentType: resolver.type,
-          },
-        };
+      const entrypointDefinition: Entrypoint<GqlEntrypointMetadata> = {
+        id: `${wrapper.id}_${resolver.methodName}`,
+        type: 'graphql-entrypoint',
+        methodName: resolver.methodName,
+        className: wrapper.name,
+        classNodeId: wrapper.id,
+        metadata: {
+          key: resolver.name,
+          parentType: resolver.type,
+        },
+      };
 
-        this.serializedGraph.insertEntrypoint(entrypointDefinition, wrapper.id);
+      this.serializedGraph.insertEntrypoint(entrypointDefinition, wrapper.id);
 
-        const createContext = (transform?: Function) =>
-          this.createContextCallback(
-            instance,
-            prototype,
-            wrapper,
-            moduleRef,
-            resolver,
-            isRequestScoped,
-            transform,
-          );
-        if (resolver.type === SUBSCRIPTION_TYPE) {
-          if (!wrapper.isDependencyTreeStatic()) {
-            // Note: We don't throw an exception here for backward
-            // compatibility reasons.
-            this.logger.error(
-              `"${wrapper.metatype.name}" resolver is request or transient-scoped. Resolvers that register subscriptions with the "@Subscription()" decorator must be static (singleton).`,
-            );
-          }
-          const subscriptionOptions = Reflect.getMetadata(
-            SUBSCRIPTION_OPTIONS_METADATA,
-            instance[resolver.methodName],
-          );
-          return this.createSubscriptionMetadata(
-            gqlAdapter,
-            createContext,
-            subscriptionOptions,
-            resolver,
-            instance,
+      const createContext = (transform?: Function) =>
+        this.createContextCallback(
+          instance,
+          prototype,
+          wrapper,
+          moduleRef,
+          resolver,
+          isRequestScoped,
+          transform,
+        );
+      if (resolver.type === SUBSCRIPTION_TYPE) {
+        if (!wrapper.isDependencyTreeStatic()) {
+          // Note: We don't throw an exception here for backward
+          // compatibility reasons.
+          this.logger.error(
+            `"${wrapper.metatype.name}" resolver is request or transient-scoped. Resolvers that register subscriptions with the "@Subscription()" decorator must be static (singleton).`,
           );
         }
-        return {
-          ...resolver,
-          callback: createContext(),
-        };
-      });
+        const subscriptionOptions = Reflect.getMetadata(
+          SUBSCRIPTION_OPTIONS_METADATA,
+          instance[resolver.methodName],
+        );
+        return this.createSubscriptionMetadata(
+          gqlAdapter,
+          createContext,
+          subscriptionOptions,
+          resolver,
+          instance,
+        );
+      }
+      return {
+        ...resolver,
+        callback: createContext(),
+      };
+    });
   }
 
   createContextCallback<T extends Record<string, any>>(
