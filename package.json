@@ -29,8 +29,8 @@
     "graphql": "15.8.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.4.2",
-    "@commitlint/config-angular": "17.4.2",
+    "@commitlint/cli": "17.4.3",
+    "@commitlint/config-angular": "17.4.3",
     "@types/graphql": "14.5.0",
     "@types/jest": "29.4.0",
     "@types/node": "18.13.0",
