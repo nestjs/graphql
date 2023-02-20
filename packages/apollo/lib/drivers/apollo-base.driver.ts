@@ -238,7 +238,9 @@ export abstract class ApolloBaseDriver<
     originalOptions: ApolloDriverConfig = { ...targetOptions },
   ) {
     if (!targetOptions.context) {
-      targetOptions.context = ({ req, request }) => ({ req: req ?? request });
+      targetOptions.context = async ({ req, request }) => ({
+        req: req ?? request,
+      });
     } else if (isFunction(targetOptions.context)) {
       targetOptions.context = async (...args: unknown[]) => {
         const ctx = await (originalOptions.context as Function)(...args);
@@ -246,7 +248,10 @@ export abstract class ApolloBaseDriver<
         return this.assignReqProperty(ctx, req ?? request);
       };
     } else {
-      targetOptions.context = ({ req, request }: Record<string, unknown>) => {
+      targetOptions.context = async ({
+        req,
+        request,
+      }: Record<string, unknown>) => {
         return this.assignReqProperty(
           originalOptions.context as Record<string, any>,
           req ?? request,
