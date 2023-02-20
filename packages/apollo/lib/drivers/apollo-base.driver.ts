@@ -133,7 +133,12 @@ export abstract class ApolloBaseDriver<
 
     await server.start();
 
-    app.use(path, expressMiddleware(server));
+    app.use(
+      path,
+      expressMiddleware(server, {
+        context: options.context,
+      }),
+    );
 
     this.apolloServer = server;
   }
@@ -171,7 +176,9 @@ export abstract class ApolloBaseDriver<
     app.route({
       url: path,
       method: ['GET', 'POST', 'OPTIONS'],
-      handler: fastifyApolloHandler(server),
+      handler: fastifyApolloHandler(server, {
+        context: options.context,
+      }),
     });
 
     this.apolloServer = server;
