@@ -1,5 +1,5 @@
 export type NullableList = 'items' | 'itemsAndList';
-export interface BaseTypeOptions {
+export interface BaseTypeOptions<T = any> {
   /**
    * Determines whether field/argument/etc is nullable.
    */
@@ -7,5 +7,5 @@ export interface BaseTypeOptions {
   /**
    * Default value.
    */
-  defaultValue?: any;
+  defaultValue?: T;
 }

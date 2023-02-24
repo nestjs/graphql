@@ -9,7 +9,11 @@ import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { Complexity, FieldMiddleware } from '../interfaces';
 import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
-import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
+import {
+  GqlTypeReference,
+  ReturnTypeFunc,
+  ReturnTypeFuncValue,
+} from '../interfaces/return-type-func.interface';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
@@ -17,7 +21,7 @@ import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 /**
  * Interface defining options that can be passed to `@Field()` decorator.
  */
-export interface FieldOptions extends BaseTypeOptions {
+export interface FieldOptions<T = any> extends BaseTypeOptions<T> {
   /**
    * Name of the field.
    */
@@ -40,6 +44,12 @@ export interface FieldOptions extends BaseTypeOptions {
   middleware?: FieldMiddleware[];
 }
 
+type FieldOptionsExtractor<T> = T extends [GqlTypeReference<infer P>]
+  ? FieldOptions<P[]>
+  : T extends GqlTypeReference<infer P>
+  ? FieldOptions<P>
+  : never;
+
 /**
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
@@ -49,24 +59,25 @@ export function Field(): PropertyDecorator & MethodDecorator;
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
  */
-export function Field(
-  options: FieldOptions,
+export function Field<T extends ReturnTypeFuncValue>(
+  options: FieldOptionsExtractor<T>,
 ): PropertyDecorator & MethodDecorator;
 /**
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
  */
-export function Field(
-  returnTypeFunction?: ReturnTypeFunc,
-  options?: FieldOptions,
+export function Field<T extends ReturnTypeFuncValue>(
+  returnTypeFunction?: ReturnTypeFunc<T>,
+  options?: FieldOptionsExtractor<T>,
 ): PropertyDecorator & MethodDecorator;
+
 /**
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
  */
-export function Field(
-  typeOrOptions?: ReturnTypeFunc | FieldOptions,
-  fieldOptions?: FieldOptions,
+export function Field<T extends ReturnTypeFuncValue>(
+  typeOrOptions?: ReturnTypeFunc<T> | FieldOptionsExtractor<T>,
+  fieldOptions?: FieldOptionsExtractor<T>,
 ): PropertyDecorator & MethodDecorator {
   return (
     prototype: Object,
@@ -83,9 +94,9 @@ export function Field(
   };
 }
 
-export function addFieldMetadata(
-  typeOrOptions: ReturnTypeFunc | FieldOptions,
-  fieldOptions: FieldOptions,
+export function addFieldMetadata<T extends ReturnTypeFuncValue>(
+  typeOrOptions: ReturnTypeFunc<T> | FieldOptionsExtractor<T>,
+  fieldOptions: FieldOptionsExtractor<T>,
   prototype: Object,
   propertyKey?: string,
   descriptor?: TypedPropertyDescriptor<any>,
@@ -103,7 +114,7 @@ export function addFieldMetadata(
       metadataKey: isResolverMethod ? 'design:returntype' : 'design:type',
       prototype,
       propertyKey,
-      explicitTypeFn: typeFunc as ReturnTypeFunc,
+      explicitTypeFn: typeFunc as ReturnTypeFunc<T>,
       typeOptions: options,
     });
 
