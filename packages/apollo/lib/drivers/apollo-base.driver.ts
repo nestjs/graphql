@@ -133,7 +133,12 @@ export abstract class ApolloBaseDriver<
 
     await server.start();
 
-    app.use(path, expressMiddleware(server));
+    app.use(
+      path,
+      expressMiddleware(server, {
+        context: options.context,
+      }),
+    );
 
     this.apolloServer = server;
   }
@@ -171,7 +176,9 @@ export abstract class ApolloBaseDriver<
     app.route({
       url: path,
       method: ['GET', 'POST', 'OPTIONS'],
-      handler: fastifyApolloHandler(server),
+      handler: fastifyApolloHandler(server, {
+        context: options.context,
+      }),
     });
 
     this.apolloServer = server;
@@ -231,18 +238,26 @@ export abstract class ApolloBaseDriver<
     originalOptions: ApolloDriverConfig = { ...targetOptions },
   ) {
     if (!targetOptions.context) {
-      targetOptions.context = ({ req, request }) => ({ req: req ?? request });
+      targetOptions.context = async (contextOrRequest) => {
+        return {
+          // New ApolloServer fastify integration has Request as first parameter to the Context function
+          req: contextOrRequest.req ?? contextOrRequest,
+        };
+      };
     } else if (isFunction(targetOptions.context)) {
       targetOptions.context = async (...args: unknown[]) => {
         const ctx = await (originalOptions.context as Function)(...args);
-        const { req, request } = args[0] as Record<string, unknown>;
-        return this.assignReqProperty(ctx, req ?? request);
+        const contextOrRequest = args[0] as Record<string, unknown>;
+        return this.assignReqProperty(
+          ctx,
+          contextOrRequest.req ?? contextOrRequest,
+        );
       };
     } else {
-      targetOptions.context = ({ req, request }: Record<string, unknown>) => {
+      targetOptions.context = async (contextOrRequest) => {
         return this.assignReqProperty(
           originalOptions.context as Record<string, any>,
-          req ?? request,
+          contextOrRequest.req ?? contextOrRequest,
         );
       };
     }
