@@ -63,6 +63,9 @@ enum SampleOrphanedEnum {
   White
 }
 
+"""A sample scalar"""
+scalar SampleScalar
+
 type Query {
   """get recipe by id"""
   recipe(
@@ -102,6 +105,7 @@ input NewRecipeInput {
   """recipe title"""
   title: String!
   description: String
+  status: String! = "published"
   ingredients: [String!]!
 }
 
@@ -160,6 +164,7 @@ type Mutation {
 input NewRecipeInput {
   description: String
   ingredients: [String!]!
+  status: String! = "published"
 
   """recipe title"""
   title: String!

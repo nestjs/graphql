@@ -63,6 +63,27 @@ describe('FieldDirectiveCollection', () => {
     expect(map.getByName('bar')).toEqual([directive1Alt]);
   });
 
+  it('should add 2 different fields with the same directives', () => {
+    const map = new FieldDirectiveCollection();
+    const directive1Alt: PropertyDirectiveMetadata = {
+      fieldName: 'bar',
+      sdl: '@foo',
+      target: () => {},
+    };
+    const directive2Alt: PropertyDirectiveMetadata = {
+      fieldName: 'foo',
+      sdl: '@bar',
+      target: () => {},
+    };
+    map.add(directive1);
+    map.add(directive2);
+    map.add(directive1Alt);
+    map.add(directive2Alt);
+
+    expect(map.getByName('foo')).toEqual([directive1, directive2Alt]);
+    expect(map.getByName('bar')).toEqual([directive2, directive1Alt]);
+  });
+
   it('should NOT the same directive on the same field twice', () => {
     const map = new FieldDirectiveCollection();
     map.add(directive1);

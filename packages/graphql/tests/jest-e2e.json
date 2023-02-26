@@ -4,11 +4,9 @@
   "testEnvironment": "node",
   "testRegex": ".spec.ts$",
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
-  },
-  "globals": {
-    "ts-jest": {
-      "tsconfig": "<rootDir>/../tsconfig.spec.json"
-    }
+    "^.+\\.(t|j)s$": [
+      "ts-jest",
+      { "tsconfig": "<rootDir>/../tsconfig.spec.json", "isolatedModules": true }
+    ]
   }
 }

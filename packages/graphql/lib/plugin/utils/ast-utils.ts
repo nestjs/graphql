@@ -149,15 +149,26 @@ export function getDecoratorName(decorator: Decorator) {
   const isDecoratorFactory =
     decorator.expression.kind === SyntaxKind.CallExpression;
   if (isDecoratorFactory) {
-    const callExpression = decorator.expression;
-    const identifier = (callExpression as CallExpression)
-      .expression as Identifier;
-    if (isDynamicallyAdded(identifier)) {
-      return undefined;
+    const callExpression = decorator.expression as ts.CallExpression;
+
+    if (
+      callExpression.expression?.kind === ts.SyntaxKind.PropertyAccessExpression
+    ) {
+      // When "import * as _" is used
+      const propertyAccessExpression =
+        callExpression.expression as PropertyAccessExpression;
+      return getIdentifierFromName(propertyAccessExpression.name).getText();
     }
-    return getIdentifierFromName(
-      (callExpression as CallExpression).expression,
-    ).getText();
+
+    if (callExpression.kind === ts.SyntaxKind.CallExpression) {
+      const identifier = (callExpression as CallExpression)
+        .expression as Identifier;
+
+      if (isDynamicallyAdded(identifier)) {
+        return undefined;
+      }
+      return getIdentifierFromName(identifier).getText();
+    }
   }
   return getIdentifierFromName(decorator.expression).getText();
 }

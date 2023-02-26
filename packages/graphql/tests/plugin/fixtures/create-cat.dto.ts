@@ -1,4 +1,6 @@
 export const createCatDtoText = `
+import * as gql from "@nestjs/graphql";
+
 enum Status {
     ENABLED,
     DISABLED
@@ -12,6 +14,7 @@ interface Node {
     id: number;
 }
 
+@gql.InputType()
 @ObjectType()
 export class CreateCatDto {
   name: string;
@@ -69,7 +72,8 @@ export class CreateCatArgs {
 }
 `;
 
-export const createCatDtoTextTranspiled = `var Status;
+export const createCatDtoTextTranspiled = `import * as gql from "@nestjs/graphql";
+var Status;
 (function (Status) {
     Status[Status["ENABLED"] = 0] = "ENABLED";
     Status[Status["DISABLED"] = 1] = "DISABLED";
@@ -91,6 +95,7 @@ __decorate([
     HideField()
 ], CreateCatDto.prototype, "hidden", void 0);
 CreateCatDto = __decorate([
+    gql.InputType(),
     ObjectType()
 ], CreateCatDto);
 export { CreateCatDto };

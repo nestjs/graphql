@@ -24,7 +24,7 @@ function getObjectOrInterfaceTypeNameIfExists(
     TypeMetadataStorage.getObjectTypeMetadataByTarget(ctor);
   if (!objectMetadata) {
     const interfaceMetadata =
-        TypeMetadataStorage.getInterfacesMetadata(ctor);
+      TypeMetadataStorage.getInterfaceMetadataByTarget(ctor);
     if (!interfaceMetadata) {
       return;
     }

@@ -11,6 +11,7 @@ import {
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
 import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface';
 import { Injector } from '@nestjs/core/injector/injector';
+import { CONTROLLER_ID_KEY } from '@nestjs/core/injector/constants';
 import {
   ContextId,
   InstanceWrapper,
@@ -110,6 +111,8 @@ export class ResolversExplorerService extends BaseExplorerService {
     return resolvers
       .filter((resolver) => !!resolver)
       .map((resolver) => {
+        this.assignResolverConstructorUniqueId(instance.constructor, moduleRef);
+
         const createContext = (transform?: Function) =>
           this.createContextCallback(
             instance,
@@ -302,7 +305,10 @@ export class ResolversExplorerService extends BaseExplorerService {
     }
     const wrapper = coreModuleRef.getProviderByKey(REQUEST);
     wrapper.setInstanceByContextId(contextId, {
-      instance: request,
+      // TODO: remove "as any" in the next major release (backward compatibility)
+      instance: (contextId as any).getParent
+        ? (contextId as any).payload
+        : request,
       isResolved: true,
     });
   }
@@ -376,5 +382,16 @@ export class ResolversExplorerService extends BaseExplorerService {
 
       return contextId;
     }
+  }
+
+  private assignResolverConstructorUniqueId(
+    resolverConstructor: any,
+    moduleRef: Module,
+  ) {
+    if (resolverConstructor.hasOwnProperty(CONTROLLER_ID_KEY)) {
+      return;
+    }
+
+    moduleRef.assignControllerUniqueId(resolverConstructor);
   }
 }
