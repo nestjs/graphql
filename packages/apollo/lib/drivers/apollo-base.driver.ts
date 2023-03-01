@@ -14,7 +14,7 @@ import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
-  [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_USER_INPUT,
+  [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
   [HttpStatus.UNAUTHORIZED]: 'UNAUTHENTICATED',
   [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
 };
