@@ -9733,10 +9733,10 @@ registry-url@^6.0.0:
   dependencies:
     rc "1.2.8"
 
-release-it@15.6.1:
-  version "15.6.1"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-15.6.1.tgz#843e4ab66110bf2460d14536fb7ce36804f2a078"
-  integrity sha512-oPJKP2yxMcA/TaGFnS5uB0spDSPiDXXd1yGKSSMQ2xutyiSs8X+1UahlJCF/xHnp01QwUqRv0fpsV9MFr2GKmQ==
+release-it@15.7.0:
+  version "15.7.0"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-15.7.0.tgz#9ea011208710736b5173e3691b48b6f719622c65"
+  integrity sha512-/ajllmzQNuxXCrPySwx+MiR/nBHp8H+lTn42QFw9YlFPJQpLFwgMjCOFTB4hhuavi9jMbDpWcTPFy31QJgzNcw==
   dependencies:
     "@iarna/toml" "2.2.5"
     "@octokit/rest" "19.0.7"
