@@ -1053,10 +1053,10 @@
   dependencies:
     ajv "^6.12.6"
 
-"@fastify/ajv-compiler@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@fastify/ajv-compiler/-/ajv-compiler-3.3.1.tgz#7045dbf23c11c42b50011ccc36998cd624856e5d"
-  integrity sha512-IRnids8lblQ8e1i8h4JLyfJmebXE+ohcj8x8X/+Ew6ZB4H0Ui05z5YL6q5FOcl0zItVpu4adRzeyVNNUwmduIg==
+"@fastify/ajv-compiler@^3.5.0":
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/@fastify/ajv-compiler/-/ajv-compiler-3.5.0.tgz#459bff00fefbf86c96ec30e62e933d2379e46670"
+  integrity sha512-ebbEtlI7dxXF5ziNdr05mOY8NnDiPB1XvAlLHctRt/Rc+C3LCOVW5imUVX+mhvUhnNzmPBHewUkOFgGlCxgdAA==
   dependencies:
     ajv "^8.11.0"
     ajv-formats "^2.1.1"
@@ -5282,12 +5282,12 @@ fastify@3.29.0:
     semver "^7.3.2"
     tiny-lru "^8.0.1"
 
-fastify@4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.13.0.tgz#5726d4c63acae1b5e34c7643e233a0be8169009a"
-  integrity sha512-p9ibdFWH3pZ7KPgmfHPKGUy2W4EWU2TEpwlcu58w4CwGyU3ARFfh2kwq6zpZ5W2ZGVbufi4tZbqHIHAlX/9Z/A==
+fastify@4.14.0:
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.14.0.tgz#05e388e93b7014c1381a44c021c4c9cfcba9d984"
+  integrity sha512-oJSHlM/XbGdJpe2MKMJBsrvrkPDrHDZlAB9qzuUJIpnBtpDE394bzdFsH4KnsUI1e8zxzFl+GNBEXC64N/IPuw==
   dependencies:
-    "@fastify/ajv-compiler" "^3.3.1"
+    "@fastify/ajv-compiler" "^3.5.0"
     "@fastify/error" "^3.0.0"
     "@fastify/fast-json-stringify-compiler" "^4.1.0"
     abstract-logging "^2.0.1"
