@@ -1095,9 +1095,9 @@
     send "^0.17.1"
 
 "@fastify/websocket@^5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-5.0.0.tgz#1fe62743c7663fb71d18953e6f62873a5b9cf448"
-  integrity sha512-ngZo5rchmhRZaML4MkAY/ClGs8Iyp0+rL97EIP0QsU2N4ICqBKEBG/wGL21ImAhha1RFixEzz8+CB/Ad/W50yw==
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-5.0.1.tgz#03c69e70988c3a8b88a8cf38036e1aeed0b3b13a"
+  integrity sha512-voOrfqhj9TIEnviQ9lzGBXdCIpIJpK69HLgvPPv7m9JNQ7GfSJAbG2y6YRuoYk8u6zpDuleHoLCmaJBDl5Chtw==
   dependencies:
     fastify-plugin "^3.0.0"
     ws "^8.0.0"
