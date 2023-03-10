@@ -1,4 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
+import { Injector } from '@nestjs/core/injector/injector';
 import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApplicationModule } from '../code-first/app.module';
@@ -7,6 +8,10 @@ describe('Serialized graph', () => {
   let testingModule: TestingModule;
 
   beforeAll(async () => {
+    jest
+      .spyOn(Injector.prototype as any, 'getNowTimestamp')
+      .mockImplementation(() => 0);
+
     testingModule = await Test.createTestingModule({
       imports: [ApplicationModule],
     }).compile({ snapshot: true, preview: true });

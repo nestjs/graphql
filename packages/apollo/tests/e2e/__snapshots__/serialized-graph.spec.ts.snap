@@ -16,7 +16,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "MutationTypeFactory",
-        "initTime": 18.66920799948275
+        "initTime": 0
       }
     },
     "183181629": {
@@ -32,7 +32,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "GraphQLAstExplorer",
-        "initTime": 7.867499999701977
+        "initTime": 0
       }
     },
     "203550704": {
@@ -64,7 +64,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "InterfaceDefinitionFactory",
-        "initTime": 17.786583000794053
+        "initTime": 0
       }
     },
     "225063248": {
@@ -81,7 +81,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "InternalCoreModule",
-        "initTime": 11.902334000915289
+        "initTime": 0
       }
     },
     "245138285": {
@@ -123,7 +123,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "GraphQLTypesLoader",
-        "initTime": 7.85950000025332
+        "initTime": 0
       }
     },
     "327064966": {
@@ -139,7 +139,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "RecipesResolver",
-        "initTime": 16.71366599947214,
+        "initTime": 0,
         "enhancers": [
           {
             "id": "-509472588",
@@ -178,7 +178,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "GraphQLFactory",
-        "initTime": 23.134416000917554
+        "initTime": 0
       }
     },
     "555176277": {
@@ -204,7 +204,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "EnumDefinitionFactory",
-        "initTime": 6.3971670009195805
+        "initTime": 0
       }
     },
     "579567951": {
@@ -236,7 +236,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "TypeDefinitionsGenerator",
-        "initTime": 18.567542001605034
+        "initTime": 0
       }
     },
     "653699184": {
@@ -252,7 +252,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "SubscriptionTypeFactory",
-        "initTime": 18.59791599959135
+        "initTime": 0
       }
     },
     "671882984": {
@@ -268,7 +268,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "Reflector",
-        "initTime": 11.673666998744011
+        "initTime": 0
       }
     },
     "705219300": {
@@ -300,7 +300,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "DateScalar",
-        "initTime": 10.300834000110626
+        "initTime": 0
       }
     },
     "847948870": {
@@ -316,7 +316,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "MetadataScanner",
-        "initTime": 9.360915999859571
+        "initTime": 0
       }
     },
     "912104522": {
@@ -368,7 +368,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "GraphQLSchemaFactory",
-        "initTime": 20.692874999716878
+        "initTime": 0
       }
     },
     "1253818496": {
@@ -385,7 +385,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "RootTestModule",
-        "initTime": 11.375083999708295
+        "initTime": 0
       }
     },
     "1259354433": {
@@ -401,7 +401,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ResolveTypeFactory",
-        "initTime": 11.400000000372529
+        "initTime": 0
       }
     },
     "1404798907": {
@@ -417,7 +417,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ObjectTypeDefinitionFactory",
-        "initTime": 17.755499999970198
+        "initTime": 0
       }
     },
     "1434456218": {
@@ -434,7 +434,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "Reflector",
-        "initTime": 17.651957999914885
+        "initTime": 0
       }
     },
     "1479432515": {
@@ -450,7 +450,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "GraphQLSchemaHost",
-        "initTime": 6.53787500038743
+        "initTime": 0
       }
     },
     "1533767552": {
@@ -467,7 +467,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ApplicationModule",
-        "initTime": 10.97766700014472
+        "initTime": 0
       }
     },
     "1595755396": {
@@ -493,7 +493,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "RootTypeFactory",
-        "initTime": 17.70466599985957
+        "initTime": 0
       }
     },
     "1723647029": {
@@ -525,7 +525,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ArgsFactory",
-        "initTime": 16.741624999791384
+        "initTime": 0
       }
     },
     "1765779671": {
@@ -541,7 +541,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "GraphQLFederationFactory",
-        "initTime": 20.242499999701977
+        "initTime": 0
       }
     },
     "1771940178": {
@@ -574,7 +574,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "REQUEST",
-        "initTime": 9.813833000138402
+        "initTime": 0
       }
     },
     "1977125601": {
@@ -590,7 +590,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "RecipesService",
-        "initTime": 10.110292000696063
+        "initTime": 0
       }
     },
     "2022351939": {
@@ -655,7 +655,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": true,
         "exported": true,
         "token": "INQUIRER",
-        "initTime": 9.81449999846518
+        "initTime": 0
       }
     },
     "-26938366": {
@@ -704,7 +704,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "HttpAdapterHost",
-        "initTime": 13.344209000468254
+        "initTime": 0
       }
     },
     "-702581189": {
@@ -720,7 +720,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "LazyModuleLoader",
-        "initTime": 9.783791000023484
+        "initTime": 0
       }
     },
     "-1904419534": {
@@ -805,7 +805,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "RecipesModule",
-        "initTime": 10.787500001490116
+        "initTime": 0
       }
     },
     "-1631857665": {
@@ -837,7 +837,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "IngredientsResolver",
-        "initTime": 10.770500000566244
+        "initTime": 0
       }
     },
     "-616118705": {
@@ -853,7 +853,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "IRecipesResolver",
-        "initTime": 10.29462500102818
+        "initTime": 0
       }
     },
     "-1315135195": {
@@ -870,7 +870,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "exported": false,
         "token": "APP_FILTER (UUID: -277730442)",
         "subtype": "filter",
-        "initTime": 10.27016699872911,
+        "initTime": 0,
         "global": true
       }
     },
@@ -904,7 +904,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "DirectionsModule",
-        "initTime": 9.746791999787092
+        "initTime": 0
       }
     },
     "-2142706414": {
@@ -936,7 +936,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "DirectionsResolver",
-        "initTime": 9.380124999210238
+        "initTime": 0
       }
     },
     "-1497318880": {
@@ -953,7 +953,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "GraphQLModule",
-        "initTime": 24.262499999254942
+        "initTime": 0
       }
     },
     "-1181044340": {
@@ -969,7 +969,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ResolversExplorerService",
-        "initTime": 14.49958299845457
+        "initTime": 0
       }
     },
     "-897067162": {
@@ -985,7 +985,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ScalarsExplorerService",
-        "initTime": 12.316500000655651
+        "initTime": 0
       }
     },
     "-407945788": {
@@ -1001,7 +1001,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "GraphQLSchemaBuilder",
-        "initTime": 21.275707999244332
+        "initTime": 0
       }
     },
     "-952748802": {
@@ -1017,7 +1017,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "TypeDefsDecoratorFactory",
-        "initTime": 6.455624999478459
+        "initTime": 0
       }
     },
     "-1783200635": {
@@ -1049,7 +1049,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "AbstractGraphQLDriver",
-        "initTime": 20.671916998922825
+        "initTime": 0
       }
     },
     "-1745210310": {
@@ -1066,7 +1066,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "GraphQLSchemaBuilderModule",
-        "initTime": 6.407499998807907
+        "initTime": 0
       }
     },
     "-1399120880": {
@@ -1082,7 +1082,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "InputTypeDefinitionFactory",
-        "initTime": 16.757875001057982
+        "initTime": 0
       }
     },
     "-325525981": {
@@ -1098,7 +1098,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "InputTypeFactory",
-        "initTime": 11.489584000781178
+        "initTime": 0
       }
     },
     "-1046435906": {
@@ -1114,7 +1114,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "OutputTypeFactory",
-        "initTime": 11.42887500114739
+        "initTime": 0
       }
     },
     "-1956905867": {
@@ -1130,7 +1130,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "OrphanedTypesFactory",
-        "initTime": 11.420583998784423
+        "initTime": 0
       }
     },
     "-848002075": {
@@ -1146,7 +1146,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "QueryTypeFactory",
-        "initTime": 18.62495900131762
+        "initTime": 0
       }
     },
     "-1492607355": {
@@ -1162,7 +1162,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "UnionDefinitionFactory",
-        "initTime": 16.611583000048995
+        "initTime": 0
       }
     },
     "-1155703408": {
@@ -1178,7 +1178,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "AstDefinitionNodeFactory",
-        "initTime": 6.240083999931812
+        "initTime": 0
       }
     },
     "-1185748874": {
@@ -1194,7 +1194,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": true,
         "token": "FileSystemHelper",
-        "initTime": 6.992916999384761
+        "initTime": 0
       }
     },
     "-973488942": {
@@ -1210,7 +1210,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "TypeDefinitionsStorage",
-        "initTime": 6.210249999538064
+        "initTime": 0
       }
     },
     "-1717366145": {
@@ -1226,7 +1226,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "TypeMapperSevice",
-        "initTime": 6.205915998667479
+        "initTime": 0
       }
     },
     "-1455444777": {
@@ -1242,7 +1242,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "TypeFieldsAccessor",
-        "initTime": 6.201333001255989
+        "initTime": 0
       }
     },
     "-713980898": {
@@ -1258,7 +1258,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "OrphanedReferenceRegistry",
-        "initTime": 6.1948750000447035
+        "initTime": 0
       }
     }
   },
