@@ -94,23 +94,6 @@ export class ObjectTypeDefinitionFactory {
     };
   }
 
-  private getRecursiveInterfaces(
-    metadatas: ObjectTypeMetadata[],
-  ): ObjectTypeMetadata[] {
-    if (!metadatas || !metadatas.length) return [];
-
-    const interfaces = metadatas.reduce<ObjectTypeMetadata[]>((prev, curr) => {
-      return [
-        ...prev,
-        ...getInterfacesArray(curr.interfaces).map((it) =>
-          TypeMetadataStorage.getInterfaceMetadataByTarget(it as Type<unknown>),
-        ),
-      ];
-    }, []);
-
-    return [...interfaces, ...this.getRecursiveInterfaces(interfaces)];
-  }
-
   private generateFields(
     metadata: ObjectTypeMetadata,
     options: BuildSchemaOptions,
@@ -180,6 +163,24 @@ export class ObjectTypeDefinitionFactory {
 
       return fields;
     };
+  }
+
+  private getRecursiveInterfaces(
+    metadatas: ObjectTypeMetadata[],
+  ): ObjectTypeMetadata[] {
+    if (!metadatas || !metadatas.length) {
+      return [];
+    }
+    const interfaces = metadatas.reduce<ObjectTypeMetadata[]>((prev, curr) => {
+      return [
+        ...prev,
+        ...getInterfacesArray(curr.interfaces).map((it) =>
+          TypeMetadataStorage.getInterfaceMetadataByTarget(it as Type<unknown>),
+        ),
+      ];
+    }, []);
+
+    return [...interfaces, ...this.getRecursiveInterfaces(interfaces)];
   }
 
   private createFieldResolver<
