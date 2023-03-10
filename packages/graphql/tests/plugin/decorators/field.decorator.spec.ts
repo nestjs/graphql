@@ -39,3 +39,9 @@ class CorrectArray {
   @Field(() => [Inner], { defaultValue: [{ test: 'test' }] })
   inner: Inner;
 }
+
+describe('Field decorator (defaultValue)', () => {
+  it('TypeScript should not complain about the type mismatch', () => {
+    expect(true).toBeTruthy();
+  });
+});
