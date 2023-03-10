@@ -6,17 +6,19 @@ export class TypeDefsFederation2Decorator {
   decorate(typeDefs: string, config: Federation2Config = { version: 2 }) {
     const {
       directives = [
-        '@key',
-        '@shareable',
-        '@external',
-        '@override',
-        '@requires',
-        '@tag',
-        '@inaccessible',
+        '@composeDirective',
         '@extends',
+        '@external',
+        '@inaccessible',
+        '@interfaceObject',
+        '@key',
+        '@override',
         '@provides',
+        '@requires',
+        '@shareable',
+        '@tag',
       ],
-      importUrl = 'https://specs.apollo.dev/federation/v2.0',
+      importUrl = 'https://specs.apollo.dev/federation/v2.3',
     } = config;
     const mappedDirectives = directives
       .map((directive) => {
