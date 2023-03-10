@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import {
-  MercuriusDriverConfig,
   MercuriusFederationDriver,
+  MercuriusFederationDriverConfig,
 } from '../../../../lib';
 import { UsersModule } from '../../../graphql-federation/users-service/users/users.module';
 import { mockPlugin } from '../../mocks/mock.plugin';
@@ -11,7 +11,7 @@ import { NEW_PLUGIN_URL } from '../../mocks/utils/constants';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<MercuriusDriverConfig>({
+    GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
       driver: MercuriusFederationDriver,
       typePaths: [
         join(
@@ -20,14 +20,13 @@ import { NEW_PLUGIN_URL } from '../../mocks/utils/constants';
           '**/*.graphql',
         ),
       ],
-      federationMetadata: true,
       plugins: [
         {
           plugin: mockPlugin,
           options: {
             url: NEW_PLUGIN_URL,
           },
-        },
+        } as any,
       ],
     }),
     UsersModule,

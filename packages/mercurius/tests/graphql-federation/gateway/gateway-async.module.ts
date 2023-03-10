@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusDriver } from '../../../lib/drivers';
+import { MercuriusGatewayDriver } from '../../../lib/drivers';
 import { MercuriusDriverConfig } from '../../../lib/interfaces';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
@@ -8,7 +8,7 @@ import { ConfigService } from './config/config.service';
 @Module({
   imports: [
     GraphQLModule.forRootAsync<MercuriusDriverConfig>({
-      driver: MercuriusDriver,
+      driver: MercuriusGatewayDriver,
       useFactory: async (configService: ConfigService) => ({
         ...configService.createGqlOptions(),
       }),

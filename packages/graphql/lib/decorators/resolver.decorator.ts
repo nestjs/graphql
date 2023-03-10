@@ -1,4 +1,5 @@
-import { Type } from '@nestjs/common';
+import { SetMetadata, Type } from '@nestjs/common';
+import { ENTRY_PROVIDER_WATERMARK } from '@nestjs/common/constants';
 import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
 import 'reflect-metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
@@ -88,6 +89,10 @@ export function Resolver(
     key?: string | symbol,
     descriptor?: any,
   ) => {
+    if (typeof target === 'function') {
+      SetMetadata(ENTRY_PROVIDER_WATERMARK, true)(target);
+    }
+
     const [nameOrType, resolverOptions] =
       typeof nameOrTypeOrOptions === 'object' && nameOrTypeOrOptions !== null
         ? [undefined, nameOrTypeOrOptions]

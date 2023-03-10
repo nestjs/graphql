@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloGatewayDriver } from '../../../lib/drivers';
+import { supergraphSdl } from './supergraph-sdl';
 
 @Module({
   imports: [
@@ -8,10 +9,7 @@ import { ApolloGatewayDriver } from '../../../lib/drivers';
       driver: ApolloGatewayDriver,
       gateway: {
         debug: false,
-        serviceList: [
-          { name: 'users', url: 'http://localhost:3001/graphql' },
-          { name: 'posts', url: 'http://localhost:3002/graphql' },
-        ],
+        supergraphSdl,
       },
     }),
   ],

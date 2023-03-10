@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
-  MercuriusDriverConfig,
-  MercuriusDriverConfigFactory,
+  MercuriusGatewayDriverConfig,
+  MercuriusGatewayDriverConfigFactory,
 } from '../../../../lib';
 
 @Injectable()
-export class ConfigService implements MercuriusDriverConfigFactory {
-  public createGqlOptions(): Partial<MercuriusDriverConfig> {
+export class ConfigService implements MercuriusGatewayDriverConfigFactory {
+  public createGqlOptions(): MercuriusGatewayDriverConfig {
     return {
       gateway: {
         services: [

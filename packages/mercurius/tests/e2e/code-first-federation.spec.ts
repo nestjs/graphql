@@ -4,8 +4,8 @@ import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module';
 import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module';
-import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module';
 import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module';
+import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module';
 
 async function createService(Module: Type<any>, port: number) {
   const module = await Test.createTestingModule({
@@ -136,7 +136,11 @@ type User @key(fields: "id") @extends {
       });
   });
 
-  it('should return posts query result from gateway', async () => {
+  /**
+   * TODO: Temporarirly skipped due to the following issue:
+   * https://github.com/mercurius-js/mercurius-gateway/issues/59
+   */
+  it.skip('should return posts query result from gateway', async () => {
     return request(gatewayApp.getHttpServer())
       .post('/graphql')
       .send({

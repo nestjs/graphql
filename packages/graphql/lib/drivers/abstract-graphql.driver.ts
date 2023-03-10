@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
+import { GraphQLSchema } from 'graphql';
 import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
 import { normalizeRoutePath } from '../utils';
@@ -12,7 +13,7 @@ export abstract class AbstractGraphQLDriver<
   protected readonly httpAdapterHost: HttpAdapterHost;
 
   @Inject()
-  protected readonly applicationConfig: ApplicationConfig;
+  protected readonly applicationConfig?: ApplicationConfig;
 
   @Inject()
   protected readonly graphQlFactory: GraphQLFactory;
@@ -36,6 +37,10 @@ export abstract class AbstractGraphQLDriver<
     return clonedOptions;
   }
 
+  public generateSchema(options: TOptions): Promise<GraphQLSchema> | null {
+    return this.graphQlFactory.generateSchema(options);
+  }
+
   public subscriptionWithFilter(
     instanceRef: unknown,
     filterFn: (
@@ -49,7 +54,7 @@ export abstract class AbstractGraphQLDriver<
   }
 
   protected getNormalizedPath(options: TOptions): string {
-    const prefix = this.applicationConfig.getGlobalPrefix();
+    const prefix = this.applicationConfig?.getGlobalPrefix() ?? '';
     const useGlobalPrefix = prefix && options.useGlobalPrefix;
     const gqlOptionsPath = normalizeRoutePath(options.path);
     return useGlobalPrefix

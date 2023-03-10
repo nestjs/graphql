@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import {
-  DirectiveNode,
+  ConstDirectiveNode,
   FieldDefinitionNode,
   GraphQLInputType,
   GraphQLOutputType,
   InputObjectTypeDefinitionNode,
   InputValueDefinitionNode,
   InterfaceTypeDefinitionNode,
+  Kind,
   ObjectTypeDefinitionNode,
   parse,
 } from 'graphql';
 import { head } from 'lodash';
+
 import { DirectiveParsingError } from '../errors/directive-parsing.error';
 import { DirectiveMetadata } from '../metadata/directive.metadata';
 
@@ -31,9 +33,9 @@ export class AstDefinitionNodeFactory {
       return;
     }
     return {
-      kind: 'ObjectTypeDefinition',
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       name: {
-        kind: 'Name',
+        kind: Kind.NAME,
         value: name,
       },
       directives: directiveMetadata.map(this.createDirectiveNode),
@@ -47,10 +49,11 @@ export class AstDefinitionNodeFactory {
     if (isEmpty(directiveMetadata)) {
       return;
     }
+
     return {
-      kind: 'InputObjectTypeDefinition',
+      kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
       name: {
-        kind: 'Name',
+        kind: Kind.NAME,
         value: name,
       },
       directives: directiveMetadata.map(this.createDirectiveNode),
@@ -64,10 +67,11 @@ export class AstDefinitionNodeFactory {
     if (isEmpty(directiveMetadata)) {
       return;
     }
+
     return {
-      kind: 'InterfaceTypeDefinition',
+      kind: Kind.INTERFACE_TYPE_DEFINITION,
       name: {
-        kind: 'Name',
+        kind: Kind.NAME,
         value: name,
       },
       directives: directiveMetadata.map(this.createDirectiveNode),
@@ -82,17 +86,18 @@ export class AstDefinitionNodeFactory {
     if (isEmpty(directiveMetadata)) {
       return;
     }
+
     return {
-      kind: 'FieldDefinition',
+      kind: Kind.FIELD_DEFINITION,
       type: {
-        kind: 'NamedType',
+        kind: Kind.NAMED_TYPE,
         name: {
-          kind: 'Name',
+          kind: Kind.NAME,
           value: type.toString(),
         },
       },
       name: {
-        kind: 'Name',
+        kind: Kind.NAME,
         value: name,
       },
       directives: directiveMetadata.map(this.createDirectiveNode),
@@ -107,24 +112,27 @@ export class AstDefinitionNodeFactory {
     if (isEmpty(directiveMetadata)) {
       return;
     }
+
     return {
-      kind: 'InputValueDefinition',
+      kind: Kind.INPUT_VALUE_DEFINITION,
       type: {
-        kind: 'NamedType',
+        kind: Kind.NAMED_TYPE,
         name: {
-          kind: 'Name',
+          kind: Kind.NAME,
           value: type.toString(),
         },
       },
       name: {
-        kind: 'Name',
+        kind: Kind.NAME,
         value: name,
       },
       directives: directiveMetadata.map(this.createDirectiveNode),
     };
   }
 
-  private createDirectiveNode(directive: DirectiveMetadata): DirectiveNode {
+  private createDirectiveNode(
+    directive: DirectiveMetadata,
+  ): ConstDirectiveNode {
     const parsed = parse(`type String ${directive.sdl}`);
     const definitions = parsed.definitions as ObjectTypeDefinitionNode[];
     const directives = definitions

@@ -1,14 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
+import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
 import { ApolloDriver } from '../../lib';
 import { ApplicationModule } from '../code-first/app.module';
+import { expectSingleResult } from '../utils/assertion-utils';
 
 describe('Code-first', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerBase;
+  let apolloClient: ApolloServer;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -33,7 +34,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       categories: [
         {
           name: 'Category #1',
@@ -59,7 +60,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       search: [
         {
           title: 'recipe',
@@ -88,7 +89,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       recipes: [
         {
           id: '1',
@@ -133,7 +134,7 @@ describe('Code-first', () => {
         }
       `,
     });
-    expect(response.data).toEqual({
+    expectSingleResult(response).toEqual({
       recipes: [
         {
           id: '1',

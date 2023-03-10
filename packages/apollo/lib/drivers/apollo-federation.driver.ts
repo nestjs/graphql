@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ModulesContainer } from '@nestjs/core';
 import { extend, GraphQLFederationFactory } from '@nestjs/graphql';
+import { GraphQLSchema } from 'graphql';
 import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
@@ -24,11 +25,6 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
       this.pluginsExplorerService.explore(options),
     );
 
-    const adapterOptions = await this.graphqlFederationFactory.mergeWithSchema(
-      options,
-    );
-    await this.runExecutorFactoryIfPresent(adapterOptions);
-
     if (options.definitions && options.definitions.path) {
       const { printSubgraphSchema } = loadPackage(
         '@apollo/subgraph',
@@ -36,12 +32,12 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
         () => require('@apollo/subgraph'),
       );
       await this.graphQlFactory.generateDefinitions(
-        printSubgraphSchema(adapterOptions.schema),
+        printSubgraphSchema(options.schema),
         options,
       );
     }
 
-    await super.start(adapterOptions);
+    await super.start(options);
 
     if (options.installSubscriptionHandlers || options.subscriptions) {
       // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
@@ -51,11 +47,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
     }
   }
 
-  private async runExecutorFactoryIfPresent(apolloOptions: ApolloDriverConfig) {
-    if (!apolloOptions.executorFactory) {
-      return;
-    }
-    const executor = await apolloOptions.executorFactory(apolloOptions.schema);
-    apolloOptions.executor = executor;
+  public generateSchema(options: ApolloDriverConfig): Promise<GraphQLSchema> {
+    return this.graphqlFederationFactory.generateSchema(options);
   }
 }

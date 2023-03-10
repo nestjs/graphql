@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { InitializeOnPreviewAllowlist } from '@nestjs/core/inspector';
 import { schemaBuilderFactories } from './factories/factories';
 import { GraphQLSchemaFactory } from './graphql-schema.factory';
 import { FileSystemHelper } from './helpers/file-system.helper';
@@ -22,3 +23,5 @@ import { TypeDefinitionsGenerator } from './type-definitions.generator';
   exports: [GraphQLSchemaFactory, FileSystemHelper],
 })
 export class GraphQLSchemaBuilderModule {}
+
+InitializeOnPreviewAllowlist.add(GraphQLSchemaBuilderModule);

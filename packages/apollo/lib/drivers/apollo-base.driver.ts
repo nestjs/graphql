@@ -1,37 +1,31 @@
+import { ApolloServer, type BaseContext } from '@apollo/server';
+import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
+import { ApolloServerErrorCode } from '@apollo/server/errors';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import {
-  ApolloError,
-  ApolloServerBase,
-  ApolloServerPluginLandingPageDisabled,
-  ApolloServerPluginLandingPageGraphQLPlayground,
-  AuthenticationError,
-  ForbiddenError,
-  PluginDefinition,
-  UserInputError,
-} from 'apollo-server-core';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
-const apolloPredefinedExceptions: Partial<
-  Record<HttpStatus, typeof ApolloError | typeof UserInputError>
-> = {
-  [HttpStatus.BAD_REQUEST]: UserInputError,
-  [HttpStatus.UNAUTHORIZED]: AuthenticationError,
-  [HttpStatus.FORBIDDEN]: ForbiddenError,
+const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
+  [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
+  [HttpStatus.UNAUTHORIZED]: 'UNAUTHENTICATED',
+  [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
 };
 
 export abstract class ApolloBaseDriver<
   T extends Record<string, any> = ApolloDriverConfig,
 > extends AbstractGraphQLDriver<T> {
-  protected _apolloServer: ApolloServerBase;
+  protected apolloServer: ApolloServer<BaseContext>;
 
-  get instance(): ApolloServerBase {
-    return this._apolloServer;
+  get instance(): ApolloServer<BaseContext> {
+    return this.apolloServer;
   }
 
   public async start(apolloOptions: T) {
@@ -48,7 +42,7 @@ export abstract class ApolloBaseDriver<
   }
 
   public stop() {
-    return this._apolloServer?.stop();
+    return this.apolloServer?.stop();
   }
 
   public async mergeDefaultOptions(options: T): Promise<T> {
@@ -68,9 +62,7 @@ export abstract class ApolloBaseDriver<
       defaults = {
         ...defaults,
         plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(
-            playgroundOptions,
-          ) as PluginDefinition,
+          ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
         ],
       };
     } else if (
@@ -80,7 +72,7 @@ export abstract class ApolloBaseDriver<
     ) {
       defaults = {
         ...defaults,
-        plugins: [ApolloServerPluginLandingPageDisabled() as PluginDefinition],
+        plugins: [ApolloServerPluginLandingPageDisabled()],
       };
     }
 
@@ -116,67 +108,80 @@ export abstract class ApolloBaseDriver<
   }
 
   protected async registerExpress(
-    apolloOptions: T,
+    options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-express',
-      'GraphQLModule',
-      () => require('apollo-server-express'),
-    );
-    const { disableHealthCheck, path, onHealthCheck, cors, bodyParserConfig } =
-      apolloOptions;
+    const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
-
-    preStartHook?.();
-
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    await apolloServer.start();
-
-    apolloServer.applyMiddleware({
-      app,
-      path,
-      disableHealthCheck,
-      onHealthCheck,
-      cors,
-      bodyParserConfig,
+    const drainHttpServerPlugin = ApolloServerPluginDrainHttpServer({
+      httpServer: httpAdapter.getHttpServer(),
     });
 
-    this._apolloServer = apolloServer;
-  }
-
-  protected async registerFastify(
-    apolloOptions: T,
-    { preStartHook }: { preStartHook?: () => void } = {},
-  ) {
-    const { ApolloServer } = loadPackage(
-      'apollo-server-fastify',
-      'GraphQLModule',
-      () => require('apollo-server-fastify'),
-    );
-
-    const httpAdapter = this.httpAdapterHost.httpAdapter;
-    const app = httpAdapter.getInstance();
-
     preStartHook?.();
-    const apolloServer = new ApolloServer(apolloOptions as any);
-    await apolloServer.start();
 
-    const { disableHealthCheck, onHealthCheck, cors, bodyParserConfig, path } =
-      apolloOptions;
-    await app.register(
-      apolloServer.createHandler({
-        disableHealthCheck,
-        onHealthCheck,
-        cors,
-        bodyParserConfig,
-        path,
+    const server = new ApolloServer({
+      typeDefs,
+      resolvers,
+      schema,
+      ...options,
+      plugins: options.plugins
+        ? options.plugins.concat([drainHttpServerPlugin])
+        : [drainHttpServerPlugin],
+    });
+
+    await server.start();
+
+    app.use(
+      path,
+      expressMiddleware(server, {
+        context: options.context,
       }),
     );
 
-    this._apolloServer = apolloServer;
+    this.apolloServer = server;
+  }
+
+  protected async registerFastify(
+    options: T,
+    { preStartHook }: { preStartHook?: () => void } = {},
+  ) {
+    const { fastifyApolloDrainPlugin, fastifyApolloHandler } = loadPackage(
+      '@as-integrations/fastify',
+      'GraphQLModule',
+      () => require('@as-integrations/fastify'),
+    );
+
+    const httpAdapter = this.httpAdapterHost.httpAdapter;
+    const app = httpAdapter.getInstance();
+
+    const { path, typeDefs, resolvers, schema } = options;
+    const apolloDrainPlugin = fastifyApolloDrainPlugin(app);
+
+    preStartHook?.();
+
+    const server = new ApolloServer<BaseContext>({
+      typeDefs,
+      resolvers,
+      schema,
+      ...options,
+      plugins: options.plugins
+        ? options.plugins.concat([apolloDrainPlugin])
+        : [apolloDrainPlugin],
+    });
+
+    await server.start();
+
+    app.route({
+      url: path,
+      method: ['GET', 'POST', 'OPTIONS'],
+      handler: fastifyApolloHandler(server, {
+        context: options.context,
+      }),
+    });
+
+    this.apolloServer = server;
   }
 
   private wrapFormatErrorFn(options: T) {
@@ -201,19 +206,25 @@ export abstract class ApolloBaseDriver<
       const exceptionRef = originalError?.extensions?.exception;
       const isHttpException =
         exceptionRef?.response?.statusCode && exceptionRef?.status;
-
       if (!isHttpException) {
         return originalError as GraphQLFormattedError;
       }
-      let error: ApolloError;
+      let error: GraphQLError;
 
       const httpStatus = exceptionRef?.status;
       if (httpStatus in apolloPredefinedExceptions) {
-        error = new apolloPredefinedExceptions[httpStatus](
-          exceptionRef?.message,
-        );
+        error = new GraphQLError(exceptionRef?.message, {
+          extensions: {
+            code: apolloPredefinedExceptions[httpStatus],
+          },
+        });
       } else {
-        error = new ApolloError(exceptionRef.message, httpStatus?.toString());
+        error = new GraphQLError(exceptionRef.message, {
+          extensions: {
+            code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+            status: httpStatus,
+          },
+        });
       }
 
       error.stack = exceptionRef?.stacktrace;
@@ -227,18 +238,26 @@ export abstract class ApolloBaseDriver<
     originalOptions: ApolloDriverConfig = { ...targetOptions },
   ) {
     if (!targetOptions.context) {
-      targetOptions.context = ({ req, request }) => ({ req: req ?? request });
+      targetOptions.context = async (contextOrRequest) => {
+        return {
+          // New ApolloServer fastify integration has Request as first parameter to the Context function
+          req: contextOrRequest.req ?? contextOrRequest,
+        };
+      };
     } else if (isFunction(targetOptions.context)) {
       targetOptions.context = async (...args: unknown[]) => {
         const ctx = await (originalOptions.context as Function)(...args);
-        const { req, request } = args[0] as Record<string, unknown>;
-        return this.assignReqProperty(ctx, req ?? request);
+        const contextOrRequest = args[0] as Record<string, unknown>;
+        return this.assignReqProperty(
+          ctx,
+          contextOrRequest.req ?? contextOrRequest,
+        );
       };
     } else {
-      targetOptions.context = ({ req, request }: Record<string, unknown>) => {
+      targetOptions.context = async (contextOrRequest) => {
         return this.assignReqProperty(
           originalOptions.context as Record<string, any>,
-          req ?? request,
+          contextOrRequest.req ?? contextOrRequest,
         );
       };
     }

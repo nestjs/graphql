@@ -68,7 +68,7 @@ export class TypeMapperSevice {
 
     const isNotNullable = !options.nullable || options.nullable === 'items';
     return isNotNullable
-      ? (new GraphQLNonNull(graphqlType) as T)
+      ? (new GraphQLNonNull(graphqlType) as unknown as T)
       : (graphqlType as T);
   }
 
@@ -101,7 +101,7 @@ export class TypeMapperSevice {
       return targetType as GraphQLList<T>;
     }
     return this.mapToGqlList<T>(
-      new GraphQLList(targetTypeNonNull) as T,
+      new GraphQLList(targetTypeNonNull) as unknown as T,
       depth - 1,
       nullable,
     );

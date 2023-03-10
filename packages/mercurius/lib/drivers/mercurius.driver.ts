@@ -1,6 +1,6 @@
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
+import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
@@ -13,16 +13,13 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
     Server,
     IncomingMessage,
     ServerResponse,
-    FastifyLoggerInstance
+    FastifyBaseLogger
   > {
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
   public async start(mercuriusOptions: MercuriusDriverConfig) {
-    const { plugins, hooks, ...options } =
-      await this.graphQlFactory.mergeWithSchema<MercuriusDriverConfig>(
-        mercuriusOptions,
-      );
+    const { plugins, hooks, ...options } = mercuriusOptions;
 
     if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
@@ -42,7 +39,7 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
       ...options,
     });
     await registerMercuriusPlugin(app, plugins);
-    await registerMercuriusHooks(app, hooks);
+    registerMercuriusHooks(app, hooks);
   }
 
   public async stop(): Promise<void> {}

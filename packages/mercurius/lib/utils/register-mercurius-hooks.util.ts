@@ -1,10 +1,11 @@
 import { FastifyInstance } from 'fastify';
-import { MercuriusGatewayHooksObject } from '../interfaces/mercurius-hook.interface';
+import { MercuriusHooksObject } from '../interfaces/mercurius-hook.interface';
 import { isArray, isNull, isUndefined } from './validation.util';
 
 export function registerMercuriusHooks(
   app: FastifyInstance,
-  hooks?: MercuriusGatewayHooksObject | null,
+  hooks?: MercuriusHooksObject | null,
+  key: 'graphql' | 'graphqlGateway' = 'graphql',
 ): void {
   if (isUndefined(hooks) || isNull(hooks)) {
     return;
@@ -16,10 +17,10 @@ export function registerMercuriusHooks(
     }
 
     if (isArray<any>(hookFn)) {
-      hookFn.forEach((fn) => app.graphql.addHook(hookName, fn));
+      hookFn.forEach((fn) => (app[key] as any).addHook(hookName, fn));
       return;
     }
 
-    app.graphql.addHook(hookName, hookFn);
+    (app[key] as any).addHook(hookName, hookFn);
   });
 }

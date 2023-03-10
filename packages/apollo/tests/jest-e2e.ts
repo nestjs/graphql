@@ -10,7 +10,6 @@ const config: Config.InitialOptions = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '../.',
   testRegex: '.spec.ts$',
-  testPathIgnorePatterns: ['.fed([1-9]).spec.ts$'],
   moduleNameMapper,
   transform: {
     '^.+\\.(t|j)s$': [

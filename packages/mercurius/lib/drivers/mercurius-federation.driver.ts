@@ -3,14 +3,16 @@ import {
   AbstractGraphQLDriver,
   GraphQLFederationFactory,
 } from '@nestjs/graphql';
-import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
-import { printSchema } from 'graphql';
+import { FastifyBaseLogger, FastifyInstance } from 'fastify';
+import { GraphQLSchema, printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
 import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
+// TODO:
+// const { mercuriusFederationPlugin } = require('@mercuriusjs/federation');
 
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
@@ -24,17 +26,13 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     Server,
     IncomingMessage,
     ServerResponse,
-    FastifyLoggerInstance
+    FastifyBaseLogger
   > {
     return this.httpAdapterHost?.httpAdapter?.getInstance?.();
   }
 
   public async start(options: MercuriusDriverConfig) {
-    const { plugins, hooks, ...adapterOptions } =
-      await this.graphqlFederationFactory.mergeWithSchema(
-        options,
-        buildMercuriusFederatedSchema,
-      );
+    const { plugins, hooks, ...adapterOptions } = options;
 
     if (adapterOptions.definitions && adapterOptions.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
@@ -50,13 +48,23 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
     const app = httpAdapter.getInstance<FastifyInstance>();
+    // TODO: replace with mercuriusFederationPlugin
     await app.register(mercurius, {
       ...adapterOptions,
     });
     await registerMercuriusPlugin(app, plugins);
-    await registerMercuriusHooks(app, hooks);
+    registerMercuriusHooks(app, hooks);
   }
 
-  /* eslit-disable-next-line @typescript-eslint/no-empty-function */
+  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   public async stop(): Promise<void> {}
+
+  public generateSchema(
+    options: MercuriusDriverConfig,
+  ): Promise<GraphQLSchema> {
+    return this.graphqlFederationFactory.generateSchema(
+      options,
+      buildMercuriusFederatedSchema,
+    );
+  }
 }
