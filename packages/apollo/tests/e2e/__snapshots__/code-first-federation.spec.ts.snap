@@ -3,7 +3,7 @@
 exports[`Code-first - Federation should return query result 1`] = `
 {
   "_service": {
-    "sdl": "directive @key(fields: String!, resolvable: Boolean = true) on OBJECT | INTERFACE
+    "sdl": "directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE
 
 directive @extends on OBJECT | INTERFACE
 

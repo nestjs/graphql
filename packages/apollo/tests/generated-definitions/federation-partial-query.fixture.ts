@@ -12,5 +12,4 @@ export interface IQuery {
     foo(): Nullable<boolean> | Promise<Nullable<boolean>>;
 }
 
-export type _FieldSet = any;
 type Nullable<T> = T | null;
