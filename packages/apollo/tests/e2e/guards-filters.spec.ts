@@ -29,7 +29,7 @@ describe('GraphQL - Guards', () => {
             message: 'Unauthorized error',
             locations: [{ line: 2, column: 3 }],
             path: ['recipe'],
-            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+            extensions: { code: 'UNAUTHENTICATED' },
           },
         ],
         data: null,

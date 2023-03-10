@@ -32,7 +32,7 @@ describe('GraphQL - Pipes', () => {
             message: 'Bad Request Exception',
             locations: [{ line: 2, column: 3 }],
             path: ['addRecipe'],
-            extensions: { code: 'INTERNAL_SERVER_ERROR' },
+            extensions: { code: 'BAD_REQUEST' },
           },
         ],
       });

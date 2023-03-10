@@ -20,7 +20,7 @@ export class AppModule {
         NotificationModule,
         GraphQLModule.forRoot({
           driver: ApolloDriver,
-          debug: false,
+          includeStacktraceInErrorResponses: false,
           context: options?.context,
           autoSchemaFile: true,
           subscriptions: options?.subscriptions,

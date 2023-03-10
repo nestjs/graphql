@@ -15,7 +15,7 @@ import { UserModule } from './user/user.module';
     RecipeModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloFederationDriver,
-      debug: false,
+      includeStacktraceInErrorResponses: false,
       autoSchemaFile: true,
       buildSchemaOptions: {
         orphanedTypes: [User],

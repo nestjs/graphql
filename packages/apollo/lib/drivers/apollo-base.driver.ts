@@ -1,6 +1,9 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
-import { ApolloServerErrorCode } from '@apollo/server/errors';
+import {
+  ApolloServerErrorCode,
+  unwrapResolverError,
+} from '@apollo/server/errors';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
@@ -191,9 +194,12 @@ export abstract class ApolloBaseDriver<
     if (options.formatError) {
       const origFormatError = options.formatError;
       const transformHttpErrorFn = this.createTransformHttpErrorFn();
-      (options as ApolloDriverConfig).formatError = (err) => {
-        err = transformHttpErrorFn(err) as GraphQLError;
-        return origFormatError(err);
+      (options as ApolloDriverConfig).formatError = (
+        formattedError: GraphQLFormattedError,
+        err: any,
+      ) => {
+        err = transformHttpErrorFn(formattedError, err) as GraphQLError;
+        return origFormatError(formattedError, err);
       };
     } else {
       (options as ApolloDriverConfig).formatError =
@@ -202,33 +208,41 @@ export abstract class ApolloBaseDriver<
   }
 
   private createTransformHttpErrorFn() {
-    return (originalError: any): GraphQLFormattedError => {
-      const exceptionRef = originalError?.extensions?.exception;
+    return (
+      formattedError: GraphQLFormattedError,
+      originalError: any,
+    ): GraphQLFormattedError => {
+      const exceptionRef = unwrapResolverError(originalError) as any;
       const isHttpException =
         exceptionRef?.response?.statusCode && exceptionRef?.status;
+
       if (!isHttpException) {
-        return originalError as GraphQLFormattedError;
+        return formattedError;
       }
+
       let error: GraphQLError;
 
       const httpStatus = exceptionRef?.status;
       if (httpStatus in apolloPredefinedExceptions) {
         error = new GraphQLError(exceptionRef?.message, {
+          path: formattedError.path,
           extensions: {
+            ...formattedError.extensions,
             code: apolloPredefinedExceptions[httpStatus],
           },
         });
       } else {
         error = new GraphQLError(exceptionRef.message, {
+          path: formattedError.path,
           extensions: {
+            ...formattedError.extensions,
             code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
             status: httpStatus,
           },
         });
       }
 
-      error.stack = exceptionRef?.stacktrace;
-      error.extensions['response'] = exceptionRef?.response;
+      (error as any).locations = formattedError.locations;
       return error;
     };
   }

@@ -1,3 +1,7 @@
+import responseCachePlugin from '@apollo/server-plugin-response-cache';
+import { ApolloServerPluginInlineTraceDisabled } from '@apollo/server/plugin/disabled';
+import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import {
   DirectiveLocation,
   GraphQLBoolean,
@@ -5,10 +9,6 @@ import {
   GraphQLEnumType,
   GraphQLInt,
 } from 'graphql';
-import responseCachePlugin from '@apollo/server-plugin-response-cache';
-import { ApolloServerPluginInlineTraceDisabled } from '@apollo/server/plugin/disabled';
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloFederationDriverConfig } from '../../lib';
 import { ApolloFederationDriver } from '../../lib/drivers';
 import { PostModule } from './post/post.module';
@@ -23,7 +23,7 @@ import { UserModule } from './user/user.module';
     RecipeModule,
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
-      debug: false,
+      includeStacktraceInErrorResponses: false,
       autoSchemaFile: true,
       buildSchemaOptions: {
         orphanedTypes: [User],

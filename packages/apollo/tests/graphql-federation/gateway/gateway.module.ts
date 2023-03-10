@@ -8,7 +8,7 @@ import { supergraphSdl } from './supergraph-sdl';
     GraphQLModule.forRoot({
       driver: ApolloGatewayDriver,
       gateway: {
-        debug: false,
+        includeStacktraceInErrorResponses: false,
         supergraphSdl,
       },
     }),
