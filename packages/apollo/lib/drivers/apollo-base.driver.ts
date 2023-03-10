@@ -241,7 +241,9 @@ export abstract class ApolloBaseDriver<
           },
         });
       }
-
+      if (exceptionRef?.response) {
+        error.extensions['originalError'] = exceptionRef.response;
+      }
       (error as any).locations = formattedError.locations;
       return error;
     };
