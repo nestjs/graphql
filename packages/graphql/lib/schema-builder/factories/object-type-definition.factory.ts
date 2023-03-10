@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   GraphQLFieldConfigMap,
@@ -94,6 +94,23 @@ export class ObjectTypeDefinitionFactory {
     };
   }
 
+  private getRecursiveInterfaces(
+    metadatas: ObjectTypeMetadata[],
+  ): ObjectTypeMetadata[] {
+    if (!metadatas || !metadatas.length) return [];
+
+    const interfaces = metadatas.reduce<ObjectTypeMetadata[]>((prev, curr) => {
+      return [
+        ...prev,
+        ...getInterfacesArray(curr.interfaces).map((it) =>
+          TypeMetadataStorage.getInterfaceMetadataByTarget(it as Type<unknown>),
+        ),
+      ];
+    }, []);
+
+    return [...interfaces, ...this.getRecursiveInterfaces(interfaces)];
+  }
+
   private generateFields(
     metadata: ObjectTypeMetadata,
     options: BuildSchemaOptions,
@@ -109,12 +126,9 @@ export class ObjectTypeDefinitionFactory {
 
       let properties = [];
       if (metadata.interfaces) {
-        const implementedInterfaces =
-          TypeMetadataStorage.getInterfacesMetadata()
-            .filter((it) =>
-              getInterfacesArray(metadata.interfaces).includes(it.target),
-            )
-            .map((it) => it.properties);
+        const implementedInterfaces = this.getRecursiveInterfaces([
+          metadata,
+        ]).map((it) => it.properties);
 
         implementedInterfaces.forEach((fields) =>
           properties.push(...(fields || [])),
