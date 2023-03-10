@@ -28,5 +28,4 @@ export class User {
     posts?: Nullable<Nullable<Post>[]>;
 }
 
-export type _FieldSet = any;
 type Nullable<T> = T | null;

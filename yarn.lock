@@ -23,7 +23,7 @@
     "@apollo/federation-internals" "2.3.3"
     "@apollo/query-graphs" "2.3.3"
 
-"@apollo/federation-internals@2.3.3":
+"@apollo/federation-internals@2.3.3", "@apollo/federation-internals@^2.2.3":
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.3.3.tgz#10663c0936fab24e66e3e3896aae91ccbeef4e89"
   integrity sha512-QzqgwQ57ZsvzExCo/dMxZL38E2cALXkn6fG93c89VPwo+4Kpo87I7DNDJgYVDSYzNosemW9ya1jGFRvwjyfQMw==
@@ -151,13 +151,13 @@
     uuid "^9.0.0"
     whatwg-mimetype "^3.0.0"
 
-"@apollo/subgraph@2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.3.3.tgz#f2a24cfcb2d0ef8b2086aadcbbd15d22f416708b"
-  integrity sha512-stYoQ/pvm1TlSEU7DeW1YEk2cQ4yYIaS9tAEiPWTLzWivMwfbgVrsSGwBgME3UZ605EqHPXx4D1wVC/YfHT53Q==
+"@apollo/subgraph@2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.2.3.tgz#cef1fee9a705f52aac22a37a1d4f6c902c63c00e"
+  integrity sha512-y7SdZaDbRJXq6xQcwT5Xj/KR1RAV9cokKK0XcMIBGvXcUXdMVorFxX2pYGzxyiIM7y4qFsAF/L8+0G5dtrnkZw==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/federation-internals" "2.3.3"
+    "@apollo/federation-internals" "^2.2.3"
 
 "@apollo/usage-reporting-protobuf@^4.0.0":
   version "4.0.2"
