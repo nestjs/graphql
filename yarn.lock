@@ -297,10 +297,10 @@
   dependencies:
     xss "^1.0.8"
 
-"@as-integrations/fastify@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-1.3.0.tgz#fc987fffabc8f34ee301eb66f2a7da2e63621004"
-  integrity sha512-T7/+qtG8yRfUud5zsGs+3y2tF3EfSXPnJ9OsLDTJG2EvrTsvYiFW2NJaat4s/5ywjxBhdNltcqDFJOu8P5q7Hw==
+"@as-integrations/fastify@1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-1.3.2.tgz#765c5d0eab8d49c7b2757a4970ca926bd760046e"
+  integrity sha512-I8HOERaWlvE2IGpCI9AxGmgAk4l9AN2xOG9oMx7FeyKcTQBO3ZftAtgb1OjjdfEysEfVGmd5XPytFb8vomzgKA==
   dependencies:
     fastify-plugin "^4.4.0"
 
