@@ -357,21 +357,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "token": "GraphQLSchemaFactory"
       }
     },
-    "1022373644": {
-      "id": "1022373644",
-      "label": "OutputTypeFactory",
-      "parent": "951921130",
-      "metadata": {
-        "type": "provider",
-        "internal": false,
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "durable": false,
-        "static": true,
-        "transient": false,
-        "exported": false,
-        "token": "OutputTypeFactory"
-      }
-    },
     "1253818496": {
       "id": "1253818496",
       "label": "RootTestModule",
@@ -416,6 +401,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "transient": false,
         "exported": false,
         "token": "ObjectTypeDefinitionFactory"
+      }
+    },
+    "1434456218": {
+      "id": "1434456218",
+      "label": "Reflector",
+      "parent": "555176277",
+      "metadata": {
+        "type": "provider",
+        "internal": true,
+        "sourceModuleName": "InternalCoreModule",
+        "durable": false,
+        "static": true,
+        "scope": 0,
+        "transient": false,
+        "exported": true,
+        "token": "Reflector"
       }
     },
     "1479432515": {
@@ -649,6 +650,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
     },
     "-326832201": {
       "id": "-326832201",
+      "label": "HttpAdapterHost",
+      "parent": "555176277",
+      "metadata": {
+        "type": "provider",
+        "internal": true,
+        "sourceModuleName": "InternalCoreModule",
+        "durable": false,
+        "static": true,
+        "scope": 0,
+        "transient": false,
+        "exported": true,
+        "token": "HttpAdapterHost"
+      }
+    },
+    "-553129559": {
+      "id": "-553129559",
       "label": "HttpAdapterHost",
       "parent": "555176277",
       "metadata": {
@@ -1041,6 +1058,21 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "token": "InputTypeFactory"
       }
     },
+    "-1046435906": {
+      "id": "-1046435906",
+      "label": "OutputTypeFactory",
+      "parent": "951921130",
+      "metadata": {
+        "type": "provider",
+        "internal": false,
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "durable": false,
+        "static": true,
+        "transient": false,
+        "exported": false,
+        "token": "OutputTypeFactory"
+      }
+    },
     "-1956905867": {
       "id": "-1956905867",
       "label": "OrphanedTypesFactory",
@@ -1225,6 +1257,23 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor"
       },
       "id": "174047910"
+    },
+    "189694679": {
+      "source": "1434456218",
+      "target": "671882984",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "InternalCoreModule",
+        "sourceClassName": "Reflector",
+        "targetClassName": "Reflector",
+        "sourceClassToken": "Reflector",
+        "targetClassToken": "Reflector",
+        "targetModuleName": "InternalCoreModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor",
+        "internal": true
+      },
+      "id": "189694679"
     },
     "280591213": {
       "source": "68986468",
@@ -1418,22 +1467,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "628792678"
     },
-    "636511241": {
-      "source": "206199259",
-      "target": "1022373644",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "InterfaceDefinitionFactory",
-        "targetClassName": "OutputTypeFactory",
-        "sourceClassToken": "InterfaceDefinitionFactory",
-        "targetClassToken": "OutputTypeFactory",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 2,
-        "injectionType": "constructor"
-      },
-      "id": "636511241"
-    },
     "643881433": {
       "source": "-1399120880",
       "target": "-1455444777",
@@ -1524,38 +1557,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "919849975"
     },
-    "989686050": {
-      "source": "1022373644",
-      "target": "-973488942",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "OutputTypeFactory",
-        "targetClassName": "TypeDefinitionsStorage",
-        "sourceClassToken": "OutputTypeFactory",
-        "targetClassToken": "TypeDefinitionsStorage",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 0,
-        "injectionType": "constructor"
-      },
-      "id": "989686050"
-    },
-    "1038879092": {
-      "source": "1404798907",
-      "target": "1022373644",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "ObjectTypeDefinitionFactory",
-        "targetClassName": "OutputTypeFactory",
-        "sourceClassToken": "ObjectTypeDefinitionFactory",
-        "targetClassToken": "OutputTypeFactory",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 1,
-        "injectionType": "constructor"
-      },
-      "id": "1038879092"
-    },
     "1102389022": {
       "source": "-195456258",
       "target": "-26938366",
@@ -1636,6 +1637,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor"
       },
       "id": "1302883637"
+    },
+    "1313753257": {
+      "source": "1645496267",
+      "target": "-1046435906",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "RootTypeFactory",
+        "targetClassName": "OutputTypeFactory",
+        "sourceClassToken": "RootTypeFactory",
+        "targetClassToken": "OutputTypeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor"
+      },
+      "id": "1313753257"
     },
     "1338979024": {
       "source": "-848002075",
@@ -1786,6 +1803,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "1681831807"
     },
+    "1758718289": {
+      "source": "1404798907",
+      "target": "-1046435906",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "ObjectTypeDefinitionFactory",
+        "targetClassName": "OutputTypeFactory",
+        "sourceClassToken": "ObjectTypeDefinitionFactory",
+        "targetClassToken": "OutputTypeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 1,
+        "injectionType": "constructor"
+      },
+      "id": "1758718289"
+    },
     "1812333014": {
       "source": "615680170",
       "target": "-1492607355",
@@ -1898,8 +1931,8 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "2086827720"
     },
-    "2092394069": {
-      "source": "-326832201",
+    "-1759625292": {
+      "source": "-553129559",
       "target": "-326832201",
       "metadata": {
         "type": "class-to-class",
@@ -1913,24 +1946,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor",
         "internal": true
       },
-      "id": "2092394069"
-    },
-    "-72331150": {
-      "source": "671882984",
-      "target": "671882984",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "InternalCoreModule",
-        "sourceClassName": "Reflector",
-        "targetClassName": "Reflector",
-        "sourceClassToken": "Reflector",
-        "targetClassToken": "Reflector",
-        "targetModuleName": "InternalCoreModule",
-        "keyOrIndex": 0,
-        "injectionType": "constructor",
-        "internal": true
-      },
-      "id": "-72331150"
+      "id": "-1759625292"
     },
     "-831015039": {
       "source": "-1181044340",
@@ -1982,8 +1998,24 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "-1303304625"
     },
-    "-1392608415": {
-      "source": "1022373644",
+    "-1796955647": {
+      "source": "-1046435906",
+      "target": "-973488942",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "OutputTypeFactory",
+        "targetClassName": "TypeDefinitionsStorage",
+        "sourceClassToken": "OutputTypeFactory",
+        "targetClassToken": "TypeDefinitionsStorage",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor"
+      },
+      "id": "-1796955647"
+    },
+    "-1168051422": {
+      "source": "-1046435906",
       "target": "-1717366145",
       "metadata": {
         "type": "class-to-class",
@@ -1996,7 +2028,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "keyOrIndex": 1,
         "injectionType": "constructor"
       },
-      "id": "-1392608415"
+      "id": "-1168051422"
     },
     "-1899123048": {
       "source": "-1956905867",
@@ -2110,6 +2142,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "-1795848503"
     },
+    "-1586166652": {
+      "source": "206199259",
+      "target": "-1046435906",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "InterfaceDefinitionFactory",
+        "targetClassName": "OutputTypeFactory",
+        "sourceClassToken": "InterfaceDefinitionFactory",
+        "targetClassToken": "OutputTypeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 2,
+        "injectionType": "constructor"
+      },
+      "id": "-1586166652"
+    },
     "-651817981": {
       "source": "206199259",
       "target": "-1455444777",
@@ -2173,22 +2221,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor"
       },
       "id": "-474671464"
-    },
-    "-1614430054": {
-      "source": "1645496267",
-      "target": "1022373644",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "RootTypeFactory",
-        "targetClassName": "OutputTypeFactory",
-        "sourceClassToken": "RootTypeFactory",
-        "targetClassToken": "OutputTypeFactory",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 0,
-        "injectionType": "constructor"
-      },
-      "id": "-1614430054"
     },
     "-1546779141": {
       "source": "1645496267",
