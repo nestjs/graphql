@@ -60,7 +60,17 @@ describe('Code-first - Federation', () => {
 
     expect(response.data).toEqual({
       _service: {
-        sdl: `type Post @key(fields: "id") {
+        sdl: `directive @shareable on FIELD_DEFINITION | OBJECT
+
+directive @link(url: String!, import: [link__Import]) on SCHEMA
+
+directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
+
+directive @override(from: String!) on FIELD_DEFINITION
+
+type Post
+  @key(fields: \"id\")
+{
   id: ID!
   title: String!
   authorId: Int!
@@ -69,17 +79,21 @@ describe('Code-first - Federation', () => {
 type Query @extends {
   findPost(id: Float!): Post!
   getPosts: [Post!]!
-  search: [FederationSearchResultUnion!]! @deprecated(reason: "test")
+  search: [FederationSearchResultUnion!]! @deprecated(reason: \"test\")
 }
 
-"""Search result description"""
+\"\"\"Search result description\"\"\"
 union FederationSearchResultUnion = Post | User
 
-type User @key(fields: "id") @extends {
+type User
+  @key(fields: \"id\")
+  @extends
+{
   id: ID! @external
   posts: [Post!]!
 }
-`,
+
+scalar link__Import`,
       },
     });
   });
