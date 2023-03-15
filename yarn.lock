@@ -1263,13 +1263,13 @@
   integrity sha512-Xs/4RZltsAL7pkvaNStUQt7netTkyxrS0K+RILcVr3TRMS/ToOg4I6uNfhB9SlGsnWBym4U+EaXq0f0cEMNkHA==
 
 "@mercuriusjs/federation@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-1.0.0.tgz#b8c8bc1ced8ac891e4543840946b68543a7bdcc0"
-  integrity sha512-IAI/F6QhuHrjdti7NN3w/leDFTJDW9fJ/WZA1dcrQj1Fhx5hSxEfjRTNYp/v6u0OuRVQrto8IZd4XcNft5/Q+Q==
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-1.0.1.tgz#e362396b82f3a81a16d78938984df6d53ba30f88"
+  integrity sha512-aski6H8SRfjK73Bruzh5kQ20OS0s0pkbFvcOex46Qm17bYWoJ3daMrbTw4caOSkru7R8pIA/bvAjSq97xkDJkQ==
   dependencies:
     "@fastify/error" "^3.0.0"
     graphql "^16.6.0"
-    mercurius "^11.3.0"
+    mercurius "^12.0.0"
 
 "@mercuriusjs/gateway@^1.0.0":
   version "1.0.0"
@@ -6991,7 +6991,7 @@ mercurius-integration-testing@8.0.0:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@12.2.0:
+mercurius@12.2.0, mercurius@^12.0.0:
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-12.2.0.tgz#ce27f4dd50037ba37cb524dc1392c2b2fb96d428"
   integrity sha512-S1/j+MSJA11A0rW/TM+31qq7PTf9EQVDtq+XJQMaebtqEP5JhhUmQnTLzCh9NhHkh7YIFH72gEY03Phr3Cs8xQ==
