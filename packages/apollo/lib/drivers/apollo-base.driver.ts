@@ -198,7 +198,10 @@ export abstract class ApolloBaseDriver<
         formattedError: GraphQLFormattedError,
         err: any,
       ) => {
-        err = transformHttpErrorFn(formattedError, err) as GraphQLError;
+        formattedError = transformHttpErrorFn(
+          formattedError,
+          err,
+        ) as GraphQLError;
         return origFormatError(formattedError, err);
       };
     } else {
