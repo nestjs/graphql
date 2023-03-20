@@ -3,7 +3,7 @@ export class MetadataByNameCollection<T> {
   protected all: (T extends any[] ? T[number] : T)[] = [];
 
   getAll() {
-    return this.all;
+    return [...this.all];
   }
 
   getByName(name: string) {
