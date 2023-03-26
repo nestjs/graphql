@@ -27,6 +27,11 @@ export interface ObjectTypeOptions {
    * Interfaces implemented by this object type.
    */
   implements?: Function | Function[] | (() => Function | Function[]);
+  /**
+   * If `true`, direct descendant classes will inherit the parent's description if own description is not set.
+   * Also works on classes marked with `isAbstract: true`.
+   */
+  inheritDescription?: boolean;
 }
 
 /**
@@ -56,13 +61,20 @@ export function ObjectType(
     : [undefined, nameOrOptions];
 
   return (target) => {
+    const parentType = TypeMetadataStorage.getObjectTypeMetadataByTarget(
+      Object.getPrototypeOf(target),
+    );
+
     const addObjectTypeMetadata = () =>
       TypeMetadataStorage.addObjectTypeMetadata({
         name: name || target.name,
         target,
-        description: options.description,
+        description: parentType?.inheritDescription
+          ? options.description ?? parentType?.description
+          : options.description,
         interfaces: options.implements,
         isAbstract: options.isAbstract,
+        inheritDescription: options.inheritDescription,
       });
 
     // This function must be called eagerly to allow resolvers
