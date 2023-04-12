@@ -109,7 +109,6 @@ export function replaceImportPath(typeReference: string, fileName: string) {
   importPath = importPath.slice(2, importPath.length - 1);
 
   let relativePath = posix.relative(posix.dirname(fileName), importPath);
-  relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
 
   const nodeModulesText = 'node_modules';
   const nodeModulePos = relativePath.indexOf(nodeModulesText);
