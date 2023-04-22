@@ -86,6 +86,20 @@ export class RecipesResolver {
     return 10;
   }
 
+  @ResolveField(undefined, {
+    middleware: [async (_, next) => (await next()).trim()],
+  })
+  tips1(): string {
+    return ' use oil sparingly ';
+  }
+
+  @ResolveField('tips2', {
+    middleware: [async (_, next) => (await next()).trim()],
+  })
+  tipsSecond(): string {
+    return ' add salt gradually ';
+  }
+
   @Mutation((returns) => Boolean)
   async removeRecipe(@Args('id') id: string) {
     return this.recipesService.remove(id);
