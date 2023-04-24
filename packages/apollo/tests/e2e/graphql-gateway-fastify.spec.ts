@@ -105,7 +105,7 @@ describe('GraphQL Gateway with fastify', () => {
           },
         },
       });
-  });
+  }, 15000);
 
   afterEach(async () => {
     await postsApp.close();

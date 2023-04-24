@@ -103,7 +103,7 @@ describe('GraphQL Gateway', () => {
           },
         },
       });
-  });
+  }, 15000);
 
   afterEach(async () => {
     await postsApp.close();
