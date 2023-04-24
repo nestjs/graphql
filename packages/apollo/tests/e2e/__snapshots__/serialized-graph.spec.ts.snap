@@ -2803,6 +2803,7 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "nodeId": "-1315135195"
       }
     ]
-  }
+  },
+  "status": "complete"
 }"
 `;
