@@ -18,8 +18,8 @@
     "test:e2e:dev": "jest --config ./tests/jest-e2e.json --watch"
   },
   "dependencies": {
-    "@graphql-tools/merge": "8.4.0",
-    "@graphql-tools/schema": "9.0.17",
+    "@graphql-tools/merge": "8.4.1",
+    "@graphql-tools/schema": "9.0.19",
     "@graphql-tools/utils": "9.2.1",
     "@nestjs/mapped-types": "1.2.2",
     "chokidar": "3.5.3",
@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@apollo/subgraph": "2.2.3",
-    "@nestjs/common": "9.3.9",
-    "@nestjs/core": "9.3.9",
-    "@nestjs/testing": "9.3.9",
+    "@nestjs/common": "9.4.0",
+    "@nestjs/core": "9.4.0",
+    "@nestjs/testing": "9.4.0",
     "graphql": "16.6.0",
     "reflect-metadata": "0.1.13",
     "ts-morph": "18.0.0"
