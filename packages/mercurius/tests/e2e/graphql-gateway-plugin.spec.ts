@@ -9,7 +9,7 @@ import { BASE_PLUGIN_URL } from '../plugins/mocks/utils/constants';
 
 // TODO: temporarily skip (flaky tests)
 // @ref https://app.circleci.com/pipelines/github/nestjs/graphql/6155/workflows/6329f2a8-00b4-4159-9241-224db1685173/jobs/11141
-describ.skip('GraphQL Gateway', () => {
+describe.skip('GraphQL Gateway', () => {
   let postsApp: INestApplication;
   let usersApp: INestApplication;
   let gatewayApp: INestApplication;
