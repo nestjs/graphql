@@ -56,7 +56,7 @@
     "reflect-metadata": "0.1.13",
     "release-it": "15.10.1",
     "rimraf": "5.0.0",
-    "rxjs": "7.8.0",
+    "rxjs": "7.8.1",
     "supertest": "6.3.3",
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",
