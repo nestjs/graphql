@@ -27,7 +27,7 @@
     "tslib": "2.5.0"
   },
   "devDependencies": {
-    "@mercuriusjs/federation": "^1.0.0",
+    "@mercuriusjs/federation": "^2.0.0",
     "@mercuriusjs/gateway": "^1.0.0",
     "@nestjs/common": "9.4.0",
     "@nestjs/platform-fastify": "9.4.0",
