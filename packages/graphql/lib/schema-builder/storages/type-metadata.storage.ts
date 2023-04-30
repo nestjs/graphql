@@ -332,14 +332,20 @@ export class TypeMetadataStorageHost {
           : () => item.target as Type<unknown>;
 
       if (item.kind === 'external') {
-        this.compileExternalFieldResolverMetadata(item);
+        const metadata = this.findModelFieldMetadata(item);
+        this.compileExternalFieldResolverMetadata(item, ...metadata);
+        const baseMetadata = this.findBaseModelFieldMetadata(item, ...metadata);
+        this.compileExternalFieldResolverMetadata(item, ...baseMetadata);
       }
     });
   }
 
-  private compileExternalFieldResolverMetadata(item: FieldResolverMetadata) {
-    const [target, objectOrInterfaceTypeMetadata, objectOrInterfaceTypeField] =
-      this.findModelFieldMetadata(item);
+  private compileExternalFieldResolverMetadata(
+    item: FieldResolverMetadata,
+    objectTypeRef: Function,
+    objectOrInterfaceTypeMetadata: ClassMetadata,
+    objectOrInterfaceTypeField: PropertyMetadata | undefined,
+  ) {
     if (!objectOrInterfaceTypeField) {
       if (!item.typeFn || !item.typeOptions) {
         throw new UndefinedTypeError(item.target.name, item.methodName);
@@ -350,7 +356,7 @@ export class TypeMetadataStorageHost {
         deprecationReason: item.deprecationReason,
         description: item.description,
         typeFn: item.typeFn,
-        target,
+        target: objectTypeRef,
         options: item.typeOptions,
         methodArgs: item.methodArgs,
         directives: item.directives,
@@ -378,46 +384,63 @@ export class TypeMetadataStorageHost {
     }
   }
 
+  private getTypeMetadata = (target: any) => {
+    const metadata = this.metadataByTargetCollection.get(target);
+    return metadata.objectType || metadata.interface;
+  };
+
   private findModelFieldMetadata(
     item: FieldResolverMetadata,
   ): [Function, ClassMetadata, PropertyMetadata | undefined] {
-    let objectTypeRef = this.metadataByTargetCollection
+    const objectTypeRef = this.metadataByTargetCollection
       .get(item.target)
       .resolver.typeFn();
-    const getTypeMetadata = (target: any) => {
-      const metadata = this.metadataByTargetCollection.get(target);
-      return metadata.objectType || metadata.interface;
-    };
-    let objectOrInterfaceTypeMetadata = getTypeMetadata(objectTypeRef);
+    const objectOrInterfaceTypeMetadata = this.getTypeMetadata(objectTypeRef);
     if (!objectOrInterfaceTypeMetadata) {
       throw new CannotDetermineHostTypeError(
         item.schemaName,
         objectTypeRef?.name,
       );
     }
-    let objectOrInterfaceTypeField =
+    const objectOrInterfaceTypeField =
       objectOrInterfaceTypeMetadata.properties.find(
         (fieldDef) => fieldDef.name === item.methodName,
       );
+    return [
+      objectTypeRef,
+      objectOrInterfaceTypeMetadata,
+      objectOrInterfaceTypeField,
+    ];
+  }
+
+  private findBaseModelFieldMetadata(
+    item: FieldResolverMetadata,
+    objectTypeRef: Function,
+    objectOrInterfaceTypeMetadata: ClassMetadata,
+    objectOrInterfaceTypeField: PropertyMetadata | undefined,
+  ): [Function, ClassMetadata, PropertyMetadata | undefined] {
+    const _objectTypeRef = objectTypeRef;
+    let _objectOrInterfaceTypeMetadata = objectOrInterfaceTypeMetadata;
+    let _objectOrInterfaceTypeField = objectOrInterfaceTypeField;
     for (
       let _objectTypeRef = objectTypeRef;
       !objectOrInterfaceTypeField && _objectTypeRef?.prototype;
       _objectTypeRef = Object.getPrototypeOf(_objectTypeRef)
     ) {
-      const possibleTypeMetadata = getTypeMetadata(_objectTypeRef);
-      objectOrInterfaceTypeField = possibleTypeMetadata?.properties.find(
+      const possibleTypeMetadata = this.getTypeMetadata(_objectTypeRef);
+      _objectOrInterfaceTypeField = possibleTypeMetadata?.properties.find(
         (fieldDef) => fieldDef.name === item.methodName,
       );
-      if (objectOrInterfaceTypeField) {
-        objectTypeRef = _objectTypeRef;
-        objectOrInterfaceTypeMetadata = possibleTypeMetadata;
+      if (_objectOrInterfaceTypeField) {
+        _objectTypeRef = _objectTypeRef;
+        _objectOrInterfaceTypeMetadata = possibleTypeMetadata;
         break;
       }
     }
     return [
-      objectTypeRef,
-      objectOrInterfaceTypeMetadata,
-      objectOrInterfaceTypeField,
+      _objectTypeRef,
+      _objectOrInterfaceTypeMetadata,
+      _objectOrInterfaceTypeField,
     ];
   }
 
