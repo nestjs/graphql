@@ -191,7 +191,7 @@ function getNameFromExpression(expression: LeftHandSideExpression) {
 export function getJSDocDescription(node: Node): string {
   const jsDoc: JSDoc[] = (node as any).jsDoc;
 
-  if (!jsDoc) {
+  if (!jsDoc || !jsDoc[0]) {
     return undefined;
   }
 
