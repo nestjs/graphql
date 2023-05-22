@@ -14,12 +14,11 @@ import {
   findNullableTypeFromUnion,
   getDecoratorName,
   getDecorators,
-  getJsDocDeprecation,
   getJSDocDescription,
+  getJsDocDeprecation,
   getModifiers,
   hasDecorators,
   hasModifiers,
-  isInUpdatedAstContext,
   isNull,
   isUndefined,
   safelyMergeObjects,
@@ -257,51 +256,29 @@ export class ModelClassVisitor {
     propsMetadata: ts.ObjectLiteralExpression,
     pluginOptions: PluginOptions,
   ) {
-    const method = isInUpdatedAstContext
-      ? f.createMethodDeclaration(
-          [f.createModifier(ts.SyntaxKind.StaticKeyword)],
-          undefined,
-          f.createIdentifier(METADATA_FACTORY_NAME),
-          undefined,
-          undefined,
-          [],
-          undefined,
-          f.createBlock([f.createReturnStatement(propsMetadata)], true),
-        )
-      : f.createMethodDeclaration(
-          undefined,
-          [f.createModifier(ts.SyntaxKind.StaticKeyword)],
-          undefined,
-          f.createIdentifier(METADATA_FACTORY_NAME),
-          undefined,
-          undefined,
-          [],
-          undefined,
-          f.createBlock([f.createReturnStatement(propsMetadata)], true),
-        );
+    const method = f.createMethodDeclaration(
+      [f.createModifier(ts.SyntaxKind.StaticKeyword)],
+      undefined,
+      f.createIdentifier(METADATA_FACTORY_NAME),
+      undefined,
+      undefined,
+      [],
+      undefined,
+      f.createBlock([f.createReturnStatement(propsMetadata)], true),
+    );
 
     const decorators = pluginOptions.introspectComments
       ? this.addDescriptionToClassDecorators(f, node)
       : getDecorators(node);
 
-    return isInUpdatedAstContext
-      ? f.updateClassDeclaration(
-          node,
-          [...decorators, ...getModifiers(node)],
-          node.name,
-          node.typeParameters,
-          node.heritageClauses,
-          [...members, method],
-        )
-      : (f.updateClassDeclaration as any)(
-          node,
-          decorators,
-          node.modifiers,
-          node.name,
-          node.typeParameters,
-          node.heritageClauses,
-          [...members, method],
-        );
+    return f.updateClassDeclaration(
+      node,
+      [...decorators, ...getModifiers(node)],
+      node.name,
+      node.typeParameters,
+      node.heritageClauses,
+      [...members, method],
+    );
   }
 
   private getOptionsFromFieldDecoratorOrUndefined(
