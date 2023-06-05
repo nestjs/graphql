@@ -41,8 +41,7 @@ type SampleOrphanedType {
 }
 
 type Ingredient {
-  """ingredient base name"""
-  baseName: String @deprecated(reason: "is deprecated")
+  baseName: String!
 
   """ingredient name"""
   name: String @deprecated(reason: "is deprecated")
@@ -146,8 +145,7 @@ interface IRecipe {
 }
 
 type Ingredient {
-  """ingredient base name"""
-  baseName: String @deprecated(reason: "is deprecated")
+  baseName: String!
   id: ID!
 
   """ingredient name"""
