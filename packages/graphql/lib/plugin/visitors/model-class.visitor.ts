@@ -1,3 +1,4 @@
+import { posix } from 'path';
 import * as ts from 'typescript';
 import {
   ArgsType,
@@ -37,8 +38,28 @@ const CLASS_DECORATORS = [
   ArgsType.name,
 ];
 
+type ClassMetadata = Record<string, ts.ObjectLiteralExpression>;
+
 export class ModelClassVisitor {
   private importsToAdd: Set<string>;
+  private readonly _collectedMetadata: Record<string, ClassMetadata> = {};
+
+  get collectedMetadata(): Array<
+    [ts.CallExpression, Record<string, ClassMetadata>]
+  > {
+    const metadataWithImports = [];
+    Object.keys(this._collectedMetadata).forEach((filePath) => {
+      const metadata = this._collectedMetadata[filePath];
+      const path = filePath.replace(/\.[jt]s$/, '');
+      const importExpr = ts.factory.createCallExpression(
+        ts.factory.createToken(ts.SyntaxKind.ImportKeyword) as ts.Expression,
+        undefined,
+        [ts.factory.createStringLiteral(path)],
+      );
+      metadataWithImports.push([importExpr, metadata]);
+    });
+    return metadataWithImports;
+  }
 
   visit(
     sourceFile: ts.SourceFile,
@@ -73,14 +94,27 @@ export class ModelClassVisitor {
           typeChecker,
         );
 
-        return this.updateClassDeclaration(
-          factory,
-          node,
-          members,
-          metadata,
-          pluginOptions,
-        );
-      } else if (ts.isSourceFile(node)) {
+        if (!pluginOptions.readonly) {
+          return this.updateClassDeclaration(
+            factory,
+            node,
+            members,
+            metadata,
+            pluginOptions,
+          );
+        } else {
+          const filePath = this.normalizeImportPath(
+            pluginOptions.pathToSource,
+            sourceFile.fileName,
+          );
+          if (!this._collectedMetadata[filePath]) {
+            this._collectedMetadata[filePath] = {};
+          }
+          const attributeKey = node.name.getText();
+          this._collectedMetadata[filePath][attributeKey] = metadata;
+          return;
+        }
+      } else if (ts.isSourceFile(node) && !pluginOptions.readonly) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
         const importStatements: ts.Statement[] =
@@ -92,7 +126,11 @@ export class ModelClassVisitor {
           ...existingStatements,
         ]);
       }
-      return ts.visitEachChild(node, visitNode, ctx);
+      if (pluginOptions.readonly) {
+        ts.forEachChild(node, visitNode);
+      } else {
+        return ts.visitEachChild(node, visitNode, ctx);
+      }
     };
     return ts.visitNode(sourceFile, visitNode);
   }
@@ -312,7 +350,7 @@ export class ModelClassVisitor {
     node: ts.PropertyDeclaration | ts.GetAccessorDeclaration,
     typeChecker: ts.TypeChecker,
     hostFilename = '',
-    pluginOptions?: PluginOptions,
+    pluginOptions: PluginOptions = {},
     typeArrowFunction?: ts.ArrowFunction,
   ) {
     const type = typeChecker.getTypeAtLocation(node);
@@ -328,7 +366,13 @@ export class ModelClassVisitor {
           [],
           undefined,
           undefined,
-          this.getTypeUsingTypeChecker(f, node.type, typeChecker, hostFilename),
+          this.getTypeUsingTypeChecker(
+            f,
+            node.type,
+            typeChecker,
+            hostFilename,
+            pluginOptions,
+          ),
         );
     }
 
@@ -353,6 +397,7 @@ export class ModelClassVisitor {
     node: ts.TypeNode,
     typeChecker: ts.TypeChecker,
     hostFilename: string,
+    options: PluginOptions,
   ) {
     if (node && ts.isUnionTypeNode(node)) {
       const nullableType = findNullableTypeFromUnion(node, typeChecker);
@@ -364,6 +409,7 @@ export class ModelClassVisitor {
           remainingTypes[0],
           typeChecker,
           hostFilename,
+          options,
         );
       }
     }
@@ -382,6 +428,7 @@ export class ModelClassVisitor {
     const { typeReference, importPath } = replaceImportPath(
       _typeReference,
       hostFilename,
+      options,
     );
 
     if (importPath) {
@@ -400,5 +447,11 @@ export class ModelClassVisitor {
     return Array.from(this.importsToAdd).map((path, index) => {
       return createImportEquals(f, 'eager_import_' + index, path);
     });
+  }
+
+  private normalizeImportPath(pathToSource: string, path: string) {
+    let relativePath = posix.relative(pathToSource, path);
+    relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
+    return relativePath;
   }
 }

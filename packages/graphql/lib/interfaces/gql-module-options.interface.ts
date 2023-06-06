@@ -115,6 +115,11 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
    * Context function
    */
   context?: any;
+
+  /**
+   * Extra static metadata to be loaded into the specification
+   */
+  metadata?: Record<string, any>;
 }
 
 export interface GqlOptionsFactory<
