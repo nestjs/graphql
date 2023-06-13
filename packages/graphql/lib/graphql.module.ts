@@ -23,6 +23,7 @@ import {
   GqlModuleOptions,
   GqlOptionsFactory,
 } from './interfaces/gql-module-options.interface';
+import { MetadataLoader } from './plugin/metadata-loader';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import { ResolversExplorerService, ScalarsExplorerService } from './services';
 import { extend, generateString } from './utils';
@@ -55,6 +56,8 @@ export class GraphQLModule<
   private static readonly logger = new Logger(GraphQLModule.name, {
     timestamp: true,
   });
+
+  private readonly metadataLoader = new MetadataLoader();
 
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
@@ -147,6 +150,9 @@ export class GraphQLModule<
   }
 
   async onModuleInit() {
+    if (this.options.metadata) {
+      await this.metadataLoader.load(this.options.metadata);
+    }
     const options = await this._graphQlAdapter.mergeDefaultOptions(
       this.options,
     );

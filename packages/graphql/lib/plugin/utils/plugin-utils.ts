@@ -1,6 +1,7 @@
 import { head } from 'lodash';
 import { isAbsolute, posix } from 'path';
 import * as ts from 'typescript';
+import { PluginOptions } from '../merge-options';
 import {
   getText,
   getTypeArguments,
@@ -97,7 +98,11 @@ export function isPromiseOrObservable(type: string) {
   return type.includes('Promise') || type.includes('Observable');
 }
 
-export function replaceImportPath(typeReference: string, fileName: string) {
+export function replaceImportPath(
+  typeReference: string,
+  fileName: string,
+  options: PluginOptions,
+) {
   if (!typeReference.includes('import')) {
     return { typeReference, importPath: null };
   }
@@ -108,7 +113,10 @@ export function replaceImportPath(typeReference: string, fileName: string) {
   importPath = convertPath(importPath);
   importPath = importPath.slice(2, importPath.length - 1);
 
-  let relativePath = posix.relative(posix.dirname(fileName), importPath);
+  const from = options?.readonly
+    ? options.pathToSource
+    : posix.dirname(fileName);
+  let relativePath = posix.relative(from, importPath);
   relativePath =
     !isAbsolute(relativePath) && relativePath[0] !== '.'
       ? './' + relativePath

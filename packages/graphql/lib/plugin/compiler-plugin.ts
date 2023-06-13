@@ -1,10 +1,9 @@
 import * as ts from 'typescript';
 import { mergePluginOptions } from './merge-options';
+import { isFilenameMatched } from './utils/is-filename-matched.util';
 import { ModelClassVisitor } from './visitors/model-class.visitor';
 
 const typeClassVisitor = new ModelClassVisitor();
-const isFilenameMatched = (patterns: string[], filename: string) =>
-  patterns.some((path) => filename.includes(path));
 
 export const before = (options?: Record<string, any>, program?: ts.Program) => {
   options = mergePluginOptions(options);
