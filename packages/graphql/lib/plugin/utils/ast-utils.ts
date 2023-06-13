@@ -24,21 +24,12 @@ import {
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils';
 
-const [tsVersionMajor, tsVersionMinor] = ts.versionMajorMinor
-  ?.split('.')
-  .map((x) => +x);
-export const isInUpdatedAstContext = tsVersionMinor >= 8 || tsVersionMajor > 4;
-
 export function getDecorators(node: ts.Node) {
-  return isInUpdatedAstContext
-    ? (ts.canHaveDecorators(node) && ts.getDecorators(node)) ?? []
-    : node.decorators;
+  return (ts.canHaveDecorators(node) && ts.getDecorators(node)) ?? [];
 }
 
 export function getModifiers(node: ts.Node) {
-  return isInUpdatedAstContext
-    ? (ts.canHaveModifiers(node) && ts.getModifiers(node)) ?? []
-    : node.modifiers;
+  return (ts.canHaveModifiers(node) && ts.getModifiers(node)) ?? [];
 }
 
 export function isArray(type: Type) {
@@ -267,28 +258,9 @@ export function createImportEquals(
   identifier: ts.Identifier | string,
   from: string,
 ): ts.ImportEqualsDeclaration {
-  const [major, minor] = ts.versionMajorMinor?.split('.').map((x) => +x);
-
-  if (major >= 4 && minor >= 2) {
-    // support TS v4.2+
-    return minor >= 8
-      ? f.createImportEqualsDeclaration(
-          undefined,
-          false,
-          identifier,
-          f.createExternalModuleReference(f.createStringLiteral(from)),
-        )
-      : f.createImportEqualsDeclaration(
-          undefined,
-          undefined,
-          false,
-          identifier,
-          f.createExternalModuleReference(f.createStringLiteral(from)),
-        );
-  }
-  return (f.createImportEqualsDeclaration as any)(
+  return f.createImportEqualsDeclaration(
     undefined,
-    undefined,
+    false,
     identifier,
     f.createExternalModuleReference(f.createStringLiteral(from)),
   );
@@ -308,18 +280,11 @@ export function createNamedImport(
       ),
     ),
   );
-  return isInUpdatedAstContext
-    ? f.createImportDeclaration(
-        undefined,
-        importClause,
-        f.createStringLiteral(from),
-      )
-    : f.createImportDeclaration(
-        undefined,
-        undefined,
-        importClause,
-        f.createStringLiteral(from),
-      );
+  return f.createImportDeclaration(
+    undefined,
+    importClause,
+    f.createStringLiteral(from),
+  );
 }
 
 export function isCallExpressionOf(name: string, node: ts.CallExpression) {
@@ -429,71 +394,35 @@ export function updateDecoratorArguments<
   }
 
   if (ts.isClassDeclaration(node)) {
-    return (
-      isInUpdatedAstContext
-        ? f.updateClassDeclaration(
-            node,
-            [...decorators, ...getModifiers(node)],
-            node.name,
-            node.typeParameters,
-            node.heritageClauses,
-            node.members,
-          )
-        : (f.updateClassDeclaration as any)(
-            node,
-            decorators,
-            node.modifiers,
-            node.name,
-            node.typeParameters,
-            node.heritageClauses,
-            node.members,
-          )
+    return f.updateClassDeclaration(
+      node,
+      [...decorators, ...getModifiers(node)],
+      node.name,
+      node.typeParameters,
+      node.heritageClauses,
+      node.members,
     ) as T;
   }
 
   if (ts.isPropertyDeclaration(node)) {
-    return (
-      isInUpdatedAstContext
-        ? f.updatePropertyDeclaration(
-            node,
-            [...decorators, ...getModifiers(node)],
-            node.name,
-            node.questionToken,
-            node.type,
-            node.initializer,
-          )
-        : (f.updatePropertyDeclaration as any)(
-            node,
-            decorators,
-            node.modifiers,
-            node.name,
-            node.questionToken,
-            node.type,
-            node.initializer,
-          )
+    return f.updatePropertyDeclaration(
+      node,
+      [...decorators, ...getModifiers(node)],
+      node.name,
+      node.questionToken,
+      node.type,
+      node.initializer,
     ) as T;
   }
 
   if (ts.isGetAccessorDeclaration(node)) {
-    return (
-      isInUpdatedAstContext
-        ? f.updateGetAccessorDeclaration(
-            node,
-            [...decorators, ...getModifiers(node)],
-            node.name,
-            node.parameters,
-            node.type,
-            node.body,
-          )
-        : (f.updateGetAccessorDeclaration as any)(
-            node,
-            decorators,
-            node.modifiers,
-            node.name,
-            node.parameters,
-            node.type,
-            node.body,
-          )
+    return f.updateGetAccessorDeclaration(
+      node,
+      [...decorators, ...getModifiers(node)],
+      node.name,
+      node.parameters,
+      node.type,
+      node.body,
     ) as T;
   }
 }
