@@ -3,29 +3,29 @@ version: 2
 aliases:
   - &restore-cache
     restore_cache:
-        name: Restore Yarn Package Cache
-        keys:
-          - yarn-packages-{{ checksum "yarn.lock" }}
+      name: Restore Yarn Package Cache
+      keys:
+        - yarn-packages-{{ checksum "yarn.lock" }}
   - &install-deps
     run:
-        name: Install Dependencies
-        command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+      name: Install Dependencies
+      command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
   - &build-packages
     run:
-        name: Build
-        command: yarn build
+      name: Build
+      command: yarn build
   - &save-cache
     save_cache:
-        name: Save Yarn Package Cache
-        key: yarn-packages-{{ checksum "yarn.lock" }}
-        paths:
-          - ~/.cache/yarn
+      name: Save Yarn Package Cache
+      key: yarn-packages-{{ checksum "yarn.lock" }}
+      paths:
+        - ~/.cache/yarn
 
 jobs:
   build:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:20.2
+      - image: cimg/node:20.3
     steps:
       - checkout
       - *restore-cache
@@ -33,12 +33,12 @@ jobs:
       - *save-cache
       - run:
           name: Build
-          command: yarn build    
+          command: yarn build
 
   e2e_tests:
     working_directory: ~/nest
     docker:
-      - image: cimg/node:20.2
+      - image: cimg/node:20.3
     steps:
       - checkout
       - *restore-cache

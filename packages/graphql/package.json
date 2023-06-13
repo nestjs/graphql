@@ -44,13 +44,13 @@
   },
   "peerDependencies": {
     "@apollo/subgraph": "^2.0.0",
-    "@nestjs/common": "^9.3.8",
-    "@nestjs/core": "^9.3.8",
+    "@nestjs/common": "^9.3.8 || ^10.0.0",
+    "@nestjs/core": "^9.3.8 || ^10.0.0",
     "class-transformer": "*",
     "class-validator": "*",
     "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13",
-    "ts-morph": "^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0"
+    "ts-morph": "^16.0.0 || ^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/subgraph": {

@@ -10,7 +10,7 @@
     "noLib": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2018",
+    "target": "ES2021",
     "sourceMap": false,
     "skipLibCheck": true,
     "resolveJsonModule": true
