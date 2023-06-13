@@ -20,7 +20,7 @@
   "dependencies": {
     "@graphql-tools/merge": "9.0.0",
     "@graphql-tools/schema": "10.0.0",
-    "@graphql-tools/utils": "10.0.0",
+    "@graphql-tools/utils": "10.0.1",
     "@nestjs/mapped-types": "1.2.2",
     "chokidar": "3.5.3",
     "fast-glob": "3.2.12",
