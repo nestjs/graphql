@@ -1378,30 +1378,21 @@
     mercurius "^13.0.0"
 
 "@mercuriusjs/gateway@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-1.0.0.tgz#44ad7a59520a0fb0952628fcecb6c4d409b06976"
-  integrity sha512-dKaRegJ9l87e47kNpmLavs2P3tqRPknAb7daTpDi2kHqF65hkLAt1C1Jh/LZAGa4mEYEI3HfDFQCy5hWzrTgsg==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-1.2.0.tgz#fd89e577ed817fae4182595e70aa904bd29ef3d3"
+  integrity sha512-kwSTeY53NpO2VUaDKKl3PBUwcqQBLHzHAq2FDxCr4N2u2ELu9/yJVAcv7okkmwg7ImjsTOdgbvU2+VrG2foLHQ==
   dependencies:
     "@mercuriusjs/federation" "^1.0.0"
     "@mercuriusjs/subscription-client" "^1.0.0"
     fastify-plugin "^4.3.0"
     graphql "^16.6.0"
     graphql-ws "^5.11.2"
-    mercurius "^11.3.0"
+    mercurius "^12.0.1"
     p-map "^4.0.0"
     single-user-cache "^0.6.0"
-    tiny-lru "^8.0.1"
+    tiny-lru "^10.0.1"
     use-strict "1.0.1"
     ws "^8.11.0"
-
-"@mercuriusjs/subscription-client@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/subscription-client/-/subscription-client-0.1.0.tgz#1e8490cd9b02daebd37560bff1536e5772765668"
-  integrity sha512-ivqMmSQ4kwroK/uUZVwOnd5QEAsjrEy/EqSsEqhtEObA/Zqkc44Fgi543Mml3XjoGopY1y1rJYQSl/gzfyfgrw==
-  dependencies:
-    "@fastify/error" "^3.0.0"
-    secure-json-parse "^2.4.0"
-    ws "^8.2.2"
 
 "@mercuriusjs/subscription-client@^1.0.0":
   version "1.0.0"
@@ -5479,19 +5470,6 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-graphql-jit@^0.7.3:
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.7.4.tgz#bc8ccf79596d13dff3835902a466f9a5ecc3a8c1"
-  integrity sha512-kWyHmsQtKMD6xcKDgf4dgPLyIZhviqA6IWGdnA0ElL9wgrIOTxf3eI4c0/U3tnoAU3t09zliVCfDkfIptzYjIA==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    fast-json-stringify "^1.21.0"
-    generate-function "^2.3.1"
-    json-schema "^0.4.0"
-    lodash.memoize "^4.1.2"
-    lodash.merge "4.6.2"
-    lodash.mergewith "4.6.2"
-
 graphql-jit@^0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.0.tgz#0f8fb7240cbd0dc1ab45f3684ff296193bb2d2a5"
@@ -7530,29 +7508,7 @@ mercurius@13.0.0, mercurius@^13.0.0:
     undici "^5.0.0"
     ws "^8.2.2"
 
-mercurius@^11.3.0:
-  version "11.5.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-11.5.0.tgz#07b2c6fbe0136ae23a1ad315361ae996586e7af7"
-  integrity sha512-e2ZGC9OyX8eY7Dt/gUrTvzjVDojXECgv4dkjOz7Mux80V0D8ZC7im2cuywsInIQw6pEK1/p8WeVzuIADdWAJag==
-  dependencies:
-    "@fastify/error" "^3.0.0"
-    "@fastify/static" "^6.0.0"
-    "@fastify/websocket" "^7.0.0"
-    "@mercuriusjs/subscription-client" "^0.1.0"
-    fastify-plugin "^4.2.0"
-    graphql "^16.0.0"
-    graphql-jit "^0.7.3"
-    mqemitter "^5.0.0"
-    p-map "^4.0.0"
-    readable-stream "^4.0.0"
-    safe-stable-stringify "^2.3.0"
-    secure-json-parse "^2.4.0"
-    single-user-cache "^0.6.0"
-    tiny-lru "^8.0.1"
-    undici "^5.0.0"
-    ws "^8.2.2"
-
-mercurius@^12.0.0:
+mercurius@^12.0.0, mercurius@^12.0.1:
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-12.2.0.tgz#ce27f4dd50037ba37cb524dc1392c2b2fb96d428"
   integrity sha512-S1/j+MSJA11A0rW/TM+31qq7PTf9EQVDtq+XJQMaebtqEP5JhhUmQnTLzCh9NhHkh7YIFH72gEY03Phr3Cs8xQ==
@@ -10222,15 +10178,15 @@ tiny-lru@^10.0.0:
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-10.0.1.tgz#aaf5d22207e641ed1b176ac2e616d6cc2fc9ef66"
   integrity sha512-Vst+6kEsWvb17Zpz14sRJV/f8bUWKhqm6Dc+v08iShmIJ/WxqWytHzCTd6m88pS33rE2zpX34TRmOpAJPloNCA==
 
+tiny-lru@^10.0.1:
+  version "10.4.1"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-10.4.1.tgz#dec67a62115a4cb31d2065b8116d010daac362fe"
+  integrity sha512-buLIzw7ppqymuO3pt10jHk/6QMeZLbidihMQU+N6sogF6EnBzG0qtDWIHuhw1x3dyNgVL/KTGIZsTK81+yCzLg==
+
 tiny-lru@^11.0.0, tiny-lru@^11.0.1:
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.0.1.tgz#629d6ddd88bd03c0929722680167f1feadf576f2"
   integrity sha512-iNgFugVuQgBKrqeO/mpiTTgmBsTP0WL6yeuLfLs/Ctf0pI/ixGqIRm8sDCwMcXGe9WWvt2sGXI5mNqZbValmJg==
-
-tiny-lru@^8.0.1:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-8.0.2.tgz#812fccbe6e622ded552e3ff8a4c3b5ff34a85e4c"
-  integrity sha512-ApGvZ6vVvTNdsmt676grvCkUCGwzG9IqXma5Z07xJgiC5L7akUMof5U8G2JTI9Rz/ovtVhJBlY6mNhEvtjzOIg==
 
 titleize@^3.0.0:
   version "3.0.0"
