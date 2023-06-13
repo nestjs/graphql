@@ -6588,7 +6588,7 @@ lerna-changelog@2.2.0:
     progress "^2.0.0"
     yargs "^17.1.0"
 
-lerna@^7.0.0:
+lerna@7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/lerna/-/lerna-7.0.0.tgz#7c805dd6c5aadb8e616295533210c10bb58a6d18"
   integrity sha512-g84mUPUcPFCZ7RpJ2TQjEqIq0XbhbghcZgnoUfk83fUmyN8vozxqF4TqRVWkHEd0MCvf0OO3h8n422ZGe3jG3w==
