@@ -7509,14 +7509,14 @@ mercurius-integration-testing@8.1.1:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@12.2.0, mercurius@^12.0.0:
-  version "12.2.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-12.2.0.tgz#ce27f4dd50037ba37cb524dc1392c2b2fb96d428"
-  integrity sha512-S1/j+MSJA11A0rW/TM+31qq7PTf9EQVDtq+XJQMaebtqEP5JhhUmQnTLzCh9NhHkh7YIFH72gEY03Phr3Cs8xQ==
+mercurius@13.0.0, mercurius@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.0.0.tgz#b8c7354546806ec67b554eaf9f488d6e8f73cf9c"
+  integrity sha512-gPJGw9qymc2JSee5lUgg5OeQLM7EtLzEWMY7dV2sMwUdh3k8iO3Y22iy6B8TnIX2atpVt2xSpWHRvfiUvH6wuQ==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^6.0.0"
-    "@fastify/websocket" "^7.0.0"
+    "@fastify/websocket" "^8.0.0"
     fastify-plugin "^4.2.0"
     graphql "^16.0.0"
     graphql-jit "^0.8.0"
@@ -7526,7 +7526,7 @@ mercurius@12.2.0, mercurius@^12.0.0:
     safe-stable-stringify "^2.3.0"
     secure-json-parse "^2.7.0"
     single-user-cache "^0.6.0"
-    tiny-lru "^10.0.0"
+    tiny-lru "^11.0.0"
     undici "^5.0.0"
     ws "^8.2.2"
 
@@ -7552,14 +7552,14 @@ mercurius@^11.3.0:
     undici "^5.0.0"
     ws "^8.2.2"
 
-mercurius@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.0.0.tgz#b8c7354546806ec67b554eaf9f488d6e8f73cf9c"
-  integrity sha512-gPJGw9qymc2JSee5lUgg5OeQLM7EtLzEWMY7dV2sMwUdh3k8iO3Y22iy6B8TnIX2atpVt2xSpWHRvfiUvH6wuQ==
+mercurius@^12.0.0:
+  version "12.2.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-12.2.0.tgz#ce27f4dd50037ba37cb524dc1392c2b2fb96d428"
+  integrity sha512-S1/j+MSJA11A0rW/TM+31qq7PTf9EQVDtq+XJQMaebtqEP5JhhUmQnTLzCh9NhHkh7YIFH72gEY03Phr3Cs8xQ==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^6.0.0"
-    "@fastify/websocket" "^8.0.0"
+    "@fastify/websocket" "^7.0.0"
     fastify-plugin "^4.2.0"
     graphql "^16.0.0"
     graphql-jit "^0.8.0"
@@ -7569,7 +7569,7 @@ mercurius@^13.0.0:
     safe-stable-stringify "^2.3.0"
     secure-json-parse "^2.7.0"
     single-user-cache "^0.6.0"
-    tiny-lru "^11.0.0"
+    tiny-lru "^10.0.0"
     undici "^5.0.0"
     ws "^8.2.2"
 
