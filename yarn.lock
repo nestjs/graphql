@@ -1339,19 +1339,19 @@
     secure-json-parse "^2.4.0"
     ws "^8.2.2"
 
-"@nestjs/common@9.4.3":
-  version "9.4.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-9.4.3.tgz#f907c5315b4273f7675864a05c4dda7056632b87"
-  integrity sha512-Gd6D4IaYj01o14Bwv81ukidn4w3bPHCblMUq+SmUmWLyosK+XQmInCS09SbDDZyL8jy86PngtBLTdhJ2bXSUig==
+"@nestjs/common@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.0.0.tgz#368959074975326b893893b7c4378d52bf9c2671"
+  integrity sha512-Fa2GDQJrO5TTTcpISWfm0pdPS62V+8YbxeG5CA01zMUI+dCO3v3oFf+BSjqCGUUo7GDNzDsjAejwGXuqA54RPw==
   dependencies:
     uid "2.0.2"
     iterare "1.2.1"
     tslib "2.5.3"
 
-"@nestjs/core@9.4.3":
-  version "9.4.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-9.4.3.tgz#7d6d3417e18c0a598684b87c955e4caac4f56dd4"
-  integrity sha512-Qi63+wi55Jh4sDyaj5Hhx2jOpKqT386aeo+VOKsxnd+Ql9VvkO/FjmuwBGUyzkJt29ENYc+P0Sx/k5LtstNpPQ==
+"@nestjs/core@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-10.0.0.tgz#265147262c01ebec3f95cbaed7f9e5504e8a4faa"
+  integrity sha512-HFTdj4vsF+2qOaq97ZPRDle6Q/KyL5lmMah0/ZR0ie+e1/tnlvmlqw589xFACTemLJFFOjZMy763v+icO9u72w==
   dependencies:
     uid "2.0.2"
     "@nuxtjs/opencollective" "0.3.2"
@@ -1365,10 +1365,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-1.2.2.tgz#d9ddb143776e309dbc1a518ac1607fddac1e140e"
   integrity sha512-3dHxLXs3M0GPiriAcCFFJQHoDFUuzTD5w6JDhE7TyfT89YKpe6tcCCIqOZWdXmt9AZjjK30RkHRSFF+QEnWFQg==
 
-"@nestjs/platform-express@9.4.3":
-  version "9.4.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-9.4.3.tgz#f61b75686bdfce566be3b54fa7bb20a4d87ed619"
-  integrity sha512-FpdczWoRSC0zz2dNL9u2AQLXKXRVtq4HgHklAhbL59X0uy+mcxhlSThG7DHzDMkoSnuuHY8ojDVf7mDxk+GtCw==
+"@nestjs/platform-express@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-10.0.0.tgz#2178f29e5061cf3fa6b590ba4b525837c3e4ee23"
+  integrity sha512-jOQBPVpk7B4JFXZZwxHSsY6odIqZlea9CbqKzu/hfDyqRv+AwuJk5gprvvL6RpWAHNyRMH1r5/14bqcXD3+WGw==
   dependencies:
     body-parser "1.20.2"
     cors "2.8.5"
@@ -1376,23 +1376,23 @@
     multer "1.4.4-lts.1"
     tslib "2.5.3"
 
-"@nestjs/platform-fastify@9.4.3":
-  version "9.4.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-9.4.3.tgz#806a8aef61034b9eb444a5c0b940cc17b40256d6"
-  integrity sha512-FgJyYpZQn97oaarzGKTwcKkrRZs9tv2OdwO0/roO0l/ytnG7eigc7Y3Hv/bDcxl2LngAhY3uXMAg3MMueWojsA==
+"@nestjs/platform-fastify@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-10.0.0.tgz#c3e6c0451265dd33678178dfa60b89d3e374e796"
+  integrity sha512-s5Ck3nTWLWytWH/c2l7JauuPiYt2MMszX3n+3hNWfevM3wELxhvnA/6617W2AliSOsVgFJ1m1uMCKudNo2vEUQ==
   dependencies:
     "@fastify/cors" "8.3.0"
     "@fastify/formbody" "7.4.0"
     "@fastify/middie" "8.3.0"
     fastify "4.18.0"
-    light-my-request "5.9.1"
+    light-my-request "5.10.0"
     path-to-regexp "3.2.0"
     tslib "2.5.3"
 
-"@nestjs/testing@9.4.3":
-  version "9.4.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-9.4.3.tgz#53ffbabdd38f500b145c30f2fbb76dedad393d79"
-  integrity sha512-LDT8Ai2eKnTzvnPaJwWOK03qTaFap5uHHsJCv6dL0uKWk6hyF9jms8DjyVaGsaujCaXDG8izl1mDEER0OmxaZA==
+"@nestjs/testing@10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-10.0.0.tgz#0dbb293d866c1d94edf48d2d9e7c4e4585ff4c0b"
+  integrity sha512-U5q3+svkddpdSk51ZFCEnFpQuWxAwE4ahsX77FrqqCAYidr7HUtL/BHYOVzI5H9vUH6BvJxMbfo3tiUXQl/2aA==
   dependencies:
     tslib "2.5.3"
 
@@ -6716,16 +6716,7 @@ libphonenumber-js@^1.10.14:
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.19.tgz#e18970c8d566fbfb1f88e688345f0512e126712e"
   integrity sha512-MDZ1zLIkfSDZV5xBta3nuvbEOlsnKCPe4z5r3hyup/AXveevkl9A1eSWmLhd2FX4k7pJDe4MrLeQsux0HI/VWg==
 
-light-my-request@5.9.1:
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-5.9.1.tgz#076f8d4cc4639408cc48381d4f2860212d469d4b"
-  integrity sha512-UT7pUk8jNCR1wR7w3iWfIjx32DiB2f3hFdQSOwy3/EPQ3n3VocyipUxcyRZR0ahoev+fky69uA+GejPa9KuHKg==
-  dependencies:
-    cookie "^0.5.0"
-    process-warning "^2.0.0"
-    set-cookie-parser "^2.4.1"
-
-light-my-request@^5.9.1:
+light-my-request@5.10.0, light-my-request@^5.9.1:
   version "5.10.0"
   resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-5.10.0.tgz#0a2bbc1d1bb573ed3b78143960920ecdc05bf157"
   integrity sha512-ZU2D9GmAcOUculTTdH9/zryej6n8TzT+fNGdNtm6SDp5MMMpHrJJkvAdE3c6d8d2chE9i+a//dS9CWZtisknqA==
