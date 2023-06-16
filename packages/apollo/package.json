@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@apollo/gateway": "2.3.3",
-    "@apollo/server": "4.4.1",
+    "@apollo/server": "4.7.4",
     "@apollo/server-plugin-response-cache": "4.1.0",
     "@apollo/subgraph": "2.2.3",
     "@as-integrations/fastify": "2.0.0",
