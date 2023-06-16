@@ -25,6 +25,7 @@ const defaultCompilerOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2020,
   newLine: ts.NewLineKind.LineFeed,
   noEmitHelpers: true,
+  experimentalDecorators: true,
   strict: true,
 };
 
@@ -82,6 +83,7 @@ describe('API model properties', () => {
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
+      experimentalDecorators: true,
     };
     const filename = 'create-cat.input.ts';
     const fakeProgram = ts.createProgram([filename], options);
@@ -104,6 +106,7 @@ describe('API model properties', () => {
       noEmitHelpers: true,
       strict: true,
       removeComments: true,
+      experimentalDecorators: true,
     };
     const filename = 'create-cat.input.ts';
     const fakeProgram = ts.createProgram([filename], options);
@@ -148,6 +151,7 @@ describe('API model properties', () => {
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
+      experimentalDecorators: true,
     };
     const filename = 'nullable.input.ts';
     const fakeProgram = ts.createProgram([filename], options);
@@ -169,6 +173,7 @@ describe('API model properties', () => {
       newLine: ts.NewLineKind.LineFeed,
       noEmitHelpers: true,
       strict: true,
+      experimentalDecorators: true,
     };
     const filename = 'deprecation.input.ts';
     const fakeProgram = ts.createProgram([filename], options);

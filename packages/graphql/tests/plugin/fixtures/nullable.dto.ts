@@ -23,7 +23,7 @@ export const nullableDtoTextTranspiled = `var Status;
     Status[Status["ENABLED"] = 0] = "ENABLED";
     Status[Status["DISABLED"] = 1] = "DISABLED";
 })(Status || (Status = {}));
-let NullableDto = class NullableDto {
+export let NullableDto = class NullableDto {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -35,5 +35,4 @@ let NullableDto = class NullableDto {
 NullableDto = __decorate([
     ObjectType()
 ], NullableDto);
-export { NullableDto };
 `;

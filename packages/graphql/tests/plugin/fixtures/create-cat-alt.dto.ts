@@ -57,20 +57,19 @@ export class CreateCatDto2 {
 
 export const createCatDtoTextAltTranspiled = `var Status;
 (function (Status) {
-    Status[Status["ENABLED"] = 0] = "ENABLED";
-    Status[Status["DISABLED"] = 1] = "DISABLED";
+    Status[Status[\"ENABLED\"] = 0] = \"ENABLED\";
+    Status[Status[\"DISABLED\"] = 1] = \"DISABLED\";
 })(Status || (Status = {}));
-let CreateCatDto2 = class CreateCatDto2 {
+export let CreateCatDto2 = class CreateCatDto2 {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { type: () => String, description: "name description" }, age: { type: () => Number, description: "test on age" }, tags: { type: () => [String] }, status: { type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, alias: { type: () => Object }, numberAlias: { type: () => Number }, union: { type: () => Object }, intersection: { type: () => Object }, optionalBoolean: { nullable: true, type: () => Boolean }, nested: { type: () => Object }, prop: { type: () => Object }, tuple: { type: () => Object } };
+        return { name: { type: () => String, description: \"name description\" }, age: { type: () => Number, description: \"test on age\" }, tags: { type: () => [String] }, status: { type: () => Status }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, alias: { type: () => Object }, numberAlias: { type: () => Number }, union: { type: () => Object }, intersection: { type: () => Object }, optionalBoolean: { nullable: true, type: () => Boolean }, nested: { type: () => Object }, prop: { type: () => Object }, tuple: { type: () => Object } };
     }
 };
 CreateCatDto2 = __decorate([
     ObjectType()
 ], CreateCatDto2);
-export { CreateCatDto2 };
 `;

@@ -7,6 +7,10 @@ export class ReadonlyVisitor {
   public readonly key = '@nestjs/graphql';
   private readonly modelClassVisitor = new ModelClassVisitor();
 
+  get typeImports() {
+    return this.modelClassVisitor.typeImports;
+  }
+
   constructor(private readonly options: PluginOptions) {
     options.readonly = true;
 

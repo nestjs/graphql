@@ -119,7 +119,7 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   /**
    * Extra static metadata to be loaded into the specification
    */
-  metadata?: Record<string, any>;
+  metadata?: () => Promise<Record<string, any>>;
 }
 
 export interface GqlOptionsFactory<

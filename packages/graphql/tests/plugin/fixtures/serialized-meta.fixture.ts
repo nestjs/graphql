@@ -1,0 +1,63 @@
+// @ts-nocheck
+export default async () => {
+  const t = {
+    ['./recipes/models/ingredient.model']: await import(
+      './recipes/models/ingredient.model'
+    ).then((f) => f.Ingredient)
+  };
+  return {
+    '@nestjs/graphql': {
+      models: [
+        [
+          import('./recipes/dto/new-recipe.input'),
+          {
+            NewRecipeInput: {
+              title: {
+                type: () => String,
+                description: 'The title of the recipe'
+              },
+              description: { nullable: true, type: () => String },
+              ingredients: { type: () => [String] }
+            }
+          }
+        ],
+        [
+          import('./recipes/dto/recipes.args'),
+          {
+            RecipesArgs: {
+              skip: { type: () => Number },
+              take: { type: () => Number }
+            }
+          }
+        ],
+        [
+          import('./recipes/models/ingredient.model'),
+          {
+            Ingredient: {
+              id: { type: () => String },
+              name: { type: () => String }
+            }
+          }
+        ],
+        [
+          import('./recipes/models/recipe.model'),
+          {
+            Recipe: {
+              id: { type: () => String },
+              title: {
+                type: () => String,
+                description: 'The title of the recipe'
+              },
+              description: { nullable: true, type: () => String },
+              creationDate: { type: () => Date },
+              ingredients: {
+                type: () => [t['./recipes/models/ingredient.model']]
+              },
+              primary: { type: () => t['./recipes/models/ingredient.model'] }
+            }
+          }
+        ]
+      ]
+    }
+  };
+};

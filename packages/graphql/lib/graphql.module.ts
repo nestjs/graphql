@@ -151,7 +151,9 @@ export class GraphQLModule<
 
   async onModuleInit() {
     if (this.options.metadata) {
-      await this.metadataLoader.load(this.options.metadata);
+      const metadataFn = this.options.metadata;
+      const metadata = await metadataFn();
+      await this.metadataLoader.load(metadata);
     }
     const options = await this._graphQlAdapter.mergeDefaultOptions(
       this.options,

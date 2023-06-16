@@ -52,6 +52,14 @@ export function isString(type: Type) {
   return hasFlag(type, TypeFlags.String);
 }
 
+export function isStringLiteral(type: Type) {
+  return hasFlag(type, TypeFlags.StringLiteral) && !type.isUnion();
+}
+
+export function isBigInt(type: Type) {
+  return hasFlag(type, TypeFlags.BigInt);
+}
+
 export function isNumber(type: Type) {
   return hasFlag(type, TypeFlags.Number);
 }

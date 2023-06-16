@@ -72,17 +72,17 @@ export class CreateCatArgs {
 }
 `;
 
-export const createCatDtoTextTranspiled = `import * as gql from "@nestjs/graphql";
+export const createCatDtoTextTranspiled = `import * as gql from \"@nestjs/graphql\";
 var Status;
 (function (Status) {
-    Status[Status["ENABLED"] = 0] = "ENABLED";
-    Status[Status["DISABLED"] = 1] = "DISABLED";
+    Status[Status[\"ENABLED\"] = 0] = \"ENABLED\";
+    Status[Status[\"DISABLED\"] = 1] = \"DISABLED\";
 })(Status || (Status = {}));
 var OneValueEnum;
 (function (OneValueEnum) {
-    OneValueEnum[OneValueEnum["ONE"] = 0] = "ONE";
+    OneValueEnum[OneValueEnum[\"ONE\"] = 0] = \"ONE\";
 })(OneValueEnum || (OneValueEnum = {}));
-let CreateCatDto = class CreateCatDto {
+export let CreateCatDto = class CreateCatDto {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -93,13 +93,12 @@ let CreateCatDto = class CreateCatDto {
 };
 __decorate([
     HideField()
-], CreateCatDto.prototype, "hidden", void 0);
+], CreateCatDto.prototype, \"hidden\", void 0);
 CreateCatDto = __decorate([
     gql.InputType(),
     ObjectType()
 ], CreateCatDto);
-export { CreateCatDto };
-let CreateCatInput = class CreateCatInput {
+export let CreateCatInput = class CreateCatInput {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -114,8 +113,7 @@ __decorate([
 CreateCatInput = __decorate([
     InputType()
 ], CreateCatInput);
-export { CreateCatInput };
-let CreateCatArgs = class CreateCatArgs {
+export let CreateCatArgs = class CreateCatArgs {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -130,5 +128,4 @@ __decorate([
 CreateCatArgs = __decorate([
     ArgsType()
 ], CreateCatArgs);
-export { CreateCatArgs };
 `;

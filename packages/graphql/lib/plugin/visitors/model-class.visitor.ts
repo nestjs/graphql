@@ -42,7 +42,12 @@ type ClassMetadata = Record<string, ts.ObjectLiteralExpression>;
 
 export class ModelClassVisitor {
   private importsToAdd: Set<string>;
+  private readonly _typeImports: Record<string, string> = {};
   private readonly _collectedMetadata: Record<string, ClassMetadata> = {};
+
+  get typeImports() {
+    return this._typeImports;
+  }
 
   get collectedMetadata(): Array<
     [ts.CallExpression, Record<string, ClassMetadata>]
@@ -419,24 +424,58 @@ export class ModelClassVisitor {
       return undefined;
     }
 
-    const _typeReference = getTypeReferenceAsString(type, typeChecker);
-
-    if (!_typeReference) {
+    const typeReferenceDescriptor = getTypeReferenceAsString(type, typeChecker);
+    if (!typeReferenceDescriptor.typeName) {
       return undefined;
     }
 
+    return this.typeReferenceToIdentifier(
+      typeReferenceDescriptor,
+      hostFilename,
+      options,
+      f,
+    );
+  }
+
+  private typeReferenceToIdentifier(
+    typeReferenceDescriptor: {
+      typeName: string;
+      isArray?: boolean;
+      arrayDepth?: number;
+    },
+    hostFilename: string,
+    options: PluginOptions,
+    factory: ts.NodeFactory,
+  ) {
     const { typeReference, importPath } = replaceImportPath(
-      _typeReference,
+      typeReferenceDescriptor.typeName,
       hostFilename,
       options,
     );
 
-    if (importPath) {
-      // add top-level import to eagarly load class metadata
+    let identifier: ts.Identifier;
+    if (importPath && !options.readonly) {
+      // Add top-level import to eagarly load class metadata
       this.importsToAdd.add(importPath);
     }
+    if (options.readonly && typeReference?.includes('import')) {
+      if (!this._typeImports[importPath]) {
+        this._typeImports[importPath] = typeReference;
+      }
 
-    return f.createIdentifier(typeReference);
+      let ref = `t["${importPath}"]`;
+      if (typeReferenceDescriptor.isArray) {
+        ref = this.wrapTypeInArray(ref, typeReferenceDescriptor.arrayDepth);
+      }
+      identifier = factory.createIdentifier(ref);
+    } else {
+      let ref = typeReference;
+      if (typeReferenceDescriptor.isArray) {
+        ref = this.wrapTypeInArray(ref, typeReferenceDescriptor.arrayDepth);
+      }
+      identifier = factory.createIdentifier(ref);
+    }
+    return identifier;
   }
 
   private createEagerImports(f: ts.NodeFactory): ts.ImportEqualsDeclaration[] {
@@ -453,5 +492,12 @@ export class ModelClassVisitor {
     let relativePath = posix.relative(pathToSource, path);
     relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
     return relativePath;
+  }
+
+  private wrapTypeInArray(typeRef: string, arrayDepth: number) {
+    for (let i = 0; i < arrayDepth; i++) {
+      typeRef = `[${typeRef}]`;
+    }
+    return typeRef;
   }
 }
