@@ -9,7 +9,7 @@ aliases:
   - &install-deps
     run:
       name: Install Dependencies
-      command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+      command: yarn install --ignore-scripts --frozen-lockfile --cache-folder ~/.cache/yarn
   - &build-packages
     run:
       name: Build
