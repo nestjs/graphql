@@ -21,7 +21,7 @@
     "@graphql-tools/merge": "9.0.0",
     "@graphql-tools/schema": "10.0.0",
     "@graphql-tools/utils": "10.0.1",
-    "@nestjs/mapped-types": "2.0.0",
+    "@nestjs/mapped-types": "2.0.1",
     "chokidar": "3.5.3",
     "fast-glob": "3.2.12",
     "graphql-tag": "2.12.6",
