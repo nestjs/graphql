@@ -24,7 +24,7 @@
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "dependencies": {
-    "tslib": "2.5.3"
+    "tslib": "2.6.0"
   },
   "devDependencies": {
     "@mercuriusjs/federation": "2.0.0",
