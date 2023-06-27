@@ -3,7 +3,7 @@ export default async () => {
   const t = {
     ['./recipes/models/ingredient.model']: await import(
       './recipes/models/ingredient.model'
-    ).then((f) => f.Ingredient)
+    )
   };
   return {
     '@nestjs/graphql': {
@@ -51,9 +51,11 @@ export default async () => {
               description: { nullable: true, type: () => String },
               creationDate: { type: () => Date },
               ingredients: {
-                type: () => [t['./recipes/models/ingredient.model']]
+                type: () => [t['./recipes/models/ingredient.model'].Ingredient]
               },
-              primary: { type: () => t['./recipes/models/ingredient.model'] }
+              primary: {
+                type: () => t['./recipes/models/ingredient.model'].Ingredient
+              }
             }
           }
         ]

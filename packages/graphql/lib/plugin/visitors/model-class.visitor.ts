@@ -10,6 +10,7 @@ import {
 } from '../../decorators';
 import { PluginOptions } from '../merge-options';
 import { METADATA_FACTORY_NAME } from '../plugin-constants';
+import { pluginDebugLogger } from '../plugin-debug-logger';
 import {
   createImportEquals,
   findNullableTypeFromUnion,
@@ -26,10 +27,8 @@ import {
   serializePrimitiveObjectToAst,
   updateDecoratorArguments,
 } from '../utils/ast-utils';
-import {
-  getTypeReferenceAsString,
-  replaceImportPath,
-} from '../utils/plugin-utils';
+import { getTypeReferenceAsString } from '../utils/plugin-utils';
+import { typeReferenceToIdentifier } from '../utils/type-reference-to-identifier.util';
 
 const CLASS_DECORATORS = [
   ObjectType.name,
@@ -83,6 +82,17 @@ export class ModelClassVisitor {
         ts.isClassDeclaration(node) &&
         hasDecorators(decorators, CLASS_DECORATORS)
       ) {
+        const isExported = node.modifiers?.some(
+          (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
+        );
+        if (pluginOptions.readonly && !isExported) {
+          if (pluginOptions.debug) {
+            pluginDebugLogger.debug(
+              `Skipping class "${node.name.getText()}" because it's not exported.`,
+            );
+          }
+          return;
+        }
         const members = this.amendFieldsDecorators(
           factory,
           node.members,
@@ -429,53 +439,15 @@ export class ModelClassVisitor {
       return undefined;
     }
 
-    return this.typeReferenceToIdentifier(
+    return typeReferenceToIdentifier(
       typeReferenceDescriptor,
       hostFilename,
       options,
       f,
+      type,
+      this._typeImports,
+      this.importsToAdd,
     );
-  }
-
-  private typeReferenceToIdentifier(
-    typeReferenceDescriptor: {
-      typeName: string;
-      isArray?: boolean;
-      arrayDepth?: number;
-    },
-    hostFilename: string,
-    options: PluginOptions,
-    factory: ts.NodeFactory,
-  ) {
-    const { typeReference, importPath } = replaceImportPath(
-      typeReferenceDescriptor.typeName,
-      hostFilename,
-      options,
-    );
-
-    let identifier: ts.Identifier;
-    if (importPath && !options.readonly) {
-      // Add top-level import to eagarly load class metadata
-      this.importsToAdd.add(importPath);
-    }
-    if (options.readonly && typeReference?.includes('import')) {
-      if (!this._typeImports[importPath]) {
-        this._typeImports[importPath] = typeReference;
-      }
-
-      let ref = `t["${importPath}"]`;
-      if (typeReferenceDescriptor.isArray) {
-        ref = this.wrapTypeInArray(ref, typeReferenceDescriptor.arrayDepth);
-      }
-      identifier = factory.createIdentifier(ref);
-    } else {
-      let ref = typeReference;
-      if (typeReferenceDescriptor.isArray) {
-        ref = this.wrapTypeInArray(ref, typeReferenceDescriptor.arrayDepth);
-      }
-      identifier = factory.createIdentifier(ref);
-    }
-    return identifier;
   }
 
   private createEagerImports(f: ts.NodeFactory): ts.ImportEqualsDeclaration[] {
@@ -492,12 +464,5 @@ export class ModelClassVisitor {
     let relativePath = posix.relative(pathToSource, path);
     relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
     return relativePath;
-  }
-
-  private wrapTypeInArray(typeRef: string, arrayDepth: number) {
-    for (let i = 0; i < arrayDepth; i++) {
-      typeRef = `[${typeRef}]`;
-    }
-    return typeRef;
   }
 }

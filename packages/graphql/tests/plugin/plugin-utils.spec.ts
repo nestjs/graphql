@@ -65,8 +65,9 @@ describe('plugin-utils', () => {
         );
 
         expect(actual).toStrictEqual({
-          typeReference: 'await import("./author.model").then((f) => f.Author)',
+          typeReference: 'await import("./author.model")',
           importPath: './author.model',
+          typeName: 'Author',
         });
       });
 
@@ -78,9 +79,9 @@ describe('plugin-utils', () => {
         );
 
         expect(actual).toStrictEqual({
-          typeReference:
-            'await import("dependency/author.model").then((f) => f.Author)',
+          typeReference: 'await import("dependency/author.model")',
           importPath: 'dependency/author.model',
+          typeName: 'Author',
         });
       });
 
@@ -92,9 +93,9 @@ describe('plugin-utils', () => {
         );
 
         expect(actual).toStrictEqual({
-          typeReference:
-            'await import("dependency/author.model").then((f) => f.Author)',
+          typeReference: 'await import("dependency/author.model")',
           importPath: 'dependency/author.model',
+          typeName: 'Author',
         });
       });
 
@@ -106,8 +107,9 @@ describe('plugin-utils', () => {
         );
 
         expect(actual).toStrictEqual({
-          typeReference: 'await import("dependency").then((f) => f.Author)',
+          typeReference: 'await import("dependency")',
           importPath: 'dependency',
+          typeName: 'Author',
         });
       });
     });

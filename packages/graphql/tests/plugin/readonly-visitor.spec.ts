@@ -19,6 +19,7 @@ describe('Readonly visitor', () => {
   const visitor = new ReadonlyVisitor({
     pathToSource: join(__dirname, 'fixtures', 'project'),
     introspectComments: true,
+    debug: true,
   });
   const metadataPrinter = new PluginMetadataPrinter();
 

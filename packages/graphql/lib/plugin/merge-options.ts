@@ -5,12 +5,14 @@ export interface PluginOptions {
   introspectComments?: boolean;
   readonly?: boolean;
   pathToSource?: string;
+  debug?: boolean;
 }
 
 const defaultOptions: PluginOptions = {
   typeFileNameSuffix: ['.input.ts', '.args.ts', '.entity.ts', '.model.ts'],
   introspectComments: false,
   readonly: false,
+  debug: false,
 };
 
 export const mergePluginOptions = (
