@@ -127,7 +127,7 @@ export function replaceImportPath(
   importPath = importPath.slice(2, importPath.length - 1);
 
   const from = options?.readonly
-    ? options.pathToSource
+    ? convertPath(options.pathToSource)
     : posix.dirname(convertPath(fileName));
 
   let relativePath = posix.relative(from, importPath);
@@ -286,7 +286,7 @@ function isOptionalBoolean(text: string) {
  * Converts Windows specific file paths to posix
  * @param windowsPath
  */
-function convertPath(windowsPath: string) {
+export function convertPath(windowsPath: string) {
   return windowsPath
     .replace(/^\\\\\?\\/, '')
     .replace(/\\/g, '/')

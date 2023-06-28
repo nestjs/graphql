@@ -27,7 +27,7 @@ import {
   serializePrimitiveObjectToAst,
   updateDecoratorArguments,
 } from '../utils/ast-utils';
-import { getTypeReferenceAsString } from '../utils/plugin-utils';
+import { convertPath, getTypeReferenceAsString } from '../utils/plugin-utils';
 import { typeReferenceToIdentifier } from '../utils/type-reference-to-identifier.util';
 
 const CLASS_DECORATORS = [
@@ -461,7 +461,10 @@ export class ModelClassVisitor {
   }
 
   private normalizeImportPath(pathToSource: string, path: string) {
-    let relativePath = posix.relative(pathToSource, path);
+    let relativePath = posix.relative(
+      convertPath(pathToSource),
+      convertPath(path),
+    );
     relativePath = relativePath[0] !== '.' ? './' + relativePath : relativePath;
     return relativePath;
   }
