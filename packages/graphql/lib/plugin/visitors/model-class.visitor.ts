@@ -93,7 +93,7 @@ export class ModelClassVisitor {
           }
           return;
         }
-        const members = this.amendFieldsDecorators(
+        const [members, amendedMetadata] = this.amendFieldsDecorators(
           factory,
           node.members,
           pluginOptions,
@@ -126,7 +126,11 @@ export class ModelClassVisitor {
             this._collectedMetadata[filePath] = {};
           }
           const attributeKey = node.name.getText();
-          this._collectedMetadata[filePath][attributeKey] = metadata;
+          this._collectedMetadata[filePath][attributeKey] = safelyMergeObjects(
+            factory,
+            metadata,
+            amendedMetadata,
+          );
           return;
         }
       } else if (ts.isSourceFile(node) && !pluginOptions.readonly) {
@@ -210,8 +214,9 @@ export class ModelClassVisitor {
     pluginOptions: PluginOptions,
     hostFilename: string, // sourceFile.fileName,
     typeChecker: ts.TypeChecker | undefined,
-  ): ts.ClassElement[] {
-    return members.map((member) => {
+  ): [ts.ClassElement[], ts.ObjectLiteralExpression] {
+    const propertyAssignments: ts.PropertyAssignment[] = [];
+    const updatedClassElements = members.map((member) => {
       const decorators = getDecorators(member);
       if (
         (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
@@ -241,6 +246,13 @@ export class ModelClassVisitor {
                 f,
                 metadata as any,
               );
+
+              propertyAssignments.push(
+                f.createPropertyAssignment(
+                  f.createIdentifier(member.name.getText()),
+                  serializedMetadata,
+                ),
+              );
               return [
                 type,
                 options
@@ -256,6 +268,11 @@ export class ModelClassVisitor {
 
       return member;
     });
+
+    return [
+      updatedClassElements,
+      f.createObjectLiteralExpression(propertyAssignments),
+    ];
   }
 
   private collectMetadataFromClassMembers(

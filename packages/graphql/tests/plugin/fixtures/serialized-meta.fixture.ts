@@ -49,13 +49,13 @@ export default async () => {
                 description: 'The title of the recipe'
               },
               description: { nullable: true, type: () => String },
-              creationDate: { type: () => Date },
               ingredients: {
                 type: () => [t['./recipes/models/ingredient.model'].Ingredient]
               },
               primary: {
                 type: () => t['./recipes/models/ingredient.model'].Ingredient
-              }
+              },
+              creationDate: { description: 'Creation date of the recipe' }
             }
           }
         ]

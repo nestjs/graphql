@@ -1,4 +1,4 @@
-import { ObjectType } from '../../../../../../lib/decorators';
+import { Field, ObjectType } from '../../../../../../lib/decorators';
 import { Ingredient } from './ingredient.model';
 
 @ObjectType({ description: 'recipe ' })
@@ -13,6 +13,10 @@ export class Recipe {
 
   description?: string;
 
+  /**
+   * Creation date of the recipe
+   */
+  @Field((type) => Date)
   creationDate: Date;
 
   ingredients: Ingredient[];
