@@ -55,7 +55,10 @@ export default async () => {
               primary: {
                 type: () => t['./recipes/models/ingredient.model'].Ingredient
               },
-              creationDate: { description: 'Creation date of the recipe' }
+              creationDate: { description: 'Creation date of the recipe' },
+              ingredientsWithFieldDecorator: {
+                description: 'Ingredients with field decorator'
+              }
             }
           }
         ]

@@ -58,6 +58,10 @@ export class Recipe extends IRecipe {
         description: 'last rate description',
       },
       tags: { nullable: false, type: () => [String] },
+      averageRating: {
+        description: "The recipe's average rating",
+      },
+      creationDate: {},
     };
   }
 }

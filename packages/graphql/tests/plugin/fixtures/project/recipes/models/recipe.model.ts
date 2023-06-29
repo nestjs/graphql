@@ -21,5 +21,11 @@ export class Recipe {
 
   ingredients: Ingredient[];
 
+  /**
+   * Ingredients with field decorator
+   */
+  @Field((type) => [Ingredient])
+  ingredientsWithFieldDecorator: Ingredient[];
+
   primary: Ingredient;
 }

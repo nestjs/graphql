@@ -5,13 +5,13 @@ import {
 import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
 import { Test } from '@nestjs/testing';
 import {
-  getIntrospectionQuery,
-  graphql,
   GraphQLSchema,
   IntrospectionField,
   IntrospectionSchema,
-  printSchema,
   TypeKind,
+  getIntrospectionQuery,
+  graphql,
+  printSchema,
 } from 'graphql';
 import { DirectionsResolver } from '../code-first/directions/directions.resolver';
 import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
@@ -335,7 +335,7 @@ describe('Code-first - schema factory', () => {
             {
               args: [],
               deprecationReason: null,
-              description: null,
+              description: "The recipe's average rating",
               isDeprecated: false,
               name: 'averageRating',
               type: {

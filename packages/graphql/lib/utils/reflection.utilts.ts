@@ -16,10 +16,11 @@ export interface ReflectTypeOptions {
   explicitTypeFn?: ReturnTypeFunc;
   typeOptions?: TypeOptions;
   index?: number;
+  ignoreOnUndefinedType?: boolean;
 }
 
 export interface TypeMetadata {
-  typeFn: (type?: any) => GqlTypeReference;
+  typeFn?: (type?: any) => GqlTypeReference;
   options: TypeOptions;
 }
 
@@ -43,16 +44,21 @@ export function reflectTypeFromMetadata(
   );
   const implicitType = extractTypeIfArray(metadataKey, reflectedType, index);
   const isNotAllowed = implicitType && NOT_ALLOWED_TYPES.includes(implicitType);
+  const hasNoImplicitNorExplicitType = !implicitType && !explicitTypeFn;
+  const hasNoExplicitAndImplicitIsNotAllowed =
+    !explicitTypeFn && (!implicitType || isNotAllowed);
 
-  if (
-    (!explicitTypeFn && (!implicitType || isNotAllowed)) ||
-    (!implicitType && !explicitTypeFn)
-  ) {
-    throw new UndefinedTypeError(
-      get(prototype, 'constructor.name'),
-      propertyKey,
-      index,
-    );
+  if (hasNoExplicitAndImplicitIsNotAllowed || hasNoImplicitNorExplicitType) {
+    if (!reflectOptions.ignoreOnUndefinedType) {
+      throw new UndefinedTypeError(
+        get(prototype, 'constructor.name'),
+        propertyKey,
+        index,
+      );
+    }
+    return {
+      options,
+    };
   }
   if (explicitTypeFn) {
     return {

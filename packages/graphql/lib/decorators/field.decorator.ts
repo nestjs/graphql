@@ -116,6 +116,7 @@ export function addFieldMetadata<T extends ReturnTypeFuncValue>(
       propertyKey,
       explicitTypeFn: typeFunc as ReturnTypeFunc<T>,
       typeOptions: options,
+      ignoreOnUndefinedType: loadEagerly,
     });
 
     TypeMetadataStorage.addClassFieldMetadata({

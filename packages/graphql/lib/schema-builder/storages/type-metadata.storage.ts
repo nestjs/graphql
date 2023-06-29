@@ -171,10 +171,11 @@ export class TypeMetadataStorageHost {
 
     if (existingMetadata) {
       const options = existingMetadata.options;
-      // inherit nullable option
       if (isUndefined(options.nullable) && isUndefined(options.defaultValue)) {
         options.nullable = metadata.options.nullable;
       }
+      existingMetadata.description ??= metadata.description;
+      existingMetadata.deprecationReason ??= metadata.deprecationReason;
     } else {
       this.metadataByTargetCollection
         .get(metadata.target)

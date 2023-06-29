@@ -16,6 +16,8 @@ type Recipe implements IRecipe {
   interfaceResolver(arg: Float): Boolean!
   description: String
   creationDate: DateTime!
+
+  """The recipe's average rating"""
   averageRating: Float!
 
   """last rate description"""
@@ -188,6 +190,7 @@ type Query {
 
 """recipe object type"""
 type Recipe implements IRecipe {
+  """The recipe's average rating"""
   averageRating: Float!
   count(status: String, type: String): Float!
   creationDate: Date!
