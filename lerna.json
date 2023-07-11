@@ -1,6 +1,6 @@
 {
   "packages": ["packages/*"],
-  "version": "12.0.7",
+  "version": "12.0.8-next.1",
   "npmClient": "yarn",
   "changelog": {
     "labels": {
