@@ -1,10 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import ApolloClient, { ApolloError } from 'apollo-client';
-import { WebSocketLink } from 'apollo-link-ws';
-import { gql } from 'graphql-tag';
+import { ApolloClient, ApolloError, InMemoryCache } from '@apollo/client/core';
+import { WebSocketLink } from '@apollo/client/link/ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { gql } from 'graphql-tag';
 import * as ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
@@ -65,7 +64,6 @@ describe('subscriptions-transport-ws protocol', () => {
       },
       ws,
     );
-
     const apolloClient = new ApolloClient({
       link: new WebSocketLink(wsClient),
       cache: new InMemoryCache(),

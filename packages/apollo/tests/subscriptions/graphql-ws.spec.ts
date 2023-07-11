@@ -1,13 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import ApolloClient, { ApolloError } from 'apollo-client';
+import { ApolloClient, ApolloError, InMemoryCache } from '@apollo/client/core';
 import { gql } from 'graphql-tag';
 import { Client, Context, createClient } from 'graphql-ws';
 import * as ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
-import { GraphQLWsLink } from './utils/graphql-ws.link';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { MalformedTokenException } from './utils/malformed-token.exception';
 
 const subscriptionQuery = gql`
@@ -37,7 +36,12 @@ describe('graphql-ws protocol', () => {
           },
           subscriptions: {
             'graphql-ws': {
-              onConnect: (context: Context<any>) => {
+              onConnect: (
+                context: Context<
+                  any,
+                  { socket: { close: (number, string) => any | boolean } }
+                >,
+              ) => {
                 if (!context.connectionParams.authorization) {
                   return context.extra.socket.close(
                     4000,

@@ -1,15 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import ApolloClient from 'apollo-client';
-import { WebSocketLink } from 'apollo-link-ws';
+import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 import { gql } from 'graphql-tag';
 import { Client, createClient } from 'graphql-ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
-import { GraphQLWsLink } from './utils/graphql-ws.link';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { WebSocketLink } from '@apollo/client/link/ws';
 
 const subscriptionQuery = gql`
   subscription TestSubscription($id: String!) {

@@ -25,16 +25,16 @@
     "@apollo/gateway": "2.3.3",
     "@apollo/server": "4.7.4",
     "@apollo/server-plugin-response-cache": "4.1.0",
-    "@apollo/subgraph": "2.2.3",
+    "@apollo/subgraph": "2.4.9",
     "@as-integrations/fastify": "2.0.0",
     "@nestjs/common": "10.0.5",
     "@nestjs/core": "10.0.5",
     "@nestjs/platform-express": "10.0.5",
     "@nestjs/platform-fastify": "10.0.5",
     "@nestjs/testing": "10.0.5",
-    "apollo-cache-inmemory": "1.6.6",
-    "apollo-client": "2.6.10",
-    "apollo-link-ws": "1.0.20"
+    "@apollo/client": "3.7.17",
+    "subscriptions-transport-ws": "0.11.0",
+    "graphql-ws": "5.14.0"
   },
   "dependencies": {
     "@apollo/server-plugin-landing-page-graphql-playground": "4.0.0",
