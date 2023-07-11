@@ -253,9 +253,12 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  compileClassMetadata(metadata: ClassMetadata[]) {
+  compileClassMetadata(
+    metadata: ClassMetadata[],
+    options?: { overrideFields?: boolean },
+  ) {
     metadata.forEach((item) => {
-      if (!item.properties) {
+      if (!item.properties || options?.overrideFields) {
         item.properties = this.getClassFieldsByPredicate(item);
       }
       if (!item.directives) {

@@ -8,7 +8,9 @@ import {
 } from '@nestjs/mapped-types';
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
+import { MetadataLoader } from '../plugin/metadata-loader';
 import { METADATA_FACTORY_NAME } from '../plugin/plugin-constants';
+import { PropertyMetadata } from '../schema-builder/metadata';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import { applyFieldDecorators } from './type-helpers.utils';
 
@@ -17,7 +19,6 @@ export function PartialType<T>(
   decorator?: ClassDecoratorFactory,
 ): Type<Partial<T>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
-
   abstract class PartialObjectType {
     constructor() {
       inheritPropertyInitializers(this, classRef);
@@ -32,21 +33,24 @@ export function PartialType<T>(
   inheritValidationMetadata(classRef, PartialObjectType);
   inheritTransformationMetadata(classRef, PartialObjectType);
 
-  fields.forEach((item) => {
-    if (isFunction(item.typeFn)) {
-      /**
-       * Execute type function eagerly to update the type options object (before "clone" operation)
-       * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
-       */
-      item.typeFn();
-    }
-    Field(item.typeFn, { ...item.options, nullable: true })(
-      PartialObjectType.prototype,
-      item.name,
-    );
-    applyIsOptionalDecorator(PartialObjectType, item.name);
-    applyFieldDecorators(PartialObjectType, item);
-  });
+  function applyFields(fields: PropertyMetadata[]) {
+    fields.forEach((item) => {
+      if (isFunction(item.typeFn)) {
+        /**
+         * Execute type function eagerly to update the type options object (before "clone" operation)
+         * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
+         */
+        item.typeFn();
+      }
+      Field(item.typeFn, { ...item.options, nullable: true })(
+        PartialObjectType.prototype,
+        item.name,
+      );
+      applyIsOptionalDecorator(PartialObjectType, item.name);
+      applyFieldDecorators(PartialObjectType, item);
+    });
+  }
+  applyFields(fields);
 
   if (PartialObjectType[METADATA_FACTORY_NAME]) {
     const pluginFields = Object.keys(
@@ -56,6 +60,12 @@ export function PartialType<T>(
       applyIsOptionalDecorator(PartialObjectType, key),
     );
   }
+  MetadataLoader.refreshHooks.add(() => {
+    const { fields } = getFieldsAndDecoratorForType(classRef, {
+      overrideFields: true,
+    });
+    applyFields(fields);
+  });
 
   Object.defineProperty(PartialObjectType, 'name', {
     value: `Partial${classRef.name}`,

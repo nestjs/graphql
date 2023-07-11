@@ -1,6 +1,8 @@
 import { METADATA_FACTORY_NAME } from './plugin-constants';
 
 export class MetadataLoader {
+  public static readonly refreshHooks = new Set<() => void>();
+
   async load(metadata: Record<string, any>) {
     const pkgMetadata = metadata['@nestjs/graphql'];
     if (!pkgMetadata) {
@@ -10,6 +12,8 @@ export class MetadataLoader {
     if (models) {
       await this.applyMetadata(models);
     }
+
+    MetadataLoader.refreshHooks.forEach((hook) => hook());
   }
 
   private async applyMetadata(meta: Record<string, any>) {

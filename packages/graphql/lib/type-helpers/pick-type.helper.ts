@@ -7,6 +7,8 @@ import {
 } from '@nestjs/mapped-types';
 import { Field } from '../decorators';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
+import { MetadataLoader } from '../plugin/metadata-loader';
+import { PropertyMetadata } from '../schema-builder/metadata';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import { applyFieldDecorators } from './type-helpers.utils';
 
@@ -14,7 +16,7 @@ export function PickType<T, K extends keyof T>(
   classRef: Type<T>,
   keys: readonly K[],
   decorator?: ClassDecoratorFactory,
-): Type<Pick<T, typeof keys[number]>> {
+): Type<Pick<T, (typeof keys)[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
   const isInheritedPredicate = (propertyKey: string) =>
@@ -34,22 +36,32 @@ export function PickType<T, K extends keyof T>(
   inheritValidationMetadata(classRef, PickObjectType, isInheritedPredicate);
   inheritTransformationMetadata(classRef, PickObjectType, isInheritedPredicate);
 
-  fields
-    .filter((item) => keys.includes(item.name as K))
-    .forEach((item) => {
-      if (isFunction(item.typeFn)) {
-        /**
-         * Execute type function eagarly to update the type options object (before "clone" operation)
-         * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
-         */
-        item.typeFn();
-      }
+  function applyFields(fields: PropertyMetadata[]) {
+    fields
+      .filter((item) => keys.includes(item.name as K))
+      .forEach((item) => {
+        if (isFunction(item.typeFn)) {
+          /**
+           * Execute type function eagarly to update the type options object (before "clone" operation)
+           * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
+           */
+          item.typeFn();
+        }
 
-      Field(item.typeFn, { ...item.options })(
-        PickObjectType.prototype,
-        item.name,
-      );
-      applyFieldDecorators(PickObjectType, item);
+        Field(item.typeFn, { ...item.options })(
+          PickObjectType.prototype,
+          item.name,
+        );
+        applyFieldDecorators(PickObjectType, item);
+      });
+  }
+  applyFields(fields);
+
+  MetadataLoader.refreshHooks.add(() => {
+    const { fields } = getFieldsAndDecoratorForType(classRef, {
+      overrideFields: true,
     });
-  return PickObjectType as Type<Pick<T, typeof keys[number]>>;
+    applyFields(fields);
+  });
+  return PickObjectType as Type<Pick<T, (typeof keys)[number]>>;
 }
