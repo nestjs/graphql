@@ -1,7 +1,11 @@
 import { METADATA_FACTORY_NAME } from './plugin-constants';
 
 export class MetadataLoader {
-  public static readonly refreshHooks = new Set<() => void>();
+  private static readonly refreshHooks = new Array<() => void>();
+
+  static addRefreshHook(hook: () => void) {
+    return MetadataLoader.refreshHooks.unshift(hook);
+  }
 
   async load(metadata: Record<string, any>) {
     const pkgMetadata = metadata['@nestjs/graphql'];
@@ -12,11 +16,16 @@ export class MetadataLoader {
     if (models) {
       await this.applyMetadata(models);
     }
+    this.runHooks();
+  }
 
+  private runHooks() {
     MetadataLoader.refreshHooks.forEach((hook) => hook());
   }
 
-  private async applyMetadata(meta: Record<string, any>) {
+  private async applyMetadata(
+    meta: Array<[Promise<unknown>, Record<string, any>]>,
+  ) {
     const loadPromises = meta.map(async ([fileImport, fileMeta]) => {
       const fileRef = await fileImport;
       Object.keys(fileMeta).map((key) => {

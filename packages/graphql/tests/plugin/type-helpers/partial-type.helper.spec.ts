@@ -1,48 +1,37 @@
 import { Expose, Transform } from 'class-transformer';
-import { IsString } from 'class-validator';
-import {
-  Directive,
-  Extensions,
-  Field,
-  ObjectType,
-} from '../../../lib/decorators';
+import { IsString, validate } from 'class-validator';
+import { Field, ObjectType } from '../../../lib/decorators';
+import { MetadataLoader } from '../../../lib/plugin/metadata-loader';
 import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
 import { PartialType } from '../../../lib/type-helpers';
+import { BaseType } from './fixtures/base-type.fixture';
+import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture';
+import { getValidationMetadataByTarget } from './type-helpers.test-utils';
+
+@ObjectType()
+class CreateUserDto extends BaseType {
+  @Field({ nullable: true })
+  login: string;
+
+  @Expose()
+  @Transform((str) => str + '_transformed')
+  @IsString()
+  @Field()
+  password: string;
+}
+
+class UpdateUserDto extends PartialType(CreateUserDto) {}
 
 describe('PartialType', () => {
-  @ObjectType({ isAbstract: true })
-  abstract class BaseType {
-    @Field()
-    @Directive('@upper')
-    @Extensions({ extension: true })
-    id: string;
+  const metadataLoader = new MetadataLoader();
 
-    @Field()
-    createdAt: Date;
+  it('should inherit all fields and set "nullable" to true', async () => {
+    await metadataLoader.load(SERIALIZED_METADATA);
 
-    @Field()
-    updatedAt: Date;
-  }
-
-  @ObjectType()
-  class CreateUserDto extends BaseType {
-    @Field({ nullable: true })
-    login: string;
-
-    @Expose()
-    @Transform((str) => str + '_transformed')
-    @IsString()
-    @Field()
-    password: string;
-  }
-
-  class UpdateUserDto extends PartialType(CreateUserDto) {}
-
-  it('should inherit all fields and set "nullable" to true', () => {
     const prototype = Object.getPrototypeOf(UpdateUserDto);
     const { fields } = getFieldsAndDecoratorForType(prototype);
 
-    expect(fields.length).toEqual(5);
+    expect(fields.length).toEqual(6);
     expect(fields).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -65,6 +54,10 @@ describe('PartialType', () => {
           name: 'password',
           options: { nullable: true },
         }),
+        expect.objectContaining({
+          name: 'meta',
+          options: { nullable: true },
+        }),
       ]),
     );
     expect(fields[0].directives.length).toEqual(1);
@@ -75,6 +68,37 @@ describe('PartialType', () => {
     });
     expect(fields[0].extensions).toEqual({
       extension: true,
+    });
+  });
+
+  describe('Validation metadata', () => {
+    it('should inherit metadata', () => {
+      const validationKeys = new Set(
+        getValidationMetadataByTarget(UpdateUserDto).map(
+          (item) => item.propertyName,
+        ),
+      );
+      expect(Array.from(validationKeys)).toEqual([
+        'password',
+        'id',
+        'createdAt',
+        'updatedAt',
+        'login',
+        'meta',
+      ]);
+    });
+    describe('when object does not fulfil validation rules', () => {
+      it('"validate" should return validation errors', async () => {
+        const updateDto = new UpdateUserDto();
+        updateDto.password = 1234567 as any;
+
+        const validationErrors = await validate(updateDto);
+
+        expect(validationErrors.length).toEqual(1);
+        expect(validationErrors[0].constraints).toEqual({
+          isString: 'password must be a string',
+        });
+      });
     });
   });
 });

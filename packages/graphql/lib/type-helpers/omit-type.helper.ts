@@ -40,10 +40,8 @@ export function OmitType<T, K extends keyof T>(
       .filter((item) => !keys.includes(item.name as K))
       .forEach((item) => {
         if (isFunction(item.typeFn)) {
-          /**
-           * Execute type function eagarly to update the type options object (before "clone" operation)
-           * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
-           */
+          // Execute type function eagerly to update the type options object (before "clone" operation)
+          // when the passed function (e.g., @Field(() => Type)) lazily returns an array.
           item.typeFn();
         }
 
@@ -56,7 +54,9 @@ export function OmitType<T, K extends keyof T>(
   }
   applyFields(fields);
 
-  MetadataLoader.refreshHooks.add(() => {
+  // Register a refresh hook to update the fields when the serialized metadata
+  // is loaded from file.
+  MetadataLoader.addRefreshHook(() => {
     const { fields } = getFieldsAndDecoratorForType(classRef, {
       overrideFields: true,
     });

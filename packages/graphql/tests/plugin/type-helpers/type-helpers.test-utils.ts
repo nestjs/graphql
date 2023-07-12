@@ -1,10 +1,17 @@
-import { getFromContainer, MetadataStorage } from 'class-validator';
+import { MetadataStorage } from 'class-validator';
 
 export function getValidationMetadataByTarget(target: Function) {
-  const metadataStorage = getFromContainer(MetadataStorage);
+  const classValidator: typeof import('class-validator') = require('class-validator');
+  const metadataStorage: MetadataStorage = (classValidator as any)
+    .getMetadataStorage
+    ? (classValidator as any).getMetadataStorage()
+    : classValidator.getFromContainer(classValidator.MetadataStorage);
+
   const targetMetadata = metadataStorage.getTargetValidationMetadatas(
     target,
-    null,
+    null!,
+    false,
+    false,
   );
   return targetMetadata;
 }

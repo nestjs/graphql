@@ -1,32 +1,8 @@
-import { Transform } from 'class-transformer';
-import { MinLength } from 'class-validator';
-import {
-  Directive,
-  Extensions,
-  Field,
-  ObjectType,
-} from '../../../lib/decorators';
 import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
 import { OmitType } from '../../../lib/type-helpers';
+import { CreateUserDto } from './fixtures/create-user-dto.fixture';
 
 describe('OmitType', () => {
-  @ObjectType()
-  class CreateUserDto {
-    @MinLength(10)
-    @Field({ nullable: true })
-    login: string;
-
-    @Transform((str) => str + '_transformed')
-    @MinLength(10)
-    @Field()
-    @Directive('@upper')
-    @Extensions({ extension: true })
-    password: string;
-
-    @Field({ name: 'id' })
-    _id: string;
-  }
-
   class UpdateUserDto extends OmitType(CreateUserDto, ['login', '_id']) {}
 
   it('should inherit all fields except for "login" and "_id"', () => {

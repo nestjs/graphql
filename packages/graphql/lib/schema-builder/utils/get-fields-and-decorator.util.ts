@@ -36,7 +36,7 @@ export function getFieldsAndDecoratorForType<T>(
   if (!fields) {
     throw new UnableToFindFieldsError(objType.name);
   }
-  fields = inheritClassFields(objType, fields);
+  fields = inheritClassFields(objType, fields, options);
 
   return {
     fields,
@@ -82,6 +82,7 @@ function getClassMetadataAndFactoryByTargetAndType(
 function inheritClassFields(
   objType: Type<unknown>,
   fields: PropertyMetadata[],
+  options?: { overrideFields?: boolean },
 ) {
   try {
     const parentClass = Object.getPrototypeOf(objType);
@@ -90,8 +91,13 @@ function inheritClassFields(
     }
     const { fields: parentFields } = getFieldsAndDecoratorForType(
       parentClass as Type<unknown>,
+      options,
     );
-    return inheritClassFields(parentClass, [...parentFields, ...fields]);
+    return inheritClassFields(
+      parentClass,
+      [...parentFields, ...fields],
+      options,
+    );
   } catch (err) {
     return fields;
   }

@@ -36,10 +36,8 @@ export function PartialType<T>(
   function applyFields(fields: PropertyMetadata[]) {
     fields.forEach((item) => {
       if (isFunction(item.typeFn)) {
-        /**
-         * Execute type function eagerly to update the type options object (before "clone" operation)
-         * when the passed function (e.g., @Field(() => Type)) lazily returns an array.
-         */
+        // Execute type function eagerly to update the type options object (before "clone" operation)
+        // when the passed function (e.g., @Field(() => Type)) lazily returns an array.
         item.typeFn();
       }
       Field(item.typeFn, { ...item.options, nullable: true })(
@@ -52,6 +50,15 @@ export function PartialType<T>(
   }
   applyFields(fields);
 
+  // Register a refresh hook to update the fields when the serialized metadata
+  // is loaded from file.
+  MetadataLoader.addRefreshHook(() => {
+    const { fields } = getFieldsAndDecoratorForType(classRef, {
+      overrideFields: true,
+    });
+    applyFields(fields);
+  });
+
   if (PartialObjectType[METADATA_FACTORY_NAME]) {
     const pluginFields = Object.keys(
       PartialObjectType[METADATA_FACTORY_NAME](),
@@ -60,12 +67,6 @@ export function PartialType<T>(
       applyIsOptionalDecorator(PartialObjectType, key),
     );
   }
-  MetadataLoader.refreshHooks.add(() => {
-    const { fields } = getFieldsAndDecoratorForType(classRef, {
-      overrideFields: true,
-    });
-    applyFields(fields);
-  });
 
   Object.defineProperty(PartialObjectType, 'name', {
     value: `Partial${classRef.name}`,

@@ -1,40 +1,25 @@
-import { Transform } from 'class-transformer';
-import { MinLength } from 'class-validator';
-import {
-  ArgsType,
-  Directive,
-  Extensions,
-  Field,
-  ObjectType,
-} from '../../../lib/decorators';
+import { validate } from 'class-validator';
+import { ArgsType, Field, ObjectType } from '../../../lib/decorators';
+import { MetadataLoader } from '../../../lib/plugin/metadata-loader';
 import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
 import { PickType } from '../../../lib/type-helpers';
+import { CreateUserDto } from './fixtures/create-user-dto.fixture';
+import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture';
+import { getValidationMetadataByTarget } from './type-helpers.test-utils';
+
+class UpdateUserDto extends PickType(CreateUserDto, ['login']) {}
+
+class UpdateUserWithIdDto extends PickType(CreateUserDto, ['_id']) {}
+
+class IsActiveUserDto extends PickType(CreateUserDto, ['active']) {}
 
 describe('PickType', () => {
-  @ObjectType()
-  class CreateUserDto {
-    @Transform((str) => str + '_transformed')
-    @MinLength(10)
-    @Field({ nullable: true })
-    @Directive('@upper')
-    login: string;
-
-    @MinLength(10)
-    @Field()
-    password: string;
-
-    @Field({ name: 'id' })
-    @Extensions({ extension: true })
-    _id: string;
-  }
-
-  class UpdateUserDto extends PickType(CreateUserDto, ['login']) {}
-
-  class UpdateUserWithIdDto extends PickType(CreateUserDto, ['_id']) {}
+  const metadataLoader = new MetadataLoader();
 
   it('should inherit "login" field', () => {
     const prototype = Object.getPrototypeOf(UpdateUserDto);
     const { fields } = getFieldsAndDecoratorForType(prototype);
+
     expect(fields.length).toEqual(1);
     expect(fields[0].name).toEqual('login');
     expect(fields[0].directives.length).toEqual(1);
@@ -45,6 +30,16 @@ describe('PickType', () => {
     });
   });
 
+  it('should inherit "active" field', async () => {
+    await metadataLoader.load(SERIALIZED_METADATA);
+
+    const prototype = Object.getPrototypeOf(IsActiveUserDto);
+    const { fields } = getFieldsAndDecoratorForType(prototype);
+
+    expect(fields.length).toEqual(1);
+    expect(fields[0].name).toEqual('active');
+  });
+
   it('should inherit renamed "_id" field', () => {
     const { fields } = getFieldsAndDecoratorForType(
       Object.getPrototypeOf(UpdateUserWithIdDto),
@@ -52,6 +47,49 @@ describe('PickType', () => {
     expect(fields.length).toEqual(1);
     expect(fields[0].name).toEqual('_id');
     expect(fields[0].extensions).toEqual({ extension: true });
+  });
+
+  describe('Validation metadata', () => {
+    it('should inherit metadata with "password" property excluded', () => {
+      const validationKeys = getValidationMetadataByTarget(UpdateUserDto).map(
+        (item) => item.propertyName,
+      );
+      expect(validationKeys).toEqual(['login']);
+    });
+    describe('when object does not fulfil validation rules', () => {
+      it('"validate" should return validation errors', async () => {
+        await metadataLoader.load(SERIALIZED_METADATA);
+
+        const updateDto = new UpdateUserDto();
+        updateDto.login = '1234567';
+
+        let validationErrors = await validate(updateDto);
+        expect(validationErrors.length).toEqual(1);
+        expect(validationErrors[0].constraints).toEqual({
+          minLength: 'login must be longer than or equal to 10 characters',
+        });
+
+        const isActiveDto = new IsActiveUserDto();
+        isActiveDto.active = '1234567' as any;
+
+        validationErrors = await validate(isActiveDto);
+        expect(validationErrors.length).toEqual(1);
+        expect(validationErrors[0].constraints).toEqual({
+          isBoolean: 'active must be a boolean value',
+        });
+      });
+    });
+    describe('otherwise', () => {
+      it('"validate" should return an empty array', async () => {
+        const updateDto = new UpdateUserDto();
+        updateDto.login = '1234567891011';
+        // @ts-expect-error
+        updateDto.password;
+
+        const validationErrors = await validate(updateDto);
+        expect(validationErrors.length).toEqual(0);
+      });
+    });
   });
 
   @ArgsType()
