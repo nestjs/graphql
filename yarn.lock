@@ -7080,16 +7080,15 @@ mercurius-integration-testing@8.1.1:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@13.0.0, mercurius@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.0.0.tgz#b8c7354546806ec67b554eaf9f488d6e8f73cf9c"
-  integrity sha512-gPJGw9qymc2JSee5lUgg5OeQLM7EtLzEWMY7dV2sMwUdh3k8iO3Y22iy6B8TnIX2atpVt2xSpWHRvfiUvH6wuQ==
+mercurius@13.1.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.1.0.tgz#73083117ec69f84ecd566971faae6d690085a46d"
+  integrity sha512-MDCmgNLk77f6Epe4af78Z36XChQ/TeHIO3l8Aoyj3whEqzlXxODNaNHt4vEfLDHCSbuLoLJTaK6bpWN0MtomUA==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^6.0.0"
     "@fastify/websocket" "^8.0.0"
     fastify-plugin "^4.2.0"
-    graphql "^16.0.0"
     graphql-jit "^0.8.0"
     mqemitter "^5.0.0"
     p-map "^4.0.0"
@@ -7141,6 +7140,27 @@ mercurius@^12.0.0:
     secure-json-parse "^2.7.0"
     single-user-cache "^0.6.0"
     tiny-lru "^10.0.0"
+    undici "^5.0.0"
+    ws "^8.2.2"
+
+mercurius@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.0.0.tgz#b8c7354546806ec67b554eaf9f488d6e8f73cf9c"
+  integrity sha512-gPJGw9qymc2JSee5lUgg5OeQLM7EtLzEWMY7dV2sMwUdh3k8iO3Y22iy6B8TnIX2atpVt2xSpWHRvfiUvH6wuQ==
+  dependencies:
+    "@fastify/error" "^3.0.0"
+    "@fastify/static" "^6.0.0"
+    "@fastify/websocket" "^8.0.0"
+    fastify-plugin "^4.2.0"
+    graphql "^16.0.0"
+    graphql-jit "^0.8.0"
+    mqemitter "^5.0.0"
+    p-map "^4.0.0"
+    readable-stream "^4.0.0"
+    safe-stable-stringify "^2.3.0"
+    secure-json-parse "^2.7.0"
+    single-user-cache "^0.6.0"
+    tiny-lru "^11.0.0"
     undici "^5.0.0"
     ws "^8.2.2"
 
