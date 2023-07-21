@@ -263,10 +263,10 @@
   dependencies:
     xss "^1.0.8"
 
-"@as-integrations/fastify@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-2.0.0.tgz#e1055c6c96450a8d76155570f3fe00c1b207b629"
-  integrity sha512-LlZUbPcE5KJWJL2zujXpmdNEl5Yal3NZTzOZWU+1euWGYPcfG9HSmQg7kWyULQNeH4T4i2+VDrsRBfyOybFeJg==
+"@as-integrations/fastify@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-2.1.0.tgz#85794b9a12ab54c2b9210a61017a9662d5662213"
+  integrity sha512-Qw57OOChZanNKcfFHQ0Pt21n1ii1CTeAIR122xuYp9DDwQmY7aVxNY7ennuxTop6PlFWQGhRrhQZFKCRaxfYCw==
   dependencies:
     fastify-plugin "^4.4.0"
 
