@@ -1349,19 +1349,19 @@
     secure-json-parse "^2.4.0"
     ws "^8.2.2"
 
-"@nestjs/common@10.1.2":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.1.2.tgz#c30c5e74967a092c395ab4bc9a4faffbf62be497"
-  integrity sha512-VS8xJtaYkUJHeQSnskZccPdlzd2A+j4aeFMTTmUJaUpTHsYBwUt1wWuZgyZeaSIIs0i0TcHla5rpFzRV3ZJmnQ==
+"@nestjs/common@10.1.3":
+  version "10.1.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.1.3.tgz#7f80d7c011e94bfb2177100cc8862e4fc65a6630"
+  integrity sha512-xSyXBwgcmiFwQqek1Urw/AL3pRPq9bp/tpgfTxmnJg3gP6XNUbx1fDr0de50irXgZYzFKfVFo9ptC3b2du5YKA==
   dependencies:
     uid "2.0.2"
     iterare "1.2.1"
     tslib "2.6.1"
 
-"@nestjs/core@10.1.2":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-10.1.2.tgz#1803ea7742d3b51caca9cc745b011b3634bf49b7"
-  integrity sha512-iOs29A/cgz8Ou8tOAeVPKYcfFoEiYbIwUvbg0UFI6VIiauo/zGalp/14ok1OL6PotrUU3mRkb0ZWYShINlvqIA==
+"@nestjs/core@10.1.3":
+  version "10.1.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-10.1.3.tgz#6f74ac04695847976dd84836d8063624a793c127"
+  integrity sha512-VzK54TuacC3Vmq3b5xTyMVTlDNJeKbjpKfV9fNqm4TbIBm8ZPo3FC0osJAbAK4XwbVvv2Flq1yA3CutasupVjw==
   dependencies:
     uid "2.0.2"
     "@nuxtjs/opencollective" "0.3.2"
@@ -1375,10 +1375,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-2.0.2.tgz#c8a090a8d22145b85ed977414c158534210f2e4f"
   integrity sha512-V0izw6tWs6fTp9+KiiPUbGHWALy563Frn8X6Bm87ANLRuE46iuBMD5acKBDP5lKL/75QFvrzSJT7HkCbB0jTpg==
 
-"@nestjs/platform-express@10.1.2":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-10.1.2.tgz#f5bc986cafd996990bc53b0c78852f31f9421e65"
-  integrity sha512-cH2qiyoc3B5/tujh3rJPUcafc1tY12OJC3B01n5DzRTm4K8xELJbp+jEo3XpUQis2VyET21K7hYfwBU5RJlbaQ==
+"@nestjs/platform-express@10.1.3":
+  version "10.1.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-10.1.3.tgz#d1f644e86f2bc45c7529b9eed7669613f4392e99"
+  integrity sha512-RSf7ooCrxiWJlWl3CLfpaYmAf3U0tRsN7pJakujWdvzVJU2EzVZTLcy1MtnSg/HBm9/Rvg98VI5QI6oOhOpt+A==
   dependencies:
     body-parser "1.20.2"
     cors "2.8.5"
@@ -1386,23 +1386,23 @@
     multer "1.4.4-lts.1"
     tslib "2.6.1"
 
-"@nestjs/platform-fastify@10.1.2":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-10.1.2.tgz#3ed72c2fc68c92eedfe018281196483059660db3"
-  integrity sha512-/bm8WQtSNHXdoX4yEFjCj7O75h/bwxyHG6v8InIf7B7/B91D+KtYHAkrDNvZmd1zQAe3VMCXgGHErDxu2X/q2g==
+"@nestjs/platform-fastify@10.1.3":
+  version "10.1.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-10.1.3.tgz#b1863d465dfd360da01198b7c0c2a7be8b40d2cf"
+  integrity sha512-ZSiMPgqE2g9tNbWp/aAMKp9ZIbgLwtYaDzuQrQCzWWrabNsKZ1uQz6qvvrTrirC7pvnUjOEe5l1puHS/+SS7cg==
   dependencies:
     "@fastify/cors" "8.3.0"
     "@fastify/formbody" "7.4.0"
     "@fastify/middie" "8.3.0"
-    fastify "4.20.0"
+    fastify "4.21.0"
     light-my-request "5.10.0"
     path-to-regexp "3.2.0"
     tslib "2.6.1"
 
-"@nestjs/testing@10.1.2":
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-10.1.2.tgz#54c879b7ab2a244b4a42d85b822e233484877e47"
-  integrity sha512-047SBcHxHNj/u/YEBTShaM3ijqjp+I8gbBy/sO18tGI0lHBdQztC6zLfIHddrF3rS2/fBLkES+/kemhkVlkpwQ==
+"@nestjs/testing@10.1.3":
+  version "10.1.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-10.1.3.tgz#596a1dc580373b3b0b070ac73bf70e45f80197dd"
+  integrity sha512-zMrO9xLPYnKtC6q1diWubuMshIp0v2aGHa58jcIfZaAlJlU/6RKsgCOiFQ42aFzxUEBRWF0LBF0aiwt04LKMyQ==
   dependencies:
     tslib "2.6.1"
 
@@ -4586,28 +4586,6 @@ fastify-plugin@^4.0.0, fastify-plugin@^4.2.0, fastify-plugin@^4.3.0, fastify-plu
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-4.5.0.tgz#8b853923a0bba6ab6921bb8f35b81224e6988d91"
   integrity sha512-79ak0JxddO0utAXAQ5ccKhvs6vX2MGyHHMMsmZkBANrq3hXc1CHzvNPHOcvTsVMEPl5I+NT+RO4YKMGehOfSIg==
-
-fastify@4.20.0:
-  version "4.20.0"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.20.0.tgz#d796c7433ac64b83a666350dc8b57e1b2517c116"
-  integrity sha512-zWWi5KGAb1YZ6fyrnFnA1CA1EZHkGM6YuELgB3QpS3l4lLRy14W1cc16b4KGPH/zQ98WCSdS+T41JkHY3eq1oA==
-  dependencies:
-    "@fastify/ajv-compiler" "^3.5.0"
-    "@fastify/error" "^3.2.0"
-    "@fastify/fast-json-stringify-compiler" "^4.3.0"
-    abstract-logging "^2.0.1"
-    avvio "^8.2.1"
-    fast-content-type-parse "^1.0.0"
-    fast-json-stringify "^5.7.0"
-    find-my-way "^7.6.0"
-    light-my-request "^5.9.1"
-    pino "^8.12.0"
-    process-warning "^2.2.0"
-    proxy-addr "^2.0.7"
-    rfdc "^1.3.0"
-    secure-json-parse "^2.5.0"
-    semver "^7.5.0"
-    tiny-lru "^11.0.1"
 
 fastify@4.21.0:
   version "4.21.0"
