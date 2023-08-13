@@ -8852,10 +8852,10 @@ registry-url@^6.0.0:
   dependencies:
     rc "1.2.8"
 
-release-it@16.1.4:
-  version "16.1.4"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-16.1.4.tgz#1bc09538b294259f081b64060c11e0b0c1d7e950"
-  integrity sha512-lLYuXfZzAzO9tDyhQKpvkrUMY43/+PMTzibcUsC4dDDzDf3JT69FhiAjkqXv9nBAotyENGMoeHtK0jRiL4YeEQ==
+release-it@16.1.5:
+  version "16.1.5"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-16.1.5.tgz#a846c2728994ff4b9aa630e2581868eda3b73978"
+  integrity sha512-w/zCljPZBSYcCwR9fjDB1zaYwie1CAQganUrwNqjtXacXhrrsS5E6dDUNLcxm2ypu8GWAgZNMJfuBJqIO2E7fA==
   dependencies:
     "@iarna/toml" "2.2.5"
     "@octokit/rest" "19.0.13"
