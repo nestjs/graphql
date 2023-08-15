@@ -130,6 +130,32 @@ export class AstDefinitionNodeFactory {
     };
   }
 
+  createArgNode(
+    name: string,
+    type: GraphQLInputType,
+    directiveMetadata?: DirectiveMetadata[],
+  ): InputValueDefinitionNode | undefined {
+    if (isEmpty(directiveMetadata)) {
+      return;
+    }
+
+    return {
+      kind: Kind.INPUT_VALUE_DEFINITION,
+      type: {
+        kind: Kind.NAMED_TYPE,
+        name: {
+          kind: Kind.NAME,
+          value: type.toString(),
+        },
+      },
+      name: {
+        kind: Kind.NAME,
+        value: name,
+      },
+      directives: directiveMetadata.map(this.createDirectiveNode),
+    };
+  }
+
   private createDirectiveNode(
     directive: DirectiveMetadata,
   ): ConstDirectiveNode {
