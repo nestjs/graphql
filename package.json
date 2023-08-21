@@ -51,7 +51,7 @@
     "jest": "29.6.3",
     "lerna": "7.1.5",
     "lerna-changelog": "2.2.0",
-    "lint-staged": "14.0.0",
+    "lint-staged": "14.0.1",
     "prettier": "2.8.8",
     "reflect-metadata": "0.1.13",
     "release-it": "16.1.5",
