@@ -101,4 +101,31 @@ describe('PartialType', () => {
       });
     });
   });
+
+
+
+  describe('Remove defaultValue', () => {
+    @ObjectType()
+    class CreateFooDto {
+      @Field({ defaultValue: 'foo' })
+      name: string;
+    }
+
+    class UpdateFooDto extends PartialType(CreateFooDto, { omitDefaultValue: true }) {}
+
+    it('should remove defaultValue', async () => {
+      await metadataLoader.load(SERIALIZED_METADATA);
+  
+      const prototype = Object.getPrototypeOf(UpdateFooDto);
+      const { fields } = getFieldsAndDecoratorForType(prototype);
+      console.log(fields);
+  
+      expect(fields.length).toEqual(1);
+      expect(fields[0].name).toEqual("name");
+      expect(fields[0].options.nullable).toEqual(true);
+      expect(fields[0].options.defaultValue).toEqual(undefined);
+    });
+
+  });
+
 });
