@@ -15,7 +15,7 @@
     "@jridgewell/gen-mapping" "^0.3.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@apollo/cache-control-types@^1.0.2":
+"@apollo/cache-control-types@^1.0.2", "@apollo/cache-control-types@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
@@ -109,7 +109,7 @@
     deep-equal "^2.0.5"
     pretty-format "^29.0.0"
 
-"@apollo/server-gateway-interface@^1.1.0":
+"@apollo/server-gateway-interface@^1.1.0", "@apollo/server-gateway-interface@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@apollo/server-gateway-interface/-/server-gateway-interface-1.1.1.tgz#a79632aa921edefcd532589943f6b97c96fa4d3c"
   integrity sha512-pGwCl/po6+rxRmDMFgozKQo2pbsSwE91TpsDBAOgf74CRDPXHHtM88wbwjab0wMMZh95QfR45GGyDIdhY24bkQ==
@@ -134,14 +134,14 @@
     "@apollo/utils.createhash" "^2.0.0"
     "@apollo/utils.keyvaluecache" "^2.1.0"
 
-"@apollo/server@4.7.4":
-  version "4.7.4"
-  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-4.7.4.tgz#b2a999b5a1f6bb909ec1749106b0c6704296a622"
-  integrity sha512-7MwEsBR+4JRfjAzrFIOP0m/NdzNCyVOlRWCO/86zs73CC+trr08FklTD7JD0yx5BJDfyzjdhF2BZ1sEYvp/Waw==
+"@apollo/server@4.9.3":
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-4.9.3.tgz#d51fa1745a7e9f3b1d687c6df40256744aaa977a"
+  integrity sha512-U56Sx/UmzR3Es344hQ/Ptf2EJrH+kV4ZPoLmgGjWoiwf2wYQ/pRSvkSXgjOvoyE34wSa8Gh7f92ljfLfY+6q1w==
   dependencies:
-    "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/server-gateway-interface" "^1.1.0"
-    "@apollo/usage-reporting-protobuf" "^4.1.0"
+    "@apollo/cache-control-types" "^1.0.3"
+    "@apollo/server-gateway-interface" "^1.1.1"
+    "@apollo/usage-reporting-protobuf" "^4.1.1"
     "@apollo/utils.createhash" "^2.0.0"
     "@apollo/utils.fetcher" "^2.0.0"
     "@apollo/utils.isnodelike" "^2.0.0"
