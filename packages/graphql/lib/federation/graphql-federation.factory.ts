@@ -1,4 +1,4 @@
-import { mergeSchemas } from '@graphql-tools/schema';
+import { mergeSchemas, addResolversToSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
@@ -78,14 +78,17 @@ export class GraphQLFederationFactory {
         require('@apollo/subgraph'),
       );
 
-    return buildSubgraphSchema([
-      {
-        typeDefs: gql`
-          ${options.typeDefs}
-        `,
-        resolvers: this.getResolvers(options.resolvers),
-      },
-    ]);
+    return addResolversToSchema({
+      inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
+      resolvers: this.getResolvers(options.resolvers),
+      schema: buildSubgraphSchema([
+        {
+          typeDefs: gql`
+            ${options.typeDefs}
+          `,
+        },
+      ]),
+    });
   }
 
   private async generateSchemaFromCodeFirst<T extends GqlModuleOptions>(
