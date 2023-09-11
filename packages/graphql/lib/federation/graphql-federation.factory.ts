@@ -78,15 +78,16 @@ export class GraphQLFederationFactory {
         require('@apollo/subgraph'),
       );
 
+    const resolvers = this.getResolvers(options.resolvers);
     return addResolversToSchema({
       inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
-      resolvers: this.getResolvers(options.resolvers),
+      resolvers,
       schema: buildSubgraphSchema([
         {
           typeDefs: gql`
             ${options.typeDefs}
           `,
-          resolvers: this.getResolvers(options.resolvers),
+          resolvers,
         },
       ]),
     });
