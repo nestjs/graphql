@@ -86,6 +86,7 @@ export class GraphQLFederationFactory {
           typeDefs: gql`
             ${options.typeDefs}
           `,
+          resolvers: this.getResolvers(options.resolvers),
         },
       ]),
     });
