@@ -38,7 +38,7 @@
     "@nestjs/common": "10.2.1",
     "@nestjs/core": "10.2.1",
     "@nestjs/testing": "10.2.1",
-    "graphql": "16.7.1",
+    "graphql": "16.8.0",
     "reflect-metadata": "0.1.13",
     "ts-morph": "19.0.0"
   },
