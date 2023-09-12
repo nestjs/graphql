@@ -7,5 +7,5 @@ export interface BaseTypeOptions<T = any> {
   /**
    * Default value.
    */
-  defaultValue?: T;
+  defaultValue?: T | null;
 }
