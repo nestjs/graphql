@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/mercurius",
-  "version": "12.0.8-next.1",
+  "version": "12.0.9",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",

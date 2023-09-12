@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/apollo",
-  "version": "12.0.8-next.1",
+  "version": "12.0.9",
   "description": "Nest - modern, fast, powerful node.js web framework (@apollo)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
