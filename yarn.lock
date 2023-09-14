@@ -4710,10 +4710,10 @@ fastify@4.22.2:
     semver "^7.5.0"
     tiny-lru "^11.0.1"
 
-fastify@4.23.1:
-  version "4.23.1"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.23.1.tgz#72df21bdbd2502530e8d517c613a9d0b518ff5b5"
-  integrity sha512-JhZWyz2PgjzkDTrTX/PQ6+03s+/r2hC3RiOoF9WQUUHbPGiDJtQch1mg5IyJjUjwhug+/z1XHt5yweZNW4kbMg==
+fastify@4.23.2:
+  version "4.23.2"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-4.23.2.tgz#7072f04b544540d2523afb4a54d4095d187f5444"
+  integrity sha512-WFSxsHES115svC7NrerNqZwwM0UOxbC/P6toT9LRHgAAFvG7o2AN5W+H4ihCtOGuYXjZf4z+2jXC89rVEoPWOA==
   dependencies:
     "@fastify/ajv-compiler" "^3.5.0"
     "@fastify/error" "^3.2.0"
