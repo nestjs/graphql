@@ -20,6 +20,7 @@ export class TypeDefinitionsGenerator {
   ) {}
 
   generate(options: BuildSchemaOptions) {
+    this.typeDefinitionsStorage.clear();
     this.generateUnionDefs();
     this.generateEnumDefs();
     this.generateInterfaceDefs(options);
