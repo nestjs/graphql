@@ -1,5 +1,6 @@
 import { Injectable, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { ModuleRef } from '@nestjs/core';
 import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
@@ -18,6 +19,7 @@ import { ArgsFactory } from './args.factory';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { OutputTypeFactory } from './output-type.factory';
 
+
 export interface ObjectTypeDefinition {
   target: Function;
   type: GraphQLObjectType;
@@ -34,6 +36,7 @@ export class ObjectTypeDefinitionFactory {
     private readonly astDefinitionNodeFactory: AstDefinitionNodeFactory,
     private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
     private readonly argsFactory: ArgsFactory,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   public create(
@@ -189,8 +192,18 @@ export class ObjectTypeDefinitionFactory {
     TArgs = { [argName: string]: any },
     TOutput = any,
   >(field: PropertyMetadata, options: BuildSchemaOptions) {
+    const typeResolver = TypeMetadataStorage.getResolverMetadataFor(field);
+
     const rootFieldResolver = (root: object) => {
       const value = root[field.name];
+      if(typeResolver) {
+        const instance = this.moduleRef.get(typeResolver.target, { strict: false, });
+        if(instance) {
+          console.warn('ref found')
+          return instance['resolve']?.(root) ?? value ?? field.options.defaultValue;
+        }
+      }
+      
       return typeof value === 'undefined' ? field.options.defaultValue : value;
     };
     const middlewareFunctions = (options.fieldMiddleware || []).concat(

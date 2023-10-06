@@ -162,6 +162,10 @@ export class TypeMetadataStorageHost {
 
   addResolverMetadata(metadata: ResolverClassMetadata) {
     this.metadataByTargetCollection.get(metadata.target).resolver = metadata;
+    this.metadataByTargetCollection.get(metadata.typeFn()).resolver = metadata;
+  }
+  getResolverMetadataFor(metadata: PropertyMetadata): ResolverClassMetadata {
+    return this.metadataByTargetCollection.get(metadata.typeFn() as any).resolver;
   }
 
   addClassFieldMetadata(metadata: PropertyMetadata) {
