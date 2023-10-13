@@ -7,6 +7,7 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 import { RESOLVE_OBJECT_TYPE_METADATA } from '../../decorators';
+import { GqlParamtype } from '../../enums/gql-paramtype.enum';
 import { GqlParamsFactory } from '../../factories/params.factory';
 import { BuildSchemaOptions } from '../../interfaces';
 import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util';
@@ -199,10 +200,19 @@ export class ObjectTypeDefinitionFactory {
     const typeResolver = TypeMetadataStorage.getResolverMetadataFor(field);
 
     const rootFieldResolver = async (...gqlArgs: any[]) => {
-      const [root, ...rest] = gqlArgs;
+      const root = this.gqlParamsFactory.exchangeKeyForValue(
+        GqlParamtype.ROOT,
+        undefined,
+        gqlArgs,
+      )
       const value = root[field.name];
       if(typeResolver) {
-        const contextId = ContextIdFactory.getByRequest(gqlArgs[2]);
+        const gqlContext = this.gqlParamsFactory.exchangeKeyForValue(
+          GqlParamtype.CONTEXT,
+          undefined,
+          gqlArgs,
+        )
+        const contextId = ContextIdFactory.getByRequest(gqlContext);
         const instance = await this.moduleRef.resolve(typeResolver.target, contextId, { strict: false, });
         if(instance) {
           const annotatedMethod = this.metadataScanner.getAllMethodNames(instance).find(method => Reflect.hasMetadata(RESOLVE_OBJECT_TYPE_METADATA, instance[method]))
