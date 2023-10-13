@@ -1,11 +1,13 @@
 import { Injectable, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { ModuleRef } from '@nestjs/core';
+import { ContextIdFactory, MetadataScanner, ModuleRef } from '@nestjs/core';
 import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
   GraphQLObjectType,
 } from 'graphql';
+import { RESOLVE_OBJECT_TYPE_METADATA } from '../../decorators';
+import { GqlParamsFactory } from '../../factories/params.factory';
 import { BuildSchemaOptions } from '../../interfaces';
 import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util';
 import { PropertyMetadata } from '../metadata';
@@ -29,6 +31,7 @@ export interface ObjectTypeDefinition {
 
 @Injectable()
 export class ObjectTypeDefinitionFactory {
+  private readonly gqlParamsFactory = new GqlParamsFactory();
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly outputTypeFactory: OutputTypeFactory,
@@ -37,6 +40,7 @@ export class ObjectTypeDefinitionFactory {
     private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
     private readonly argsFactory: ArgsFactory,
     private readonly moduleRef: ModuleRef,
+    private readonly metadataScanner: MetadataScanner,
   ) {}
 
   public create(
@@ -194,13 +198,17 @@ export class ObjectTypeDefinitionFactory {
   >(field: PropertyMetadata, options: BuildSchemaOptions) {
     const typeResolver = TypeMetadataStorage.getResolverMetadataFor(field);
 
-    const rootFieldResolver = (root: object) => {
+    const rootFieldResolver = async (...gqlArgs: any[]) => {
+      const [root, ...rest] = gqlArgs;
       const value = root[field.name];
       if(typeResolver) {
-        const instance = this.moduleRef.get(typeResolver.target, { strict: false, });
+        const contextId = ContextIdFactory.getByRequest(gqlArgs[2]);
+        const instance = await this.moduleRef.resolve(typeResolver.target, contextId, { strict: false, });
         if(instance) {
-          console.warn('ref found')
-          return instance['resolve']?.(root) ?? value ?? field.options.defaultValue;
+          const annotatedMethod = this.metadataScanner.getAllMethodNames(instance).find(method => Reflect.hasMetadata(RESOLVE_OBJECT_TYPE_METADATA, instance[method]))
+          if(annotatedMethod) {
+            return instance[annotatedMethod](...gqlArgs);
+          }
         }
       }
       
@@ -209,11 +217,13 @@ export class ObjectTypeDefinitionFactory {
     const middlewareFunctions = (options.fieldMiddleware || []).concat(
       field.middleware || [],
     );
+    
     if (middlewareFunctions?.length === 0) {
       return rootFieldResolver;
     }
-    const rootResolveFnFactory = (root: TSource) => () =>
-      rootFieldResolver(root);
+    
+    const rootResolveFnFactory = (...gqlParams) => () =>
+      rootFieldResolver(...gqlParams);
 
     return decorateFieldResolverWithMiddleware<
       TSource,

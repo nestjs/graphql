@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MetadataScanner } from '@nestjs/core';
 import { InitializeOnPreviewAllowlist } from '@nestjs/core/inspector';
 import { schemaBuilderFactories } from './factories/factories';
 import { GraphQLSchemaFactory } from './graphql-schema.factory';
@@ -19,6 +20,7 @@ import { TypeDefinitionsGenerator } from './type-definitions.generator';
     TypeMapperSevice,
     TypeFieldsAccessor,
     OrphanedReferenceRegistry,
+    MetadataScanner,
   ],
   exports: [GraphQLSchemaFactory, FileSystemHelper],
 })
