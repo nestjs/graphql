@@ -16,7 +16,7 @@ import { applyFieldDecorators } from './type-helpers.utils';
 
 interface PartialTypeOptions {
   decorator?: ClassDecoratorFactory;
-  omitDefaultValue?: boolean;
+  omitDefaultValues?: boolean;
 }
 
 function isPartialTypeOptions(
@@ -24,8 +24,8 @@ function isPartialTypeOptions(
 ): optionsOrDecorator is PartialTypeOptions {
   return (
     optionsOrDecorator &&
-    ((optionsOrDecorator as PartialTypeOptions).decorator !== undefined ||
-      (optionsOrDecorator as PartialTypeOptions).omitDefaultValue !== undefined)
+    ('decorator' in optionsOrDecorator ||
+      'omitDefaultValues' in optionsOrDecorator)
   );
 }
 
@@ -41,10 +41,10 @@ export function PartialType<T>(
   }
 
   let decorator: ClassDecoratorFactory | undefined;
-  let omitDefaultValue = false;
+  let omitDefaultValues = false;
   if (isPartialTypeOptions(optionsOrDecorator)) {
     decorator = optionsOrDecorator.decorator;
-    omitDefaultValue = optionsOrDecorator.omitDefaultValue;
+    omitDefaultValues = optionsOrDecorator.omitDefaultValues;
   }
 
   if (decorator) {
@@ -66,7 +66,7 @@ export function PartialType<T>(
       Field(item.typeFn, {
         ...item.options,
         nullable: true,
-        defaultValue: omitDefaultValue ? undefined : item.options.defaultValue,
+        defaultValue: omitDefaultValues ? undefined : item.options.defaultValue,
       })(PartialObjectType.prototype, item.name);
       applyIsOptionalDecorator(PartialObjectType, item.name);
       applyFieldDecorators(PartialObjectType, item);
