@@ -1,5 +1,4 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import {
   ApolloServerErrorCode,
   unwrapResolverError,
@@ -7,6 +6,7 @@ import {
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
@@ -64,9 +64,7 @@ export abstract class ApolloBaseDriver<
         typeof options.playground === 'object' ? options.playground : undefined;
       defaults = {
         ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
-        ],
+        plugins: [ApolloServerPluginLandingPageLocalDefault(playgroundOptions)],
       };
     } else if (
       (options.playground === undefined &&

@@ -37,7 +37,6 @@
     "apollo-link-ws": "1.0.20"
   },
   "dependencies": {
-    "@apollo/server-plugin-landing-page-graphql-playground": "4.0.0",
     "iterall": "1.3.0",
     "lodash.omit": "4.5.0",
     "tslib": "2.6.2"

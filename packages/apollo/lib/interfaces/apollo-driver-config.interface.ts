@@ -1,5 +1,5 @@
 import { ApolloServerOptionsWithTypeDefs } from '@apollo/server';
-import { ApolloServerPluginLandingPageGraphQLPlaygroundOptions } from '@apollo/server-plugin-landing-page-graphql-playground';
+import { ApolloServerPluginLandingPageLocalDefaultOptions } from '@apollo/server/plugin/landingPage/default';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
@@ -34,7 +34,7 @@ export interface ApolloDriverConfig
   /**
    * GraphQL playground options.
    */
-  playground?: boolean | ApolloServerPluginLandingPageGraphQLPlaygroundOptions;
+  playground?: boolean | ApolloServerPluginLandingPageLocalDefaultOptions;
 
   /**
    * If enabled, will register a global interceptor that automatically maps
