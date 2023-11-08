@@ -60,7 +60,7 @@ export const createCatDtoTextAltTranspiled = `var Status;
     Status[Status[\"ENABLED\"] = 0] = \"ENABLED\";
     Status[Status[\"DISABLED\"] = 1] = \"DISABLED\";
 })(Status || (Status = {}));
-export let CreateCatDto2 = class CreateCatDto2 {
+let CreateCatDto2 = class CreateCatDto2 {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -72,4 +72,5 @@ export let CreateCatDto2 = class CreateCatDto2 {
 CreateCatDto2 = __decorate([
     ObjectType()
 ], CreateCatDto2);
+export { CreateCatDto2 };
 `;

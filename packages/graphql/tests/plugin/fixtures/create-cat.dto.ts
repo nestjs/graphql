@@ -82,7 +82,7 @@ var OneValueEnum;
 (function (OneValueEnum) {
     OneValueEnum[OneValueEnum[\"ONE\"] = 0] = \"ONE\";
 })(OneValueEnum || (OneValueEnum = {}));
-export let CreateCatDto = class CreateCatDto {
+let CreateCatDto = class CreateCatDto {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -98,7 +98,8 @@ CreateCatDto = __decorate([
     gql.InputType(),
     ObjectType()
 ], CreateCatDto);
-export let CreateCatInput = class CreateCatInput {
+export { CreateCatDto };
+let CreateCatInput = class CreateCatInput {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -113,7 +114,8 @@ __decorate([
 CreateCatInput = __decorate([
     InputType()
 ], CreateCatInput);
-export let CreateCatArgs = class CreateCatArgs {
+export { CreateCatInput };
+let CreateCatArgs = class CreateCatArgs {
     constructor() {
         this.age = 3;
         this.status = Status.ENABLED;
@@ -128,4 +130,5 @@ __decorate([
 CreateCatArgs = __decorate([
     ArgsType()
 ], CreateCatArgs);
+export { CreateCatArgs };
 `;
