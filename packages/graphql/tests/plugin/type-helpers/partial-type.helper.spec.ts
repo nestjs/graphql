@@ -113,7 +113,7 @@ describe('PartialType', () => {
 
     class UpdateFooDto extends PartialType(CreateFooDto, { omitDefaultValue: true }) {}
 
-    it('should remove defaultValue', async () => {
+    it('should skip default values of inherited class', async () => {
       await metadataLoader.load(SERIALIZED_METADATA);
   
       const prototype = Object.getPrototypeOf(UpdateFooDto);
