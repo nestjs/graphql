@@ -118,7 +118,6 @@ describe('PartialType', () => {
   
       const prototype = Object.getPrototypeOf(UpdateFooDto);
       const { fields } = getFieldsAndDecoratorForType(prototype);
-      console.log(fields);
   
       expect(fields.length).toEqual(1);
       expect(fields[0].name).toEqual("name");
