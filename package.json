@@ -35,7 +35,7 @@
     "@types/jest": "29.5.8",
     "@types/node": "18.17.18",
     "@types/node-fetch": "3.0.3",
-    "@types/normalize-path": "3.0.0",
+    "@types/normalize-path": "3.0.2",
     "@types/supertest": "2.0.12",
     "@types/ws": "8.5.9",
     "@typescript-eslint/eslint-plugin": "6.7.2",
