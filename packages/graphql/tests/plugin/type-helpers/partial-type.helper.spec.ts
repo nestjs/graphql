@@ -101,4 +101,28 @@ describe('PartialType', () => {
       });
     });
   });
+
+  describe('omitDefaultValues', () => {
+    @ObjectType()
+    class CreateFooDto {
+      @Field({ defaultValue: 'foo' })
+      name: string;
+    }
+
+    class UpdateFooDto extends PartialType(CreateFooDto, {
+      omitDefaultValues: true,
+    }) {}
+
+    it('should skip default values of inherited class', async () => {
+      await metadataLoader.load(SERIALIZED_METADATA);
+
+      const prototype = Object.getPrototypeOf(UpdateFooDto);
+      const { fields } = getFieldsAndDecoratorForType(prototype);
+
+      expect(fields.length).toEqual(1);
+      expect(fields[0].name).toEqual('name');
+      expect(fields[0].options.nullable).toEqual(true);
+      expect(fields[0].options.defaultValue).toEqual(undefined);
+    });
+  });
 });

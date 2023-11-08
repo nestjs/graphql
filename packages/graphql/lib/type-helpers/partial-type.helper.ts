@@ -14,9 +14,24 @@ import { PropertyMetadata } from '../schema-builder/metadata';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
 import { applyFieldDecorators } from './type-helpers.utils';
 
+interface PartialTypeOptions {
+  decorator?: ClassDecoratorFactory;
+  omitDefaultValues?: boolean;
+}
+
+function isPartialTypeOptions(
+  optionsOrDecorator: PartialTypeOptions | ClassDecoratorFactory,
+): optionsOrDecorator is PartialTypeOptions {
+  return (
+    optionsOrDecorator &&
+    ('decorator' in optionsOrDecorator ||
+      'omitDefaultValues' in optionsOrDecorator)
+  );
+}
+
 export function PartialType<T>(
   classRef: Type<T>,
-  decorator?: ClassDecoratorFactory,
+  optionsOrDecorator?: ClassDecoratorFactory | PartialTypeOptions,
 ): Type<Partial<T>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
   abstract class PartialObjectType {
@@ -24,6 +39,14 @@ export function PartialType<T>(
       inheritPropertyInitializers(this, classRef);
     }
   }
+
+  let decorator: ClassDecoratorFactory | undefined;
+  let omitDefaultValues = false;
+  if (isPartialTypeOptions(optionsOrDecorator)) {
+    decorator = optionsOrDecorator.decorator;
+    omitDefaultValues = optionsOrDecorator.omitDefaultValues;
+  }
+
   if (decorator) {
     decorator({ isAbstract: true })(PartialObjectType);
   } else {
@@ -40,10 +63,11 @@ export function PartialType<T>(
         // when the passed function (e.g., @Field(() => Type)) lazily returns an array.
         item.typeFn();
       }
-      Field(item.typeFn, { ...item.options, nullable: true })(
-        PartialObjectType.prototype,
-        item.name,
-      );
+      Field(item.typeFn, {
+        ...item.options,
+        nullable: true,
+        defaultValue: omitDefaultValues ? undefined : item.options.defaultValue,
+      })(PartialObjectType.prototype, item.name);
       applyIsOptionalDecorator(PartialObjectType, item.name);
       applyFieldDecorators(PartialObjectType, item);
     });
