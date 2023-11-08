@@ -1566,6 +1566,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "859295028"
     },
+    "878947487": {
+      "source": "1725932106",
+      "target": "-1155703408",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "ArgsFactory",
+        "targetClassName": "AstDefinitionNodeFactory",
+        "sourceClassToken": "ArgsFactory",
+        "targetClassToken": "AstDefinitionNodeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 1,
+        "injectionType": "constructor"
+      },
+      "id": "878947487"
+    },
     "918694211": {
       "source": "954997704",
       "target": "951921130",
