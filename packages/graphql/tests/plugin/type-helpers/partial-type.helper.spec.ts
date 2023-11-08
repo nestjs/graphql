@@ -102,8 +102,6 @@ describe('PartialType', () => {
     });
   });
 
-
-
   describe('omitDefaultValue', () => {
     @ObjectType()
     class CreateFooDto {
