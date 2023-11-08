@@ -104,7 +104,7 @@ describe('PartialType', () => {
 
 
 
-  describe('Remove defaultValue', () => {
+  describe('omitDefaultValue', () => {
     @ObjectType()
     class CreateFooDto {
       @Field({ defaultValue: 'foo' })
