@@ -21,7 +21,7 @@ import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 /**
  * Interface defining options that can be passed to `@Field()` decorator.
  */
-export interface FieldOptions<T = any> extends BaseTypeOptions<T> {
+export type FieldOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Name of the field.
    */
@@ -42,7 +42,7 @@ export interface FieldOptions<T = any> extends BaseTypeOptions<T> {
    * Array of middleware to apply.
    */
   middleware?: FieldMiddleware[];
-}
+};
 
 type FieldOptionsExtractor<T> = T extends [GqlTypeReference<infer P>]
   ? FieldOptions<P[]>

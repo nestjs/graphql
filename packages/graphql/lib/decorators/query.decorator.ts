@@ -15,7 +15,7 @@ import { addResolverMetadata } from './resolvers.utils';
 /**
  * Interface defining options that can be passed to `@Query()` decorator.
  */
-export interface QueryOptions extends BaseTypeOptions {
+export type QueryOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Name of the query.
    */
@@ -32,7 +32,7 @@ export interface QueryOptions extends BaseTypeOptions {
    * Query complexity options.
    */
   complexity?: Complexity;
-}
+};
 
 /**
  * Query handler (method) Decorator. Routes specified query to this method.

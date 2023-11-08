@@ -14,7 +14,7 @@ import { addResolverMetadata } from './resolvers.utils';
 /**
  * Interface defining options that can be passed to `@Subscription()` decorator.
  */
-export interface SubscriptionOptions extends BaseTypeOptions {
+export type SubscriptionOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Name of the subscription.
    */
@@ -44,7 +44,7 @@ export interface SubscriptionOptions extends BaseTypeOptions {
     context: any,
     info: any,
   ) => any | Promise<any>;
-}
+};
 
 /**
  * Subscription handler (method) Decorator. Routes subscriptions to this method.

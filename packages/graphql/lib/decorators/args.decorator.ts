@@ -16,7 +16,7 @@ import { addPipesMetadata } from './param.utils';
 /**
  * Interface defining options that can be passed to `@Args()` decorator.
  */
-export interface ArgsOptions extends BaseTypeOptions {
+export type ArgsOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Name of the argument.
    */
@@ -29,7 +29,7 @@ export interface ArgsOptions extends BaseTypeOptions {
    * Function that returns a reference to the arguments host class.
    */
   type?: () => any;
-}
+};
 
 /**
  * Resolver method parameter decorator. Extracts the arguments

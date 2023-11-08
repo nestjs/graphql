@@ -19,7 +19,7 @@ import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 /**
  * Interface defining options that can be passed to `@ResolveField()` decorator.
  */
-export interface ResolveFieldOptions extends BaseTypeOptions {
+export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Name of the field.
    */
@@ -40,7 +40,7 @@ export interface ResolveFieldOptions extends BaseTypeOptions {
    * Array of middleware to apply.
    */
   middleware?: FieldMiddleware[];
-}
+};
 
 /**
  * Field resolver (method) Decorator.

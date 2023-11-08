@@ -15,7 +15,7 @@ import { addResolverMetadata } from './resolvers.utils';
 /**
  * Interface defining options that can be passed to `@Mutation()` decorator.
  */
-export interface MutationOptions extends BaseTypeOptions {
+export type MutationOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Name of the mutation.
    */
@@ -32,7 +32,7 @@ export interface MutationOptions extends BaseTypeOptions {
    * Mutation complexity options.
    */
   complexity?: Complexity;
-}
+};
 
 /**
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
