@@ -33,7 +33,7 @@
     "@commitlint/config-angular": "17.8.1",
     "@types/graphql": "14.5.0",
     "@types/jest": "29.5.8",
-    "@types/node": "18.18.9",
+    "@types/node": "20.9.0",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.2",
     "@types/supertest": "2.0.16",
