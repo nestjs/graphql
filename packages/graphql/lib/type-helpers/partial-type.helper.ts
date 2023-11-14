@@ -45,6 +45,8 @@ export function PartialType<T>(
   if (isPartialTypeOptions(optionsOrDecorator)) {
     decorator = optionsOrDecorator.decorator;
     omitDefaultValues = optionsOrDecorator.omitDefaultValues;
+  } else {
+    decorator = optionsOrDecorator;
   }
 
   if (decorator) {
