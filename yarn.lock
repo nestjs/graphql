@@ -7624,10 +7624,10 @@ mercurius-integration-testing@8.1.1:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@13.3.0:
-  version "13.3.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.3.0.tgz#3627f7c8a56dbb7051eeb9dd72b4a4463829da1e"
-  integrity sha512-iUdPtY5MDV1qIarRbp10CZ6W+cCZgPfTrevKUVQy+ty+mf3pkts3omTAg5TDrzN62jwzWBBIxup/oUN4n7yBKQ==
+mercurius@13.3.1:
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.3.1.tgz#d02c1ed4fe1466222c3382d0ccc6024ef53e321c"
+  integrity sha512-jUeo3pO1H/Etpipa9RB5kDbXX2NsIH3IBnAIlDYoNaOeuo3Ka9nNH0ujYTnjkpytuAdygnStU/hcm1afwTKYlA==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^6.0.0"
