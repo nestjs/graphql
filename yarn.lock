@@ -925,14 +925,6 @@
     p-limit "^3.1.0"
     readable-stream "^4.0.0"
 
-"@fastify/websocket@^7.0.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-7.2.0.tgz#3b39cc0c821c1334cb8ddac93d9673ce52084742"
-  integrity sha512-vhWQCT0I5a1JIKc34LXHQ2earW7kViYvhGn5x+lZr8TIOJKmx6NJk0Bw9zGWakulXhMsu/0y89QnsUnHiII9ag==
-  dependencies:
-    fastify-plugin "^4.0.0"
-    ws "^8.0.0"
-
 "@fastify/websocket@^8.0.0":
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-8.1.0.tgz#b00f4f80646bf5c9da56ae4f92335abf0f7d324a"
@@ -1430,7 +1422,7 @@
   resolved "https://registry.yarnpkg.com/@lukeed/ms/-/ms-2.0.1.tgz#3c2bbc258affd9cc0e0cc7828477383c73afa6ee"
   integrity sha512-Xs/4RZltsAL7pkvaNStUQt7netTkyxrS0K+RILcVr3TRMS/ToOg4I6uNfhB9SlGsnWBym4U+EaXq0f0cEMNkHA==
 
-"@mercuriusjs/federation@2.0.0":
+"@mercuriusjs/federation@2.0.0", "@mercuriusjs/federation@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-2.0.0.tgz#b729a8863729b8192349e8be364391dd1fd676f5"
   integrity sha512-hBL2Zhdf0p2Ab2SDPXcVnNsYTf5x50xPAyHm2HpmXreHS7aGt4obX8g8JrqRhIfOApcRg5l9RQ2OZqaUYeR8sQ==
@@ -1439,40 +1431,22 @@
     graphql "^16.6.0"
     mercurius "^13.0.0"
 
-"@mercuriusjs/federation@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-1.0.1.tgz#e362396b82f3a81a16d78938984df6d53ba30f88"
-  integrity sha512-aski6H8SRfjK73Bruzh5kQ20OS0s0pkbFvcOex46Qm17bYWoJ3daMrbTw4caOSkru7R8pIA/bvAjSq97xkDJkQ==
+"@mercuriusjs/gateway@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-2.1.0.tgz#3d3a8c03fa5e310a996104e164ba4a78ace3747d"
+  integrity sha512-saQlIJAKYpfPJw32vJ5Zz69RPJ7hS8GBjjsRvrGZJVuevHKTZkJHfjRICkG1RqAAJ8hrDNDjist8ks6m4MLvfQ==
   dependencies:
-    "@fastify/error" "^3.0.0"
-    graphql "^16.6.0"
-    mercurius "^12.0.0"
-
-"@mercuriusjs/gateway@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-1.0.0.tgz#44ad7a59520a0fb0952628fcecb6c4d409b06976"
-  integrity sha512-dKaRegJ9l87e47kNpmLavs2P3tqRPknAb7daTpDi2kHqF65hkLAt1C1Jh/LZAGa4mEYEI3HfDFQCy5hWzrTgsg==
-  dependencies:
-    "@mercuriusjs/federation" "^1.0.0"
+    "@mercuriusjs/federation" "^2.0.0"
     "@mercuriusjs/subscription-client" "^1.0.0"
     fastify-plugin "^4.3.0"
     graphql "^16.6.0"
     graphql-ws "^5.11.2"
-    mercurius "^11.3.0"
+    mercurius "^13.0.0"
     p-map "^4.0.0"
     single-user-cache "^0.6.0"
-    tiny-lru "^8.0.1"
+    tiny-lru "^11.0.0"
     use-strict "1.0.1"
     ws "^8.11.0"
-
-"@mercuriusjs/subscription-client@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/subscription-client/-/subscription-client-0.1.0.tgz#1e8490cd9b02daebd37560bff1536e5772765668"
-  integrity sha512-ivqMmSQ4kwroK/uUZVwOnd5QEAsjrEy/EqSsEqhtEObA/Zqkc44Fgi543Mml3XjoGopY1y1rJYQSl/gzfyfgrw==
-  dependencies:
-    "@fastify/error" "^3.0.0"
-    secure-json-parse "^2.4.0"
-    ws "^8.2.2"
 
 "@mercuriusjs/subscription-client@^1.0.0":
   version "1.0.0"
@@ -1938,18 +1912,6 @@
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
-
-"@pkgr/utils@^2.3.1":
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/@pkgr/utils/-/utils-2.4.2.tgz#9e638bbe9a6a6f165580dc943f138fd3309a2cbc"
-  integrity sha512-POgTXhjrTfbTV63DiFXav4lBHiICLKKwDeaKn9Nphwj7WH6m0hMMCaJkMyRWjgtPFyRKRVoMXXjczsTQRDEhYw==
-  dependencies:
-    cross-spawn "^7.0.3"
-    fast-glob "^3.3.0"
-    is-glob "^4.0.3"
-    open "^9.1.0"
-    picocolors "^1.0.0"
-    tslib "^2.6.0"
 
 "@pnpm/config.env-replace@^1.1.0":
   version "1.1.0"
@@ -4518,13 +4480,12 @@ eslint-plugin-import@2.29.0:
     semver "^6.3.1"
     tsconfig-paths "^3.14.2"
 
-eslint-plugin-prettier@5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.0.1.tgz#a3b399f04378f79f066379f544e42d6b73f11515"
-  integrity sha512-m3u5RnR56asrwV/lDC4GHorlW75DsFfmUcjfCYylTUs85dBRnB7VM6xG8eCMJdeDRnppzmxZVf1GEPJvl1JmNg==
+eslint-plugin-prettier@4:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-4.2.1.tgz#651cbb88b1dab98bfd42f017a12fa6b2d993f94b"
+  integrity sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==
   dependencies:
     prettier-linter-helpers "^1.0.0"
-    synckit "^0.8.5"
 
 eslint-scope@^7.2.2:
   version "7.2.2"
@@ -4838,17 +4799,6 @@ fast-glob@^3.2.12, fast-glob@^3.2.9:
   version "3.2.12"
   resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.2.12.tgz#7f39ec99c2e6ab030337142da9e0c18f37afae80"
   integrity sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w==
-  dependencies:
-    "@nodelib/fs.stat" "^2.0.2"
-    "@nodelib/fs.walk" "^1.2.3"
-    glob-parent "^5.1.2"
-    merge2 "^1.3.0"
-    micromatch "^4.0.4"
-
-fast-glob@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.3.0.tgz#7c40cb491e1e2ed5664749e87bfb516dbe8727c0"
-  integrity sha512-ChDuvbOypPuNjO8yIDf36x7BlZX1smcUMTTcyoIjycexOxd6DFsKsg21qVBzEmr3G7fUKIRy2/psii+CIUt7FA==
   dependencies:
     "@nodelib/fs.stat" "^2.0.2"
     "@nodelib/fs.walk" "^1.2.3"
@@ -5592,19 +5542,6 @@ graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
-
-graphql-jit@^0.7.3:
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.7.4.tgz#bc8ccf79596d13dff3835902a466f9a5ecc3a8c1"
-  integrity sha512-kWyHmsQtKMD6xcKDgf4dgPLyIZhviqA6IWGdnA0ElL9wgrIOTxf3eI4c0/U3tnoAU3t09zliVCfDkfIptzYjIA==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.1.1"
-    fast-json-stringify "^1.21.0"
-    generate-function "^2.3.1"
-    json-schema "^0.4.0"
-    lodash.memoize "^4.1.2"
-    lodash.merge "4.6.2"
-    lodash.mergewith "4.6.2"
 
 graphql-jit@^0.8.0:
   version "0.8.2"
@@ -7614,49 +7551,6 @@ mercurius@13.3.1:
     undici "^5.0.0"
     ws "^8.2.2"
 
-mercurius@^11.3.0:
-  version "11.5.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-11.5.0.tgz#07b2c6fbe0136ae23a1ad315361ae996586e7af7"
-  integrity sha512-e2ZGC9OyX8eY7Dt/gUrTvzjVDojXECgv4dkjOz7Mux80V0D8ZC7im2cuywsInIQw6pEK1/p8WeVzuIADdWAJag==
-  dependencies:
-    "@fastify/error" "^3.0.0"
-    "@fastify/static" "^6.0.0"
-    "@fastify/websocket" "^7.0.0"
-    "@mercuriusjs/subscription-client" "^0.1.0"
-    fastify-plugin "^4.2.0"
-    graphql "^16.0.0"
-    graphql-jit "^0.7.3"
-    mqemitter "^5.0.0"
-    p-map "^4.0.0"
-    readable-stream "^4.0.0"
-    safe-stable-stringify "^2.3.0"
-    secure-json-parse "^2.4.0"
-    single-user-cache "^0.6.0"
-    tiny-lru "^8.0.1"
-    undici "^5.0.0"
-    ws "^8.2.2"
-
-mercurius@^12.0.0:
-  version "12.2.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-12.2.0.tgz#ce27f4dd50037ba37cb524dc1392c2b2fb96d428"
-  integrity sha512-S1/j+MSJA11A0rW/TM+31qq7PTf9EQVDtq+XJQMaebtqEP5JhhUmQnTLzCh9NhHkh7YIFH72gEY03Phr3Cs8xQ==
-  dependencies:
-    "@fastify/error" "^3.0.0"
-    "@fastify/static" "^6.0.0"
-    "@fastify/websocket" "^7.0.0"
-    fastify-plugin "^4.2.0"
-    graphql "^16.0.0"
-    graphql-jit "^0.8.0"
-    mqemitter "^5.0.0"
-    p-map "^4.0.0"
-    readable-stream "^4.0.0"
-    safe-stable-stringify "^2.3.0"
-    secure-json-parse "^2.7.0"
-    single-user-cache "^0.6.0"
-    tiny-lru "^10.0.0"
-    undici "^5.0.0"
-    ws "^8.2.2"
-
 mercurius@^13.0.0:
   version "13.0.0"
   resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.0.0.tgz#b8c7354546806ec67b554eaf9f488d6e8f73cf9c"
@@ -8420,7 +8314,7 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-open@9.1.0, open@^9.1.0:
+open@9.1.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/open/-/open-9.1.0.tgz#684934359c90ad25742f5a26151970ff8c6c80b6"
   integrity sha512-OS+QTnw1/4vrf+9hh1jc1jnYjzSG4ttTBB8UxOwAnInG3Uo4ssetzC1ihqaIHjLJnA5GGlRl6QlZXOTQhRBUvg==
@@ -10135,14 +10029,6 @@ symbol-observable@^1.0.2, symbol-observable@^1.0.4:
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
   integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
 
-synckit@^0.8.5:
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/synckit/-/synckit-0.8.5.tgz#b7f4358f9bb559437f9f167eb6bc46b3c9818fa3"
-  integrity sha512-L1dapNV6vu2s/4Sputv8xGsCdAVlb5nRDMFU/E27D44l5U6cw1g0dGd45uLc+OXjNMmF4ntiMdCimzcjFKQI8Q==
-  dependencies:
-    "@pkgr/utils" "^2.3.1"
-    tslib "^2.5.0"
-
 tar-stream@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/tar-stream/-/tar-stream-2.2.0.tgz#acad84c284136b060dc3faa64474aa9aebd77287"
@@ -10248,20 +10134,10 @@ through@2, "through@>=2.2.7 <3", through@^2.3.4, through@^2.3.6:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
 
-tiny-lru@^10.0.0:
-  version "10.4.1"
-  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-10.4.1.tgz#dec67a62115a4cb31d2065b8116d010daac362fe"
-  integrity sha512-buLIzw7ppqymuO3pt10jHk/6QMeZLbidihMQU+N6sogF6EnBzG0qtDWIHuhw1x3dyNgVL/KTGIZsTK81+yCzLg==
-
 tiny-lru@^11.0.0:
   version "11.0.1"
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.0.1.tgz#629d6ddd88bd03c0929722680167f1feadf576f2"
   integrity sha512-iNgFugVuQgBKrqeO/mpiTTgmBsTP0WL6yeuLfLs/Ctf0pI/ixGqIRm8sDCwMcXGe9WWvt2sGXI5mNqZbValmJg==
-
-tiny-lru@^8.0.1:
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-8.0.2.tgz#812fccbe6e622ded552e3ff8a4c3b5ff34a85e4c"
-  integrity sha512-ApGvZ6vVvTNdsmt676grvCkUCGwzG9IqXma5Z07xJgiC5L7akUMof5U8G2JTI9Rz/ovtVhJBlY6mNhEvtjzOIg==
 
 titleize@^3.0.0:
   version "3.0.0"
@@ -10396,7 +10272,7 @@ tsconfig-paths@^4.1.2:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@2.6.2, tslib@^2.5.0, tslib@^2.6.0:
+tslib@2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.2.tgz#703ac29425e7b37cd6fd456e92404d46d1f3e4ae"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
