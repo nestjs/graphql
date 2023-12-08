@@ -55,7 +55,7 @@
     "lint-staged": "15.2.0",
     "prettier": "2.8.8",
     "reflect-metadata": "0.1.14",
-    "release-it": "17.0.0",
+    "release-it": "17.0.1",
     "rimraf": "5.0.5",
     "rxjs": "7.8.1",
     "supertest": "6.3.3",
