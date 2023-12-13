@@ -8,7 +8,7 @@ import { MercuriusCommonOptions } from 'mercurius';
 import { MercuriusHooks } from './mercurius-hook.interface';
 import { MercuriusPlugins } from './mercurius-plugin.interface';
 
-export type MercuriusGatewayDriverConfig = GqlModuleOptions &
+export type MercuriusGatewayDriverConfig = Omit<GqlModuleOptions, 'resolvers'> &
   MercuriusCommonOptions &
   MercuriusGatewayOptions &
   MercuriusPlugins &
