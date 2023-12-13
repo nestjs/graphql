@@ -7611,10 +7611,10 @@ mercurius-integration-testing@8.1.1:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@13.3.1:
-  version "13.3.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.3.1.tgz#d02c1ed4fe1466222c3382d0ccc6024ef53e321c"
-  integrity sha512-jUeo3pO1H/Etpipa9RB5kDbXX2NsIH3IBnAIlDYoNaOeuo3Ka9nNH0ujYTnjkpytuAdygnStU/hcm1afwTKYlA==
+mercurius@13.3.2:
+  version "13.3.2"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.3.2.tgz#cd849cf46c7e0f9423c304ba3290b27d82ea9242"
+  integrity sha512-NVTu7+qPbo+bNqY5VFRkLKqdCuHZHn3bDMu0IiRDIJcwHfVPgkyBU1p9Qp0idIQYypNSESEzh+z7F1iEK0ESEA==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^6.0.0"
@@ -7628,7 +7628,7 @@ mercurius@13.3.1:
     secure-json-parse "^2.7.0"
     single-user-cache "^0.6.0"
     tiny-lru "^11.0.0"
-    undici "^5.0.0"
+    undici "^6.0.1"
     ws "^8.2.2"
 
 mercurius@^11.3.0:
@@ -10611,6 +10611,13 @@ undici@^5.0.0:
   version "5.26.3"
   resolved "https://registry.yarnpkg.com/undici/-/undici-5.26.3.tgz#ab3527b3d5bb25b12f898dfd22165d472dd71b79"
   integrity sha512-H7n2zmKEWgOllKkIUkLvFmsJQj062lSm3uA4EYApG8gLuiOM0/go9bIoC3HVaSnfg4xunowDE2i9p8drkXuvDw==
+  dependencies:
+    "@fastify/busboy" "^2.0.0"
+
+undici@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-6.0.1.tgz#385572addca36d1c2b280629cb694b726170027e"
+  integrity sha512-eZFYQLeS9BiXpsU0cuFhCwfeda2MnC48EVmmOz/eCjsTgmyTdaHdVsPSC/kwC2GtW2e0uH0HIPbadf3/bRWSxw==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 
