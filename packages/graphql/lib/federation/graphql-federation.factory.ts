@@ -80,6 +80,7 @@ export class GraphQLFederationFactory {
 
     const resolvers = this.getResolvers(options.resolvers);
     return addResolversToSchema({
+      resolverValidationOptions: options.resolverValidationOptions,
       inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
       resolvers,
       schema: buildSubgraphSchema([
