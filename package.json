@@ -36,7 +36,7 @@
     "@types/node": "20.11.17",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.2",
-    "@types/supertest": "2.0.16",
+    "@types/supertest": "6.0.2",
     "@types/ws": "8.5.10",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
@@ -58,7 +58,7 @@
     "release-it": "17.0.3",
     "rimraf": "5.0.5",
     "rxjs": "7.8.1",
-    "supertest": "6.3.3",
+    "supertest": "6.3.4",
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "typescript": "5.3.3"
