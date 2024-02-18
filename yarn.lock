@@ -9521,10 +9521,10 @@ registry-url@^6.0.0:
   dependencies:
     rc "1.2.8"
 
-release-it@17.0.5:
-  version "17.0.5"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-17.0.5.tgz#cd984a34f931d04452a170bb6a52ea0a46d3ecb8"
-  integrity sha512-97FcBu/2IjPd4qMvliZSnavpCO0+BWi8lZr+BgVJTXs6ihX8HLPucYR5RsgUUcZoGKj3beO8cunrsMuvEWTzGQ==
+release-it@17.1.0:
+  version "17.1.0"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-17.1.0.tgz#30a2cbbbdd60a6ccf49515a51bb339fe7468b2bb"
+  integrity sha512-1/vS82JuEVQt2mENqq9/9HQo48R/ECSxYDKhNd3JHnmoyYGaHQdN3ojHNvHgUD4mwJsxGANYNXZR7SCD6G/c6Q==
   dependencies:
     "@iarna/toml" "2.2.5"
     "@octokit/rest" "20.0.2"
