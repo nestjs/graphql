@@ -13,6 +13,7 @@ export interface ArgParamMetadata extends BaseArgMetadata {
   kind: 'arg';
   name: string;
   description?: string;
+  deprecationReason?: string;
 }
 
 export interface ArgsParamMetadata extends BaseArgMetadata {

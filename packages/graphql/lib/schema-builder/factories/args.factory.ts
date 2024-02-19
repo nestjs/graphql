@@ -25,6 +25,7 @@ export class ArgsFactory {
       if (param.kind === 'arg') {
         fieldConfigMap[param.name] = {
           description: param.description,
+          deprecationReason: param.deprecationReason,
           type: this.inputTypeFactory.create(
             param.name,
             param.typeFn(),
@@ -85,6 +86,7 @@ export class ArgsFactory {
       );
       fieldConfigMap[schemaName] = {
         description: field.description,
+        deprecationReason: field.deprecationReason,
         type,
         defaultValue: field.options.defaultValue,
         /**
