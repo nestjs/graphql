@@ -59,6 +59,8 @@ export class GraphQLModule<
 
   private readonly metadataLoader = new MetadataLoader();
 
+  completeOptions?: GqlModuleOptions;
+
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
   }
@@ -170,7 +172,7 @@ export class GraphQLModule<
     });
     this.gqlSchemaHost.schema = gqlSchema;
 
-    const completeOptions = {
+    this.completeOptions = {
       ...options,
       schema: gqlSchema,
       typeDefs: undefined,
@@ -181,7 +183,7 @@ export class GraphQLModule<
       return;
     }
 
-    await this._graphQlAdapter.start(completeOptions);
+    await this._graphQlAdapter.start(this.completeOptions);
 
     if (options.path) {
       GraphQLModule.logger.log(
