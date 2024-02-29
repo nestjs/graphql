@@ -52,11 +52,24 @@ type Recipe implements IRecipe {
   description: String!
 }
 
+type Human implements Character {
+  id: ID!
+  name: String!
+  friends: [Human!]!
+}
+
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Human!]!
+}
+
 type Query {
   findPost(id: Float!): Post!
   getPosts: [Post!]!
   search: [FederationSearchResultUnion!]! @deprecated(reason: "test")
   recipe: IRecipe!
+  humans: [Human!]!
   _entities(representations: [_Any!]!): [_Entity]!
   _service: _Service!
 }
