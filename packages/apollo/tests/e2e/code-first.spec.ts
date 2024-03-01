@@ -83,6 +83,8 @@ describe('Code-first', () => {
               name
             }
             rating
+            tips1
+            tips2
             interfaceResolver
             averageRating
           }
@@ -100,6 +102,8 @@ describe('Code-first', () => {
             },
           ],
           rating: 10,
+          tips1: 'use oil sparingly',
+          tips2: 'add salt gradually',
           interfaceResolver: true,
           averageRating: 0.5,
         },
@@ -112,6 +116,8 @@ describe('Code-first', () => {
             },
           ],
           rating: 10,
+          tips1: 'use oil sparingly',
+          tips2: 'add salt gradually',
           interfaceResolver: true,
           averageRating: 0.5,
         },
@@ -130,6 +136,8 @@ describe('Code-first', () => {
             }
             rating
             averageRating
+            tips1
+            tips2
           }
         }
       `,
@@ -145,6 +153,8 @@ describe('Code-first', () => {
           ],
           rating: 10,
           averageRating: 0.5,
+          tips1: 'use oil sparingly',
+          tips2: 'add salt gradually',
         },
         {
           id: '2',
@@ -155,6 +165,8 @@ describe('Code-first', () => {
           ],
           rating: 10,
           averageRating: 0.5,
+          tips1: 'use oil sparingly',
+          tips2: 'add salt gradually',
         },
       ],
     });

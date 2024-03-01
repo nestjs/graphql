@@ -1,5 +1,9 @@
 import { SetMetadata, Type } from '@nestjs/common';
-import { isFunction, isObject } from '@nestjs/common/utils/shared.utils';
+import {
+  isFunction,
+  isObject,
+  isString,
+} from '@nestjs/common/utils/shared.utils';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   RESOLVER_NAME_METADATA,
@@ -70,12 +74,17 @@ export function ResolveField(
     key?: string,
     descriptor?: any,
   ) => {
-    // eslint-disable-next-line prefer-const
-    let [propertyName, typeFunc, options] = isFunction(propertyNameOrFunc)
-      ? typeFuncOrOptions && typeFuncOrOptions.name
-        ? [typeFuncOrOptions.name, propertyNameOrFunc, typeFuncOrOptions]
-        : [undefined, propertyNameOrFunc, typeFuncOrOptions]
-      : [propertyNameOrFunc, typeFuncOrOptions, resolveFieldOptions];
+    const propertyName = isString(propertyNameOrFunc)
+      ? propertyNameOrFunc
+      : typeFuncOrOptions?.name;
+    const typeFunc = isFunction(propertyNameOrFunc)
+      ? propertyNameOrFunc
+      : isFunction(typeFuncOrOptions)
+      ? typeFuncOrOptions
+      : undefined;
+    let options = isFunction(typeFuncOrOptions)
+      ? resolveFieldOptions
+      : typeFuncOrOptions;
 
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
     SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);

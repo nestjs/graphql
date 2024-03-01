@@ -26,6 +26,8 @@ type Recipe implements IRecipe {
   ingredients: [Ingredient!]!
   count(type: String, status: String): Float!
   rating: Float!
+  tips1: String!
+  tips2: String!
 }
 
 """
@@ -203,6 +205,8 @@ type Recipe implements IRecipe {
   lastRate: Float
   rating: Float!
   tags: [String!]!
+  tips1: String!
+  tips2: String!
   title: String!
 }
 
