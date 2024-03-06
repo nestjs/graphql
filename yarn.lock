@@ -920,6 +920,18 @@
     p-limit "^3.1.0"
     readable-stream "^4.0.0"
 
+"@fastify/static@^7.0.0":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@fastify/static/-/static-7.0.1.tgz#eab983cca87b69c7ed0131af61b3b77da351a3f2"
+  integrity sha512-i1p/nELMknAisNfnjo7yhfoUOdKzA+n92QaMirv2NkZrJ1Wl12v2nyTYlDwPN8XoStMBAnRK/Kx6zKmfrXUPXw==
+  dependencies:
+    "@fastify/accept-negotiator" "^1.0.0"
+    "@fastify/send" "^2.0.0"
+    content-disposition "^0.5.3"
+    fastify-plugin "^4.0.0"
+    fastq "^1.17.0"
+    glob "^10.3.4"
+
 "@fastify/websocket@^7.0.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-7.2.0.tgz#3b39cc0c821c1334cb8ddac93d9673ce52084742"
@@ -5051,7 +5063,7 @@ fastparallel@^2.3.0:
     reusify "^1.0.4"
     xtend "^4.0.2"
 
-fastq@^1.17.1:
+fastq@^1.17.0, fastq@^1.17.1:
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.17.1.tgz#2a523f07a4e7b1e81a42b91b8bf2254107753b47"
   integrity sha512-sRVD3lWVIXWg6By68ZN7vho9a1pQcN/WBFaAAsDDFzlJjvoGx0P8z7V1t72grFJfJhu3YPZBuu25f7Kaw2jN1w==
@@ -5538,7 +5550,7 @@ glob@^10.2.2:
     minipass "^5.0.0 || ^6.0.2"
     path-scurry "^1.10.0"
 
-glob@^10.3.10, glob@^10.3.7:
+glob@^10.3.10, glob@^10.3.4, glob@^10.3.7:
   version "10.3.10"
   resolved "https://registry.yarnpkg.com/glob/-/glob-10.3.10.tgz#0351ebb809fd187fe421ab96af83d3a70715df4b"
   integrity sha512-fa46+tv1Ak0UPK1TOy/pZrIybNNt4HCv7SDzwyfiOZkvZLEbjsZkJBPtDHVshZjbecAoAGSC20MjLDG/qr679g==
@@ -7772,13 +7784,13 @@ mercurius-integration-testing@8.1.1:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@13.3.3:
-  version "13.3.3"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.3.3.tgz#179c43050f0bfd246172d02f245c70178a8e2a67"
-  integrity sha512-42IWxrvKjzOwdd+HdwV8AgYL8kpARJ0BzcqczWDFFsxgDM3MDlGm7PpesT1BsohvnYCN+5OU6Xk5vySkd2x9Eg==
+mercurius@13.4.0:
+  version "13.4.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.4.0.tgz#1663d54293e74d0c7c59b2e21e32f9873bc8cec9"
+  integrity sha512-WNjpBYMRDTpqCs+dLrzZzRIzVJsiBHDCtvJyqnyJRayep9/R1K2mCtaK1HOWL9XLNFXztaJGPpEL8k9WyO1uqQ==
   dependencies:
     "@fastify/error" "^3.0.0"
-    "@fastify/static" "^6.0.0"
+    "@fastify/static" "^7.0.0"
     "@fastify/websocket" "^8.0.0"
     fastify-plugin "^4.2.0"
     graphql-jit "^0.8.0"
@@ -7789,7 +7801,7 @@ mercurius@13.3.3:
     secure-json-parse "^2.7.0"
     single-user-cache "^0.6.0"
     tiny-lru "^11.0.0"
-    undici "5.28.1"
+    undici "5.28.3"
     ws "^8.2.2"
 
 mercurius@^11.3.0:
@@ -10860,10 +10872,10 @@ undici-types@~5.26.4:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
   integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
-undici@5.28.1:
-  version "5.28.1"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.28.1.tgz#1052d37bd1a2e8cf3e188d7caebff833fdc06fa7"
-  integrity sha512-xcIIvj1LOQH9zAL54iWFkuDEaIVEjLrru7qRpa3GrEEHk6OBhb/LycuUY2m7VCcTuDeLziXCxobQVyKExyGeIA==
+undici@5.28.3:
+  version "5.28.3"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.28.3.tgz#a731e0eff2c3fcfd41c1169a869062be222d1e5b"
+  integrity sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 
