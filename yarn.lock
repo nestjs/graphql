@@ -1008,7 +1008,7 @@
     "@graphql-typed-document-node/core" "^3.1.1"
     tslib "^2.4.0"
 
-"@graphql-typed-document-node/core@^3.1.1", "@graphql-typed-document-node/core@^3.1.2":
+"@graphql-typed-document-node/core@^3.1.1", "@graphql-typed-document-node/core@^3.1.2", "@graphql-typed-document-node/core@^3.2.0":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
   integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
@@ -5698,6 +5698,18 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
+graphql-jit@0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.4.tgz#53c2e43b90ec98ea0942f4062516de910fbff709"
+  integrity sha512-4KRrJ1ROy3Usgbl3eAoUMfdfZCRjkcw9cCGT7QwTUIHm9dPGaSaldxzGUttyjErU0rsYEb6WWyb6mMh5r6lEoQ==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    fast-json-stringify "^5.7.0"
+    generate-function "^2.3.1"
+    lodash.memoize "^4.1.2"
+    lodash.merge "4.6.2"
+    lodash.mergewith "4.6.2"
+
 graphql-jit@^0.7.3:
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.7.4.tgz#bc8ccf79596d13dff3835902a466f9a5ecc3a8c1"
@@ -7775,16 +7787,16 @@ mercurius-integration-testing@8.1.1:
     cookie "^0.5.0"
     ws "^8.12.1"
 
-mercurius@13.4.0:
-  version "13.4.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.4.0.tgz#1663d54293e74d0c7c59b2e21e32f9873bc8cec9"
-  integrity sha512-WNjpBYMRDTpqCs+dLrzZzRIzVJsiBHDCtvJyqnyJRayep9/R1K2mCtaK1HOWL9XLNFXztaJGPpEL8k9WyO1uqQ==
+mercurius@13.4.1:
+  version "13.4.1"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.4.1.tgz#3ac5da939c59a5b12f782bd08339b237e04d58ac"
+  integrity sha512-fN7nfkuq1iB/S5J4PxG9F4nKeEsdbIUCT2CPdKDEPQUzJ9voXIxM5Zwm086MHEsiBa80mE+pvxgodiVLRgaOGQ==
   dependencies:
     "@fastify/error" "^3.0.0"
     "@fastify/static" "^7.0.0"
     "@fastify/websocket" "^8.0.0"
     fastify-plugin "^4.2.0"
-    graphql-jit "^0.8.0"
+    graphql-jit "0.8.4"
     mqemitter "^5.0.0"
     p-map "^4.0.0"
     readable-stream "^4.0.0"
