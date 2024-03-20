@@ -7,13 +7,16 @@ import { PostModule } from './post/post.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
+import { HumanModule } from './human/human.module';
 
 @Module({
   imports: [
     UserModule,
     PostModule,
     RecipeModule,
+    HumanModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      inheritResolversFromInterfaces: true,
       driver: ApolloFederationDriver,
       includeStacktraceInErrorResponses: false,
       autoSchemaFile: true,

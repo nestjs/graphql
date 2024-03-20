@@ -89,6 +89,37 @@ describe('Code-first - Federation', () => {
     });
   });
 
+  it('should return the human result with resolve interface', async () => {
+    const response = await apolloClient.executeOperation({
+      query: gql`
+        {
+          humans {
+            id
+            name
+            friends {
+              id
+              name
+            }
+          }
+        }
+      `,
+    });
+    expectSingleResult(response).toEqual({
+      humans: [
+        {
+          id: '1',
+          name: 'Bob',
+          friends: [{ id: '3', name: 'Peter' }],
+        },
+        {
+          id: '2',
+          name: 'Alice',
+          friends: [{ id: '3', name: 'Peter' }],
+        },
+      ],
+    });
+  });
+
   afterEach(async () => {
     await app.close();
   });

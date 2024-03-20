@@ -139,9 +139,15 @@ export class GraphQLFederationFactory {
       typeDefs = typeDefsDecorator.decorate(typeDefs, federationOptions);
     }
 
-    let executableSchema: GraphQLSchema = buildFederatedSchema({
-      typeDefs: gql(typeDefs),
-      resolvers: this.getResolvers(options.resolvers),
+    const resolvers = this.getResolvers(options.resolvers);
+    let executableSchema: GraphQLSchema = addResolversToSchema({
+      schema: buildFederatedSchema({
+        typeDefs: gql(typeDefs),
+        resolvers,
+      }),
+      resolvers,
+      resolverValidationOptions: options.resolverValidationOptions,
+      inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
     });
 
     executableSchema = this.overrideOrExtendResolvers(
