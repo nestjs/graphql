@@ -933,6 +933,15 @@
     fastq "^1.17.0"
     glob "^10.3.4"
 
+"@fastify/websocket@^10.0.0":
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-10.0.1.tgz#ece72340870dfccc0d5abdbe7242c632a5f3340a"
+  integrity sha512-8/pQIxTPRD8U94aILTeJ+2O3el/r19+Ej5z1O1mXlqplsUH7KzCjAI0sgd5DM/NoPjAi5qLFNIjgM5+9/rGSNw==
+  dependencies:
+    duplexify "^4.1.2"
+    fastify-plugin "^4.0.0"
+    ws "^8.0.0"
+
 "@fastify/websocket@^7.0.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@fastify/websocket/-/websocket-7.2.0.tgz#3b39cc0c821c1334cb8ddac93d9673ce52084742"
@@ -1430,14 +1439,14 @@
   resolved "https://registry.yarnpkg.com/@lukeed/ms/-/ms-2.0.1.tgz#3c2bbc258affd9cc0e0cc7828477383c73afa6ee"
   integrity sha512-Xs/4RZltsAL7pkvaNStUQt7netTkyxrS0K+RILcVr3TRMS/ToOg4I6uNfhB9SlGsnWBym4U+EaXq0f0cEMNkHA==
 
-"@mercuriusjs/federation@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-2.0.0.tgz#b729a8863729b8192349e8be364391dd1fd676f5"
-  integrity sha512-hBL2Zhdf0p2Ab2SDPXcVnNsYTf5x50xPAyHm2HpmXreHS7aGt4obX8g8JrqRhIfOApcRg5l9RQ2OZqaUYeR8sQ==
+"@mercuriusjs/federation@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-3.0.0.tgz#889165e0653f4a32c9596ea7b03cf31afb3eb766"
+  integrity sha512-GVk6n314p6rs2gfF3OtqsREftyuzYztiAq0XFl7wg/8w6bJMNctzn/nMkBcA8JYl++d52uchzWLD7eo2yQXQTw==
   dependencies:
     "@fastify/error" "^3.0.0"
     graphql "^16.6.0"
-    mercurius "^13.0.0"
+    mercurius "^14.0.0"
 
 "@mercuriusjs/federation@^1.0.0":
   version "1.0.1"
@@ -4313,6 +4322,16 @@ duplexer@^0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.2.tgz#3abe43aef3835f8ae077d136ddce0f276b0400e6"
   integrity sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==
+
+duplexify@^4.1.2:
+  version "4.1.3"
+  resolved "https://registry.yarnpkg.com/duplexify/-/duplexify-4.1.3.tgz#a07e1c0d0a2c001158563d32592ba58bddb0236f"
+  integrity sha512-M3BmBhwJRZsSx38lZyhE53Csddgzl5R7xGJNk7CVddZD6CcmwMCH8J+7AprIrQKH7TonKxaCjcv27Qmf+sQ+oA==
+  dependencies:
+    end-of-stream "^1.4.1"
+    inherits "^2.0.3"
+    readable-stream "^3.1.1"
+    stream-shift "^1.0.2"
 
 eastasianwidth@^0.2.0:
   version "0.2.0"
@@ -7850,17 +7869,16 @@ mercurius@^12.0.0:
     undici "^5.0.0"
     ws "^8.2.2"
 
-mercurius@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-13.0.0.tgz#b8c7354546806ec67b554eaf9f488d6e8f73cf9c"
-  integrity sha512-gPJGw9qymc2JSee5lUgg5OeQLM7EtLzEWMY7dV2sMwUdh3k8iO3Y22iy6B8TnIX2atpVt2xSpWHRvfiUvH6wuQ==
+mercurius@^14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-14.0.0.tgz#f9664d29c6861d8d4b736acf92152abcff379d29"
+  integrity sha512-eGqBuc8ZfnBbJDnnedZWx0mPJ2ZQZz2HLmPCxRdMa5RZnRP9Uxn4Ew1x1OQ49MvNbut9xfvHCXKlr8uI6GOyZg==
   dependencies:
     "@fastify/error" "^3.0.0"
-    "@fastify/static" "^6.0.0"
-    "@fastify/websocket" "^8.0.0"
+    "@fastify/static" "^7.0.0"
+    "@fastify/websocket" "^10.0.0"
     fastify-plugin "^4.2.0"
-    graphql "^16.0.0"
-    graphql-jit "^0.8.0"
+    graphql-jit "0.8.4"
     mqemitter "^5.0.0"
     p-map "^4.0.0"
     readable-stream "^4.0.0"
@@ -7868,7 +7886,7 @@ mercurius@^13.0.0:
     secure-json-parse "^2.7.0"
     single-user-cache "^0.6.0"
     tiny-lru "^11.0.0"
-    undici "^5.0.0"
+    undici "5.28.3"
     ws "^8.2.2"
 
 merge-descriptors@1.0.1:
@@ -10195,6 +10213,11 @@ stop-iteration-iterator@^1.0.0:
   integrity sha512-iCGQj+0l0HOdZ2AEeBADlsRC+vsnDsZsbdSiH1yNSjcfKM7fdpCMfqAL/dwF5BLiw/XhRft/Wax6zQbhq2BcjQ==
   dependencies:
     internal-slot "^1.0.4"
+
+stream-shift@^1.0.2:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/stream-shift/-/stream-shift-1.0.3.tgz#85b8fab4d71010fc3ba8772e8046cc49b8a3864b"
+  integrity sha512-76ORR0DO1o1hlKwTbi/DM3EXWGf3ZJYO8cXX5RJwnul2DEg2oyoZyjLNoQM8WsvZiFKCRfC1O0J7iCvie3RZmQ==
 
 streamsearch@^1.1.0:
   version "1.1.0"
