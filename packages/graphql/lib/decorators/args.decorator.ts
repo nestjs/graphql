@@ -26,6 +26,10 @@ export type ArgsOptions<T = any> = BaseTypeOptions<T> & {
    */
   description?: string;
   /**
+   * Argument deprecation reason (if deprecated).
+   */
+  deprecationReason?: string;
+  /**
    * Function that returns a reference to the arguments host class.
    */
   type?: () => any;
@@ -118,6 +122,7 @@ export function Args(
           kind: 'arg',
           name: property,
           description: argOptions.description,
+          deprecationReason: argOptions.deprecationReason,
           ...metadata,
         });
       } else {
