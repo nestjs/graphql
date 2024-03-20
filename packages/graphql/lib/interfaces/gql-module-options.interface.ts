@@ -120,6 +120,20 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
    * Extra static metadata to be loaded into the specification
    */
   metadata?: () => Promise<Record<string, any>>;
+
+  /**
+   * If `true`, enables development mode helpers and logs messages of all severity levels
+   * If `false`, only warn- and error-level messages are logged.
+   * @default true
+   */
+  debug?: boolean;
+
+  /**
+   * If `true`, enables schema introspection by clients. Default is `true` unless `NODE_ENV` is
+   * set to `production`
+   * @default true
+   */
+  introspection?: boolean;
 }
 
 export interface GqlOptionsFactory<

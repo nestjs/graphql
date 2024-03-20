@@ -13,7 +13,9 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 /**
  * Interface defining options that can be passed to `createUnionType` function.
  */
-export interface UnionOptions<T extends readonly Type<unknown>[] = Type<unknown>[]> {
+export interface UnionOptions<
+  T extends readonly Type<unknown>[] = Type<unknown>[],
+> {
   /**
    * Name of the union.
    */
@@ -40,9 +42,9 @@ export type Union<T extends readonly any[]> = InstanceType<ArrayElement<T>>;
  * Creates a GraphQL union type composed of types references.
  * @param options
  */
-export function createUnionType<T extends readonly Type<unknown>[] = Type<unknown>[]>(
-  options: UnionOptions<T>,
-): Union<T> {
+export function createUnionType<
+  T extends readonly Type<unknown>[] = Type<unknown>[],
+>(options: UnionOptions<T>): Union<T> {
   const { name, description, types, resolveType } = options;
   const id = Symbol(name);
 
