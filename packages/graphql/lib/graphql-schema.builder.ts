@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
-import { GraphQLSchema, lexicographicSortSchema, printSchema } from 'graphql';
+import {
+  GraphQLSchema,
+  lexicographicSortSchema,
+  printSchema as gqlPrintSchema,
+} from 'graphql';
 import { resolve } from 'path';
 import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
 import { AutoSchemaFileValue, GqlModuleOptions } from './interfaces';
@@ -52,6 +56,7 @@ export class GraphQLSchemaBuilder {
     transformSchema?: (
       schema: GraphQLSchema,
     ) => GraphQLSchema | Promise<GraphQLSchema>,
+    printSchema?: (schema: GraphQLSchema) => string,
   ): Promise<GraphQLSchema> {
     const schema = await this.gqlSchemaFactory.create(resolvers, options);
     const filename = getPathForAutoSchemaFile(autoSchemaFile);
@@ -60,13 +65,14 @@ export class GraphQLSchemaBuilder {
       const transformedSchema = transformSchema
         ? await transformSchema(schema)
         : schema;
-      const fileContent =
-        GRAPHQL_SDL_FILE_HEADER +
-        printSchema(
-          sortSchema
-            ? lexicographicSortSchema(transformedSchema)
-            : transformedSchema,
-        );
+
+      const base = sortSchema
+        ? lexicographicSortSchema(transformedSchema)
+        : transformedSchema;
+
+      const gql = printSchema ? printSchema(base) : gqlPrintSchema(base);
+
+      const fileContent = GRAPHQL_SDL_FILE_HEADER + gql;
       await this.fileSystemHelper.writeFile(filename, fileContent);
     }
     return schema;
