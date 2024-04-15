@@ -27,8 +27,8 @@
     "tslib": "2.6.2"
   },
   "devDependencies": {
-    "@mercuriusjs/federation": "2.0.0",
-    "@mercuriusjs/gateway": "1.0.0",
+    "@mercuriusjs/federation": "3.0.0",
+    "@mercuriusjs/gateway": "3.0.0",
     "@nestjs/common": "10.2.10",
     "@nestjs/platform-fastify": "10.2.10",
     "@nestjs/testing": "10.2.10",
@@ -38,13 +38,13 @@
   },
   "peerDependencies": {
     "@apollo/subgraph": "^2.0.0",
-    "@mercuriusjs/federation": "^1.0.0 || ^2.0.0",
-    "@mercuriusjs/gateway": "^1.0.0",
+    "@mercuriusjs/federation": "^1.0.0 || ^2.0.0 || ^3.0.0",
+    "@mercuriusjs/gateway": "^1.0.0 || ^2.0.0 || ^3.0.0",
     "@nestjs/common": "^9.3.8 || ^10.0.0",
     "@nestjs/graphql": "^12.0.0",
     "fastify": "^4.12.0",
     "graphql": "^16.0.0",
-    "mercurius": "^12.0.0 || ^13.0.0"
+    "mercurius": "^12.0.0 || ^13.0.0 || ^14.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/subgraph": {
