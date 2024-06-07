@@ -11,6 +11,7 @@ import { ResolveTypeFn } from '../interfaces';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
+import type { Lazy, Many } from '../utils/types';
 
 /**
  * Interface defining options that can be passed to `@InterfaceType()` decorator.
@@ -31,7 +32,7 @@ export interface InterfaceTypeOptions {
   /**
    * Interfaces implemented by this interface.
    */
-  implements?: Function | Function[] | (() => Function | Function[]);
+  implements?: Lazy<Many<Function>>;
 }
 
 /**

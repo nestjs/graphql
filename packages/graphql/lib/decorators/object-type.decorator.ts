@@ -10,6 +10,7 @@ import { ClassType } from '../enums/class-type.enum';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
+import type { Lazy, Many } from '../utils/types';
 
 /**
  * Interface defining options that can be passed to `@ObjectType()` decorator
@@ -26,7 +27,7 @@ export interface ObjectTypeOptions {
   /**
    * Interfaces implemented by this object type.
    */
-  implements?: Function | Function[] | (() => Function | Function[]);
+  implements?: Lazy<Many<Function>>;
   /**
    * If `true`, direct descendant classes will inherit the parent's description if own description is not set.
    * Also works on classes marked with `isAbstract: true`.

@@ -39,7 +39,7 @@ export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
   /**
    * Array of middleware to apply.
    */
-  middleware?: FieldMiddleware[];
+  middleware?: readonly FieldMiddleware[];
 };
 
 /**
