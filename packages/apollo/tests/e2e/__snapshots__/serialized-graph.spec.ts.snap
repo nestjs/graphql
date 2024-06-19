@@ -319,6 +319,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "initTime": 0
       }
     },
+    "862407351": {
+      "id": "862407351",
+      "label": "TypeMapperService",
+      "parent": "951921130",
+      "metadata": {
+        "type": "provider",
+        "internal": false,
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "durable": false,
+        "static": true,
+        "transient": false,
+        "exported": false,
+        "token": "TypeMapperService",
+        "initTime": 0
+      }
+    },
     "912104522": {
       "id": "912104522",
       "label": "ModuleRef",
@@ -1196,22 +1212,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "initTime": 0
       }
     },
-    "-1717366145": {
-      "id": "-1717366145",
-      "label": "TypeMapperSevice",
-      "parent": "951921130",
-      "metadata": {
-        "type": "provider",
-        "internal": false,
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "durable": false,
-        "static": true,
-        "transient": false,
-        "exported": false,
-        "token": "TypeMapperSevice",
-        "initTime": 0
-      }
-    },
     "-1455444777": {
       "id": "-1455444777",
       "label": "TypeFieldsAccessor",
@@ -1755,6 +1755,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "1412068273"
     },
+    "1448874619": {
+      "source": "-325525981",
+      "target": "862407351",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "InputTypeFactory",
+        "targetClassName": "TypeMapperService",
+        "sourceClassToken": "InputTypeFactory",
+        "targetClassToken": "TypeMapperService",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 1,
+        "injectionType": "constructor"
+      },
+      "id": "1448874619"
+    },
     "1457082583": {
       "source": "245138285",
       "target": "555176277",
@@ -2017,22 +2033,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "-1036206953"
     },
-    "-1303304625": {
-      "source": "-325525981",
-      "target": "-1717366145",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "InputTypeFactory",
-        "targetClassName": "TypeMapperSevice",
-        "sourceClassToken": "InputTypeFactory",
-        "targetClassToken": "TypeMapperSevice",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 1,
-        "injectionType": "constructor"
-      },
-      "id": "-1303304625"
-    },
     "-1796955647": {
       "source": "-1046435906",
       "target": "-973488942",
@@ -2049,21 +2049,21 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "-1796955647"
     },
-    "-1168051422": {
+    "-73778520": {
       "source": "-1046435906",
-      "target": "-1717366145",
+      "target": "862407351",
       "metadata": {
         "type": "class-to-class",
         "sourceModuleName": "GraphQLSchemaBuilderModule",
         "sourceClassName": "OutputTypeFactory",
-        "targetClassName": "TypeMapperSevice",
+        "targetClassName": "TypeMapperService",
         "sourceClassToken": "OutputTypeFactory",
-        "targetClassToken": "TypeMapperSevice",
+        "targetClassToken": "TypeMapperService",
         "targetModuleName": "GraphQLSchemaBuilderModule",
         "keyOrIndex": 1,
         "injectionType": "constructor"
       },
-      "id": "-1168051422"
+      "id": "-73778520"
     },
     "-1899123048": {
       "source": "-1956905867",

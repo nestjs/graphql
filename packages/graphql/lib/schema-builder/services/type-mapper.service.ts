@@ -22,7 +22,7 @@ import { DefaultNullableConflictError } from '../errors/default-nullable-conflic
 import { InvalidNullableOptionError } from '../errors/invalid-nullable-option.error';
 
 @Injectable()
-export class TypeMapperSevice {
+export class TypeMapperService {
   mapToScalarType<T extends GqlTypeReference = Type<unknown>>(
     typeRef: T,
     scalarsMap: ScalarsTypeMap[] = [],
