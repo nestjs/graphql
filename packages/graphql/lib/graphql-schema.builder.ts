@@ -31,7 +31,10 @@ export class GraphQLSchemaBuilder {
         autoSchemaFile,
         {
           ...buildSchemaOptions,
-          scalarsMap,
+          scalarsMap: [
+            ...(buildSchemaOptions.scalarsMap ?? []),
+            ...scalarsMap.filter(({ type }) => buildSchemaOptions.scalarsMap?.every((item) => item.type !== type) ?? true),
+          ],
         },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
