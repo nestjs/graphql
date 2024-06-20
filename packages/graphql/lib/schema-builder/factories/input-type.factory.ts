@@ -3,14 +3,14 @@ import { GraphQLInputType } from 'graphql';
 import { BuildSchemaOptions, GqlTypeReference } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
 import { CannotDetermineInputTypeError } from '../errors/cannot-determine-input-type.error';
-import { TypeMapperSevice } from '../services/type-mapper.service';
+import { TypeMapperService } from '../services/type-mapper.service';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
 
 @Injectable()
 export class InputTypeFactory {
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
-    private readonly typeMapperService: TypeMapperSevice,
+    private readonly typeMapperService: TypeMapperService,
   ) {}
 
   public create(
