@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { isString } from '@nestjs/common/utils/shared.utils';
 import { GraphQLSchema, lexicographicSortSchema, printSchema } from 'graphql';
 import { resolve } from 'path';
-import { GRAPHQL_SDL_FILE_HEADER } from './graphql.constants';
+import {
+  GRAPHQL_SDL_FILE_HEADER,
+  GRAPHQL_SDL_FILE_END,
+} from './graphql.constants';
 import { AutoSchemaFileValue, GqlModuleOptions } from './interfaces';
 import { BuildSchemaOptions } from './interfaces/build-schema-options.interface';
 import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
@@ -60,13 +63,18 @@ export class GraphQLSchemaBuilder {
       const transformedSchema = transformSchema
         ? await transformSchema(schema)
         : schema;
-      const fileContent =
+      let fileContent =
         GRAPHQL_SDL_FILE_HEADER +
         printSchema(
           sortSchema
             ? lexicographicSortSchema(transformedSchema)
             : transformedSchema,
         );
+
+      if (options.addNewlineAtEnd) {
+        fileContent = fileContent.concat(GRAPHQL_SDL_FILE_END);
+      }
+
       await this.fileSystemHelper.writeFile(filename, fileContent);
     }
     return schema;

@@ -1,13 +1,16 @@
 import { INestApplication } from '@nestjs/common';
 import { GraphQLSchemaHost } from '@nestjs/graphql';
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
+import {
+  GRAPHQL_SDL_FILE_HEADER,
+  GRAPHQL_SDL_FILE_END,
+} from '@nestjs/graphql/graphql.constants';
 import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { SortAutoSchemaModule } from '../graphql/sort-auto-schema.module';
 import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 
-describe('GraphQL sort autoSchemaFile schema', () => {
+describe('GraphQL sort autoSchemaFile and new line at the end of the schema', () => {
   let app: INestApplication;
   let schema: GraphQLSchema;
   let writeFileMock: jest.Mock;
@@ -38,7 +41,7 @@ describe('GraphQL sort autoSchemaFile schema', () => {
     expect(writeFileMock).toHaveBeenCalledTimes(1);
     expect(writeFileMock).toHaveBeenCalledWith(
       'schema.graphql',
-      sortedPrintedSchemaSnapshot,
+      sortedPrintedSchemaSnapshot + GRAPHQL_SDL_FILE_END,
     );
   });
 
