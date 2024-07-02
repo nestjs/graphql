@@ -41,7 +41,8 @@ export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFacto
     // This leads to duplicated IQuery interfaces
     // see: https://github.com//issues/2344
     const mergedDefinition = mergeTypeDefs([printSubgraphSchema(schema)], {
-      useSchemaDefinition: false,
+      // schema-first requires the schema definition to be included for federation 2 @link to function
+      useSchemaDefinition: true,
       throwOnConflict: true,
       commentDescriptions: true,
       reverseDirectives: true,
