@@ -34,3 +34,5 @@ export const GRAPHQL_SDL_FILE_HEADER = `\
 # ------------------------------------------------------
 
 `;
+
+export const GRAPHQL_SDL_FILE_END = '\n';

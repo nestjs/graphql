@@ -51,4 +51,9 @@ export interface BuildSchemaOptions {
    * Set to true if it should throw an error when the same Query / Mutation field is defined more than once
    */
   noDuplicatedFields?: boolean;
+
+  /**
+   * Add new line at the end of the generated GraphQL SDL file
+   */
+  addNewlineAtEnd?: boolean;
 }

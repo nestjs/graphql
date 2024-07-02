@@ -12,6 +12,9 @@ import { RecipesModule } from '../code-first/recipes/recipes.module';
       driver: ApolloDriver,
       autoSchemaFile: 'schema.graphql',
       sortSchema: true,
+      buildSchemaOptions: {
+        addNewlineAtEnd: true,
+      },
     }),
   ],
 })
