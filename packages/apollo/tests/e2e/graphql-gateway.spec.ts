@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway.module';
@@ -104,6 +105,12 @@ describe('GraphQL Gateway', () => {
         },
       });
   }, 15000);
+
+  it(`should return complete options`, () => {
+    const graphql = gatewayApp.get(GraphQLModule);
+
+    expect(graphql.completeOptions).toHaveProperty('schema', null);
+  });
 
   afterEach(async () => {
     await postsApp.close();
