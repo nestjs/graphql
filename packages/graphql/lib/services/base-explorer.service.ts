@@ -5,7 +5,7 @@ import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
 
 export class BaseExplorerService {
   getModules(
-    modulesContainer: Map<string, Module>,
+    modulesContainer: Map<string, Module> | undefined,
     include: Function[],
   ): Module[] {
     if (!modulesContainer) {
