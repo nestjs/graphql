@@ -8,6 +8,9 @@ export class BaseExplorerService {
     modulesContainer: Map<string, Module>,
     include: Function[],
   ): Module[] {
+    if (!modulesContainer) {
+      return [];
+    }
     if (!include || isEmpty(include)) {
       return [...modulesContainer.values()];
     }
