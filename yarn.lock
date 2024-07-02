@@ -1437,10 +1437,10 @@
     graphql "^16.6.0"
     mercurius "^14.0.0"
 
-"@mercuriusjs/gateway@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-3.0.0.tgz#e8011fc37e0beda652334aad35b34905036878f2"
-  integrity sha512-KBShjsz5Q1DhEdH4GE9Z97vzaauJPwIhTxrTJL4uMs80z2DujiXGdiNSNpYBN3Dyi1Dn9pOg2WJ/TEAsyNg6hQ==
+"@mercuriusjs/gateway@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-3.0.1.tgz#04c5d7aa99058979d58a90fa8da4a5af9bb93193"
+  integrity sha512-t/a3U3SQS4bd0iiOzHUaqbnp7VSoHIGICyQFKYsQHPEGO8yhmZGk2zfAvDG5J2dgioPnk2af6BGA+/WZRlAlnw==
   dependencies:
     "@mercuriusjs/federation" "^3.0.0"
     "@mercuriusjs/subscription-client" "^1.0.0"
