@@ -2,11 +2,11 @@ import { createIteratorWithInitialData } from '../../lib/utils/async-iterator-wi
 
 it('Should serve initial data followed by live upates', async () => {
   const initialData: Array<number> = [1, 2, 3];
-  const asyncIterator = {
-    next: jest.fn().mockResolvedValueOnce({ value: 4, done: false }),
+  const asyncIterator = async function* () {
+    yield 4;
   };
   const iterator = await createIteratorWithInitialData<number>(
-    asyncIterator,
+    asyncIterator(),
     initialData,
   );
   const result: Array<number> = [];
