@@ -216,16 +216,23 @@ export class TypeMetadataStorageHost {
   }
 
   loadClassPluginMetadata(metadata: ClassMetadata[]) {
+    const loadedClasses = new Set<Function>();
     metadata
       .filter((item) => item?.target)
-      .forEach((item) => this.applyPluginMetadata(item.target.prototype));
+      .forEach((item) => this.applyPluginMetadata(item.target.prototype, loadedClasses));
   }
 
-  applyPluginMetadata(prototype: Function) {
+  applyPluginMetadata(prototype: Function, loadedClasses = new Set<Function>()) {
     do {
       if (!prototype.constructor) {
         return;
       }
+      // Skip redundant metadata merges for common parents.
+      if (loadedClasses.has(prototype.constructor)) {
+        return;
+      }
+      loadedClasses.add(prototype.constructor);
+
       const metadata = Object.getOwnPropertyDescriptor(
         prototype.constructor,
         METADATA_FACTORY_NAME,
