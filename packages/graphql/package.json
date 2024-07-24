@@ -30,7 +30,7 @@
     "normalize-path": "3.0.0",
     "subscriptions-transport-ws": "0.11.0",
     "tslib": "2.6.3",
-    "uuid": "9.0.1",
+    "uuid": "10.0.0",
     "ws": "8.17.1"
   },
   "devDependencies": {
