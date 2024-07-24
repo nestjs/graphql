@@ -394,7 +394,7 @@ export class GraphQLAstExplorer {
   getType(typeName: string, options: DefinitionsGeneratorOptions): string {
     const defaults = this.getDefaultTypes(options);
     const isDefault = defaults[typeName];
-    return isDefault ? defaults[typeName] : typeName;
+    return isDefault ? defaults[typeName] : upperFirst(typeName);
   }
 
   getDefaultTypes(options: DefinitionsGeneratorOptions): {
