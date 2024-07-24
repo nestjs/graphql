@@ -226,10 +226,13 @@ export class TypeMetadataStorageHost {
       if (!prototype.constructor) {
         return;
       }
-      if (!prototype.constructor[METADATA_FACTORY_NAME]) {
+      const metadata = Object.getOwnPropertyDescriptor(
+        prototype.constructor,
+        METADATA_FACTORY_NAME,
+      )?.value?.();
+      if (!metadata) {
         continue;
       }
-      const metadata = prototype.constructor[METADATA_FACTORY_NAME]();
       const properties = Object.keys(metadata);
       properties.forEach((key) => {
         if (metadata[key].type) {
