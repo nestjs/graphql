@@ -10,6 +10,10 @@ import { getValidationMetadataByTarget } from './type-helpers.test-utils';
 
 @ObjectType()
 class CreateUserDto extends BaseType {
+  @IsString()
+  @Field()
+  firstName: string;
+
   @Field({ nullable: true })
   login: string;
 
@@ -31,7 +35,7 @@ describe('PartialType', () => {
     const prototype = Object.getPrototypeOf(UpdateUserDto);
     const { fields } = getFieldsAndDecoratorForType(prototype);
 
-    expect(fields.length).toEqual(6);
+    expect(fields.length).toEqual(7);
     expect(fields).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -52,6 +56,10 @@ describe('PartialType', () => {
         }),
         expect.objectContaining({
           name: 'password',
+          options: { nullable: true },
+        }),
+        expect.objectContaining({
+          name: 'firstName',
           options: { nullable: true },
         }),
         expect.objectContaining({
@@ -79,6 +87,7 @@ describe('PartialType', () => {
         ),
       );
       expect(Array.from(validationKeys)).toEqual([
+        'firstName',
         'password',
         'id',
         'createdAt',
@@ -86,6 +95,12 @@ describe('PartialType', () => {
         'login',
         'meta',
       ]);
+    });
+    it('should apply @IsOptional to properties reflected by the plugin', async () => {
+      const updateDto = new UpdateUserDto();
+      updateDto.firstName = null;
+      const validationErrors = await validate(updateDto);
+      expect(validationErrors).toHaveLength(0);
     });
     describe('when object does not fulfil validation rules', () => {
       it('"validate" should return validation errors', async () => {
@@ -123,6 +138,41 @@ describe('PartialType', () => {
       expect(fields[0].name).toEqual('name');
       expect(fields[0].options.nullable).toEqual(true);
       expect(fields[0].options.defaultValue).toEqual(undefined);
+    });
+  });
+
+  describe('skipNullProperties', () => {
+    it('should apply @IsOptional to properties reflected by the plugin if option `skipNullProperties` is true', async () => {
+      class UpdateUserWithNullableDto extends PartialType(CreateUserDto, {
+        skipNullProperties: true,
+      }) {}
+      const updateDto = new UpdateUserWithNullableDto();
+      updateDto.firstName = null;
+      const validationErrors = await validate(updateDto);
+      expect(validationErrors).toHaveLength(0);
+    });
+
+    it('should apply @IsOptional to properties reflected by the plugin if option `skipNullProperties` is undefined', async () => {
+      class UpdateUserWithoutNullableDto extends PartialType(CreateUserDto, {
+        skipNullProperties: undefined,
+      }) {}
+      const updateDto = new UpdateUserWithoutNullableDto();
+      updateDto.firstName = null;
+      const validationErrors = await validate(updateDto);
+      expect(validationErrors).toHaveLength(0);
+    });
+
+    it('should apply @ValidateIf to properties reflected by the plugin if option `skipNullProperties` is false', async () => {
+      class UpdateUserWithoutNullableDto extends PartialType(CreateUserDto, {
+        skipNullProperties: false,
+      }) {}
+      const updateDto = new UpdateUserWithoutNullableDto();
+      updateDto.firstName = null;
+      const validationErrors = await validate(updateDto);
+      expect(validationErrors).toHaveLength(1);
+      expect(validationErrors[0].constraints).toEqual({
+        isString: 'firstName must be a string',
+      });
     });
   });
 });
