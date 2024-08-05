@@ -31,7 +31,7 @@
     "subscriptions-transport-ws": "0.11.0",
     "tslib": "2.6.3",
     "uuid": "9.0.1",
-    "ws": "8.17.1"
+    "ws": "8.18.0"
   },
   "devDependencies": {
     "@apollo/subgraph": "2.2.3",
