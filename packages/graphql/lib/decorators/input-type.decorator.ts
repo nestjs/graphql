@@ -23,6 +23,11 @@ export interface InputTypeOptions {
    * If `true`, type will not be registered in the schema.
    */
   isAbstract?: boolean;
+  /**
+   * Argument deprecation reason (if deprecated).
+   */
+  deprecationReason?: string;
+
 }
 
 /**
@@ -57,6 +62,8 @@ export function InputType(
       name: name || target.name,
       description: options.description,
       isAbstract: options.isAbstract,
+      deprecationReason: options.deprecationReason
+
     };
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addInputTypeMetadata(metadata),
