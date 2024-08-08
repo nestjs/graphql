@@ -40,7 +40,7 @@
     "@nestjs/testing": "10.2.10",
     "graphql": "16.8.1",
     "reflect-metadata": "0.2.2",
-    "ts-morph": "21.0.1"
+    "ts-morph": "23.0.0"
   },
   "peerDependencies": {
     "@apollo/subgraph": "^2.0.0",
@@ -50,7 +50,7 @@
     "class-validator": "*",
     "graphql": "^16.6.0",
     "reflect-metadata": "^0.1.13 || ^0.2.0",
-    "ts-morph": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0"
+    "ts-morph": "^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^23.0.0"
   },
   "peerDependenciesMeta": {
     "@apollo/subgraph": {
