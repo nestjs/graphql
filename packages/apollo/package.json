@@ -22,7 +22,7 @@
     "url": "https://github.com/nestjs/graphql/issues"
   },
   "devDependencies": {
-    "@apollo/gateway": "2.3.3",
+    "@apollo/gateway": "2.8.5",
     "@apollo/server": "4.9.3",
     "@apollo/server-plugin-response-cache": "4.1.0",
     "@apollo/subgraph": "2.2.3",
