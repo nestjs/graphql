@@ -1,6 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import * as chokidar from 'chokidar';
+import { glob } from 'fast-glob'
 import { printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 import {
@@ -45,7 +46,7 @@ export class GraphQLDefinitionsFactory {
         'GraphQL factory is watching your files...',
         isDebugEnabled,
       );
-      const watcher = chokidar.watch(options.typePaths);
+      const watcher = chokidar.watch(await glob(options.typePaths));
       watcher.on('change', async (file) => {
         this.printMessage(
           `[${new Date().toLocaleTimeString()}] "${file}" has been changed.`,
