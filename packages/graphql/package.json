@@ -34,7 +34,7 @@
     "ws": "8.18.0"
   },
   "devDependencies": {
-    "@apollo/subgraph": "2.2.3",
+    "@apollo/subgraph": "2.9.2",
     "@nestjs/common": "10.2.10",
     "@nestjs/core": "10.2.10",
     "@nestjs/testing": "10.2.10",
