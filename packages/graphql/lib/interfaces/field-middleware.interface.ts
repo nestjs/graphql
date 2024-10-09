@@ -8,7 +8,7 @@ export interface MiddlewareContext<
   source: TSource;
   args: TArgs;
   context: TContext;
-  info: GraphQLResolveInfo;
+  info?: GraphQLResolveInfo | null;
 }
 
 export type NextFn<T = any> = () => Promise<T>;
