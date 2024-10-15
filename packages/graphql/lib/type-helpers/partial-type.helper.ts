@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import {
   applyIsOptionalDecorator,
+  applyValidateIfDefinedDecorator,
   inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
@@ -17,6 +18,7 @@ import { applyFieldDecorators } from './type-helpers.utils';
 interface PartialTypeOptions {
   decorator?: ClassDecoratorFactory;
   omitDefaultValues?: boolean;
+  skipNullProperties?: boolean;
 }
 
 function isPartialTypeOptions(
@@ -25,7 +27,8 @@ function isPartialTypeOptions(
   return (
     optionsOrDecorator &&
     ('decorator' in optionsOrDecorator ||
-      'omitDefaultValues' in optionsOrDecorator)
+      'omitDefaultValues' in optionsOrDecorator ||
+      'skipNullProperties' in optionsOrDecorator)
   );
 }
 
@@ -42,12 +45,19 @@ export function PartialType<T>(
 
   let decorator: ClassDecoratorFactory | undefined;
   let omitDefaultValues = false;
+  let skipNullProperties = true;
   if (isPartialTypeOptions(optionsOrDecorator)) {
     decorator = optionsOrDecorator.decorator;
     omitDefaultValues = optionsOrDecorator.omitDefaultValues;
+    skipNullProperties = optionsOrDecorator.skipNullProperties ?? true;
   } else {
     decorator = optionsOrDecorator;
   }
+
+  const applyPartialDecoratorFn =
+    skipNullProperties === false
+      ? applyValidateIfDefinedDecorator
+      : applyIsOptionalDecorator;
 
   if (decorator) {
     decorator({ isAbstract: true })(PartialObjectType);
@@ -70,7 +80,7 @@ export function PartialType<T>(
         nullable: true,
         defaultValue: omitDefaultValues ? undefined : item.options.defaultValue,
       })(PartialObjectType.prototype, item.name);
-      applyIsOptionalDecorator(PartialObjectType, item.name);
+      applyPartialDecoratorFn(PartialObjectType, item.name);
       applyFieldDecorators(PartialObjectType, item);
     });
   }
@@ -90,7 +100,7 @@ export function PartialType<T>(
       PartialObjectType[METADATA_FACTORY_NAME](),
     );
     pluginFields.forEach((key) =>
-      applyIsOptionalDecorator(PartialObjectType, key),
+      applyPartialDecoratorFn(PartialObjectType, key),
     );
   }
 
