@@ -8147,10 +8147,10 @@ meow@^8.1.2:
     type-fest "^0.18.0"
     yargs-parser "^20.2.3"
 
-mercurius-integration-testing@8.2.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/mercurius-integration-testing/-/mercurius-integration-testing-8.2.0.tgz#6d731311dba94b1116061523428b0b93f0e90a73"
-  integrity sha512-ew677oij/lTiLXECZsVIZfLxIFnur9Q+rKb20kP3OJmlxFqJH0IqawDW+CfHXBFqZPi19FSEGzzde2zr0ceiDw==
+mercurius-integration-testing@9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/mercurius-integration-testing/-/mercurius-integration-testing-9.0.0.tgz#ffc5c364cd02630a09b89bc7b69ed12590564310"
+  integrity sha512-N2GRMPOZ2BjgnTUH3QKcv9INd3AXb7u7GYQQ8EeakBTqZ68PkWppM32RwNTRMKuxJblUBbTEOJ5diAwo0ETP9A==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.2"
     cookie "^0.5.0"
