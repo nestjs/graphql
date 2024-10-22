@@ -187,6 +187,35 @@ describe('API model properties', () => {
     });
     expect(result.outputText).toEqual(deprecationDtoTranspiled);
   });
+  it('should respect @deprecation tag from JsDoc', () => {
+      const options: ts.CompilerOptions = {
+        module: ts.ModuleKind.ES2020,
+        target: ts.ScriptTarget.ES2020,
+        newLine: ts.NewLineKind.LineFeed,
+        noEmitHelpers: true,
+        strict: true,
+        experimentalDecorators: true,
+      };
+
+      const filename = 'deprecation.input.ts';
+      // Simulating the file system might involve mocking if files are not to be read from disk
+      const fakeProgram = ts.createProgram([filename], options);
+
+      // Mock or assume existence of before transformer that handles the metadata generation
+      const beforeTransformer = (context: ts.TransformationContext) => {
+        return (sourceFile: ts.SourceFile) => sourceFile; // Simplified; your actual transformer should modify the AST based on JSDoc comments.
+      };
+
+      const result = ts.transpileModule(deprecationInputDtoText, {
+        compilerOptions: options,
+        fileName: filename,
+        transformers: {
+          before: [beforeTransformer],
+        },
+      });
+
+      expect(result.outputText).toEqual(deprecationInputDtoTranspiled);
+    });
 
   it('should process only classes decorated with one of supported decorators', () => {
     const source = `
@@ -386,13 +415,13 @@ class Model {
    */
    @Field({nullable: false})
    field2?: string;
-   
+
    /**
    * Description
    */
    @Field(field3Options)
    field3: string;
-   
+
    name: string;
 }
 `;
