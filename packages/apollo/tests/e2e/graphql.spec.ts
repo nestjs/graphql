@@ -2,6 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { ApplicationModule } from '../graphql/app.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloFederationDriver } from '../../lib';
 
 describe('GraphQL', () => {
   let app: INestApplication;
@@ -41,6 +43,14 @@ describe('GraphQL', () => {
           ],
         },
       });
+  });
+
+  it(`should return complete options`, () => {
+    const graphql =
+      app.get<GraphQLModule<ApolloFederationDriver>>(GraphQLModule);
+
+    expect(graphql.completeOptions).toHaveProperty('path', '/graphql');
+    expect(graphql.completeOptions).toHaveProperty('schema');
   });
 
   afterEach(async () => {
