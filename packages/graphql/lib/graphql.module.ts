@@ -54,13 +54,11 @@ export class GraphQLModule<
   >
   implements OnModuleInit, OnModuleDestroy
 {
+  public completeOptions: GqlModuleOptions | undefined;
   private static readonly logger = new Logger(GraphQLModule.name, {
     timestamp: true,
   });
-
   private readonly metadataLoader = new MetadataLoader();
-
-  completeOptions?: GqlModuleOptions;
 
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
