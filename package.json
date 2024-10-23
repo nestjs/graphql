@@ -23,7 +23,7 @@
     "test:e2e:apollo": "lerna run test:e2e --scope @nestjs/apollo --stream",
     "test:e2e:graphql": "lerna run test:e2e --scope @nestjs/graphql --stream",
     "test:e2e:mercurius": "lerna run test:e2e --scope @nestjs/mercurius --stream",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "resolutions": {
     "graphql": "16.9.0"
