@@ -45,10 +45,10 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "sourceModuleName": "InternalCoreModule",
         "durable": false,
         "static": true,
-        "scope": 0,
         "transient": false,
         "exported": true,
-        "token": "ExternalContextCreator"
+        "token": "ExternalContextCreator",
+        "initTime": 0
       }
     },
     "206199259": {
@@ -684,10 +684,10 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "sourceModuleName": "InternalCoreModule",
         "durable": false,
         "static": true,
-        "scope": 0,
         "transient": false,
         "exported": true,
-        "token": "ModulesContainer"
+        "token": "ModulesContainer",
+        "initTime": 0
       }
     },
     "-326832201": {
@@ -700,10 +700,10 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "sourceModuleName": "InternalCoreModule",
         "durable": false,
         "static": true,
-        "scope": 0,
         "transient": false,
         "exported": true,
-        "token": "HttpAdapterHost"
+        "token": "HttpAdapterHost",
+        "initTime": 0
       }
     },
     "-702581189": {
@@ -732,10 +732,10 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "sourceModuleName": "InternalCoreModule",
         "durable": false,
         "static": true,
-        "scope": 0,
         "transient": false,
         "exported": true,
-        "token": "SerializedGraph"
+        "token": "SerializedGraph",
+        "initTime": 0
       }
     },
     "-1251270035": {
@@ -1999,40 +1999,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "2086827720"
     },
-    "-831015039": {
-      "source": "-1181044340",
-      "target": "-26938366",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLModule",
-        "sourceClassName": "ResolversExplorerService",
-        "targetClassName": "ModulesContainer",
-        "sourceClassToken": "ResolversExplorerService",
-        "targetClassToken": "ModulesContainer",
-        "targetModuleName": "InternalCoreModule",
-        "keyOrIndex": 0,
-        "injectionType": "constructor",
-        "internal": true
-      },
-      "id": "-831015039"
-    },
-    "-1036206953": {
-      "source": "-1181044340",
-      "target": "203550704",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLModule",
-        "sourceClassName": "ResolversExplorerService",
-        "targetClassName": "ExternalContextCreator",
-        "sourceClassToken": "ResolversExplorerService",
-        "targetClassToken": "ExternalContextCreator",
-        "targetModuleName": "InternalCoreModule",
-        "keyOrIndex": 2,
-        "injectionType": "constructor",
-        "internal": true
-      },
-      "id": "-1036206953"
-    },
     "-1796955647": {
       "source": "-1046435906",
       "target": "-973488942",
@@ -2080,6 +2046,40 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor"
       },
       "id": "-1899123048"
+    },
+    "-831015039": {
+      "source": "-1181044340",
+      "target": "-26938366",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLModule",
+        "sourceClassName": "ResolversExplorerService",
+        "targetClassName": "ModulesContainer",
+        "sourceClassToken": "ResolversExplorerService",
+        "targetClassToken": "ModulesContainer",
+        "targetModuleName": "InternalCoreModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor",
+        "internal": true
+      },
+      "id": "-831015039"
+    },
+    "-1036206953": {
+      "source": "-1181044340",
+      "target": "203550704",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLModule",
+        "sourceClassName": "ResolversExplorerService",
+        "targetClassName": "ExternalContextCreator",
+        "sourceClassToken": "ResolversExplorerService",
+        "targetClassToken": "ExternalContextCreator",
+        "targetModuleName": "InternalCoreModule",
+        "keyOrIndex": 2,
+        "injectionType": "constructor",
+        "internal": true
+      },
+      "id": "-1036206953"
     },
     "-658225180": {
       "source": "327064966",

@@ -1,4 +1,6 @@
-import * as prettier from 'prettier';
+// Prettier v3 is an ESM module, so we need to use v2 here for now
+// to avoid breaking tests.
+import * as prettier from 'prettierv2';
 import * as ts from 'typescript';
 
 export class PluginMetadataPrinter {
