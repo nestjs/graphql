@@ -20,7 +20,10 @@ export class MetadataListByNameCollection<T> extends MetadataByNameCollection<
 
     arrayResult.push(value);
     this.all.push(value);
-    this.globalArray && this.globalArray.push(value);
+
+    if (this.globalArray) {
+      this.globalArray.push(value);
+    }
   }
 
   unshift(value: T, name: string) {
@@ -32,6 +35,9 @@ export class MetadataListByNameCollection<T> extends MetadataByNameCollection<
 
     arrayResult.unshift(value);
     this.all.push(value);
-    this.globalArray && this.globalArray.unshift(value);
+
+    if (this.globalArray) {
+      this.globalArray.unshift(value);
+    }
   }
 }

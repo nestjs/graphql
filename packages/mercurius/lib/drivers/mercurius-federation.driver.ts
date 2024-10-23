@@ -56,7 +56,6 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
     registerMercuriusHooks(app, hooks);
   }
 
-  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
   public async stop(): Promise<void> {}
 
   public generateSchema(

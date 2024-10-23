@@ -98,7 +98,7 @@ function inheritClassFields(
       [...parentFields, ...fields],
       options,
     );
-  } catch (err) {
+  } catch {
     return fields;
   }
 }

@@ -9,7 +9,7 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 export function Directive(
   sdl: string,
 ): MethodDecorator & PropertyDecorator & ClassDecorator {
-  return (target: Function | Object, key?: string | symbol) => {
+  return (target: Function | object, key?: string | symbol) => {
     validateDirective(sdl);
 
     LazyMetadataStorage.store(() => {

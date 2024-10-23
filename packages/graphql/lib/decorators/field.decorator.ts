@@ -47,8 +47,8 @@ export type FieldOptions<T = any> = BaseTypeOptions<T> & {
 type FieldOptionsExtractor<T> = T extends [GqlTypeReference<infer P>]
   ? FieldOptions<P[]>
   : T extends GqlTypeReference<infer P>
-  ? FieldOptions<P>
-  : never;
+    ? FieldOptions<P>
+    : never;
 
 /**
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
@@ -80,7 +80,7 @@ export function Field<T extends ReturnTypeFuncValue>(
   fieldOptions?: FieldOptionsExtractor<T>,
 ): PropertyDecorator & MethodDecorator {
   return (
-    prototype: Object,
+    prototype: object,
     propertyKey?: string,
     descriptor?: TypedPropertyDescriptor<any>,
   ) => {
@@ -97,7 +97,7 @@ export function Field<T extends ReturnTypeFuncValue>(
 export function addFieldMetadata<T extends ReturnTypeFuncValue>(
   typeOrOptions: ReturnTypeFunc<T> | FieldOptionsExtractor<T>,
   fieldOptions: FieldOptionsExtractor<T>,
-  prototype: Object,
+  prototype: object,
   propertyKey?: string,
   descriptor?: TypedPropertyDescriptor<any>,
   loadEagerly?: boolean,
@@ -114,7 +114,7 @@ export function addFieldMetadata<T extends ReturnTypeFuncValue>(
       metadataKey: isResolverMethod ? 'design:returntype' : 'design:type',
       prototype,
       propertyKey,
-      explicitTypeFn: typeFunc as ReturnTypeFunc<T>,
+      explicitTypeFn: typeFunc,
       typeOptions: options,
       ignoreOnUndefinedType: loadEagerly,
     });

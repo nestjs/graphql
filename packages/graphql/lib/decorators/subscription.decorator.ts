@@ -43,6 +43,7 @@ export type SubscriptionOptions<T = any> = BaseTypeOptions<T> & {
     args: any,
     context: any,
     info: any,
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   ) => any | Promise<any>;
 };
 

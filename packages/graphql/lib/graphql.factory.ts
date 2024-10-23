@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema';
 import { Injectable } from '@nestjs/common';
 import { existsSync, lstatSync, readFileSync } from 'fs';

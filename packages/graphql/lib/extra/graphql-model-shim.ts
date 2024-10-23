@@ -25,7 +25,7 @@ export function ArgsType(): ClassDecorator {
 export function Directive(
   sdl: string,
 ): MethodDecorator & PropertyDecorator & ClassDecorator {
-  return (target: Function | Object, key?: string | symbol) => {};
+  return (target: Function | object, key?: string | symbol) => {};
 }
 
 export function Extensions(
@@ -39,7 +39,7 @@ export function Field(
   fieldOptions?: FieldOptions,
 ): PropertyDecorator & MethodDecorator {
   return (
-    prototype: Object,
+    prototype: object,
     propertyKey?: string,
     descriptor?: TypedPropertyDescriptor<any>,
   ) => {};

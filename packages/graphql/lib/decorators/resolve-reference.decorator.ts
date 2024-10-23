@@ -6,7 +6,7 @@ import { RESOLVER_REFERENCE_METADATA } from '../graphql.constants';
  */
 export function ResolveReference(): MethodDecorator {
   return (
-    target: Function | Object,
+    target: Function | object,
     key?: string | symbol,
     descriptor?: any,
   ) => {

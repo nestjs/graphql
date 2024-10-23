@@ -1,8 +1,7 @@
+import { ApolloServer, type BaseContext } from '@apollo/server';
 import { INestApplicationContext } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '..';
-
-import { ApolloServer, type BaseContext } from '@apollo/server';
 
 type GetApolloServer = (
   app: INestApplicationContext,
@@ -17,7 +16,9 @@ export const getApolloServer: GetApolloServer = (app) => {
   try {
     const graphqlModule = app.get<GraphQLModule<ApolloDriver>>(GraphQLModule);
     return graphqlModule.graphQlAdapter?.instance;
-  } catch (error) {}
+  } catch {
+    /* empty */
+  }
 
   throw new Error(
     `Nest could not find the "GraphQLModule" in your application's container. Please, double-check if it's registered in the given application.`,

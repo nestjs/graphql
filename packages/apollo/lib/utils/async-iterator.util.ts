@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 import { $$asyncIterator } from 'iterall';
 
 export type AsyncIterator<T> = {

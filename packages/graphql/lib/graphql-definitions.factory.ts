@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import * as chokidar from 'chokidar';
-import { glob } from 'fast-glob'
+import { glob } from 'fast-glob';
 import { printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 import {
@@ -47,6 +47,7 @@ export class GraphQLDefinitionsFactory {
         isDebugEnabled,
       );
       const watcher = chokidar.watch(await glob(options.typePaths));
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       watcher.on('change', async (file) => {
         this.printMessage(
           `[${new Date().toLocaleTimeString()}] "${file}" has been changed.`,
@@ -108,6 +109,8 @@ export class GraphQLDefinitionsFactory {
   }
 
   protected printMessage(text: string, isEnabled: boolean) {
-    isEnabled && console.log(text);
+    if (isEnabled) {
+      console.log(text);
+    }
   }
 }

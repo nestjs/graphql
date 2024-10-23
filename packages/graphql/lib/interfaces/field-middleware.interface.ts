@@ -19,7 +19,8 @@ export interface FieldMiddleware<
   TArgs = { [argName: string]: any },
   TOutput = any,
 > {
-  (ctx: MiddlewareContext<TSource, TContext, TArgs>, next: NextFn):
-    | Promise<TOutput>
-    | TOutput;
+  (
+    ctx: MiddlewareContext<TSource, TContext, TArgs>,
+    next: NextFn,
+  ): Promise<TOutput> | TOutput;
 }

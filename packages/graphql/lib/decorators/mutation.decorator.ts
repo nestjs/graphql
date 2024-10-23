@@ -56,7 +56,7 @@ export function Mutation(
   nameOrType?: string | ReturnTypeFunc,
   options: MutationOptions = {},
 ): MethodDecorator {
-  return (target: Object | Function, key?: string, descriptor?: any) => {
+  return (target: object | Function, key?: string, descriptor?: any) => {
     const name = isString(nameOrType)
       ? nameOrType
       : (options && options.name) || undefined;

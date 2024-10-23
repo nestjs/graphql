@@ -125,7 +125,7 @@ export class GraphQLSchemaFactory {
       if (!scalarNameMetadata) {
         return;
       }
-      const instance = new (classRef as Type<unknown>)();
+      const instance = new classRef();
       const type =
         (isFunction(scalarTypeMetadata) && scalarTypeMetadata()) || classRef;
 

@@ -10,5 +10,6 @@ export function isPipe(
   if (isFunction(value)) {
     return true;
   }
+
   return isFunction((value as PipeTransform).transform);
 }

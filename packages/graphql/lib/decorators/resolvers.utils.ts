@@ -45,8 +45,8 @@ export function getClassOrUndefined(typeOrFunc: Function | Type<any>) {
   return isConstructor(typeOrFunc)
     ? typeOrFunc
     : isFunction(typeOrFunc)
-    ? (typeOrFunc as Function)()
-    : undefined;
+      ? (typeOrFunc as Function)()
+      : undefined;
 }
 
 function isConstructor(obj: any) {

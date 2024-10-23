@@ -160,8 +160,7 @@ export function getDecoratorName(decorator: Decorator) {
     }
 
     if (callExpression.kind === ts.SyntaxKind.CallExpression) {
-      const identifier = (callExpression as CallExpression)
-        .expression as Identifier;
+      const identifier = callExpression.expression as Identifier;
 
       if (isDynamicallyAdded(identifier)) {
         return undefined;
@@ -345,10 +344,13 @@ export function safelyMergeObjects(
   // if both of objects are ObjectLiterals, so merge property by property in compile time
   // if one or both of expressions not an object literal, produce rest spread and merge in runtime
   if (ts.isObjectLiteralExpression(a) && ts.isObjectLiteralExpression(b)) {
-    const aMap = a.properties.reduce((acc, prop) => {
-      acc[(prop.name as ts.Identifier).text] = prop;
-      return acc;
-    }, {} as { [propName: string]: ts.ObjectLiteralElementLike });
+    const aMap = a.properties.reduce(
+      (acc, prop) => {
+        acc[(prop.name as ts.Identifier).text] = prop;
+        return acc;
+      },
+      {} as { [propName: string]: ts.ObjectLiteralElementLike },
+    );
 
     b.properties.forEach((prop) => {
       aMap[(prop.name as ts.Identifier).text] = prop;

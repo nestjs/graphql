@@ -50,8 +50,9 @@ import { extend, generateString } from './utils';
   ],
 })
 export class GraphQLModule<
-  TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
-> implements OnModuleInit, OnModuleDestroy
+    TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
+  >
+  implements OnModuleInit, OnModuleDestroy
 {
   private static readonly logger = new Logger(GraphQLModule.name, {
     timestamp: true,

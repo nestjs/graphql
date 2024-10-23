@@ -15,7 +15,7 @@ export function createScalarType(
 ) {
   return new GraphQLScalarType({
     name,
-    description: instance.description as string,
+    description: instance.description,
     parseValue: bindInstanceContext(instance, 'parseValue'),
     serialize: bindInstanceContext(instance, 'serialize'),
     parseLiteral: bindInstanceContext(instance, 'parseLiteral'),

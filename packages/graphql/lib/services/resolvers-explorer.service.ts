@@ -176,12 +176,12 @@ export class ResolversExplorerService extends BaseExplorerService {
       resolver.methodName === FIELD_TYPENAME
         ? { guards: false, filters: false, interceptors: false }
         : isPropertyResolver
-        ? {
-            guards: fieldResolverEnhancers.includes('guards'),
-            filters: fieldResolverEnhancers.includes('filters'),
-            interceptors: fieldResolverEnhancers.includes('interceptors'),
-          }
-        : undefined;
+          ? {
+              guards: fieldResolverEnhancers.includes('guards'),
+              filters: fieldResolverEnhancers.includes('filters'),
+              interceptors: fieldResolverEnhancers.includes('interceptors'),
+            }
+          : undefined;
 
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
@@ -284,6 +284,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       this.modulesContainer,
       this.gqlOptions.include || [],
     );
+
     const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
     return resolvers;
   }
@@ -364,6 +365,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     resolverConstructor: any,
     moduleRef: Module,
   ) {
+    // eslint-disable-next-line no-prototype-builtins
     if (resolverConstructor.hasOwnProperty(CONTROLLER_ID_KEY)) {
       return;
     }

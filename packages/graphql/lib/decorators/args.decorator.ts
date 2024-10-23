@@ -96,7 +96,7 @@ export function Args(
     pipes,
   );
 
-  return (target: Object, key: string, index: number) => {
+  return (target: object, key: string, index: number) => {
     addPipesMetadata(GqlParamtype.ARGS, property, argPipes, target, key, index);
 
     LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {

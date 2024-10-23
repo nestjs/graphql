@@ -5,7 +5,6 @@ import * as fs from 'fs';
 import { flatten } from 'lodash';
 import * as util from 'util';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const normalize = require('normalize-path');
 const readFile = util.promisify(fs.readFile);
 
@@ -37,6 +36,7 @@ export class GraphQLTypesLoader {
     });
     if (filePaths.length === 0) {
       throw new Error(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         `No type definitions were found with the specified file name patterns: "${paths}". Please make sure there is at least one file that matches the given patterns.`,
       );
     }

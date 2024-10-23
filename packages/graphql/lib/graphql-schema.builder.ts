@@ -36,7 +36,12 @@ export class GraphQLSchemaBuilder {
           ...buildSchemaOptions,
           scalarsMap: [
             ...(buildSchemaOptions.scalarsMap ?? []),
-            ...scalarsMap.filter(({ type }) => buildSchemaOptions.scalarsMap?.every((item) => item.type !== type) ?? true),
+            ...scalarsMap.filter(
+              ({ type }) =>
+                buildSchemaOptions.scalarsMap?.every(
+                  (item) => item.type !== type,
+                ) ?? true,
+            ),
           ],
         },
         options.sortSchema,

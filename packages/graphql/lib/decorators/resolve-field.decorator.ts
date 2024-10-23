@@ -86,12 +86,12 @@ export function ResolveField(
 
     options = isObject(options)
       ? {
-          name: propertyName as string,
+          name: propertyName,
           ...options,
         }
       : propertyName
-      ? { name: propertyName as string }
-      : {};
+        ? { name: propertyName }
+        : {};
 
     LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
       let typeOptions: TypeOptions, typeFn: (type?: any) => GqlTypeReference;
@@ -105,7 +105,9 @@ export function ResolveField(
         });
         typeOptions = implicitTypeMetadata.options;
         typeFn = implicitTypeMetadata.typeFn;
-      } catch {}
+      } catch {
+        /* empty */
+      }
 
       TypeMetadataStorage.addResolverPropertyMetadata({
         kind: 'external',
@@ -114,9 +116,9 @@ export function ResolveField(
         target: target.constructor,
         typeFn,
         typeOptions,
-        description: (options as ResolveFieldOptions).description,
-        deprecationReason: (options as ResolveFieldOptions).deprecationReason,
-        complexity: (options as ResolveFieldOptions).complexity,
+        description: options.description,
+        deprecationReason: options.deprecationReason,
+        complexity: options.complexity,
       });
     });
   };

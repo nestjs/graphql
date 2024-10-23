@@ -11,7 +11,7 @@ const NOT_ALLOWED_TYPES: Type<any>[] = [Promise, Array, Object, Function];
 
 export interface ReflectTypeOptions {
   metadataKey: 'design:type' | 'design:returntype' | 'design:paramtypes';
-  prototype: Object;
+  prototype: object;
   propertyKey: string;
   explicitTypeFn?: ReturnTypeFunc;
   typeOptions?: TypeOptions;

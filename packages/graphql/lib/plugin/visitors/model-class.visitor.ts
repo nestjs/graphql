@@ -289,7 +289,7 @@ export class ModelClassVisitor {
       const modifiers = getModifiers(member);
       if (
         (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
-        !hasModifiers(modifiers as readonly ts.Modifier[], [
+        !hasModifiers(modifiers, [
           ts.SyntaxKind.StaticKeyword,
           ts.SyntaxKind.PrivateKeyword,
         ]) &&
