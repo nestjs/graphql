@@ -38,7 +38,7 @@
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.2",
     "@types/supertest": "6.0.2",
-    "@types/ws": "8.5.12",
+    "@types/ws": "8.5.13",
     "@typescript-eslint/eslint-plugin": "8.12.2",
     "@typescript-eslint/parser": "8.12.2",
     "class-transformer": "0.5.1",

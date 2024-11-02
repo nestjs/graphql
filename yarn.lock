@@ -2502,10 +2502,10 @@
   resolved "https://registry.npmjs.org/@types/validator/-/validator-13.11.9.tgz"
   integrity sha512-FCTsikRozryfayPuiI46QzH3fnrOoctTjvOYZkho9BTFLCOZ2rgZJHMOVgCOfttjPJcgOx52EpkY0CMfy87MIw==
 
-"@types/ws@8.5.12":
-  version "8.5.12"
-  resolved "https://registry.npmjs.org/@types/ws/-/ws-8.5.12.tgz"
-  integrity sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==
+"@types/ws@8.5.13":
+  version "8.5.13"
+  resolved "https://registry.npmjs.org/@types/ws/-/ws-8.5.13.tgz"
+  integrity sha512-osM/gWBTPKgHV8XkTunnegTRIsvF6owmf5w+JtAfOw472dptdm0dlGv4xCt6GwQRcC2XVOvvRE/0bAoQcL2QkA==
   dependencies:
     "@types/node" "*"
 
