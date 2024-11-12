@@ -29,7 +29,7 @@
 > **NOTE** `mercurius` is not compatible with Express.
 
 ```bash
-npm i --save @nestjs/graphql @nestjs/mercurius mercurius graphql
+$ npm i --save @nestjs/graphql @nestjs/mercurius mercurius graphql
 ```
 
 ## Quick Start
