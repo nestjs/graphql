@@ -1477,19 +1477,19 @@
     "@emnapi/runtime" "^1.1.0"
     "@tybys/wasm-util" "^0.9.0"
 
-"@nestjs/common@10.4.7":
-  version "10.4.7"
-  resolved "https://registry.npmjs.org/@nestjs/common/-/common-10.4.7.tgz"
-  integrity sha512-gIOpjD3Mx8gfYGxYm/RHPcJzqdknNNFCyY+AxzBT3gc5Xvvik1Dn5OxaMGw5EbVfhZgJKVP0n83giUOAlZQe7w==
+"@nestjs/common@10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-10.4.8.tgz#0a874c4673a61bcb4531732852c8b012b8619610"
+  integrity sha512-PVor9dxihg3F2LMnVNkQu42vUmea2+qukkWXUSumtVKDsBo7X7jnZWXtF5bvNTcYK7IYL4/MM4awNfJVJcJpFg==
   dependencies:
     uid "2.0.2"
     iterare "1.2.1"
     tslib "2.7.0"
 
-"@nestjs/core@10.4.7":
-  version "10.4.7"
-  resolved "https://registry.npmjs.org/@nestjs/core/-/core-10.4.7.tgz"
-  integrity sha512-AIpQzW/vGGqSLkKvll1R7uaSNv99AxZI2EFyVJPNGDgFsfXaohfV1Ukl6f+s75Km+6Fj/7aNl80EqzNWQCS8Ig==
+"@nestjs/core@10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-10.4.8.tgz#b299fd5b65f575f53f270ab98fa39a7badb5fd4f"
+  integrity sha512-Kdi9rDZdlCkGL2AK9XuJ24bZp2YFV6dWBdogGsAHSP5u95wfnSkhduxHZy6q/i1nFFiLASUHabL8Jwr+bmD22Q==
   dependencies:
     uid "2.0.2"
     "@nuxtjs/opencollective" "0.3.2"
@@ -1503,10 +1503,10 @@
   resolved "https://registry.npmjs.org/@nestjs/mapped-types/-/mapped-types-2.0.5.tgz"
   integrity sha512-bSJv4pd6EY99NX9CjBIyn4TVDoSit82DUZlL4I3bqNfy5Gt+gXTa86i3I/i0iIV9P4hntcGM5GyO+FhZAhxtyg==
 
-"@nestjs/platform-express@10.4.7":
-  version "10.4.7"
-  resolved "https://registry.npmjs.org/@nestjs/platform-express/-/platform-express-10.4.7.tgz"
-  integrity sha512-q6XDOxZPTZ9cxALcVuKUlRBk+cVEv6dW2S8p2yVre22kpEQxq53/OI8EseDvzObGb6hepZ8+yBY04qoYqSlXNQ==
+"@nestjs/platform-express@10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-10.4.8.tgz#fe2ff3ce96ad606e5c5c7a652b3c73dafc317b61"
+  integrity sha512-bDz6wQD9LzGeK6uAAFv9l9AbrpyPwHStNObL8J95HBAXJesOblVlQMBAhdfci1YVMQUfOc36qq0IpRSa1II9Mg==
   dependencies:
     body-parser "1.20.3"
     cors "2.8.5"
@@ -1514,10 +1514,10 @@
     multer "1.4.4-lts.1"
     tslib "2.7.0"
 
-"@nestjs/platform-fastify@10.4.7":
-  version "10.4.7"
-  resolved "https://registry.npmjs.org/@nestjs/platform-fastify/-/platform-fastify-10.4.7.tgz"
-  integrity sha512-lrKGBeAEj14u3AuREWTAe7FADsA6EVULpawRnHNayEOKP3WgbtUdvG2xefsALsHWRz6pcM2Ftxtv+GeTR3pciA==
+"@nestjs/platform-fastify@10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-10.4.8.tgz#bb796aec0e910b721b0b94e43c6c3021784dbc9e"
+  integrity sha512-Z3OjsmMCbYBJMv413ITUs2RDG2IXbjcMLEdAiTB6rMjQcpY+9hquCkEZFVZWFq6qyh6GeIVR1S3Qzi0oMiGG1A==
   dependencies:
     "@fastify/cors" "9.0.1"
     "@fastify/formbody" "7.4.0"
@@ -1527,10 +1527,10 @@
     path-to-regexp "3.3.0"
     tslib "2.7.0"
 
-"@nestjs/testing@10.4.7":
-  version "10.4.7"
-  resolved "https://registry.npmjs.org/@nestjs/testing/-/testing-10.4.7.tgz"
-  integrity sha512-aS3sQ0v4g8cyHDzW3xJv1+8MiFAkxUNXmnau588IFFI/nBIo/kevLNHNPr85keYekkJ/lwNDW72h8UGg8BYd9w==
+"@nestjs/testing@10.4.8":
+  version "10.4.8"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-10.4.8.tgz#70e35b923c6b8c5fe0e3aeeae8541e20c5650285"
+  integrity sha512-VusUnVgfY6KUc0gKU7ER9QQ2QyCoO770wcAfgLhtqydezt/w07FvqT6uOtb/Tf4SMfUbxx6AJwte6UUmkewbnQ==
   dependencies:
     tslib "2.7.0"
 
