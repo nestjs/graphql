@@ -51,6 +51,6 @@ export class CatsResolvers {
 
   @Subscription('catCreated')
   catCreated() {
-    return pubSub.asyncIterator('catCreated');
+    return pubSub.asyncIterableIterator('catCreated');
   }
 }

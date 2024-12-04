@@ -95,6 +95,6 @@ export class RecipesResolver {
     description: 'subscription description',
   })
   recipeAdded() {
-    return pubSub.asyncIterator('recipeAdded');
+    return pubSub.asyncIterableIterator('recipeAdded');
   }
 }

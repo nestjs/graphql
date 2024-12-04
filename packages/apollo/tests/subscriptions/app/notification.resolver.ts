@@ -33,6 +33,6 @@ export class NotificationResolver {
     id: string,
   ) {
     this.logger.log('User subscribed to newNotification');
-    return pubSub.asyncIterator('newNotification');
+    return pubSub.asyncIterableIterator('newNotification');
   }
 }
