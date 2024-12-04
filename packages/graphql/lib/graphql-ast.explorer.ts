@@ -68,7 +68,8 @@ export interface DefinitionsGeneratorOptions {
    * @default undefined
    */
   defaultTypeMapping?: Partial<
-    Record<'ID' | 'Boolean' | 'Float' | 'String' | 'Int', string>
+    Record<'ID' | 'Float' | 'Int', 'string' | 'number'> &
+    Record<'Boolean' | 'String', 'boolean' | 'string' | 'number'>
   >;
 
   /**
