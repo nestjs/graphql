@@ -29,7 +29,7 @@
     "graphql": "16.9.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.6.0",
+    "@commitlint/cli": "19.6.1",
     "@commitlint/config-angular": "19.6.0",
     "@eslint/js": "9.17.0",
     "@types/graphql": "14.5.0",
