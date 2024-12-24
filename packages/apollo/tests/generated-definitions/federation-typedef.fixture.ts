@@ -33,4 +33,8 @@ export class User {
     posts?: Nullable<Nullable<Post>[]>;
 }
 
+export class ISchema {
+    Query: IQuery;
+}
+
 type Nullable<T> = T | null;
