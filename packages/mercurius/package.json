@@ -34,7 +34,7 @@
     "@nestjs/testing": "10.4.15",
     "fastify": "4.29.0",
     "mercurius": "14.1.0",
-    "mercurius-integration-testing": "9.0.0"
+    "mercurius-integration-testing": "9.0.1"
   },
   "peerDependencies": {
     "@apollo/subgraph": "^2.0.0",

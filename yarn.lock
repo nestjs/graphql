@@ -3910,7 +3910,7 @@ cookie@^0.5.0:
   resolved "https://registry.npmjs.org/cookie/-/cookie-0.5.0.tgz"
   integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
 
-cookie@^1.0.1:
+cookie@^1.0.0, cookie@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.0.2.tgz#27360701532116bd3f1f9416929d176afe1e4610"
   integrity sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==
@@ -7703,13 +7703,13 @@ meow@^8.1.2:
     type-fest "^0.18.0"
     yargs-parser "^20.2.3"
 
-mercurius-integration-testing@9.0.0:
-  version "9.0.0"
-  resolved "https://registry.npmjs.org/mercurius-integration-testing/-/mercurius-integration-testing-9.0.0.tgz"
-  integrity sha512-N2GRMPOZ2BjgnTUH3QKcv9INd3AXb7u7GYQQ8EeakBTqZ68PkWppM32RwNTRMKuxJblUBbTEOJ5diAwo0ETP9A==
+mercurius-integration-testing@9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/mercurius-integration-testing/-/mercurius-integration-testing-9.0.1.tgz#f1f5a5cb7683549155713eeee929f6c71aeb61ef"
+  integrity sha512-AAE0slhjNPtNbRD3guczsEzlh38ClzFlvU/VnuMHqjWUDsc7pHkk8psFTxlJ6ihFiNIVBBPDIfWnBzbMJ+7IrA==
   dependencies:
     "@graphql-typed-document-node/core" "^3.1.2"
-    cookie "^0.5.0"
+    cookie "^1.0.0"
     ws "^8.12.1"
 
 mercurius@14.1.0:
