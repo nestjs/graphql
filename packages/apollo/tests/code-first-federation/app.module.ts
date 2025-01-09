@@ -18,6 +18,7 @@ import { HumanModule } from './human/human.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       inheritResolversFromInterfaces: true,
       driver: ApolloFederationDriver,
+      enableDrainPlugin: false,
       includeStacktraceInErrorResponses: false,
       autoSchemaFile: true,
       buildSchemaOptions: {

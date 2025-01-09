@@ -24,6 +24,7 @@ describe('Code-first - Federation', () => {
   });
 
   it(`should return query result`, async () => {
+    console.log('APOLLO SERVER OPTIONS', apolloClient.internals.plugins);
     const response = await apolloClient.executeOperation({
       query: gql`
         {

@@ -37,6 +37,10 @@ export abstract class ApolloBaseDriver<
     const platformName = httpAdapter.getType();
 
     if (platformName === 'express') {
+      console.log(
+        'ApolloBaseDriver.start() - platformName === express',
+        apolloOptions,
+      );
       await this.registerExpress(apolloOptions);
     } else if (platformName === 'fastify') {
       await this.registerFastify(apolloOptions);
@@ -50,10 +54,12 @@ export abstract class ApolloBaseDriver<
   }
 
   public async mergeDefaultOptions(options: T): Promise<T> {
+    console.log('passed in options', options);
     let defaults: ApolloDriverConfig = {
       path: '/graphql',
       fieldResolverEnhancers: [],
       stopOnTerminationSignals: false,
+      enableDrainPlugin: options.enableDrainPlugin ?? true,
     };
 
     if (
@@ -115,24 +121,34 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
+    console.log('registerExpress() - options', options);
     const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
-    const drainHttpServerPlugin = ApolloServerPluginDrainHttpServer({
-      httpServer: httpAdapter.getHttpServer(),
-    });
 
     preStartHook?.();
+
+    const plugins = options.plugins || [];
+
+    // need to make enableDefaultPlugins == true
+    if (options.enableDrainPlugin === true) {
+      console.log('ApolloBaseDriver.registerExpress() - enableDrainPlugin');
+      const drainHttpServerPlugin = ApolloServerPluginDrainHttpServer({
+        httpServer: httpAdapter.getHttpServer(),
+      });
+
+      plugins.push(drainHttpServerPlugin);
+    } else {
+      console.log('ApolloBaseDriver.registerExpress() - NOT enableDrainPlugin');
+    }
 
     const server = new ApolloServer({
       typeDefs,
       resolvers,
       schema,
       ...options,
-      plugins: options.plugins
-        ? options.plugins.concat([drainHttpServerPlugin])
-        : [drainHttpServerPlugin],
+      plugins,
     });
 
     await server.start();
@@ -161,18 +177,25 @@ export abstract class ApolloBaseDriver<
     const app = httpAdapter.getInstance();
 
     const { path, typeDefs, resolvers, schema } = options;
-    const apolloDrainPlugin = fastifyApolloDrainPlugin(app);
 
     preStartHook?.();
+
+    const plugins = options.plugins || [];
+
+    if (options.enableDrainPlugin === true) {
+      const apolloDrainPlugin = fastifyApolloDrainPlugin(app);
+
+      plugins.push(apolloDrainPlugin);
+    } else {
+      console.log('ApolloBaseDriver.registerFastify() - NOT enableDrainPlugin');
+    }
 
     const server = new ApolloServer<BaseContext>({
       typeDefs,
       resolvers,
       schema,
       ...options,
-      plugins: options.plugins
-        ? options.plugins.concat([apolloDrainPlugin])
-        : [apolloDrainPlugin],
+      plugins,
     });
 
     await server.start();

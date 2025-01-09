@@ -42,6 +42,11 @@ export interface ApolloDriverConfig
    * @default true
    */
   autoTransformHttpErrors?: boolean;
+
+  /**
+   *  Install the default GraphQL Drain Server plugin.
+   */
+  enableDrainPlugin?: boolean;
 }
 
 export type ApolloDriverConfigFactory = GqlOptionsFactory<ApolloDriverConfig>;
