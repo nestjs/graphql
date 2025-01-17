@@ -219,10 +219,15 @@ export class TypeMetadataStorageHost {
     const loadedClasses = new Set<Function>();
     metadata
       .filter((item) => item?.target)
-      .forEach((item) => this.applyPluginMetadata(item.target.prototype, loadedClasses));
+      .forEach((item) =>
+        this.applyPluginMetadata(item.target.prototype, loadedClasses),
+      );
   }
 
-  applyPluginMetadata(prototype: Function, loadedClasses = new Set<Function>()) {
+  applyPluginMetadata(
+    prototype: Function,
+    loadedClasses = new Set<Function>(),
+  ) {
     do {
       if (!prototype.constructor) {
         return;

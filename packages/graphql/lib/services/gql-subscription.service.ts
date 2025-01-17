@@ -8,11 +8,12 @@ import {
   GRAPHQL_TRANSPORT_WS_PROTOCOL,
   ServerOptions,
 } from 'graphql-ws';
-import { useServer } from 'graphql-ws/lib/use/ws';
+// @ts-expect-error TS says path is invalid, but it's valid
+import { useServer } from 'graphql-ws/use/ws';
 import {
   GRAPHQL_WS,
-  ServerOptions as SubscriptionTransportWsServerOptions,
   SubscriptionServer,
+  ServerOptions as SubscriptionTransportWsServerOptions,
 } from 'subscriptions-transport-ws';
 import * as ws from 'ws';
 
