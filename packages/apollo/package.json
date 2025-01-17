@@ -49,7 +49,7 @@
     "@as-integrations/fastify": "^2.1.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/graphql": "^12.2.2",
+    "@nestjs/graphql": "^13.0.0",
     "graphql": "^16.10.0"
   },
   "peerDependenciesMeta": {
