@@ -118,6 +118,17 @@ export abstract class ApolloBaseDriver<
     const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
+
+    // Workaround: GraphQL playground requires body to be present
+    // otherwise, it shows the "req.body is not set; this probably means you forgot to set up the json middleware before the Apollo Server middleware." error.
+    // The latest version of "body-parser" does not set the body if there is no payload.
+    // @see https://github.com/nestjs/graphql/issues/3451
+    // @see https://github.com/nestjs/nest/pull/14443
+    httpAdapter.use(path, (req: any, _: any, next: () => void) => {
+      req.body = req.body ?? {};
+      next();
+    });
+
     const app = httpAdapter.getInstance();
     const drainHttpServerPlugin = ApolloServerPluginDrainHttpServer({
       httpServer: httpAdapter.getHttpServer(),
