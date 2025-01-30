@@ -28,6 +28,11 @@ export class TypeMetadataStorageHost {
   private queries = new Array<ResolverTypeMetadata>();
   private mutations = new Array<ResolverTypeMetadata>();
   private subscriptions = new Array<ResolverTypeMetadata>();
+  private compiledResolvers?: {
+    queries: Array<ResolverTypeMetadata>;
+    mutations: Array<ResolverTypeMetadata>;
+    subscriptions: Array<ResolverTypeMetadata>;
+  };
   private fieldResolvers = new Array<FieldResolverMetadata>();
   private readonly enums = new Array<EnumMetadata>();
   private readonly unions = new Array<UnionMetadata>();
@@ -39,7 +44,7 @@ export class TypeMetadataStorageHost {
   }
 
   getMutationsMetadata(): ResolverTypeMetadata[] {
-    return this.mutations;
+    return this.compiledResolvers?.mutations ?? this.mutations;
   }
 
   addQueryMetadata(metadata: ResolverTypeMetadata) {
@@ -47,7 +52,7 @@ export class TypeMetadataStorageHost {
   }
 
   getQueriesMetadata(): ResolverTypeMetadata[] {
-    return this.queries;
+    return this.compiledResolvers?.queries ?? this.queries;
   }
 
   addSubscriptionMetadata(metadata: ResolverTypeMetadata) {
@@ -55,7 +60,7 @@ export class TypeMetadataStorageHost {
   }
 
   getSubscriptionsMetadata(): ResolverTypeMetadata[] {
-    return this.subscriptions;
+    return this.compiledResolvers?.subscriptions ?? this.subscriptions;
   }
 
   addResolverPropertyMetadata(metadata: FieldResolverMetadata) {
@@ -208,7 +213,7 @@ export class TypeMetadataStorageHost {
       ...this.subscriptions,
     ];
     this.compileResolversMetadata(resolversMetadata);
-    this.compileExtendedResolversMetadata();
+    this.compiledResolvers = this.compileExtendedResolversMetadata();
 
     orphanedTypes.forEach(
       (type) => 'prototype' in type && this.applyPluginMetadata(type.prototype),
@@ -441,6 +446,10 @@ export class TypeMetadataStorageHost {
   }
 
   private compileExtendedResolversMetadata() {
+    let queries = this.queries,
+      mutations = this.mutations,
+      subscriptions = this.subscriptions;
+
     this.metadataByTargetCollection.all.resolver.forEach((item) => {
       let parentClass = Object.getPrototypeOf(item.target);
 
@@ -450,18 +459,18 @@ export class TypeMetadataStorageHost {
         ).resolver;
 
         if (parentMetadata) {
-          this.queries = this.mergeParentResolverHandlers(
-            this.queries,
+          queries = this.mergeParentResolverHandlers(
+            queries,
             parentClass,
             item,
           );
-          this.mutations = this.mergeParentResolverHandlers(
-            this.mutations,
+          mutations = this.mergeParentResolverHandlers(
+            mutations,
             parentClass,
             item,
           );
-          this.subscriptions = this.mergeParentResolverHandlers(
-            this.subscriptions,
+          subscriptions = this.mergeParentResolverHandlers(
+            subscriptions,
             parentClass,
             item,
           );
@@ -474,6 +483,8 @@ export class TypeMetadataStorageHost {
         parentClass = Object.getPrototypeOf(parentClass);
       }
     });
+
+    return { queries, mutations, subscriptions };
   }
 
   private mergeParentResolverHandlers<
