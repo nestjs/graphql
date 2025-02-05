@@ -10429,10 +10429,10 @@ ts-jest@29.2.5:
     semver "^7.6.3"
     yargs-parser "^21.1.1"
 
-ts-morph@25.0.0:
-  version "25.0.0"
-  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-25.0.0.tgz#f6eff3bbc7328dfb6f28b461a8d20ed32d36f8da"
-  integrity sha512-ERPTUVO5qF8cEGJgAejGOsCVlbk8d0SDyiJsucKQT5XgqoZslv0Qml+gnui6Yy6o+uQqw5SestyW2HvlVtT/Sg==
+ts-morph@25.0.1:
+  version "25.0.1"
+  resolved "https://registry.yarnpkg.com/ts-morph/-/ts-morph-25.0.1.tgz#7de0b60fcc6e86955c8766831bcd2c5d87ffbd4f"
+  integrity sha512-QJEiTdnz1YjrB3JFhd626gX4rKHDLSjSVMvGGG4v7ONc3RBwa0Eei98G9AT9uNFDMtV54JyuXsFeC+OH0n6bXQ==
   dependencies:
     "@ts-morph/common" "~0.26.0"
     code-block-writer "^13.0.3"
