@@ -39,7 +39,7 @@
     "@nestjs/testing": "11.0.7",
     "graphql": "16.10.0",
     "reflect-metadata": "0.2.2",
-    "ts-morph": "25.0.0"
+    "ts-morph": "25.0.1"
   },
   "peerDependencies": {
     "@apollo/subgraph": "^2.9.3",
