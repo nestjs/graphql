@@ -7,6 +7,9 @@ import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
 
+/**
+ * @publicApi
+ */
 @Injectable()
 export class ApolloFederationDriver extends ApolloBaseDriver {
   private readonly pluginsExplorerService: PluginsExplorerService;

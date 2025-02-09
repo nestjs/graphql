@@ -2,6 +2,8 @@ import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { GraphQLError, GraphQLErrorOptions } from 'graphql';
 
 /**
+ * @publicApi
+ *
  * This error is thrown when the user input does not pass validation.
  *
  * "ValidationError" class was removed in the latest version of Apollo Server (4.0.0)

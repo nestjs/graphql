@@ -39,6 +39,9 @@ import { TypeDefsDecoratorFactory } from './type-defs-decorator.factory';
 
 const DEFAULT_FEDERATION_VERSION: FederationVersion = 1;
 
+/**
+ * @publicApi
+ */
 @Injectable()
 export class GraphQLFederationFactory {
   constructor(

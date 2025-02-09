@@ -17,6 +17,8 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 
 /**
+ * @publicApi
+ *
  * Interface defining options that can be passed to `@ResolveField()` decorator.
  */
 export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
@@ -43,6 +45,8 @@ export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
 };
 
 /**
+ * @publicApi
+ *
  * Field resolver (method) Decorator.
  */
 export function ResolveField(
@@ -50,6 +54,8 @@ export function ResolveField(
   options?: ResolveFieldOptions,
 ): MethodDecorator;
 /**
+ * @publicApi
+ *
  * Property resolver (method) Decorator.
  */
 export function ResolveField(
@@ -58,6 +64,8 @@ export function ResolveField(
   options?: ResolveFieldOptions,
 ): MethodDecorator;
 /**
+ * @publicApi
+ *
  * Property resolver (method) Decorator.
  */
 export function ResolveField(

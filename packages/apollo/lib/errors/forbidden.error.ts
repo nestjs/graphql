@@ -1,6 +1,8 @@
 import { GraphQLError, GraphQLErrorOptions } from 'graphql';
 
 /**
+ * @publicApi
+ *
  * This error is thrown when the user is not authorized to access a resource.
  *
  * "ForbiddenError" class was removed in the latest version of Apollo Server (4.0.0)

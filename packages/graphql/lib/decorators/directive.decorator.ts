@@ -4,6 +4,8 @@ import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.st
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
+ * @publicApi
+ *
  * Adds a directive to specified field, type, or handler.
  */
 export function Directive(

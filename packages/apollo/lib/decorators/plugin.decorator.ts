@@ -3,6 +3,8 @@ import { PLUGIN_METADATA } from '../constants';
 
 /**
  * Decorator that marks a class as an Apollo plugin.
+ *
+ * @publicApi
  */
 export function Plugin(): ClassDecorator {
   return (target: Function) => {

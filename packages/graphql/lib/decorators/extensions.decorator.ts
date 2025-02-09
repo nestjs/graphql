@@ -2,6 +2,8 @@ import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.st
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
+ * @publicApi
+ *
  * Adds arbitrary data accessible through the "extensions" property to specified field, type, or handler.
  */
 export function Extensions(

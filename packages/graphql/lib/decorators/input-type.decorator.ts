@@ -12,6 +12,8 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
+ * @publicApi
+ *
  * Interface defining options that can be passed to `@InputType()` decorator.
  */
 export interface InputTypeOptions {
@@ -26,14 +28,20 @@ export interface InputTypeOptions {
 }
 
 /**
+ * @publicApi
+ *
  * Decorator that marks a class as a GraphQL input type.
  */
 export function InputType(): ClassDecorator;
 /**
+ * @publicApi
+ *
  * Decorator that marks a class as a GraphQL input type.
  */
 export function InputType(options: InputTypeOptions): ClassDecorator;
 /**
+ * @publicApi
+ *
  * Decorator that marks a class as a GraphQL input type.
  */
 export function InputType(
@@ -41,6 +49,8 @@ export function InputType(
   options?: InputTypeOptions,
 ): ClassDecorator;
 /**
+ * @publicApi
+ *
  * Decorator that marks a class as a GraphQL input type.
  */
 export function InputType(

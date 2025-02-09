@@ -6,6 +6,9 @@ export interface TypeDefsDecorator<T = FederationConfig> {
   decorate(typeDefs: string, options: T): string;
 }
 
+/**
+ * @publicApi
+ */
 @Injectable()
 export class TypeDefsDecoratorFactory {
   private readonly logger = new Logger(TypeDefsDecoratorFactory.name);

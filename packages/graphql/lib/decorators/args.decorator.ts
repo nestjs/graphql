@@ -14,6 +14,8 @@ import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 import { addPipesMetadata } from './param.utils';
 
 /**
+ * @publicApi
+ *
  * Interface defining options that can be passed to `@Args()` decorator.
  */
 export type ArgsOptions<T = any> = BaseTypeOptions<T> & {
@@ -36,12 +38,16 @@ export type ArgsOptions<T = any> = BaseTypeOptions<T> & {
 };
 
 /**
+ * @publicApi
+ *
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
  */
 export function Args(): ParameterDecorator;
 /**
+ * @publicApi
+ *
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
@@ -50,6 +56,8 @@ export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ): ParameterDecorator;
 /**
+ * @publicApi
+ *
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
@@ -59,6 +67,8 @@ export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ): ParameterDecorator;
 /**
+ * @publicApi
+ *
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
@@ -68,6 +78,8 @@ export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ): ParameterDecorator;
 /**
+ * @publicApi
+ *
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
@@ -78,6 +90,8 @@ export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
 ): ParameterDecorator;
 /**
+ * @publicApi
+ *
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.

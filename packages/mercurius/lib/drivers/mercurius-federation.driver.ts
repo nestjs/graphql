@@ -14,6 +14,9 @@ import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util
 // TODO:
 // const { mercuriusFederationPlugin } = require('@mercuriusjs/federation');
 
+/**
+ * @publicApi
+ */
 @Injectable()
 export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
   constructor(

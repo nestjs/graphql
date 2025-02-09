@@ -10,6 +10,9 @@ import {
   preValidationHookHandler,
 } from 'mercurius';
 
+/**
+ *  @publicApi
+ */
 export interface MercuriusHooksObject<
   Context extends MercuriusContext = MercuriusContext,
 > {
@@ -39,6 +42,9 @@ export interface MercuriusHooksObject<
     | onSubscriptionEndHookHandler<Context>[];
 }
 
+/**
+ *  @publicApi
+ */
 export interface MercuriusHooks<
   Context extends MercuriusContext = MercuriusContext,
 > {
