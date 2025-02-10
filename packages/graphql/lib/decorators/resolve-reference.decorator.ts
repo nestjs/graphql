@@ -2,9 +2,9 @@ import { SetMetadata } from '@nestjs/common';
 import { RESOLVER_REFERENCE_METADATA } from '../graphql.constants';
 
 /**
- * @publicApi
- *
  * Property reference resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveReference(): MethodDecorator {
   return (

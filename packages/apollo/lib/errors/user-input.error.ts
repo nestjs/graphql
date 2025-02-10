@@ -2,12 +2,13 @@ import { ApolloServerErrorCode } from '@apollo/server/errors';
 import { GraphQLError, GraphQLErrorOptions } from 'graphql';
 
 /**
- * @publicApi
- *
  * This error is thrown when the user input is invalid.
  *
  * "UserInputError" class was removed in the latest version of Apollo Server (4.0.0)
  * It was moved to the @nestjs/apollo package to avoid regressions & make migration easier.
+ *
+ * @publicApi
+ *
  */
 export class UserInputError extends GraphQLError {
   constructor(message: string, options?: GraphQLErrorOptions) {

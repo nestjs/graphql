@@ -4,9 +4,9 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
- * @publicApi
- *
  * Decorator that marks a class as a resolver arguments type.
+ *
+ * @publicApi
  */
 export function ArgsType(): ClassDecorator {
   return (target: Function) => {

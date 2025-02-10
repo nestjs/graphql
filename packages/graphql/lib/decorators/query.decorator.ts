@@ -37,30 +37,30 @@ export type QueryOptions<T = any> = BaseTypeOptions<T> & {
 };
 
 /**
- * @publicApi
- *
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(): MethodDecorator;
 /**
- * @publicApi
- *
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(name: string): MethodDecorator;
 /**
- * @publicApi
- *
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(
   typeFunc: ReturnTypeFunc,
   options?: QueryOptions,
 ): MethodDecorator;
 /**
- * @publicApi
- *
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(
   nameOrType?: string | ReturnTypeFunc,

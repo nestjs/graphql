@@ -5,18 +5,18 @@ import { ResolveField, ResolveFieldOptions } from './resolve-field.decorator';
 const logger = new Logger('GraphQLModule');
 
 /**
- * @publicApi
- *
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveProperty(
   typeFunc?: ReturnTypeFunc,
   options?: ResolveFieldOptions,
 ): MethodDecorator;
 /**
- * @publicApi
- *
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveProperty(
   propertyName?: string,
@@ -24,9 +24,9 @@ export function ResolveProperty(
   options?: ResolveFieldOptions,
 ): MethodDecorator;
 /**
- * @publicApi
- *
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveProperty(
   propertyNameOrFunc?: string | ReturnTypeFunc,

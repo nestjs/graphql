@@ -13,9 +13,9 @@ import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 import { addResolverMetadata } from './resolvers.utils';
 
 /**
- * @publicApi
- *
  * Interface defining options that can be passed to `@Mutation()` decorator.
+ *
+ * @publicApi
  */
 export type MutationOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -37,30 +37,30 @@ export type MutationOptions<T = any> = BaseTypeOptions<T> & {
 };
 
 /**
- * @publicApi
- *
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(): MethodDecorator;
 /**
- * @publicApi
- *
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(name: string): MethodDecorator;
 /**
- * @publicApi
- *
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(
   typeFunc: ReturnTypeFunc,
   options?: MutationOptions,
 ): MethodDecorator;
 /**
- * @publicApi
- *
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(
   nameOrType?: string | ReturnTypeFunc,

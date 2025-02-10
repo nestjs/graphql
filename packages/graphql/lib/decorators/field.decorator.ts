@@ -19,9 +19,9 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 
 /**
- * @publicApi
- *
  * Interface defining options that can be passed to `@Field()` decorator.
+ *
+ * @publicApi
  */
 export type FieldOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -53,26 +53,26 @@ type FieldOptionsExtractor<T> = T extends [GqlTypeReference<infer P>]
     : never;
 
 /**
- * @publicApi
- *
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
+ *
+ * @publicApi
  */
 export function Field(): PropertyDecorator & MethodDecorator;
 /**
- * @publicApi
- *
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
+ *
+ * @publicApi
  */
 export function Field<T extends ReturnTypeFuncValue>(
   options: FieldOptionsExtractor<T>,
 ): PropertyDecorator & MethodDecorator;
 /**
- * @publicApi
- *
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
+ *
+ * @publicApi
  */
 export function Field<T extends ReturnTypeFuncValue>(
   returnTypeFunction?: ReturnTypeFunc<T>,
@@ -80,10 +80,10 @@ export function Field<T extends ReturnTypeFuncValue>(
 ): PropertyDecorator & MethodDecorator;
 
 /**
- * @publicApi
- *
  * @Field() decorator is used to mark a specific class property as a GraphQL field.
  * Only properties decorated with this decorator will be defined in the schema.
+ *
+ * @publicApi
  */
 export function Field<T extends ReturnTypeFuncValue>(
   typeOrOptions?: ReturnTypeFunc<T> | FieldOptionsExtractor<T>,

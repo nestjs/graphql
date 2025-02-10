@@ -13,9 +13,9 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
- * @publicApi
- *
  * Interface defining options that can be passed to `@InterfaceType()` decorator.
+ *
+ * @publicApi
  */
 export interface InterfaceTypeOptions {
   /**
@@ -37,24 +37,25 @@ export interface InterfaceTypeOptions {
 }
 
 /**
+ * Decorator that marks a class as a GraphQL interface type.
+ *
  * @publicApi
  *
- * Decorator that marks a class as a GraphQL interface type.
  */
 export function InterfaceType(options?: InterfaceTypeOptions): ClassDecorator;
 /**
- * @publicApi
- *
  * Decorator that marks a class as a GraphQL interface type.
+ *
+ * @publicApi
  */
 export function InterfaceType(
   name: string,
   options?: InterfaceTypeOptions,
 ): ClassDecorator;
 /**
- * @publicApi
- *
  * Decorator that marks a class as a GraphQL interface type.
+ *
+ * @publicApi
  */
 export function InterfaceType(
   nameOrOptions?: string | InterfaceTypeOptions,

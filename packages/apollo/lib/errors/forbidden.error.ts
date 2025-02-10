@@ -1,12 +1,13 @@
 import { GraphQLError, GraphQLErrorOptions } from 'graphql';
 
 /**
- * @publicApi
- *
  * This error is thrown when the user is not authorized to access a resource.
  *
  * "ForbiddenError" class was removed in the latest version of Apollo Server (4.0.0)
  * It was moved to the @nestjs/apollo package to avoid regressions & make migration easier.
+ *
+ * @publicApi
+ *
  */
 export class ForbiddenError extends GraphQLError {
   constructor(message: string, options?: GraphQLErrorOptions) {

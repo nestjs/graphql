@@ -6,21 +6,21 @@ import {
 import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
 
 /**
- * @publicApi
- *
  * Decorator that marks a class as a GraphQL scalar.
+ *
+ * @publicApi
  */
 export function Scalar(name: string): ClassDecorator;
 /**
- * @publicApi
- *
  * Decorator that marks a class as a GraphQL scalar.
+ *
+ * @publicApi
  */
 export function Scalar(name: string, typeFunc: ReturnTypeFunc): ClassDecorator;
 /**
- * @publicApi
- *
  * Decorator that marks a class as a GraphQL scalar.
+ *
+ * @publicApi
  */
 export function Scalar(
   name: string,
