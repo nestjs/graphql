@@ -50,39 +50,39 @@ export type SubscriptionOptions<T = any> = BaseTypeOptions<T> & {
 };
 
 /**
- * @publicApi
- *
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(): MethodDecorator;
 /**
- * @publicApi
- *
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(name: string): MethodDecorator;
 /**
- * @publicApi
- *
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(
   name: string,
   options: Pick<SubscriptionOptions, 'filter' | 'resolve'>,
 ): MethodDecorator;
 /**
- * @publicApi
- *
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(
   typeFunc: ReturnTypeFunc,
   options?: SubscriptionOptions,
 ): MethodDecorator;
 /**
- * @publicApi
- *
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(
   nameOrType?: string | ReturnTypeFunc,
