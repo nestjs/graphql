@@ -40,7 +40,6 @@ export interface InterfaceTypeOptions {
  * Decorator that marks a class as a GraphQL interface type.
  *
  * @publicApi
- *
  */
 export function InterfaceType(options?: InterfaceTypeOptions): ClassDecorator;
 /**

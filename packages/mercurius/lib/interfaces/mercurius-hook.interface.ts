@@ -11,7 +11,7 @@ import {
 } from 'mercurius';
 
 /**
- *  @publicApi
+ * @publicApi
  */
 export interface MercuriusHooksObject<
   Context extends MercuriusContext = MercuriusContext,

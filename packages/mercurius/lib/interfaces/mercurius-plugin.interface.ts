@@ -6,7 +6,7 @@ import {
 } from 'fastify';
 
 /**
- *  @publicApi
+ * @publicApi
  */
 export interface MercuriusPlugin<
   Options extends FastifyPluginOptions = unknown,
@@ -21,7 +21,7 @@ export interface MercuriusPlugin<
 }
 
 /**
- *  @publicApi
+ * @publicApi
  */
 export interface MercuriusPlugins<
   Options extends FastifyPluginOptions = unknown,
