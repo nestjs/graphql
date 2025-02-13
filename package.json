@@ -54,7 +54,7 @@
     "lerna": "8.1.9",
     "lerna-changelog": "2.2.0",
     "lint-staged": "15.4.3",
-    "prettier": "3.5.0",
+    "prettier": "3.5.1",
     "prettierv2": "npm:prettier@2.8.8",
     "reflect-metadata": "0.2.2",
     "release-it": "18.1.2",
