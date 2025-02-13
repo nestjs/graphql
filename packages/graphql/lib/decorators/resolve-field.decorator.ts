@@ -18,6 +18,8 @@ import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
 
 /**
  * Interface defining options that can be passed to `@ResolveField()` decorator.
+ *
+ * @publicApi
  */
 export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -44,6 +46,8 @@ export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
 
 /**
  * Field resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveField(
   typeFunc?: ReturnTypeFunc,
@@ -51,6 +55,8 @@ export function ResolveField(
 ): MethodDecorator;
 /**
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveField(
   propertyName?: string,
@@ -59,6 +65,8 @@ export function ResolveField(
 ): MethodDecorator;
 /**
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveField(
   propertyNameOrFunc?: string | ReturnTypeFunc,

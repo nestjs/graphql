@@ -13,6 +13,8 @@ import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
  * Interface defining options that can be passed to `@InputType()` decorator.
+ *
+ * @publicApi
  */
 export interface InputTypeOptions {
   /**
@@ -27,14 +29,20 @@ export interface InputTypeOptions {
 
 /**
  * Decorator that marks a class as a GraphQL input type.
+ *
+ * @publicApi
  */
 export function InputType(): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL input type.
+ *
+ * @publicApi
  */
 export function InputType(options: InputTypeOptions): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL input type.
+ *
+ * @publicApi
  */
 export function InputType(
   name: string,
@@ -42,6 +50,8 @@ export function InputType(
 ): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL input type.
+ *
+ * @publicApi
  */
 export function InputType(
   nameOrOptions?: string | InputTypeOptions,

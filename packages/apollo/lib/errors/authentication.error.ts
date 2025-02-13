@@ -5,6 +5,9 @@ import { GraphQLError, GraphQLErrorOptions } from 'graphql';
  *
  * "AuthenticationError" class was removed in the latest version of Apollo Server (4.0.0)
  * It was moved to the @nestjs/apollo package to avoid regressions & make migration easier.
+ *
+ * @publicApi
+ *
  */
 export class AuthenticationError extends GraphQLError {
   constructor(message: string, options?: GraphQLErrorOptions) {

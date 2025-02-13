@@ -5,6 +5,9 @@ import { MercuriusGatewayDriverConfig } from '../interfaces';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
 
+/**
+ * @publicApi
+ */
 export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatewayDriverConfig> {
   get instance(): FastifyInstance<
     Server,

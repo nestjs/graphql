@@ -7,6 +7,8 @@ import { createGqlPipesParamDecorator } from './param.utils';
  * Resolver method parameter decorator. Extracts the `Info`
  * object from the underlying platform and populates the decorated
  * parameter with the value of `Info`.
+ *
+ * @publicApi
  */
 export function Info(...pipes: (Type<PipeTransform> | PipeTransform)[]) {
   return createGqlPipesParamDecorator(GqlParamtype.INFO)(undefined, ...pipes);

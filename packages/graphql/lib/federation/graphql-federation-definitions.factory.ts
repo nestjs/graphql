@@ -5,6 +5,9 @@ import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory';
 import { extend } from '../utils';
 import { mergeTypeDefs } from '@graphql-tools/merge';
 
+/**
+ * @publicApi
+ */
 export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFactory {
   protected async exploreAndEmit(
     typePaths: string[],

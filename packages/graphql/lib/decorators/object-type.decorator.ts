@@ -13,6 +13,8 @@ import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
  * Interface defining options that can be passed to `@ObjectType()` decorator
+ *
+ * @publicApi
  */
 export interface ObjectTypeOptions {
   /**
@@ -36,14 +38,20 @@ export interface ObjectTypeOptions {
 
 /**
  * Decorator that marks a class as a GraphQL type.
+ *
+ * @publicApi
  */
 export function ObjectType(): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL type.
+ *
+ * @publicApi
  */
 export function ObjectType(options: ObjectTypeOptions): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL type.
+ *
+ * @publicApi
  */
 export function ObjectType(
   name: string,
@@ -51,6 +59,8 @@ export function ObjectType(
 ): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL type.
+ *
+ * @publicApi
  */
 export function ObjectType(
   nameOrOptions?: string | ObjectTypeOptions,

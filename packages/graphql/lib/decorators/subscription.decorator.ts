@@ -13,6 +13,8 @@ import { addResolverMetadata } from './resolvers.utils';
 
 /**
  * Interface defining options that can be passed to `@Subscription()` decorator.
+ *
+ * @publicApi
  */
 export type SubscriptionOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -49,14 +51,20 @@ export type SubscriptionOptions<T = any> = BaseTypeOptions<T> & {
 
 /**
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(): MethodDecorator;
 /**
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(name: string): MethodDecorator;
 /**
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(
   name: string,
@@ -64,6 +72,8 @@ export function Subscription(
 ): MethodDecorator;
 /**
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(
   typeFunc: ReturnTypeFunc,
@@ -71,6 +81,8 @@ export function Subscription(
 ): MethodDecorator;
 /**
  * Subscription handler (method) Decorator. Routes subscriptions to this method.
+ *
+ * @publicApi
  */
 export function Subscription(
   nameOrType?: string | ReturnTypeFunc,

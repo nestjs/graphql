@@ -15,6 +15,8 @@ import { addPipesMetadata } from './param.utils';
 
 /**
  * Interface defining options that can be passed to `@Args()` decorator.
+ *
+ * @publicApi
  */
 export type ArgsOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -39,12 +41,16 @@ export type ArgsOptions<T = any> = BaseTypeOptions<T> & {
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
+ *
+ * @publicApi
  */
 export function Args(): ParameterDecorator;
 /**
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
+ *
+ * @publicApi
  */
 export function Args(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
@@ -53,6 +59,8 @@ export function Args(
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
+ *
+ * @publicApi
  */
 export function Args(
   property: string,
@@ -62,6 +70,8 @@ export function Args(
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
+ *
+ * @publicApi
  */
 export function Args(
   options: ArgsOptions,
@@ -71,6 +81,8 @@ export function Args(
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
+ *
+ * @publicApi
  */
 export function Args(
   property: string,
@@ -81,6 +93,8 @@ export function Args(
  * Resolver method parameter decorator. Extracts the arguments
  * object from the underlying platform and populates the decorated
  * parameter with the value of either all arguments or a single specified argument.
+ *
+ * @publicApi
  */
 export function Args(
   propertyOrOptionsOrPipe?:

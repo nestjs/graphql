@@ -5,6 +5,8 @@ import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.st
 
 /**
  * Adds a directive to specified field, type, or handler.
+ *
+ * @publicApi
  */
 export function Directive(
   sdl: string,

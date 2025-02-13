@@ -3,6 +3,9 @@ import { ParamsFactory } from '@nestjs/core/helpers/external-context-creator';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
 import { normalizeResolverArgs } from '../utils/normalize-resolver-args';
 
+/**
+ * @publicApi
+ */
 export class GqlParamsFactory implements ParamsFactory {
   exchangeKeyForValue(type: number, data: ParamData, args: any) {
     if (!args) {

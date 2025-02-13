@@ -14,6 +14,8 @@ import { addResolverMetadata } from './resolvers.utils';
 
 /**
  * Interface defining options that can be passed to `@Mutation()` decorator.
+ *
+ * @publicApi
  */
 export type MutationOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -36,14 +38,20 @@ export type MutationOptions<T = any> = BaseTypeOptions<T> & {
 
 /**
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(): MethodDecorator;
 /**
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(name: string): MethodDecorator;
 /**
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(
   typeFunc: ReturnTypeFunc,
@@ -51,6 +59,8 @@ export function Mutation(
 ): MethodDecorator;
 /**
  * Mutation handler (method) Decorator. Routes specified mutation to this method.
+ *
+ * @publicApi
  */
 export function Mutation(
   nameOrType?: string | ReturnTypeFunc,

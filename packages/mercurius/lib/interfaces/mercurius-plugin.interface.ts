@@ -5,6 +5,9 @@ import {
   FastifyRegisterOptions,
 } from 'fastify';
 
+/**
+ * @publicApi
+ */
 export interface MercuriusPlugin<
   Options extends FastifyPluginOptions = unknown,
 > {
@@ -17,6 +20,9 @@ export interface MercuriusPlugin<
   options?: FastifyRegisterOptions<Options>;
 }
 
+/**
+ * @publicApi
+ */
 export interface MercuriusPlugins<
   Options extends FastifyPluginOptions = unknown,
 > {

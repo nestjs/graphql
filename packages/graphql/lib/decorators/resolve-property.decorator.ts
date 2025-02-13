@@ -6,6 +6,8 @@ const logger = new Logger('GraphQLModule');
 
 /**
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveProperty(
   typeFunc?: ReturnTypeFunc,
@@ -13,6 +15,8 @@ export function ResolveProperty(
 ): MethodDecorator;
 /**
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveProperty(
   propertyName?: string,
@@ -21,6 +25,8 @@ export function ResolveProperty(
 ): MethodDecorator;
 /**
  * Property resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveProperty(
   propertyNameOrFunc?: string | ReturnTypeFunc,

@@ -3,6 +3,8 @@ import { RESOLVER_REFERENCE_METADATA } from '../graphql.constants';
 
 /**
  * Property reference resolver (method) Decorator.
+ *
+ * @publicApi
  */
 export function ResolveReference(): MethodDecorator {
   return (

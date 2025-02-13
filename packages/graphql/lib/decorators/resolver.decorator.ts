@@ -16,6 +16,8 @@ export type ResolverTypeFn = (of?: void) => Function;
 /**
  * Extracts the name property set through the @ObjectType() decorator (if specified)
  * @param nameOrType type reference
+ *
+ * @publicApi
  */
 function getObjectOrInterfaceTypeNameIfExists(
   nameOrType: Function,
@@ -36,6 +38,8 @@ function getObjectOrInterfaceTypeNameIfExists(
 
 /**
  * Interface defining options that can be passed to `@Resolve()` decorator
+ *
+ * @publicApi
  */
 export interface ResolverOptions {
   /**
@@ -46,20 +50,28 @@ export interface ResolverOptions {
 
 /**
  * Object resolver decorator.
+ *
+ * @publicApi
  */
 export function Resolver(): MethodDecorator & ClassDecorator;
 /**
  * Object resolver decorator.
+ *
+ * @publicApi
  */
 export function Resolver(name: string): MethodDecorator & ClassDecorator;
 /**
  * Object resolver decorator.
+ *
+ * @publicApi
  */
 export function Resolver(
   options: ResolverOptions,
 ): MethodDecorator & ClassDecorator;
 /**
  * Object resolver decorator.
+ *
+ * @publicApi
  */
 export function Resolver(
   classType: Function,
@@ -67,6 +79,8 @@ export function Resolver(
 ): MethodDecorator & ClassDecorator;
 /**
  * Object resolver decorator.
+ *
+ * @publicApi
  */
 export function Resolver(
   typeFunc: ResolverTypeFn,
@@ -74,6 +88,8 @@ export function Resolver(
 ): MethodDecorator & ClassDecorator;
 /**
  * Object resolver decorator.
+ *
+ * @publicApi
  */
 export function Resolver(
   nameOrTypeOrOptions?:

@@ -7,12 +7,16 @@ import { createGqlPipesParamDecorator } from './param.utils';
  * Resolver method parameter decorator. Extracts the `Context`
  * object from the underlying platform and populates the decorated
  * parameter with the value of `Context`.
+ *
+ * @publicApi
  */
 export function Context(): ParameterDecorator;
 /**
  * Resolver method parameter decorator. Extracts the `Context`
  * object from the underlying platform and populates the decorated
  * parameter with the value of `Context`.
+ *
+ * @publicApi
  */
 export function Context(
   ...pipes: (Type<PipeTransform> | PipeTransform)[]
@@ -21,6 +25,8 @@ export function Context(
  * Resolver method parameter decorator. Extracts the `Context`
  * object from the underlying platform and populates the decorated
  * parameter with the value of `Context`.
+ *
+ * @publicApi
  */
 export function Context(
   property: string,
@@ -30,6 +36,8 @@ export function Context(
  * Resolver method parameter decorator. Extracts the `Context`
  * object from the underlying platform and populates the decorated
  * parameter with the value of `Context`.
+ *
+ * @publicApi
  */
 export function Context(
   property?: string | (Type<PipeTransform> | PipeTransform),

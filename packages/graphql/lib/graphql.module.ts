@@ -28,6 +28,9 @@ import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.modu
 import { ResolversExplorerService, ScalarsExplorerService } from './services';
 import { extend, generateString } from './utils';
 
+/**
+ * @publicApi
+ */
 @Module({
   imports: [GraphQLSchemaBuilderModule],
   providers: [

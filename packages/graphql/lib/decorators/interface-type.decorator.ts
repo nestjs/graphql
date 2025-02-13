@@ -14,6 +14,8 @@ import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
 
 /**
  * Interface defining options that can be passed to `@InterfaceType()` decorator.
+ *
+ * @publicApi
  */
 export interface InterfaceTypeOptions {
   /**
@@ -36,10 +38,14 @@ export interface InterfaceTypeOptions {
 
 /**
  * Decorator that marks a class as a GraphQL interface type.
+ *
+ * @publicApi
  */
 export function InterfaceType(options?: InterfaceTypeOptions): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL interface type.
+ *
+ * @publicApi
  */
 export function InterfaceType(
   name: string,
@@ -47,6 +53,8 @@ export function InterfaceType(
 ): ClassDecorator;
 /**
  * Decorator that marks a class as a GraphQL interface type.
+ *
+ * @publicApi
  */
 export function InterfaceType(
   nameOrOptions?: string | InterfaceTypeOptions,

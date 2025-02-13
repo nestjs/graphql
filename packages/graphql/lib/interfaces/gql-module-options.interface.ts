@@ -11,6 +11,9 @@ export type Enhancer = 'guards' | 'interceptors' | 'filters';
 
 /**
  * "GraphQLModule" options object.
+ *
+ * @publicApi
+ *
  */
 export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   /**

@@ -10,6 +10,9 @@ import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
 
+/**
+ *  @publicApi
+ */
 @Injectable()
 export class ApolloDriver extends ApolloBaseDriver {
   private _subscriptionService?: GqlSubscriptionService;

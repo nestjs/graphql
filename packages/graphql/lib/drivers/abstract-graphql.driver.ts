@@ -5,6 +5,9 @@ import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
 import { normalizeRoutePath } from '../utils';
 
+/**
+ * @publicApi
+ */
 export abstract class AbstractGraphQLDriver<
   TOptions extends Record<string, any> = GqlModuleOptions,
 > implements GraphQLDriver<TOptions>

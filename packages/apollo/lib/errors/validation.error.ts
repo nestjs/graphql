@@ -6,6 +6,9 @@ import { GraphQLError, GraphQLErrorOptions } from 'graphql';
  *
  * "ValidationError" class was removed in the latest version of Apollo Server (4.0.0)
  * It was moved to the @nestjs/apollo package to avoid regressions & make migration easier.
+ *
+ * @publicApi
+ *
  */
 export class ValidationError extends GraphQLError {
   constructor(message: string, options?: GraphQLErrorOptions) {

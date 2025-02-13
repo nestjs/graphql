@@ -6,6 +6,9 @@ import { ApolloGatewayDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
 import { ApolloBaseDriver } from './apollo-base.driver';
 
+/**
+ *  @publicApi
+ */
 @Injectable()
 export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverConfig> {
   private readonly pluginsExplorerService: PluginsExplorerService;

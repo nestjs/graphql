@@ -14,6 +14,8 @@ import { addResolverMetadata } from './resolvers.utils';
 
 /**
  * Interface defining options that can be passed to `@Query()` decorator.
+ *
+ * @publicApi
  */
 export type QueryOptions<T = any> = BaseTypeOptions<T> & {
   /**
@@ -36,14 +38,20 @@ export type QueryOptions<T = any> = BaseTypeOptions<T> & {
 
 /**
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(): MethodDecorator;
 /**
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(name: string): MethodDecorator;
 /**
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(
   typeFunc: ReturnTypeFunc,
@@ -51,6 +59,8 @@ export function Query(
 ): MethodDecorator;
 /**
  * Query handler (method) Decorator. Routes specified query to this method.
+ *
+ * @publicApi
  */
 export function Query(
   nameOrType?: string | ReturnTypeFunc,
