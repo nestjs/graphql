@@ -63,6 +63,10 @@ export class TypeDefinitionsStorage {
     return this.unionTypeDefinitions.get(key);
   }
 
+  getAllUnionDefinitions(): UnionDefinition[] {
+    return Array.from(this.unionTypeDefinitions.values());
+  }
+
   addInterfaces(interfaceDefs: InterfaceTypeDefinition[]) {
     interfaceDefs.forEach((item) =>
       this.interfaceTypeDefinitions.set(item.target, item),
