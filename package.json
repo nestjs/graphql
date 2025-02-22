@@ -59,7 +59,7 @@
     "reflect-metadata": "0.2.2",
     "release-it": "18.1.2",
     "rimraf": "6.0.1",
-    "rxjs": "7.8.1",
+    "rxjs": "7.8.2",
     "supertest": "7.0.0",
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
