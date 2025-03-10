@@ -110,6 +110,17 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   ) => GraphQLSchema | Promise<GraphQLSchema>;
 
   /**
+   * Function to be applied to the discovered resolvers letting you perform compositions.
+   */
+  transformResolvers?: (
+    resolvers: IResolvers | Array<IResolvers>,
+  ) =>
+    | IResolvers
+    | Array<IResolvers>
+    | Promise<IResolvers>
+    | Promise<Array<IResolvers>>;
+
+  /**
    * Apply `transformSchema` to the `autoSchemaFile`
    */
   transformAutoSchemaFile?: boolean;
