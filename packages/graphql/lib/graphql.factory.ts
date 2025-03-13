@@ -34,10 +34,14 @@ export class GraphQLFactory {
     options: T = { typeDefs: [] } as T,
   ): Promise<GraphQLSchema> {
     const resolvers = this.resolversExplorerService.explore();
-    const typesResolvers = extend(
+    const rawResolvers = extend(
       this.scalarsExplorerService.explore(),
       resolvers,
     );
+
+    const typesResolvers = options.transformResolvers
+      ? await options.transformResolvers(rawResolvers)
+      : rawResolvers;
 
     const transformSchema = async (schema: GraphQLSchema) =>
       options.transformSchema ? await options.transformSchema(schema) : schema;
