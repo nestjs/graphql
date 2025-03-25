@@ -5084,6 +5084,27 @@ fastify@5.2.1:
     semver "^7.6.0"
     toad-cache "^3.7.0"
 
+fastify@5.2.2:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.2.2.tgz#4af803da759a5c7de3996af8b82ad7df69a82cf8"
+  integrity sha512-22T/PnhquWozuFXg3Ish4md5ipsF1Nx1mJ9ulLdZPXSk14WFj/wMlyNB/yll9sQOojKRgOIxT2inK3Xpjg5hyw==
+  dependencies:
+    "@fastify/ajv-compiler" "^4.0.0"
+    "@fastify/error" "^4.0.0"
+    "@fastify/fast-json-stringify-compiler" "^5.0.0"
+    "@fastify/proxy-addr" "^5.0.0"
+    abstract-logging "^2.0.1"
+    avvio "^9.0.0"
+    fast-json-stringify "^6.0.0"
+    find-my-way "^9.0.0"
+    light-my-request "^6.0.0"
+    pino "^9.0.0"
+    process-warning "^4.0.0"
+    rfdc "^1.3.1"
+    secure-json-parse "^3.0.1"
+    semver "^7.6.0"
+    toad-cache "^3.7.0"
+
 fastparallel@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/fastparallel/-/fastparallel-2.4.1.tgz#0d984a5813ffa67f30b4a5cb4cb8cbe61c7ee5a5"
