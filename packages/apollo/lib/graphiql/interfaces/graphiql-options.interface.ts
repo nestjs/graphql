@@ -14,7 +14,7 @@ export interface GraphiQLOptions {
   /**
    * This prop toggles if the contents of the headers editor are persisted in
    * storage.
-   * @default false
+   * @default true
    */
   shouldPersistHeaders?: boolean;
   /**
