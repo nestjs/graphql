@@ -13,6 +13,8 @@ import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import * as omit from 'lodash.omit';
+import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
 import { ApolloDriverConfig } from '../interfaces';
 import { createAsyncIterator } from '../utils/async-iterator.util';
 
@@ -56,7 +58,16 @@ export abstract class ApolloBaseDriver<
       stopOnTerminationSignals: false,
     };
 
-    if (
+    if (options.graphiql) {
+      const graphiQlPlaygroundOpts: GraphiQLOptions =
+        typeof options.graphiql === 'object' ? options.graphiql : {};
+      graphiQlPlaygroundOpts.url ??= options.path;
+
+      defaults = {
+        ...defaults,
+        plugins: [new GraphiQLPlaygroundPlugin(graphiQlPlaygroundOpts)],
+      };
+    } else if (
       (options.playground === undefined &&
         process.env.NODE_ENV !== 'production') ||
       options.playground

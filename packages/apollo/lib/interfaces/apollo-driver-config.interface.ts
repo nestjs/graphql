@@ -6,6 +6,7 @@ import {
   GqlOptionsFactory,
   SubscriptionConfig,
 } from '@nestjs/graphql';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
 
 /**
  *  @publicApi
@@ -39,8 +40,14 @@ export interface ApolloDriverConfig
 
   /**
    * GraphQL playground options.
+   * The built-in playground is deprecated and will be replaced with GraphiQL in the future.
    */
   playground?: boolean | ApolloServerPluginLandingPageGraphQLPlaygroundOptions;
+
+  /**
+   * GraphiQL options, or a boolean to enable GraphiQL with default options.
+   */
+  graphiql?: boolean | GraphiQLOptions;
 
   /**
    * If enabled, will register a global interceptor that automatically maps
