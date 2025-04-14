@@ -29,9 +29,9 @@
   "devDependencies": {
     "@mercuriusjs/federation": "5.0.0",
     "@mercuriusjs/gateway": "5.0.0",
-    "@nestjs/common": "11.0.16",
-    "@nestjs/platform-fastify": "11.0.16",
-    "@nestjs/testing": "11.0.16",
+    "@nestjs/common": "11.0.17",
+    "@nestjs/platform-fastify": "11.0.17",
+    "@nestjs/testing": "11.0.17",
     "fastify": "5.3.0",
     "mercurius": "16.1.0",
     "mercurius-integration-testing": "9.0.1"
