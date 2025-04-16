@@ -1532,20 +1532,21 @@
     "@emnapi/runtime" "^1.1.0"
     "@tybys/wasm-util" "^0.9.0"
 
-"@nestjs/common@11.0.19":
-  version "11.0.19"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.0.19.tgz#59b47915483944ca3d35a16c4312a2053b7ca69c"
-  integrity sha512-pGzOqtAnpHFEPHUD7y1c10M+a2pKq2Eqi+oJXvnwCQ0JBN+AbobSefC5dx43sUnVRe3uzJwbvHQXaA3vjg8TzQ==
+"@nestjs/common@11.0.20":
+  version "11.0.20"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.0.20.tgz#e67e73f261ee79a0c4daa2c303712731667d0129"
+  integrity sha512-/GH8NDCczjn6+6RNEtSNAts/nq/wQE8L1qZ9TRjqjNqEsZNE1vpFuRIhmcO2isQZ0xY5rySnpaRdrOAul3gQ3A==
   dependencies:
     uid "2.0.2"
     file-type "20.4.1"
     iterare "1.2.1"
+    load-esm "1.0.2"
     tslib "2.8.1"
 
-"@nestjs/core@11.0.19":
-  version "11.0.19"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.0.19.tgz#2cbae7099d49039fceae6a2b81a020e077be2ece"
-  integrity sha512-50PyuEwEPuKSFdPA0U0wpxjkp2206d5eqmYV0M7vTgBnjjmggQcOjrdPf9shye/2+OROXUGdq/vbaDj4MVAGIg==
+"@nestjs/core@11.0.20":
+  version "11.0.20"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.0.20.tgz#1a053474d0128b4ba8d2edd136add6854bb09f4c"
+  integrity sha512-yUkEzBGiRNSEThVl6vMCXgoA9sDGWoRbJsTLdYdCC7lg7PE1iXBnna1FiBfQjT995pm0fjyM1e3WsXmyWeJXbw==
   dependencies:
     uid "2.0.2"
     "@nuxt/opencollective" "0.4.1"
@@ -1559,10 +1560,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-2.1.0.tgz#b9b536b7c3571567aa1d0223db8baa1a51505a19"
   integrity sha512-W+n+rM69XsFdwORF11UqJahn4J3xi4g/ZEOlJNL6KoW5ygWSmBB2p0S2BZ4FQeS/NDH72e6xIcu35SfJnE8bXw==
 
-"@nestjs/platform-express@11.0.19":
-  version "11.0.19"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.0.19.tgz#b7aa10c2a52e335cec042359b74b1b979a4baa4a"
-  integrity sha512-db2afriOKcM48bcdagkjSS+FAmELup4C7g5hMFaz+rHsybeRl38rXmeSbZmMzckdSmQiZtBEHxaecc6DXcozFQ==
+"@nestjs/platform-express@11.0.20":
+  version "11.0.20"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.0.20.tgz#1a81d6eab1c5694ccc148264e006665d0c0ed8f6"
+  integrity sha512-h/Xq2x0Qi2cr9T64w9DfLejZws1M1hYu7n7XWuC4vxX00FlfOz1jSWGgaTo/Gjq6vtULfq34Gp5Fzf0w34XDyQ==
   dependencies:
     cors "2.8.5"
     express "5.1.0"
@@ -1570,10 +1571,10 @@
     path-to-regexp "8.2.0"
     tslib "2.8.1"
 
-"@nestjs/platform-fastify@11.0.19":
-  version "11.0.19"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.0.19.tgz#ef6a1ea20f5ed6690dad9722ee1a9fb2a4cf9143"
-  integrity sha512-zsmOYMBeh/M/oKdYgPNYWKlR4rHy+sIH3/1hoOhrOa6LcjJa3bbqjN+ADR3W1eDl424yyv4FTSVqwtuL/Xsifw==
+"@nestjs/platform-fastify@11.0.20":
+  version "11.0.20"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.0.20.tgz#49098816da623eda60c90712eff417a0602c0929"
+  integrity sha512-MZnjO77N/XesVzXhn8qnSEcnjXVIHxkh5zTz8SEIr6K2yWgGJZbTlNm7ul6l7QBeaCeNZtZJlvY/F+4Dbx8yCQ==
   dependencies:
     "@fastify/cors" "11.0.1"
     "@fastify/formbody" "8.0.2"
@@ -1584,10 +1585,10 @@
     path-to-regexp "8.2.0"
     tslib "2.8.1"
 
-"@nestjs/testing@11.0.19":
-  version "11.0.19"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-11.0.19.tgz#a2b3770b47e3d3d1d675532bb43e016131c9239c"
-  integrity sha512-BZC+4zJ99YYfdQOUPNsIFOOYE4oTMwdclL+gNg8LgDKlPD6+Zia1iww71bQV+9NfuIdtoW+Rks4QEKlPrdlgVA==
+"@nestjs/testing@11.0.20":
+  version "11.0.20"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-11.0.20.tgz#32ba2f992ab64cf191b403efb4e7ebac8448c7a7"
+  integrity sha512-3o+HWsVfA46tt81ctKuNj5ufL9srfmp3dQBCAIx9fzvjooEKwWl5L69AcvDh6JhdB79jhhM1lkSSU+1fBGbxgw==
   dependencies:
     tslib "2.8.1"
 
@@ -7309,6 +7310,11 @@ listr2@^8.2.5:
     log-update "^6.1.0"
     rfdc "^1.4.1"
     wrap-ansi "^9.0.0"
+
+load-esm@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/load-esm/-/load-esm-1.0.2.tgz#35dbac8a1a3abdb802cf236008048fcc8a9289a6"
+  integrity sha512-nVAvWk/jeyrWyXEAs84mpQCYccxRqgKY4OznLuJhJCa0XsPSfdOIr2zvBZEj3IHEHbX97jjscKRRV539bW0Gpw==
 
 load-json-file@6.2.0:
   version "6.2.0"
