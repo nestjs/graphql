@@ -5047,10 +5047,10 @@ fastify@5.3.0:
     semver "^7.6.0"
     toad-cache "^3.7.0"
 
-fastify@5.3.1:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.3.1.tgz#89881214b23d2c0715cb86eefc055a0ff2b53744"
-  integrity sha512-PhpFhuUZVnq1IvTHCrIMCqqukNuJGWnV/nxTrSDtirbsAZnVYO8I9LaxSk5OPXSiioA6DoEG1r5U1g41/cix0g==
+fastify@5.3.2:
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.3.2.tgz#88c895a30c0f67166979077ac8649fe8b205a1b3"
+  integrity sha512-AIPqBgtqBAwkOkrnwesEE+dOyU30dQ4kh7udxeGVR05CRGwubZx+p2H8P0C4cRnQT0+EPK4VGea2DTL2RtWttg==
   dependencies:
     "@fastify/ajv-compiler" "^4.0.0"
     "@fastify/error" "^4.0.0"
@@ -7168,19 +7168,10 @@ libphonenumber-js@^1.10.53:
   resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.11.18.tgz#0ce5188a76487fae01afdf318255783cde36501e"
   integrity sha512-okMm/MCoFrm1vByeVFLBdkFIXLSHy/AIK2AEGgY3eoicfWZeOZqv3GfhtQgICkzs/tqorAMm3a4GBg5qNCrqzg==
 
-light-my-request@6.6.0:
+light-my-request@6.6.0, light-my-request@^6.0.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-6.6.0.tgz#c9448772323f65f33720fb5979c7841f14060add"
   integrity sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A==
-  dependencies:
-    cookie "^1.0.1"
-    process-warning "^4.0.0"
-    set-cookie-parser "^2.6.0"
-
-light-my-request@^6.0.0:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/light-my-request/-/light-my-request-6.5.1.tgz#30f6984bcd05ff76550e6d5bbaba5982d864b111"
-  integrity sha512-0q82RyxIextuDtkA0UDofhPHIiQ2kmpa7fwElCSlm/8nQl36cDU1Cw+CAO90Es0lReH2HChClKL84I86Nc52hg==
   dependencies:
     cookie "^1.0.1"
     process-warning "^4.0.0"
@@ -9535,7 +9526,7 @@ secure-json-parse@^4.0.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.2.tgz#48d55db737c3287cd4835e17fa13feace1c41ef8"
   integrity sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==
 
-semver@7.7.1, semver@^7.7.1:
+semver@7.7.1, semver@^7.0.0, semver@^7.1.1, semver@^7.3.4, semver@^7.3.5, semver@^7.3.7, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0, semver@^7.7.1:
   version "7.7.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.1.tgz#abd5098d82b18c6c81f6074ff2647fd3e7220c9f"
   integrity sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==
@@ -9544,11 +9535,6 @@ semver@^6.3.0, semver@^6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
-
-semver@^7.0.0, semver@^7.1.1, semver@^7.3.4, semver@^7.3.5, semver@^7.3.7, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0:
-  version "7.6.3"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.3.tgz#980f7b5550bc175fb4dc09403085627f9eb33143"
-  integrity sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==
 
 send@0.19.0:
   version "0.19.0"
