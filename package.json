@@ -31,7 +31,7 @@
   "devDependencies": {
     "@commitlint/cli": "19.8.1",
     "@commitlint/config-angular": "19.8.1",
-    "@eslint/js": "9.27.0",
+    "@eslint/js": "9.28.0",
     "@types/graphql": "14.5.0",
     "@types/jest": "29.5.14",
     "@types/node": "22.15.29",
@@ -43,7 +43,7 @@
     "@typescript-eslint/parser": "8.33.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.2",
-    "eslint": "9.27.0",
+    "eslint": "9.28.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-prettier": "5.4.1",
