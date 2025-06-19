@@ -8046,23 +8046,23 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.1.0:
-  version "16.1.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.1.0.tgz#cdc4a1509ecbad49f4e01226cd303a091b8fca8b"
-  integrity sha512-foMnqtFn3Wf/3zh0IJEz30Dq0alZIlIMCoQpxpS3/GkDB12h/LfmcoZ6ASCZ8xBJIvStEIKYxOyjfDeEcYhjLQ==
+mercurius@16.2.0:
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.2.0.tgz#da5a60b3f36b8f7179eb314fe42eb40f0f76211a"
+  integrity sha512-I2+KRkC6MVbf44FN7hopWXj+OzS1nKLwN7brAkpd3MLTz9mQgWMYdnrk2ETVaG6yD3x9zIIzuRrCQcuWHyFL1w==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^8.0.0"
     "@fastify/websocket" "^11.0.0"
     fastify-plugin "^5.0.0"
     graphql-jit "0.8.7"
-    mqemitter "^6.0.0"
+    mqemitter "^7.0.0"
     p-map "^4.0.0"
     quick-lru "^7.0.0"
     readable-stream "^4.0.0"
     safe-stable-stringify "^2.3.0"
     secure-json-parse "^3.0.0"
-    single-user-cache "^1.0.0"
+    single-user-cache "^2.0.0"
     tiny-lru "^11.0.0"
     ws "^8.2.2"
 
@@ -8361,6 +8361,14 @@ mqemitter@^6.0.0:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/mqemitter/-/mqemitter-6.0.2.tgz#f99ab435de886082e005e1577d1070cecc63f695"
   integrity sha512-8RGlznQx/Nb1xC3xKUFXHWov7pn7JdH++YVwlr6SLT6k3ft1h+ImGqZdVudbdKruFckIq9wheq9s4hgCivJDow==
+  dependencies:
+    fastparallel "^2.4.1"
+    qlobber "^8.0.1"
+
+mqemitter@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/mqemitter/-/mqemitter-7.0.0.tgz#745d0089ed258def3b6172a85e8311568ab2b3fd"
+  integrity sha512-tyn+3Ob93QZRVOqttct3C6oHamvieBC4RA+pyyoMA/pBCphSPFMgItXIKa6g10jtBzyyupBdLelsS5+P75v1/w==
   dependencies:
     fastparallel "^2.4.1"
     qlobber "^8.0.1"
@@ -10235,6 +10243,13 @@ single-user-cache@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/single-user-cache/-/single-user-cache-1.0.1.tgz#f46050eb6ce235e55f943cfa6e0b545a49ef1ff6"
   integrity sha512-xFW/TuZUKoMZl47xqfC2jb7dO1XtJ5VgZxQliOKQWTueIH96CX6USaPiZcyDN0HFb4Ow+tsXpJZViRyIkl/rDA==
+  dependencies:
+    safe-stable-stringify "^2.4.3"
+
+single-user-cache@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/single-user-cache/-/single-user-cache-2.0.0.tgz#8571d04387fd9e3260d7af26f1464d3c15b345bd"
+  integrity sha512-AGsTqnYmJH59HtK/5RhCfWh0cz3/Y2bxJf4w+0chSdkg1WmS8vYMnFGZc+C/m0gDZFl4iQ9sSLv7oURP6aKJwQ==
   dependencies:
     safe-stable-stringify "^2.4.3"
 
