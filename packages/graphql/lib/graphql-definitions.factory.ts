@@ -1,7 +1,7 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import * as chokidar from 'chokidar';
-import { glob } from 'fast-glob';
+import { glob } from 'tinyglobby';
 import { printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 import {
@@ -46,7 +46,9 @@ export class GraphQLDefinitionsFactory {
         'GraphQL factory is watching your files...',
         isDebugEnabled,
       );
-      const watcher = chokidar.watch(await glob(options.typePaths));
+      const watcher = chokidar.watch(
+        await glob(options.typePaths, { expandDirectories: false }),
+      );
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       watcher.on('change', async (file) => {
         this.printMessage(

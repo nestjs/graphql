@@ -1,6 +1,6 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
-import * as glob from 'fast-glob';
+import { glob } from 'tinyglobby';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
 import * as util from 'util';
@@ -33,6 +33,7 @@ export class GraphQLTypesLoader {
 
     const filePaths = await glob(paths, {
       ignore: includeNodeModules ? [] : ['node_modules'],
+      expandDirectories: false,
     });
     if (filePaths.length === 0) {
       throw new Error(
