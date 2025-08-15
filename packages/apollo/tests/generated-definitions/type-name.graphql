@@ -1,0 +1,37 @@
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  role: UserRole!
+  profile: Profile
+}
+
+type Profile {
+  bio: String
+  avatar: String
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  GUEST
+}
+
+union SearchResult = User | Profile
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  role: UserRole!
+}
+
+type Query {
+  user(id: ID!): User
+  searchUsers(query: String!): [SearchResult!]!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+}
+
+scalar DateTime
