@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { ModulesContainer } from '@nestjs/core';
-import { extend, GraphQLFederationFactory } from '@nestjs/graphql';
+import {
+  extend,
+  GqlSubscriptionService,
+  GraphQLFederationFactory,
+  SubscriptionConfig,
+} from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
 import { ApolloDriverConfig } from '../interfaces';
 import { PluginsExplorerService } from '../services/plugins-explorer.service';
@@ -12,6 +17,7 @@ import { ApolloBaseDriver } from './apollo-base.driver';
  */
 @Injectable()
 export class ApolloFederationDriver extends ApolloBaseDriver {
+  private _subscriptionService?: GqlSubscriptionService;
   private readonly pluginsExplorerService: PluginsExplorerService;
 
   constructor(
@@ -43,9 +49,16 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
     await super.start(options);
 
     if (options.installSubscriptionHandlers || options.subscriptions) {
-      // TL;DR <https://github.com/apollographql/apollo-server/issues/2776>
-      throw new Error(
-        'No support for subscriptions yet when using Apollo Federation',
+      const subscriptionsOptions: SubscriptionConfig =
+        options.subscriptions || { 'subscriptions-transport-ws': {} };
+      this._subscriptionService = new GqlSubscriptionService(
+        {
+          schema: options.schema,
+          path: options.path,
+          context: options.context,
+          ...subscriptionsOptions,
+        },
+        this.httpAdapterHost.httpAdapter?.getHttpServer(),
       );
     }
   }
