@@ -80,6 +80,7 @@ export class InputTypeDefinitionFactory {
           description: property.description,
           type,
           defaultValue: property.options.defaultValue,
+          deprecationReason: property.deprecationReason,
           /**
            * AST node has to be manually created in order to define directives
            * (more on this topic here: https://github.com/graphql/graphql-js/issues/1343)
