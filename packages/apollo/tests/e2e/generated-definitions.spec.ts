@@ -358,4 +358,23 @@ describe('Generated Definitions', () => {
       ),
     ).toBe(await readFile(outputFile, 'utf8'));
   });
+
+  it('should apply typeName function to transform type names', async () => {
+    const typeDefs = await readFile(
+      generatedDefinitions('type-name.graphql'),
+      'utf8',
+    );
+
+    const outputFile = generatedDefinitions('type-name.test-definitions.ts');
+    await graphqlFactory.generateDefinitions(typeDefs, {
+      definitions: {
+        path: outputFile,
+        typeName: (name: string) => `${name}Schema`,
+      },
+    });
+
+    expect(
+      await readFile(generatedDefinitions('type-name.fixture.ts'), 'utf8'),
+    ).toBe(await readFile(outputFile, 'utf8'));
+  });
 });
