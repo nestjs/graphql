@@ -319,12 +319,12 @@
   resolved "https://registry.yarnpkg.com/@as-integrations/express5/-/express5-1.1.2.tgz#5c5b207b8e457bbd546e9b20898d0b1f4a478480"
   integrity sha512-BxfwtcWNf2CELDkuPQxi5Zl3WqY/dQVJYafeCBOGoFQjv5M0fjhxmAFZ9vKx/5YKKNeok4UY6PkFbHzmQrdxIA==
 
-"@as-integrations/fastify@2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-2.1.1.tgz#7662d7b39732fb3d1fc58bbe4ca599676ce1acb9"
-  integrity sha512-iupYSQyRrlBAdsDcCYzuKjJlJAKiQpRDLd33A6yAF3Ip/rGrSDDDrxfJWp6FqyVlivSL+MQkGIphmUI/ckfZkg==
+"@as-integrations/fastify@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-3.0.0.tgz#923dc71ccaa2b27070668960e1a12d0780828560"
+  integrity sha512-UXJYMraDQKwCUjk5zKDb4GJnPzqKbn+sPOboNISZCinPAPQsTzuZiw1/VgJNfGRW4l+dI3C0DDM9PysYCG+MWg==
   dependencies:
-    fastify-plugin "^4.4.0"
+    fastify-plugin "^5.0.1"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.25.9", "@babel/code-frame@^7.26.0", "@babel/code-frame@^7.26.2":
   version "7.26.2"
@@ -5411,15 +5411,15 @@ fast-uri@^3.0.0, fast-uri@^3.0.1:
   resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.0.5.tgz#19f5f9691d0dab9b85861a7bb5d98fca961da9cd"
   integrity sha512-5JnBCWpFlMo0a3ciDy/JckMzzv1U9coZrIhedq+HXxxUfDTAiS0LA8OKVao4G9BxmCVck/jtA5r3KAtRWEyD8Q==
 
-fastify-plugin@^4.4.0:
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-4.5.1.tgz#44dc6a3cc2cce0988bc09e13f160120bbd91dbee"
-  integrity sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==
-
 fastify-plugin@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.0.1.tgz#82d44e6fe34d1420bb5a4f7bee434d501e41939f"
   integrity sha512-HCxs+YnRaWzCl+cWRYFnHmeRFyR5GVnJTAaCJQiYzQSDwK9MgJdyAsuL3nh0EWRCYMgQ5MeziymvmAhUHYHDUQ==
+
+fastify-plugin@^5.0.1:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.1.0.tgz#7083e039d6418415f9a669f8c25e72fc5bf2d3e7"
+  integrity sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==
 
 fastify@5.4.0:
   version "5.4.0"
