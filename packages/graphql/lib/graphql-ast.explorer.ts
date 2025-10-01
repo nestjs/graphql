@@ -84,6 +84,13 @@ export interface DefinitionsGeneratorOptions {
    * @default false
    */
   enumsAsTypes?: boolean;
+
+  /**
+   * If provided, specifies a function to transform type names.
+   * @example (name) => `${name}Schema`
+   * @default undefined
+   */
+  typeName?: (name: string) => string;
 }
 
 @Injectable()
@@ -176,7 +183,7 @@ export class GraphQLAstExplorer {
         return this.toEnumDefinitionStructure(item, options);
       case 'UnionTypeDefinition':
       case 'UnionTypeExtension':
-        return this.toUnionDefinitionStructure(item);
+        return this.toUnionDefinitionStructure(item, options);
     }
   }
 
@@ -230,10 +237,14 @@ export class GraphQLAstExplorer {
         ? tsMorphLib.StructureKind.Class
         : tsMorphLib.StructureKind.Interface;
     const isRoot = this.root.indexOf(parentName) >= 0;
+    // Don't transform root type names (Query, Mutation, Subscription)
+    const transformedName = isRoot
+      ? parentName
+      : this.getTransformedTypeName(parentName, options);
     const parentStructure:
       | ClassDeclarationStructure
       | InterfaceDeclarationStructure = {
-      name: this.addSymbolIfRoot(upperFirst(parentName)),
+      name: this.addSymbolIfRoot(upperFirst(transformedName)),
       isExported: true,
       isAbstract: isRoot && mode === 'class',
       kind: structureKind,
@@ -245,11 +256,21 @@ export class GraphQLAstExplorer {
     if (interfaces) {
       if (mode === 'class') {
         (parentStructure as ClassDeclarationStructure).implements = interfaces
-          .map((element) => get(element, 'name.value'))
+          .map((element) => {
+            const interfaceName = get(element, 'name.value');
+            return interfaceName
+              ? this.getTransformedTypeName(interfaceName, options)
+              : null;
+          })
           .filter(Boolean);
       } else {
         parentStructure.extends = interfaces
-          .map((element) => get(element, 'name.value'))
+          .map((element) => {
+            const interfaceName = get(element, 'name.value');
+            return interfaceName
+              ? this.getTransformedTypeName(interfaceName, options)
+              : null;
+          })
           .filter(Boolean);
       }
     }
@@ -395,7 +416,11 @@ export class GraphQLAstExplorer {
   getType(typeName: string, options: DefinitionsGeneratorOptions): string {
     const defaults = this.getDefaultTypes(options);
     const isDefault = defaults[typeName];
-    return isDefault ? defaults[typeName] : upperFirst(typeName);
+    if (isDefault) {
+      return defaults[typeName];
+    }
+    const transformedName = this.getTransformedTypeName(typeName, options);
+    return upperFirst(transformedName);
   }
 
   getDefaultTypes(options: DefinitionsGeneratorOptions): {
@@ -444,9 +469,11 @@ export class GraphQLAstExplorer {
     const mappedTypeName =
       typeof typeMapping === 'string' ? typeMapping : typeMapping?.name;
 
+    const transformedName = this.getTransformedTypeName(name, options);
+
     return {
       kind: tsMorphLib.StructureKind.TypeAlias,
-      name,
+      name: transformedName,
       type: mappedTypeName ?? options.defaultScalarType ?? 'any',
       isExported: true,
     };
@@ -460,13 +487,15 @@ export class GraphQLAstExplorer {
     if (!name) {
       return undefined;
     }
+    const transformedName = this.getTransformedTypeName(name, options);
+
     if (options.enumsAsTypes) {
       const values = item.values.map(
         (value) => `"${get(value, 'name.value')}"`,
       );
       return {
         kind: tsMorphLib.StructureKind.TypeAlias,
-        name,
+        name: transformedName,
         type: values.join(' | '),
         isExported: true,
       };
@@ -477,7 +506,7 @@ export class GraphQLAstExplorer {
     }));
     return {
       kind: tsMorphLib.StructureKind.Enum,
-      name,
+      name: transformedName,
       members,
       isExported: true,
     };
@@ -485,18 +514,22 @@ export class GraphQLAstExplorer {
 
   toUnionDefinitionStructure(
     item: UnionTypeDefinitionNode | UnionTypeExtensionNode,
+    options: DefinitionsGeneratorOptions,
   ): TypeAliasDeclarationStructure {
     const name = get(item, 'name.value');
     if (!name) {
       return undefined;
     }
-    const types: string[] = map(item.types, (value) =>
-      get(value, 'name.value'),
-    );
+    const transformedName = this.getTransformedTypeName(name, options);
+
+    const types: string[] = map(item.types, (value) => {
+      const typeName = get(value, 'name.value');
+      return typeName ? this.getTransformedTypeName(typeName, options) : null;
+    }).filter(Boolean);
 
     return {
       kind: tsMorphLib.StructureKind.TypeAlias,
-      name,
+      name: transformedName,
       type: types.join(' | '),
       isExported: true,
     };
@@ -508,5 +541,15 @@ export class GraphQLAstExplorer {
 
   isRoot(name: string): boolean {
     return ['IQuery', 'IMutation', 'ISubscription'].indexOf(name) >= 0;
+  }
+
+  private getTransformedTypeName(
+    name: string,
+    options: DefinitionsGeneratorOptions,
+  ): string {
+    if (!options.typeName) {
+      return name;
+    }
+    return options.typeName(name);
   }
 }
