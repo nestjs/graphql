@@ -51,7 +51,7 @@
     "graphql-subscriptions": "3.0.0",
     "husky": "9.1.7",
     "jest": "30.0.5",
-    "lerna": "8.2.3",
+    "lerna": "8.2.4",
     "lerna-changelog": "2.2.0",
     "lint-staged": "16.1.6",
     "prettier": "3.6.2",
