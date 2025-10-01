@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Serialized graph should generate a post-initialization graph and match snapshot 1`] = `
 "{
@@ -2097,38 +2097,6 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "-658225180"
     },
-    "-702351839": {
-      "source": "-1492607355",
-      "target": "1259354433",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "UnionDefinitionFactory",
-        "targetClassName": "ResolveTypeFactory",
-        "sourceClassToken": "UnionDefinitionFactory",
-        "targetClassToken": "ResolveTypeFactory",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 0,
-        "injectionType": "constructor"
-      },
-      "id": "-702351839"
-    },
-    "-1647339849": {
-      "source": "-1492607355",
-      "target": "-973488942",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "GraphQLSchemaBuilderModule",
-        "sourceClassName": "UnionDefinitionFactory",
-        "targetClassName": "TypeDefinitionsStorage",
-        "sourceClassToken": "UnionDefinitionFactory",
-        "targetClassToken": "TypeDefinitionsStorage",
-        "targetModuleName": "GraphQLSchemaBuilderModule",
-        "keyOrIndex": 1,
-        "injectionType": "constructor"
-      },
-      "id": "-1647339849"
-    },
     "-1301730010": {
       "source": "-1399120880",
       "target": "-325525981",
@@ -2160,6 +2128,38 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor"
       },
       "id": "-1418451909"
+    },
+    "-702351839": {
+      "source": "-1492607355",
+      "target": "1259354433",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "UnionDefinitionFactory",
+        "targetClassName": "ResolveTypeFactory",
+        "sourceClassToken": "UnionDefinitionFactory",
+        "targetClassToken": "ResolveTypeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor"
+      },
+      "id": "-702351839"
+    },
+    "-1647339849": {
+      "source": "-1492607355",
+      "target": "-973488942",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "UnionDefinitionFactory",
+        "targetClassName": "TypeDefinitionsStorage",
+        "sourceClassToken": "UnionDefinitionFactory",
+        "targetClassToken": "TypeDefinitionsStorage",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 1,
+        "injectionType": "constructor"
+      },
+      "id": "-1647339849"
     },
     "-1795848503": {
       "source": "206199259",
