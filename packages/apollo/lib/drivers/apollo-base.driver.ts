@@ -4,7 +4,7 @@ import {
   ApolloServerErrorCode,
   unwrapResolverError,
 } from '@apollo/server/errors';
-import { expressMiddleware } from '@apollo/server/express4';
+import { expressMiddleware } from '@as-integrations/express5';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { HttpStatus } from '@nestjs/common';
