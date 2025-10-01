@@ -1025,10 +1025,10 @@
     ajv-formats "^3.0.1"
     fast-uri "^3.0.0"
 
-"@fastify/cors@11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@fastify/cors/-/cors-11.0.1.tgz#5f35396f12231f093b3d05f26fa5d43cab6a7d86"
-  integrity sha512-dmZaE7M1f4SM8ZZuk5RhSsDJ+ezTgI7v3HHRj8Ow9CneczsPLZV6+2j2uwdaSLn8zhTv6QV0F4ZRcqdalGx1pQ==
+"@fastify/cors@11.1.0":
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/@fastify/cors/-/cors-11.1.0.tgz#09f79748f08f147d19cfc3f1807b59791bc77cf0"
+  integrity sha512-sUw8ed8wP2SouWZTIbA7V2OQtMNpLj2W6qJOYhNdcmINTu6gsxVYXjQiM9mdi8UUDlcoDDJ/W2syPo1WB2QjYA==
   dependencies:
     fastify-plugin "^5.0.0"
     toad-cache "^3.7.0"
@@ -1843,10 +1843,10 @@
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.9.0"
 
-"@nestjs/common@11.1.3":
-  version "11.1.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.1.3.tgz#d954644da5f4d1b601e48ee71a0d3e3405d81ea1"
-  integrity sha512-ogEK+GriWodIwCw6buQ1rpcH4Kx+G7YQ9EwuPySI3rS05pSdtQ++UhucjusSI9apNidv+QURBztJkRecwwJQXg==
+"@nestjs/common@11.1.6":
+  version "11.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.1.6.tgz#704ae26f09ccd135bf3e6f44b6ef4e3407ea3c54"
+  integrity sha512-krKwLLcFmeuKDqngG2N/RuZHCs2ycsKcxWIDgcm7i1lf3sQ0iG03ci+DsP/r3FcT/eJDFsIHnKtNta2LIi7PzQ==
   dependencies:
     uid "2.0.2"
     file-type "21.0.0"
@@ -1854,10 +1854,10 @@
     load-esm "1.0.2"
     tslib "2.8.1"
 
-"@nestjs/core@11.1.3":
-  version "11.1.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.1.3.tgz#42a9c6261ff70ef49afa809c526134cae22021e8"
-  integrity sha512-5lTni0TCh8x7bXETRD57pQFnKnEg1T6M+VLE7wAmyQRIecKQU+2inRGZD+A4v2DC1I04eA0WffP0GKLxjOKlzw==
+"@nestjs/core@11.1.6":
+  version "11.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.1.6.tgz#9d54882f121168b2fa2b07fa1db0858161a80626"
+  integrity sha512-siWX7UDgErisW18VTeJA+x+/tpNZrJewjTBsRPF3JVxuWRuAB1kRoiJcxHgln8Lb5UY9NdvklITR84DUEXD0Cg==
   dependencies:
     uid "2.0.2"
     "@nuxt/opencollective" "0.4.1"
@@ -1871,35 +1871,35 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-2.1.0.tgz#b9b536b7c3571567aa1d0223db8baa1a51505a19"
   integrity sha512-W+n+rM69XsFdwORF11UqJahn4J3xi4g/ZEOlJNL6KoW5ygWSmBB2p0S2BZ4FQeS/NDH72e6xIcu35SfJnE8bXw==
 
-"@nestjs/platform-express@11.1.3":
-  version "11.1.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.1.3.tgz#bf470f2e270ca9daa930974476dd0d7d62879556"
-  integrity sha512-hEDNMlaPiBO72fxxX/CuRQL3MEhKRc/sIYGVoXjrnw6hTxZdezvvM6A95UaLsYknfmcZZa/CdG1SMBZOu9agHQ==
+"@nestjs/platform-express@11.1.6":
+  version "11.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.1.6.tgz#9b1dcf82a3b3fdd5761c918ad664aff83e4eacc7"
+  integrity sha512-HErwPmKnk+loTq8qzu1up+k7FC6Kqa8x6lJ4cDw77KnTxLzsCaPt+jBvOq6UfICmfqcqCCf3dKXg+aObQp+kIQ==
   dependencies:
     cors "2.8.5"
     express "5.1.0"
-    multer "2.0.1"
+    multer "2.0.2"
     path-to-regexp "8.2.0"
     tslib "2.8.1"
 
-"@nestjs/platform-fastify@11.1.3":
-  version "11.1.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.1.3.tgz#35ce7668360db3a72659a0d1e2acd195d4d7abf4"
-  integrity sha512-SMIjGV6eAxQv6+/2OumIdNivVLebql6THWjXv8Uh4dR1CI6ipp3gMbpoiYbHP7AGXv8pzuGmpakli86VP9P8NQ==
+"@nestjs/platform-fastify@11.1.6":
+  version "11.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.1.6.tgz#22524df44cad32012858566f1b3bb627ce2788f8"
+  integrity sha512-udnIg7vfA103wppRkcMRVWX71S7NfeDnlprTndhcZzYXcDY2i5c+RwrQN/xU4Aw5X22Fg8ryi7bFbn6/Lquv8w==
   dependencies:
-    "@fastify/cors" "11.0.1"
+    "@fastify/cors" "11.1.0"
     "@fastify/formbody" "8.0.2"
     "@fastify/middie" "9.0.3"
     fast-querystring "1.1.2"
-    fastify "5.3.3"
+    fastify "5.4.0"
     light-my-request "6.6.0"
     path-to-regexp "8.2.0"
     tslib "2.8.1"
 
-"@nestjs/testing@11.1.3":
-  version "11.1.3"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-11.1.3.tgz#27b34003f90429fef542b4fe54c5d43f73308b17"
-  integrity sha512-CeXG6/eEqgFIkPkmU00y18Dd3DLOIDFhPItzJK1SWckKo6IhcnfoRJzGx75bmuvUMjb51j6An96S/+MJ2ty9jA==
+"@nestjs/testing@11.1.6":
+  version "11.1.6"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-11.1.6.tgz#7f172a8024948dee4cb318acccfff31c1356f338"
+  integrity sha512-srYzzDNxGvVCe1j0SpTS9/ix75PKt6Sn6iMaH1rpJ6nj2g8vwNrhK0CoJJXvpCYgrnI+2WES2pprYnq8rAMYHA==
   dependencies:
     tslib "2.8.1"
 
@@ -5449,10 +5449,10 @@ fastify-plugin@^5.0.0:
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.0.1.tgz#82d44e6fe34d1420bb5a4f7bee434d501e41939f"
   integrity sha512-HCxs+YnRaWzCl+cWRYFnHmeRFyR5GVnJTAaCJQiYzQSDwK9MgJdyAsuL3nh0EWRCYMgQ5MeziymvmAhUHYHDUQ==
 
-fastify@5.3.3:
-  version "5.3.3"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.3.3.tgz#14915c39a6198dbb0a3910e0d1f13e04234bbedc"
-  integrity sha512-nCBiBCw9q6jPx+JJNVgO8JVnTXeUyrGcyTKPQikRkA/PanrFcOIo4R+ZnLeOLPZPGgzjomqfVarzE0kYx7qWiQ==
+fastify@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.4.0.tgz#82bf56e0bc36ba8dfb0bd372a0de8b62ccf3287c"
+  integrity sha512-I4dVlUe+WNQAhKSyv15w+dwUh2EPiEl4X2lGYMmNSgF83WzTMAPKGdWEv5tPsCQOb+SOZwz8Vlta2vF+OeDgRw==
   dependencies:
     "@fastify/ajv-compiler" "^4.0.0"
     "@fastify/error" "^4.0.0"
@@ -8422,10 +8422,10 @@ ms@^2.0.0, ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-multer@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/multer/-/multer-2.0.1.tgz#3ed335ed2b96240e3df9e23780c91cfcf5d29202"
-  integrity sha512-Ug8bXeTIUlxurg8xLTEskKShvcKDZALo1THEX5E41pYCD2sCVub5/kIRIGqWNoqV6szyLyQKV6mD4QUrWE5GCQ==
+multer@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/multer/-/multer-2.0.2.tgz#08a8aa8255865388c387aaf041426b0c87bf58dd"
+  integrity sha512-u7f2xaZ/UG8oLXHvtF/oWTRvT44p9ecwBBqTwgJVq0+4BW1g8OW01TyMEGWBHbyMOYVHXslaut7qEQ1meATXgw==
   dependencies:
     append-field "^1.0.0"
     busboy "^1.6.0"
