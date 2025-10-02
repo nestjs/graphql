@@ -4,7 +4,6 @@ import {
   ApolloServerErrorCode,
   unwrapResolverError,
 } from '@apollo/server/errors';
-import { expressMiddleware } from '@as-integrations/express5';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { HttpStatus } from '@nestjs/common';
@@ -126,6 +125,12 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
+    const { expressMiddleware } = loadPackage(
+      '@as-integrations/express5',
+      'GraphQLModule',
+      () => require('@as-integrations/express5'),
+    );
+
     const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
