@@ -8031,10 +8031,10 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.2.0:
-  version "16.2.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.2.0.tgz#da5a60b3f36b8f7179eb314fe42eb40f0f76211a"
-  integrity sha512-I2+KRkC6MVbf44FN7hopWXj+OzS1nKLwN7brAkpd3MLTz9mQgWMYdnrk2ETVaG6yD3x9zIIzuRrCQcuWHyFL1w==
+mercurius@16.4.0:
+  version "16.4.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.4.0.tgz#8c76a006eff26612afd727d66908d2edc1caf5bb"
+  integrity sha512-RZ/iqPY4xn0nzpEG9qczgkBlufqlmDmXmRfhokhkALIEyvYyzaIwGje24ITJ8Sj6eY3AeogxVtZLIPnDpL+qOg==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^8.0.0"
