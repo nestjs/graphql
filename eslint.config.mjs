@@ -1,33 +1,24 @@
-// @ts-check
-import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
-import { join } from 'path';
-import tseslint from 'typescript-eslint';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
-export default tseslint.config(
+import globals from 'globals';
+
+import js from '@eslint/js';
+import ts from 'typescript-eslint';
+
+import prettier from 'eslint-plugin-prettier';
+
+import jest from 'eslint-plugin-jest';
+
+export default defineConfig([
+  globalIgnores(['node_modules', 'coverage', 'dist']),
+  js.configs.recommended,
+  ts.configs.recommended,
   {
-    ignores: ['eslint.config.mjs', 'packages/**/tests/**', 'packages/**/dist/**'],
-  },
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  {
-    languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
-      ecmaVersion: 5,
-      sourceType: 'module',
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: join(import.meta.dirname, 'packages'),
-      },
+    plugins: {
+      prettier,
     },
-  },
-  {
     rules: {
+      ...prettier.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
@@ -43,4 +34,13 @@ export default tseslint.config(
       '@typescript-eslint/unbound-method': 'off',
     },
   },
-);
+  {
+    files: ['**/*.{spec,test}.ts'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+    ...jest.configs.recommended,
+  },
+]);
