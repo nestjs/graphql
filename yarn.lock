@@ -347,10 +347,10 @@
   resolved "https://registry.yarnpkg.com/@as-integrations/express5/-/express5-1.1.2.tgz#5c5b207b8e457bbd546e9b20898d0b1f4a478480"
   integrity sha512-BxfwtcWNf2CELDkuPQxi5Zl3WqY/dQVJYafeCBOGoFQjv5M0fjhxmAFZ9vKx/5YKKNeok4UY6PkFbHzmQrdxIA==
 
-"@as-integrations/fastify@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-3.0.0.tgz#923dc71ccaa2b27070668960e1a12d0780828560"
-  integrity sha512-UXJYMraDQKwCUjk5zKDb4GJnPzqKbn+sPOboNISZCinPAPQsTzuZiw1/VgJNfGRW4l+dI3C0DDM9PysYCG+MWg==
+"@as-integrations/fastify@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@as-integrations/fastify/-/fastify-3.1.0.tgz#9673fb041a8c8b3f05b870ecb88619e8628b3bc4"
+  integrity sha512-hfK5adsybNj0qRc+5BiCOy50SqqOhPIctvaaGsjqq7ui8lO/TZkLtz6IvDhWC70vOcMXJuMJCTTEb4hex8RVgw==
   dependencies:
     fastify-plugin "^5.0.1"
 
