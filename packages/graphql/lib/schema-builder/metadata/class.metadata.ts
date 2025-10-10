@@ -10,4 +10,5 @@ export interface ClassMetadata {
   extensions?: Record<string, unknown>;
   properties?: PropertyMetadata[];
   inheritDescription?: boolean;
+  isOneOf?: boolean; // For '@oneOf' input types
 }
