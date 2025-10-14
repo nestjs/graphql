@@ -27,7 +27,7 @@
     "@apollo/server-plugin-response-cache": "5.0.0",
     "@apollo/subgraph": "2.11.2",
     "@as-integrations/express5": "^1.1.2",
-    "@as-integrations/fastify": "3.0.0",
+    "@as-integrations/fastify": "3.1.0",
     "@nestjs/common": "11.1.6",
     "@nestjs/core": "11.1.6",
     "@nestjs/platform-express": "11.1.6",
