@@ -31,7 +31,7 @@
   "devDependencies": {
     "@commitlint/cli": "20.1.0",
     "@commitlint/config-angular": "20.0.0",
-    "@eslint/js": "9.37.0",
+    "@eslint/js": "9.38.0",
     "@types/graphql": "14.5.0",
     "@types/jest": "30.0.0",
     "@types/node": "24.6.2",
@@ -52,7 +52,7 @@
     "jest": "30.0.5",
     "lerna": "9.0.0",
     "lerna-changelog": "2.2.0",
-    "lint-staged": "16.2.4",
+    "lint-staged": "16.2.6",
     "prettier": "3.6.2",
     "prettierv2": "npm:prettier@2.8.8",
     "reflect-metadata": "0.2.2",
@@ -63,7 +63,7 @@
     "ts-jest": "29.4.5",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.46.1"
+    "typescript-eslint": "8.46.2"
   },
   "changelog": {
     "labels": {
