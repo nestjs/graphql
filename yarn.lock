@@ -8318,10 +8318,10 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.5.0:
-  version "16.5.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.5.0.tgz#93389778ca5175292a042e6236e28fe871367495"
-  integrity sha512-l5SOEXYATLhlH1M3tEIF1lJdwcgxXdNCf7HsCHoZ9IFO4Sgs//lo/ymeRuXOnapQ6zo1yruecY7OsRVaSCC2LA==
+mercurius@16.6.0:
+  version "16.6.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.6.0.tgz#f84ea085d1e67125bfff5cae4fd35b6fbfd22a08"
+  integrity sha512-X4IJ4kL1ySKhen7/PHzrAiu+96xIVzxQoGDENdab/SbS36Z9qbngyES6mXbDGGvVhL+4ehxBo22Yg4GMFc6Umw==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^8.0.0"
