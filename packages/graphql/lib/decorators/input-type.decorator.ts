@@ -25,6 +25,11 @@ export interface InputTypeOptions {
    * If `true`, type will not be registered in the schema.
    */
   isAbstract?: boolean;
+  /**
+   * If 'true', the input type will be '@oneOf' type.
+   * More info about '@oneOf' types in the [GraphQL spec](https://spec.graphql.org/September2025/#sec-OneOf-Input-Objects).
+   */
+  isOneOf?: boolean;
 }
 
 /**
@@ -67,6 +72,7 @@ export function InputType(
       name: name || target.name,
       description: options.description,
       isAbstract: options.isAbstract,
+      isOneOf: options.isOneOf,
     };
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addInputTypeMetadata(metadata),
