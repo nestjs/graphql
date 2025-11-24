@@ -39,8 +39,8 @@
     "@types/normalize-path": "3.0.2",
     "@types/supertest": "6.0.3",
     "@types/ws": "8.18.1",
-    "@typescript-eslint/eslint-plugin": "8.47.0",
-    "@typescript-eslint/parser": "8.47.0",
+    "@typescript-eslint/eslint-plugin": "8.48.0",
+    "@typescript-eslint/parser": "8.48.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.14.3",
     "eslint": "9.39.1",
@@ -64,7 +64,7 @@
     "ts-jest": "29.4.5",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.47.0"
+    "typescript-eslint": "8.48.0"
   },
   "changelog": {
     "labels": {
