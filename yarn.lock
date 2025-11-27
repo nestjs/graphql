@@ -1752,10 +1752,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lerna/create@9.0.1":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@lerna/create/-/create-9.0.1.tgz#41446915ae312003e22cd981d71ef297fa51b944"
-  integrity sha512-xkZhQ+d7IsLzL5+1G+rKtH3b9aKRyBQ9yaz1VwPTfkD2nUAyaco97BRN9YRJgJrSHY/SI265RaD1D2rt00Jjkg==
+"@lerna/create@9.0.3":
+  version "9.0.3"
+  resolved "https://registry.yarnpkg.com/@lerna/create/-/create-9.0.3.tgz#3cbc02adc6a1d7d289764d9814825b105a3f7c79"
+  integrity sha512-hUTEWrR8zH+/Z3bp/R1aLm6DW8vB/BB7KH7Yeg4fMfrvSwxegiLVW9uJFAzWkK4mzEagmj/Dti85Yg9MN13t0g==
   dependencies:
     "@npmcli/arborist" "9.1.6"
     "@npmcli/package-json" "7.0.2"
@@ -1785,7 +1785,7 @@
     inquirer "12.9.6"
     is-ci "3.0.1"
     is-stream "2.0.0"
-    js-yaml "4.1.0"
+    js-yaml "4.1.1"
     libnpmpublish "11.1.2"
     load-json-file "6.2.0"
     make-dir "4.0.0"
@@ -7550,10 +7550,10 @@ js-tokens@^4.0.0:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@4.1.0, js-yaml@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
-  integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
+js-yaml@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.1.tgz#854c292467705b699476e1a2decc0c8a3458806b"
+  integrity sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==
   dependencies:
     argparse "^2.0.1"
 
@@ -7564,6 +7564,13 @@ js-yaml@^3.10.0, js-yaml@^3.13.1:
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
+
+js-yaml@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
+  integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
+  dependencies:
+    argparse "^2.0.1"
 
 jsbn@1.1.0:
   version "1.1.0"
@@ -7706,12 +7713,12 @@ lerna-changelog@2.2.0:
     progress "^2.0.0"
     yargs "^17.1.0"
 
-lerna@9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/lerna/-/lerna-9.0.1.tgz#2a57edab330411a684e135d108abe28d32e099c9"
-  integrity sha512-sPfufYbSLisgi3mghbfOPxNL0Jhs4p6yCexXEdwgXITV5oKq6mdj2w5NQ32i6wMfSlEZFzIIV17ozdYsHavNhg==
+lerna@9.0.3:
+  version "9.0.3"
+  resolved "https://registry.yarnpkg.com/lerna/-/lerna-9.0.3.tgz#6913f4306071953026f9660760c6d947a38f4c17"
+  integrity sha512-wCsJWKX8FaGJoWX2K5gL5q7ReqQNxNsS92AW5glBe/JzWEtoM/jgXXGrEzQzORMb8rTXYFjUjpn60et+i8XugA==
   dependencies:
-    "@lerna/create" "9.0.1"
+    "@lerna/create" "9.0.3"
     "@npmcli/arborist" "9.1.6"
     "@npmcli/package-json" "7.0.2"
     "@npmcli/run-script" "10.0.2"
@@ -7745,7 +7752,7 @@ lerna@9.0.1:
     is-ci "3.0.1"
     is-stream "2.0.0"
     jest-diff ">=30.0.0 < 31"
-    js-yaml "4.1.0"
+    js-yaml "4.1.1"
     libnpmaccess "10.0.3"
     libnpmpublish "11.1.2"
     load-json-file "6.2.0"
