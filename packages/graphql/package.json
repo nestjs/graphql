@@ -22,7 +22,7 @@
     "@graphql-tools/schema": "10.0.25",
     "@graphql-tools/utils": "10.9.1",
     "@nestjs/mapped-types": "2.1.0",
-    "chokidar": "4.0.3",
+    "chokidar": "5.0.0",
     "fast-glob": "3.3.3",
     "graphql-tag": "2.12.6",
     "graphql-ws": "6.0.6",
