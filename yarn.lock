@@ -10083,10 +10083,10 @@ regexp.prototype.flags@^1.5.1, regexp.prototype.flags@^1.5.3, regexp.prototype.f
     gopd "^1.2.0"
     set-function-name "^2.0.2"
 
-release-it@19.0.6:
-  version "19.0.6"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-19.0.6.tgz#9be4900d66ada03398647d95e0b26f6a1c687485"
-  integrity sha512-XTCNZ2mV9wjASQmc2bcQjA+ImJiFMijbFSyQE6lDmP1Plq17acjYaoY5FmJb5Lh/Nv4UDwfRlKQMv1DvHFKf1g==
+release-it@19.1.0:
+  version "19.1.0"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-19.1.0.tgz#6c13e419ca0e1e2558ece312d70fe5a3e4a69d02"
+  integrity sha512-XgAIZVKgHgOBUUoLFrUfXHG4cUDiXPWFW0AHIAgk17Tk9JbIjz9YyAU8MyQer7dWkfG5IpNU9QH8tViQZGfhaw==
   dependencies:
     "@nodeutils/defaults-deep" "1.1.0"
     "@octokit/rest" "22.0.0"
