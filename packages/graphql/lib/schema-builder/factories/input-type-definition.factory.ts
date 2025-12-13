@@ -90,7 +90,7 @@ export class InputTypeDefinitionFactory {
             type,
             property.directives,
           ),
-          extensions: metadata.extensions,
+          extensions: property.extensions,
         };
       });
 

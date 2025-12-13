@@ -4,6 +4,7 @@ import {
   InputType,
   GraphQLSchemaBuilderModule,
   TypeMetadataStorage,
+  Extensions
 } from '../../../lib';
 import { TypeDefinitionsGenerator } from '../../../lib/schema-builder/type-definitions.generator';
 import { TypeDefinitionsStorage } from '../../../lib/schema-builder/storages/type-definitions.storage';
@@ -19,6 +20,10 @@ class DeprecationInput {
     deprecationReason: 'use something else',
   })
   oldField!: string;
+
+  @Field(() => String)
+  @Extensions({ metadata: 'field' })
+  extendedField!: string;
 }
 
 describe('InputTypeDefinitionFactory (deprecation)', () => {
@@ -52,5 +57,17 @@ describe('InputTypeDefinitionFactory (deprecation)', () => {
     const fields = inputType.getFields();
     expect(fields.regular.deprecationReason).toBeUndefined();
     expect(fields.oldField.deprecationReason).toBe('use something else');
+  });
+
+   it('should add extensions to the field', () => {
+    // Generate type definitions (inputs included)
+    generator.generate({} as any);
+
+    const inputType: any = storage.getInputTypeAndExtract(DeprecationInput);
+    expect(inputType).toBeDefined();
+
+    const fields = inputType.getFields();
+    expect(fields.extendedField.extensions).toBeDefined()
+    expect(fields.extendedField.extensions.metadata).toBe('field')
   });
 });
