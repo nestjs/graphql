@@ -34,6 +34,7 @@ export class InputTypeDefinitionFactory {
       type: new GraphQLInputObjectType({
         name: metadata.name,
         description: metadata.description,
+        isOneOf: metadata.isOneOf,
         fields: this.generateFields(metadata, options),
         /**
          * AST node has to be manually created in order to define directives
