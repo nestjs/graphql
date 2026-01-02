@@ -4,7 +4,6 @@ import { GraphQLAstExplorer, GraphQLFactory } from '../lib';
 import { GraphQLSchemaBuilder } from '../lib/graphql-schema.builder';
 import { ResolversExplorerService } from '../lib/services/resolvers-explorer.service';
 import { ScalarsExplorerService } from '../lib/services/scalars-explorer.service';
-import gql from 'graphql-tag';
 import { GraphQLSchema } from 'graphql';
 
 describe('GraphQLFactory', () => {
