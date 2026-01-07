@@ -10327,10 +10327,10 @@ regexp.prototype.flags@^1.5.1, regexp.prototype.flags@^1.5.3, regexp.prototype.f
     gopd "^1.2.0"
     set-function-name "^2.0.2"
 
-release-it@19.2.2:
-  version "19.2.2"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-19.2.2.tgz#8709c937c433eb5499f7d65add1bc8f183096e27"
-  integrity sha512-57TBUTBbBXLJsPufYS+Hsb1dSZKZ0ktiYgPkNc3Pmlq/QQtH9X0oD0SG2ib5CsXHTI11m19pyK60NXmvtE6cLg==
+release-it@19.2.3:
+  version "19.2.3"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-19.2.3.tgz#af2e96752bfcf4d0c08f53e4928e3493b54c618d"
+  integrity sha512-GTSfrKb0cPmssEFliX0+WQBHC6NiDsMR/M8Y2tkvct/TO36BjB5XV6LO5BUTYV12C3+f78Y8aroku7jCyNiDeA==
   dependencies:
     "@nodeutils/defaults-deep" "1.1.0"
     "@octokit/rest" "22.0.1"
