@@ -41,13 +41,22 @@ export class TypeMapperService {
     const numberScalar =
       numberScalarMode === 'float' ? GraphQLFloat : GraphQLInt;
 
-    const typeScalarMapping = new Map<Function, GraphQLScalarType>([
-      [String, GraphQLString],
-      [Number, numberScalar],
-      [Boolean, GraphQLBoolean],
-      [Date, dateScalar],
-    ]);
-    return typeScalarMapping.get(typeRef as Function);
+    // Use name-based lookup to handle cross-VM context type references.
+    // Built-in constructors (String, Number, etc.) captured by @Field() decorators
+    // may differ across VM contexts, causing reference equality checks to fail.
+    // Using constructor names ensures correct mapping regardless of VM context.
+    const typeScalarMapping: Record<string, GraphQLScalarType> = {
+      String: GraphQLString,
+      Number: numberScalar,
+      Boolean: GraphQLBoolean,
+      Date: dateScalar,
+    };
+
+    const typeRefAsFunction = typeRef as Function;
+    if (typeof typeRefAsFunction === 'function' && typeRefAsFunction.name) {
+      return typeScalarMapping[typeRefAsFunction.name];
+    }
+    return undefined;
   }
 
   mapToGqlType<T extends GraphQLType = GraphQLType>(

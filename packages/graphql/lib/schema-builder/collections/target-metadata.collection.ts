@@ -66,7 +66,16 @@ export class TargetMetadataCollection {
 
   set objectType(val: ObjectTypeMetadata) {
     this._objectType = val;
-    this.all.objectType.push(val);
+    // Check if a type with the same name already exists (can happen with
+    // different VM contexts in Jest globalSetup scenarios). If so, replace it.
+    const existingIndex = this.all.objectType.findIndex(
+      (existing) => existing.name === val.name,
+    );
+    if (existingIndex >= 0) {
+      this.all.objectType[existingIndex] = val;
+    } else {
+      this.all.objectType.push(val);
+    }
   }
 
   get objectType() {
