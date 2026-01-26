@@ -7,6 +7,7 @@
 
 import { isString } from '@nestjs/common/utils/shared.utils';
 import { ClassType } from '../enums/class-type.enum';
+import { RegisterInOption } from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
@@ -30,6 +31,13 @@ export interface InputTypeOptions {
    * More info about '@oneOf' types in the [GraphQL spec](https://spec.graphql.org/September2025/#sec-OneOf-Input-Objects).
    */
   isOneOf?: boolean;
+  /**
+   * NestJS module that this type belongs to.
+   * When specified, this type will only be included in GraphQL schemas
+   * that include this module via the `include` option.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
 }
 
 /**
@@ -73,6 +81,7 @@ export function InputType(
       description: options.description,
       isAbstract: options.isAbstract,
       isOneOf: options.isOneOf,
+      registerIn: options.registerIn,
     };
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addInputTypeMetadata(metadata),

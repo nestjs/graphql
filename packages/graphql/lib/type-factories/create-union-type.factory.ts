@@ -7,6 +7,7 @@
 
 import { Type } from '@nestjs/common';
 import { ResolveTypeFn } from '../interfaces/resolve-type-fn.interface';
+import { RegisterInOption } from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
@@ -32,6 +33,13 @@ export interface UnionOptions<
    * Types that the union consist of.
    */
   types: () => T;
+  /**
+   * NestJS module that this union belongs to.
+   * When specified, this union will only be included in GraphQL schemas
+   * that include this module via the `include` option.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
 }
 
 export type ArrayElement<ArrayType extends readonly unknown[]> =
@@ -45,7 +53,7 @@ export type Union<T extends readonly any[]> = InstanceType<ArrayElement<T>>;
 export function createUnionType<
   T extends readonly Type<unknown>[] = Type<unknown>[],
 >(options: UnionOptions<T>): Union<T> {
-  const { name, description, types, resolveType } = options;
+  const { name, description, types, resolveType, registerIn } = options;
   const id = Symbol(name);
 
   LazyMetadataStorage.store(() =>
@@ -55,6 +63,7 @@ export function createUnionType<
       description,
       typesFn: types,
       resolveType,
+      registerIn,
     }),
   );
   return id as any;

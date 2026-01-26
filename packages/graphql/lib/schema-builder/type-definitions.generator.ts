@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { BuildSchemaOptions } from '../interfaces';
+import { ClassMetadata, EnumMetadata, UnionMetadata } from './metadata';
+import { InterfaceMetadata } from './metadata/interface.metadata';
+import { ObjectTypeMetadata } from './metadata/object-type.metadata';
 import { EnumDefinitionFactory } from './factories/enum-definition.factory';
 import { InputTypeDefinitionFactory } from './factories/input-type-definition.factory';
 import { InterfaceDefinitionFactory } from './factories/interface-definition.factory';
@@ -19,50 +22,88 @@ export class TypeDefinitionsGenerator {
     private readonly unionDefinitionFactory: UnionDefinitionFactory,
   ) {}
 
-  generate(options: BuildSchemaOptions) {
-    this.generateUnionDefs();
-    this.generateEnumDefs();
-    this.generateInterfaceDefs(options);
-    this.generateObjectTypeDefs(options);
-    this.generateInputTypeDefs(options);
+  generate(options: BuildSchemaOptions, includeModules?: Function[]) {
+    // Clear previous type definitions to support multiple schema generation
+    this.typeDefinitionsStorage.clear();
+
+    if (includeModules?.length) {
+      // Filter metadata by modules
+      this.generateUnionDefs(
+        TypeMetadataStorage.getUnionsMetadataByModules(includeModules),
+      );
+      this.generateEnumDefs(
+        TypeMetadataStorage.getEnumsMetadataByModules(includeModules),
+      );
+      this.generateInterfaceDefs(
+        options,
+        TypeMetadataStorage.getInterfacesMetadataByModules(includeModules),
+      );
+      this.generateObjectTypeDefs(
+        options,
+        TypeMetadataStorage.getObjectTypesMetadataByModules(includeModules),
+      );
+      this.generateInputTypeDefs(
+        options,
+        TypeMetadataStorage.getInputTypesMetadataByModules(includeModules),
+      );
+    } else {
+      // Use all metadata when no module filter is specified
+      this.generateUnionDefs();
+      this.generateEnumDefs();
+      this.generateInterfaceDefs(options);
+      this.generateObjectTypeDefs(options);
+      this.generateInputTypeDefs(options);
+    }
   }
 
-  private generateInputTypeDefs(options: BuildSchemaOptions) {
-    const metadata = TypeMetadataStorage.getInputTypesMetadata();
-    const inputTypeDefs = metadata.map((metadata) =>
-      this.inputTypeDefinitionFactory.create(metadata, options),
+  private generateInputTypeDefs(
+    options: BuildSchemaOptions,
+    metadata?: ClassMetadata[],
+  ) {
+    const inputTypeMetadata =
+      metadata ?? TypeMetadataStorage.getInputTypesMetadata();
+    const inputTypeDefs = inputTypeMetadata.map((item) =>
+      this.inputTypeDefinitionFactory.create(item, options),
     );
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
   }
 
-  private generateObjectTypeDefs(options: BuildSchemaOptions) {
-    const metadata = TypeMetadataStorage.getObjectTypesMetadata();
-    const objectTypeDefs = metadata.map((metadata) =>
-      this.objectTypeDefinitionFactory.create(metadata, options),
+  private generateObjectTypeDefs(
+    options: BuildSchemaOptions,
+    metadata?: ObjectTypeMetadata[],
+  ) {
+    const objectTypeMetadata =
+      metadata ?? TypeMetadataStorage.getObjectTypesMetadata();
+    const objectTypeDefs = objectTypeMetadata.map((item) =>
+      this.objectTypeDefinitionFactory.create(item, options),
     );
     this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
   }
 
-  private generateInterfaceDefs(options: BuildSchemaOptions) {
-    const metadata = TypeMetadataStorage.getInterfacesMetadata();
-    const interfaceDefs = metadata.map((metadata) =>
-      this.interfaceDefinitionFactory.create(metadata, options),
+  private generateInterfaceDefs(
+    options: BuildSchemaOptions,
+    metadata?: InterfaceMetadata[],
+  ) {
+    const interfaceMetadata =
+      metadata ?? TypeMetadataStorage.getInterfacesMetadata();
+    const interfaceDefs = interfaceMetadata.map((item) =>
+      this.interfaceDefinitionFactory.create(item, options),
     );
     this.typeDefinitionsStorage.addInterfaces(interfaceDefs);
   }
 
-  private generateEnumDefs() {
-    const metadata = TypeMetadataStorage.getEnumsMetadata();
-    const enumDefs = metadata.map((metadata) =>
-      this.enumDefinitionFactory.create(metadata),
+  private generateEnumDefs(metadata?: EnumMetadata[]) {
+    const enumMetadata = metadata ?? TypeMetadataStorage.getEnumsMetadata();
+    const enumDefs = enumMetadata.map((item) =>
+      this.enumDefinitionFactory.create(item),
     );
     this.typeDefinitionsStorage.addEnums(enumDefs);
   }
 
-  private generateUnionDefs() {
-    const metadata = TypeMetadataStorage.getUnionsMetadata();
-    const unionDefs = metadata.map((metadata) =>
-      this.unionDefinitionFactory.create(metadata),
+  private generateUnionDefs(metadata?: UnionMetadata[]) {
+    const unionMetadata = metadata ?? TypeMetadataStorage.getUnionsMetadata();
+    const unionDefs = unionMetadata.map((item) =>
+      this.unionDefinitionFactory.create(item),
     );
     this.typeDefinitionsStorage.addUnions(unionDefs);
   }
