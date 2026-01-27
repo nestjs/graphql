@@ -22,4 +22,11 @@ export interface GraphiQLOptions {
    * @default true
    */
   isHeadersEditorEnabled?: boolean;
+  /**
+   * If `true`, the schema documentation will include deprecated input field
+   * and argument values. When introspecting the schema, deprecated values
+   * will be included.
+   * @default false
+   */
+  inputValueDeprecation?: boolean;
 }

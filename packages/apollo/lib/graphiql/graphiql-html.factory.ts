@@ -4,6 +4,7 @@ export class GraphiQLHTMLFactory {
   create(options: GraphiQLOptions): string {
     const shouldPersistHeaders = options.shouldPersistHeaders ?? true;
     const isHeadersEditorEnabled = options.isHeadersEditorEnabled ?? true;
+    const inputValueDeprecation = options.inputValueDeprecation ?? false;
     const headers = options.headers ?? {};
     const url = options.url ?? '/graphql';
     const html = `
@@ -53,6 +54,7 @@ export class GraphiQLHTMLFactory {
           defaultEditorToolsVisibility: true,
           shouldPersistHeaders: ${shouldPersistHeaders ? 'true' : 'false'},
           isHeadersEditorEnabled: ${isHeadersEditorEnabled ? 'true' : 'false'},
+          inputValueDeprecation: ${inputValueDeprecation ? 'true' : 'false'},
         }),
         document.getElementById('graphiql'),
       );
