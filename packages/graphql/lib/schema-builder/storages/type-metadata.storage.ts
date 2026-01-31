@@ -1,4 +1,4 @@
-import { Type } from '@nestjs/common';
+import { Logger, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { addFieldMetadata } from '../../decorators';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
@@ -16,6 +16,7 @@ import {
   PropertyDirectiveMetadata,
   PropertyExtensionsMetadata,
   PropertyMetadata,
+  RegisterInOption,
   ResolverClassMetadata,
   ResolverTypeMetadata,
   UnionMetadata,
@@ -25,6 +26,7 @@ import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { isThrowing } from '../utils/is-throwing.util';
 
 export class TypeMetadataStorageHost {
+  private readonly logger = new Logger(TypeMetadataStorageHost.name);
   private queries = new Array<ResolverTypeMetadata>();
   private mutations = new Array<ResolverTypeMetadata>();
   private subscriptions = new Array<ResolverTypeMetadata>();
@@ -138,6 +140,117 @@ export class TypeMetadataStorageHost {
 
   getUnionsMetadata(): UnionMetadata[] {
     return this.unions;
+  }
+
+  /**
+   * Resolves the registerIn value, which can be either a module class directly
+   * or a function that returns the module class (for circular dependency handling).
+   */
+  private resolveRegisterIn(
+    registerIn: RegisterInOption | undefined,
+  ): Function | undefined {
+    if (!registerIn) {
+      return undefined;
+    }
+    // Check if it's a class (has prototype with constructor)
+    // or an arrow function / factory function (no prototype)
+    if (
+      registerIn.prototype &&
+      registerIn.prototype.constructor === registerIn
+    ) {
+      // It's a class, return directly
+      return registerIn;
+    }
+    // It's a factory function, call it to get the actual module
+    try {
+      return registerIn();
+    } catch (error) {
+      this.logger.warn(
+        `Failed to resolve registerIn function. The type will be included in all schemas (backward compatible behavior). Error: ${error}`,
+      );
+      return undefined;
+    }
+  }
+
+  /**
+   * Checks if the metadata should be included based on module filtering.
+   */
+  private shouldIncludeInModules(
+    registerIn: RegisterInOption | undefined,
+    moduleSet: Set<Function>,
+  ): boolean {
+    const resolvedModule = this.resolveRegisterIn(registerIn);
+    // Include if no registerIn specified (included in all schemas) or if in the module set
+    return !resolvedModule || moduleSet.has(resolvedModule);
+  }
+
+  /**
+   * Generic helper to filter metadata by modules.
+   * Returns items that either have no registerIn specified (included in all schemas)
+   * or are registered in one of the specified modules.
+   */
+  private filterByModules<T extends { registerIn?: RegisterInOption }>(
+    metadata: T[],
+    modules: Function[],
+  ): T[] {
+    const moduleSet = new Set(modules);
+    return metadata.filter((item) =>
+      this.shouldIncludeInModules(item.registerIn, moduleSet),
+    );
+  }
+
+  /**
+   * Get ObjectType metadata filtered by modules.
+   */
+  getObjectTypesMetadataByModules(modules: Function[]): ObjectTypeMetadata[] {
+    return this.filterByModules(
+      this.metadataByTargetCollection.all.objectType,
+      modules,
+    );
+  }
+
+  /**
+   * Get InputType metadata filtered by modules.
+   */
+  getInputTypesMetadataByModules(modules: Function[]): ClassMetadata[] {
+    return this.filterByModules(
+      this.metadataByTargetCollection.all.inputType,
+      modules,
+    );
+  }
+
+  /**
+   * Get InterfaceType metadata filtered by modules.
+   */
+  getInterfacesMetadataByModules(modules: Function[]): InterfaceMetadata[] {
+    return this.filterByModules(
+      [...this.metadataByTargetCollection.all.interface.values()],
+      modules,
+    );
+  }
+
+  /**
+   * Get ArgsType metadata filtered by modules.
+   */
+  getArgumentsMetadataByModules(modules: Function[]): ClassMetadata[] {
+    return this.filterByModules(
+      this.metadataByTargetCollection.all.argumentType,
+      modules,
+    );
+  }
+
+  /**
+   * Get Enum metadata filtered by modules.
+   */
+  getEnumsMetadataByModules(modules: Function[]): EnumMetadata[] {
+    return this.filterByModules(this.enums, modules);
+  }
+
+  /**
+   * Get Union metadata filtered by modules.
+   */
+  getUnionsMetadataByModules(modules: Function[]): UnionMetadata[] {
+    return this.filterByModules(this.unions, modules);
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
