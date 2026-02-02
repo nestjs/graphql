@@ -5724,10 +5724,10 @@ fastify@5.6.2:
     semver "^7.6.0"
     toad-cache "^3.7.0"
 
-fastify@5.7.2:
-  version "5.7.2"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.7.2.tgz#3487cd6bd709a28fff00b9c1df3f3390eaa85f59"
-  integrity sha512-dBJolW+hm6N/yJVf6J5E1BxOBNkuXNl405nrfeR8SpvGWG3aCC2XDHyiFBdow8Win1kj7sjawQc257JlYY6M/A==
+fastify@5.7.4:
+  version "5.7.4"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.7.4.tgz#c5779ec5a509f5ea0a6b4232855eddb7125da129"
+  integrity sha512-e6l5NsRdaEP8rdD8VR0ErJASeyaRbzXYpmkrpr2SuvuMq6Si3lvsaVy5C+7gLanEkvjpMDzBXWE5HPeb/hgTxA==
   dependencies:
     "@fastify/ajv-compiler" "^4.0.5"
     "@fastify/error" "^4.0.0"
