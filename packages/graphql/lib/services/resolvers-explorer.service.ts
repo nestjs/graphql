@@ -48,6 +48,7 @@ export class ResolversExplorerService extends BaseExplorerService {
   private readonly logger = new Logger(ResolversExplorerService.name);
   private readonly gqlParamsFactory = new GqlParamsFactory();
   private readonly injector = new Injector();
+  private coreModuleRef: Module | null | undefined;
 
   constructor(
     private readonly modulesContainer: ModulesContainer,
@@ -298,18 +299,22 @@ export class ResolversExplorerService extends BaseExplorerService {
   }
 
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
-    const coreModuleArray = [...this.modulesContainer.entries()]
-      .filter(
-        ([key, { metatype }]) =>
-          metatype && metatype.name === InternalCoreModule.name,
-      )
-      .map(([key, value]) => value);
+    if (this.coreModuleRef === undefined) {
+      const coreModuleArray = [...this.modulesContainer.entries()]
+        .filter(
+          ([key, { metatype }]) =>
+            metatype && metatype.name === InternalCoreModule.name,
+        )
+        .map(([key, value]) => value);
 
-    const coreModuleRef = head(coreModuleArray);
-    if (!coreModuleRef) {
+      this.coreModuleRef = head(coreModuleArray) ?? null;
+    }
+
+    if (!this.coreModuleRef) {
       return;
     }
-    const wrapper = coreModuleRef.getProviderByKey(REQUEST);
+
+    const wrapper = this.coreModuleRef.getProviderByKey(REQUEST);
     wrapper.setInstanceByContextId(contextId, {
       instance: contextId.getParent ? contextId.payload : request,
       isResolved: true,
