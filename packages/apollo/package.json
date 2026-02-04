@@ -31,7 +31,7 @@
     "@nestjs/common": "11.1.13",
     "@nestjs/core": "11.1.13",
     "@nestjs/platform-express": "11.1.13",
-    "@nestjs/platform-fastify": "11.1.13",
+    "@nestjs/platform-fastify": "11.1.10",
     "@nestjs/testing": "11.1.13",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
