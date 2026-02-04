@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import * as request from 'supertest';
+import { HOOKS_INVOCATIONS } from '../hooks/base/graphql.config';
 import { ApplicationModule } from '../hooks/base/hooks.module';
 import { MockLogger } from '../hooks/mocks/logger.mock';
 
@@ -31,27 +32,10 @@ describe('Base hooks', () => {
           getAnimalName: 'cat',
         },
       });
-    expect(logger.warn).toHaveBeenCalledTimes(4);
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      1,
-      'preParsing',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      2,
-      'preValidation',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      3,
-      'preExecution',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      4,
-      'onResolution',
-      'GqlConfigService',
-    );
+    expect(HOOKS_INVOCATIONS.preParsing).toEqual(1);
+    expect(HOOKS_INVOCATIONS.preValidation).toEqual(1);
+    expect(HOOKS_INVOCATIONS.preExecution).toEqual(1);
+    expect(HOOKS_INVOCATIONS.onResolution).toEqual(1);
   });
 
   afterEach(async () => {

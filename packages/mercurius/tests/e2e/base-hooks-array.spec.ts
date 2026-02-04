@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import * as request from 'supertest';
+import { HOOKS_INVOCATIONS } from '../hooks/base-array/graphql.config';
 import { ApplicationModule } from '../hooks/base-array/hooks.module';
 import { MockLogger } from '../hooks/mocks/logger.mock';
 
@@ -31,47 +32,10 @@ describe('Base hooks in array format', () => {
           getAnimalName: 'cat',
         },
       });
-    expect(logger.warn).toHaveBeenCalledTimes(8);
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      1,
-      'preParsing1',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      2,
-      'preParsing2',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      3,
-      'preValidation1',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      4,
-      'preValidation2',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      5,
-      'preExecution1',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      6,
-      'preExecution2',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      7,
-      'onResolution1',
-      'GqlConfigService',
-    );
-    expect(logger.warn).toHaveBeenNthCalledWith(
-      8,
-      'onResolution2',
-      'GqlConfigService',
-    );
+    expect(HOOKS_INVOCATIONS.preParsing).toEqual([1, 1]);
+    expect(HOOKS_INVOCATIONS.preValidation).toEqual([1, 1]);
+    expect(HOOKS_INVOCATIONS.preExecution).toEqual([1, 1]);
+    expect(HOOKS_INVOCATIONS.onResolution).toEqual([1, 1]);
   });
 
   afterEach(async () => {

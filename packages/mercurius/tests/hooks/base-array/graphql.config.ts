@@ -2,6 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 import { MercuriusDriverConfig } from '../../../lib/interfaces/mercurius-driver-config.interface';
 
+export const HOOKS_INVOCATIONS = {
+  preParsing: [0, 0],
+  preValidation: [0, 0],
+  preExecution: [0, 0],
+  onResolution: [0, 0],
+};
+
 @Injectable()
 export class GqlConfigService
   implements GqlOptionsFactory<MercuriusDriverConfig>
@@ -15,41 +22,41 @@ export class GqlConfigService
         preParsing: [
           (schema, document, context) => {
             this.logger.warn('preParsing1');
-            return { schema, document, context };
+            HOOKS_INVOCATIONS.preParsing[0]++;
           },
           (schema, document, context) => {
             this.logger.warn('preParsing2');
-            return { schema, document, context };
+            HOOKS_INVOCATIONS.preParsing[1]++;
           },
         ],
         preValidation: [
           (schema, document, context) => {
             this.logger.warn('preValidation1');
-            return { schema, document, context };
+            HOOKS_INVOCATIONS.preValidation[0]++;
           },
           (schema, document, context) => {
             this.logger.warn('preValidation2');
-            return { schema, document, context };
+            HOOKS_INVOCATIONS.preValidation[1]++;
           },
         ],
         preExecution: [
           (schema, document, context) => {
             this.logger.warn('preExecution1');
-            return { schema, document, context };
+            HOOKS_INVOCATIONS.preExecution[0]++;
           },
           (schema, document, context) => {
             this.logger.warn('preExecution2');
-            return { schema, document, context };
+            HOOKS_INVOCATIONS.preExecution[1]++;
           },
         ],
         onResolution: [
           (execution, context) => {
             this.logger.warn('onResolution1');
-            return execution;
+            HOOKS_INVOCATIONS.onResolution[0]++;
           },
           (execution, context) => {
             this.logger.warn('onResolution2');
-            return execution;
+            HOOKS_INVOCATIONS.onResolution[1]++;
           },
         ],
       },
