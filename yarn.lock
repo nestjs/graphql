@@ -152,10 +152,10 @@
     "@apollo/utils.createhash" "^3.0.0"
     "@apollo/utils.keyvaluecache" "^4.0.0"
 
-"@apollo/server@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-5.0.0.tgz#c7d120e22db66743aa4b21d380062f51b194a47e"
-  integrity sha512-PHopOm7pr69k7eDJvCBU4cZy9Z19qyCFKB9/luLnf2YCatu2WOYhoQPNr3dAoe//xv0RZFhxXbRcnK6IXIP7Nw==
+"@apollo/server@5.4.0":
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-5.4.0.tgz#ad161a6e8b14f5227027205e0970a91667351e49"
+  integrity sha512-E0/2C5Rqp7bWCjaDh4NzYuEPDZ+dltTf2c0FI6GCKJA6GBetVferX3h1//1rS4+NxD36wrJsGGJK+xyT/M3ysg==
   dependencies:
     "@apollo/cache-control-types" "^1.0.3"
     "@apollo/server-gateway-interface" "^2.0.0"
@@ -169,7 +169,8 @@
     "@apollo/utils.withrequired" "^3.0.0"
     "@graphql-tools/schema" "^10.0.0"
     async-retry "^1.2.1"
-    body-parser "^2.2.0"
+    body-parser "^2.2.2"
+    content-type "^1.0.5"
     cors "^2.8.5"
     finalhandler "^2.1.0"
     loglevel "^1.6.8"
@@ -3867,7 +3868,7 @@ bl@^4.0.3:
     inherits "^2.0.4"
     readable-stream "^3.4.0"
 
-body-parser@^2.2.0, body-parser@^2.2.1:
+body-parser@^2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.2.1.tgz#6df606b0eb0a6e3f783dde91dde182c24c82438c"
   integrity sha512-nfDwkulwiZYQIGwxdy0RUmowMhKcFVcYXUU7m4QlKYim1rUtg83xm2yjZ40QjDuc291AJjjeSc9b++AWHSgSHw==
@@ -3879,6 +3880,21 @@ body-parser@^2.2.0, body-parser@^2.2.1:
     iconv-lite "^0.7.0"
     on-finished "^2.4.1"
     qs "^6.14.0"
+    raw-body "^3.0.1"
+    type-is "^2.0.1"
+
+body-parser@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.2.2.tgz#1a32cdb966beaf68de50a9dfbe5b58f83cb8890c"
+  integrity sha512-oP5VkATKlNwcgvxi0vM0p/D3n2C3EReYVX+DNYs5TjZFn/oQt2j+4sVJtSMr18pdRr8wjTcBl6LoV+FUwzPmNA==
+  dependencies:
+    bytes "^3.1.2"
+    content-type "^1.0.5"
+    debug "^4.4.3"
+    http-errors "^2.0.0"
+    iconv-lite "^0.7.0"
+    on-finished "^2.4.1"
+    qs "^6.14.1"
     raw-body "^3.0.1"
     type-is "^2.0.1"
 
