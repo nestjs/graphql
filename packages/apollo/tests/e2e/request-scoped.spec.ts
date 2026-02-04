@@ -80,6 +80,14 @@ describe('Request scope', () => {
       expect(Guard.COUNTER).toEqual(3);
       expect(Guard.REQUEST_SCOPED_DATA).toEqual([1, 1, 1]);
     });
+
+    it(`should inject REQUEST context into request-scoped services`, async () => {
+      expect(UsersService.REQUEST_CONTEXTS).toHaveLength(3);
+      UsersService.REQUEST_CONTEXTS.forEach((context) => {
+        expect(context).toBeDefined();
+        expect(context.req).toBeDefined();
+      });
+    });
   });
 
   afterAll(async () => {
