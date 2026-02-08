@@ -5,7 +5,10 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
-import { EnumMetadataValuesMap } from '../schema-builder/metadata';
+import {
+  EnumMetadataValuesMap,
+  RegisterInOption,
+} from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
@@ -25,6 +28,13 @@ export interface EnumOptions<T extends object = any> {
    * A map of options for the values of the enum.
    */
   valuesMap?: EnumMetadataValuesMap<T>;
+  /**
+   * NestJS module that this enum belongs to.
+   * When specified, this enum will only be included in GraphQL schemas
+   * that include this module via the `include` option.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
 }
 
 /**
@@ -41,6 +51,7 @@ export function registerEnumType<T extends object = any>(
       name: options.name,
       description: options.description,
       valuesMap: options.valuesMap || {},
+      registerIn: options.registerIn,
     }),
   );
 }
