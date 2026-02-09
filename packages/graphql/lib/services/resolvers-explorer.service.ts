@@ -21,7 +21,7 @@ import { Entrypoint } from '@nestjs/core/inspector/interfaces/entrypoint.interfa
 import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
 import { GraphQLResolveInfo } from 'graphql';
-import { head, identity } from 'lodash';
+import { identity } from 'lodash';
 import { SubscriptionOptions } from '../decorators/subscription.decorator';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver';
 import { GqlParamtype } from '../enums/gql-paramtype.enum';
@@ -43,12 +43,26 @@ import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
 
+const ROOT_RESOLVER_TYPES = new Set<string>([
+  Resolver.MUTATION,
+  Resolver.QUERY,
+  Resolver.SUBSCRIPTION,
+]);
+
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
   private readonly logger = new Logger(ResolversExplorerService.name);
   private readonly gqlParamsFactory = new GqlParamsFactory();
   private readonly injector = new Injector();
   private coreModuleRef: Module | null | undefined;
+
+  private fieldResolverEnhancersLookup: {
+    guards: boolean;
+    filters: boolean;
+    interceptors: boolean;
+  } | null = null;
+
+  private hasGlobalFieldMiddleware: boolean | null = null;
 
   constructor(
     private readonly modulesContainer: ModulesContainer,
@@ -92,9 +106,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       isUndefined(resolverType) ||
       (!isReferenceResolver &&
         !isPropertyResolver &&
-        ![Resolver.MUTATION, Resolver.QUERY, Resolver.SUBSCRIPTION].some(
-          (type) => type === resolverType,
-        ));
+        !ROOT_RESOLVER_TYPES.has(resolverType));
 
     const resolvers = this.metadataScanner
       .getAllMethodNames(prototype)
@@ -166,22 +178,21 @@ export class ResolversExplorerService extends BaseExplorerService {
     transform: Function = identity,
   ) {
     const paramsFactory = this.gqlParamsFactory;
-    const isPropertyResolver = ![
-      Resolver.MUTATION,
-      Resolver.QUERY,
-      Resolver.SUBSCRIPTION,
-    ].some((type) => type === resolver.type);
+    const isPropertyResolver = !ROOT_RESOLVER_TYPES.has(resolver.type);
 
-    const fieldResolverEnhancers = this.gqlOptions.fieldResolverEnhancers || [];
+    if (this.fieldResolverEnhancersLookup === null) {
+      const enhancers = this.gqlOptions.fieldResolverEnhancers || [];
+      this.fieldResolverEnhancersLookup = {
+        guards: enhancers.includes('guards'),
+        filters: enhancers.includes('filters'),
+        interceptors: enhancers.includes('interceptors'),
+      };
+    }
     const contextOptions =
       resolver.methodName === FIELD_TYPENAME
         ? { guards: false, filters: false, interceptors: false }
         : isPropertyResolver
-          ? {
-              guards: fieldResolverEnhancers.includes('guards'),
-              filters: fieldResolverEnhancers.includes('filters'),
-              interceptors: fieldResolverEnhancers.includes('interceptors'),
-            }
+          ? this.fieldResolverEnhancersLookup
           : undefined;
 
     if (isRequestScoped) {
@@ -220,6 +231,21 @@ export class ResolversExplorerService extends BaseExplorerService {
           )
         : resolverCallback;
     }
+
+    if (
+      isPropertyResolver &&
+      this.canUseFastFieldResolver(
+        instance,
+        resolver.methodName,
+        contextOptions,
+      )
+    ) {
+      const resolverFn = prototype[resolver.methodName];
+      if (typeof resolverFn === 'function') {
+        return resolverFn.bind(instance);
+      }
+    }
+
     const resolverCallback = this.externalContextCreator.create<
       Record<number, ParamMetadata>,
       GqlContextType
@@ -300,14 +326,14 @@ export class ResolversExplorerService extends BaseExplorerService {
 
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
     if (this.coreModuleRef === undefined) {
-      const coreModuleArray = [...this.modulesContainer.entries()]
-        .filter(
-          ([key, { metatype }]) =>
-            metatype && metatype.name === InternalCoreModule.name,
-        )
-        .map(([key, value]) => value);
-
-      this.coreModuleRef = head(coreModuleArray) ?? null;
+      let foundModule: Module | null = null;
+      for (const [, moduleRef] of this.modulesContainer.entries()) {
+        if (moduleRef.metatype?.name === InternalCoreModule.name) {
+          foundModule = moduleRef;
+          break;
+        }
+      }
+      this.coreModuleRef = foundModule;
     }
 
     if (!this.coreModuleRef) {
@@ -364,6 +390,59 @@ export class ResolversExplorerService extends BaseExplorerService {
       });
     }
     return contextId;
+  }
+
+  /**
+   * Determines if a field resolver can use the fast-path that bypasses
+   * ExternalContextCreator overhead. This is possible when:
+   * - No guards/filters/interceptors are enabled for field resolvers
+   * - No field middleware is registered (global or method-level)
+   * - No parameter decorators (@Parent, @Args, etc.) are used on the method
+   */
+  private canUseFastFieldResolver(
+    instance: object,
+    methodKey: string,
+    contextOptions?: {
+      guards: boolean;
+      filters: boolean;
+      interceptors: boolean;
+    },
+  ): boolean {
+    if (
+      contextOptions?.guards ||
+      contextOptions?.filters ||
+      contextOptions?.interceptors
+    ) {
+      return false;
+    }
+
+    const fieldMiddleware = Reflect.getMetadata(
+      FIELD_RESOLVER_MIDDLEWARE_METADATA,
+      instance[methodKey as keyof typeof instance],
+    );
+    if (fieldMiddleware?.length > 0) {
+      return false;
+    }
+
+    if (this.hasGlobalFieldMiddleware === null) {
+      const globalMiddleware =
+        this.gqlOptions?.buildSchemaOptions?.fieldMiddleware;
+      this.hasGlobalFieldMiddleware = (globalMiddleware?.length ?? 0) > 0;
+    }
+    if (this.hasGlobalFieldMiddleware) {
+      return false;
+    }
+
+    const paramMetadata = Reflect.getMetadata(
+      PARAM_ARGS_METADATA,
+      instance.constructor,
+      methodKey,
+    );
+    if (paramMetadata && Object.keys(paramMetadata).length > 0) {
+      return false;
+    }
+
+    return true;
   }
 
   private assignResolverConstructorUniqueId(
