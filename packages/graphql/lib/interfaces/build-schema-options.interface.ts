@@ -28,6 +28,12 @@ export interface BuildSchemaOptions {
   scalarsMap?: ScalarsTypeMap[];
 
   /**
+   * Whether or not to register all detected orphaned types in the schema
+   * @default true
+   */
+  autoRegisterOrphanedTypes?: boolean;
+
+  /**
    * Orphaned type classes/enums that are not explicitly used in GraphQL types definitions
    */
   orphanedTypes?: (Function | object)[];
