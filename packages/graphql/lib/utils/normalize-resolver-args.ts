@@ -1,16 +1,18 @@
 import { isType } from 'graphql';
 
 export function normalizeResolverArgs(args: any[]) {
-  const newArgs = [...args];
-  // Reference resolver args don't have args argument
-  const isReferenceResolver = newArgs.length === 3;
+  // Reference resolver args don't have args argument (3 args instead of 4)
+  const isReferenceResolver = args.length === 3;
   // Resolve type args don't have args argument and the last argument is the parent object type
-  const isResolveType =
-    !isReferenceResolver && isType(newArgs[newArgs.length - 1]);
+  const isResolveType = !isReferenceResolver && isType(args[args.length - 1]);
 
-  // Add an undefined args argument
+  // Only create a new array when we need to insert undefined at position 1
+  // This avoids array allocation for the common 4-argument case
   if (isReferenceResolver || isResolveType) {
-    newArgs.splice(1, 0, undefined);
+    // Insert undefined at position 1: [root, ctx, info] -> [root, undefined, ctx, info]
+    return [args[0], undefined, args[1], args[2], args[3]];
   }
-  return newArgs;
+
+  // Return original array for the common case (no mutation needed)
+  return args;
 }
