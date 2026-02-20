@@ -1,3 +1,5 @@
+import { RegisterInOption } from './class.metadata';
+
 export interface EnumMetadataValuesMapOptions {
   deprecationReason?: string;
   description?: string;
@@ -12,4 +14,9 @@ export interface EnumMetadata<T extends object = any> {
   name: string;
   description?: string;
   valuesMap?: EnumMetadataValuesMap<T>;
+  /**
+   * NestJS module that this enum belongs to.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
 }

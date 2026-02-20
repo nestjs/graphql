@@ -8,6 +8,7 @@
 import { isString } from '@nestjs/common/utils/shared.utils';
 import { ClassType } from '../enums/class-type.enum';
 import { ResolveTypeFn } from '../interfaces';
+import { RegisterInOption } from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
@@ -34,6 +35,13 @@ export interface InterfaceTypeOptions {
    * Interfaces implemented by this interface.
    */
   implements?: Function | Function[] | (() => Function | Function[]);
+  /**
+   * NestJS module that this type belongs to.
+   * When specified, this type will only be included in GraphQL schemas
+   * that include this module via the `include` option.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
 }
 
 /**
@@ -71,6 +79,7 @@ export function InterfaceType(
         target,
         ...options,
         interfaces: options.implements,
+        registerIn: options.registerIn,
       };
       TypeMetadataStorage.addInterfaceMetadata(metadata);
     };
