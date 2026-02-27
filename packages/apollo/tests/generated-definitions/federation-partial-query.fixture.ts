@@ -12,4 +12,8 @@ export interface IQuery {
     foo(): Nullable<boolean> | Promise<Nullable<boolean>>;
 }
 
+export interface ISchema {
+    Query: IQuery;
+}
+
 type Nullable<T> = T | null;
