@@ -1072,17 +1072,6 @@
     "@fastify/forwarded" "^3.0.0"
     ipaddr.js "^2.1.0"
 
-"@fastify/send@^3.2.0":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@fastify/send/-/send-3.3.1.tgz#cb5759480eb4110b44d9af613d61b3f8b2933d8b"
-  integrity sha512-6pofeVwaHN+E/MAofCwDqkWUliE3i++jlD0VH/LOfU8TJlCkMUSgKvA9bawDdVXxjve7XrdYMyDmkiYaoGWEtA==
-  dependencies:
-    "@lukeed/ms" "^2.0.2"
-    escape-html "~1.0.3"
-    fast-decode-uri-component "^1.0.1"
-    http-errors "^2.0.0"
-    mime "^3"
-
 "@fastify/send@^4.0.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@fastify/send/-/send-4.1.0.tgz#d9c283b86e12080c0dcc160bbc16106debf1f0d3"
@@ -1093,18 +1082,6 @@
     fast-decode-uri-component "^1.0.1"
     http-errors "^2.0.0"
     mime "^3"
-
-"@fastify/static@^8.0.0":
-  version "8.0.4"
-  resolved "https://registry.yarnpkg.com/@fastify/static/-/static-8.0.4.tgz#7410ac5f73d6027d46e5b759b6a0365f9c5bca76"
-  integrity sha512-JdJIlXDYXZxbTFQazWOEfHxyD5uRXqRsLnp4rV9MwJnxadA0rrWBI8ZelPF2TPk/xDi5wunY/6ZmfwHXld13bA==
-  dependencies:
-    "@fastify/accept-negotiator" "^2.0.0"
-    "@fastify/send" "^3.2.0"
-    content-disposition "^0.5.4"
-    fastify-plugin "^5.0.0"
-    fastq "^1.17.1"
-    glob "^11.0.0"
 
 "@fastify/static@^9.0.0":
   version "9.0.0"
@@ -4487,13 +4464,6 @@ console-control-strings@^1.1.0:
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
   integrity sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==
 
-content-disposition@^0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-0.5.4.tgz#8b82b4efac82512a02bb0b1dcec9d2c5e8eb5bfe"
-  integrity sha512-FveZTNuGw04cxlAiWbzi6zTAL/lhehaWbTtgluJh4/E95DqMwTmha3KZN1aAWA8cFIhHzMZUvLevkw5Rqk+tSQ==
-  dependencies:
-    safe-buffer "5.2.1"
-
 content-disposition@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-1.0.0.tgz#844426cb398f934caefcbb172200126bc7ceace2"
@@ -6312,18 +6282,6 @@ glob@^10.2.2, glob@^10.3.10:
     package-json-from-dist "^1.0.0"
     path-scurry "^1.11.1"
 
-glob@^11.0.0:
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/glob/-/glob-11.0.1.tgz#1c3aef9a59d680e611b53dcd24bb8639cef064d9"
-  integrity sha512-zrQDm8XPnYEKawJScsnM0QzobJxlT/kHOOlRTio8IH/GrmxRE5fjllkzdaHclIuNjUQTJYH2xHNIGfdpJkDJUw==
-  dependencies:
-    foreground-child "^3.1.0"
-    jackspeak "^4.0.1"
-    minimatch "^10.0.0"
-    minipass "^7.1.2"
-    package-json-from-dist "^1.0.0"
-    path-scurry "^2.0.0"
-
 glob@^11.0.3:
   version "11.0.3"
   resolved "https://registry.yarnpkg.com/glob/-/glob-11.0.3.tgz#9d8087e6d72ddb3c4707b1d2778f80ea3eaefcd6"
@@ -7227,13 +7185,6 @@ jackspeak@^3.1.2:
     "@isaacs/cliui" "^8.0.2"
   optionalDependencies:
     "@pkgjs/parseargs" "^0.11.0"
-
-jackspeak@^4.0.1:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/jackspeak/-/jackspeak-4.0.2.tgz#11f9468a3730c6ff6f56823a820d7e3be9bef015"
-  integrity sha512-bZsjR/iRjl1Nk1UkjGpAzLNfQtzuijhn2g+pbZb98HQ1Gk8vM9hfbxeMBP+M2/UUdwj0RqGG3mlvk2MsAqwvEw==
-  dependencies:
-    "@isaacs/cliui" "^8.0.2"
 
 jackspeak@^4.1.1:
   version "4.1.1"
@@ -8418,7 +8369,7 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.7.0:
+mercurius@16.7.0, mercurius@^16.0.0:
   version "16.7.0"
   resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.7.0.tgz#00a8febd82116d7b4ddaab51a2b936b03b47a0d4"
   integrity sha512-xCu0qfOIvCm52jKKXFzl9VfPp+9DQrP/5cS0qt8OAA1xZomjTniK4ZlodOP1Q6dsgdfp1RtLx/KQcP7283febw==
@@ -8435,26 +8386,6 @@ mercurius@16.7.0:
     safe-stable-stringify "^2.3.0"
     secure-json-parse "^4.1.0"
     single-user-cache "^2.0.0"
-    tiny-lru "^11.0.0"
-    ws "^8.2.2"
-
-mercurius@^16.0.0:
-  version "16.0.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.0.1.tgz#6a77a0ea1802f35310a9dd54505d3528c6f8a9f6"
-  integrity sha512-Yyu7nku6UH+92p3tht22A4lof1y6FQigHTgSjZp7iAElwIvKEo9HOdfTbSWvSvAFx8+Zaa66gLsIBubC6xd0iw==
-  dependencies:
-    "@fastify/error" "^4.0.0"
-    "@fastify/static" "^8.0.0"
-    "@fastify/websocket" "^11.0.0"
-    fastify-plugin "^5.0.0"
-    graphql-jit "0.8.7"
-    mqemitter "^6.0.0"
-    p-map "^4.0.0"
-    quick-lru "^7.0.0"
-    readable-stream "^4.0.0"
-    safe-stable-stringify "^2.3.0"
-    secure-json-parse "^3.0.0"
-    single-user-cache "^1.0.0"
     tiny-lru "^11.0.0"
     ws "^8.2.2"
 
@@ -8570,13 +8501,6 @@ minimatch@9.0.3:
   version "9.0.3"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-9.0.3.tgz#a6e00c3de44c3a542bfaae70abfc22420a6da825"
   integrity sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==
-  dependencies:
-    brace-expansion "^2.0.1"
-
-minimatch@^10.0.0:
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-10.0.1.tgz#ce0521856b453c86e25f2c4c0d03e6ff7ddc440b"
-  integrity sha512-ethXTt3SGGR+95gudmqJ1eNhRO7eGEGIgYA9vnPatK4/etz2MEVDno5GMCibdMTuBMyElzIlgxMna3K94XDIDQ==
   dependencies:
     brace-expansion "^2.0.1"
 
@@ -8752,14 +8676,6 @@ modify-values@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.1.tgz#b3939fa605546474e3e3e3c63d64bd43b4ee6022"
   integrity sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==
-
-mqemitter@^6.0.0:
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/mqemitter/-/mqemitter-6.0.2.tgz#f99ab435de886082e005e1577d1070cecc63f695"
-  integrity sha512-8RGlznQx/Nb1xC3xKUFXHWov7pn7JdH++YVwlr6SLT6k3ft1h+ImGqZdVudbdKruFckIq9wheq9s4hgCivJDow==
-  dependencies:
-    fastparallel "^2.4.1"
-    qlobber "^8.0.1"
 
 mqemitter@^7.0.0:
   version "7.0.0"
