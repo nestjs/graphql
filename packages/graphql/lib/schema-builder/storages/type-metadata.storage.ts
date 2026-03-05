@@ -421,7 +421,7 @@ export class TypeMetadataStorageHost {
     }
     let objectOrInterfaceTypeField =
       objectOrInterfaceTypeMetadata.properties.find(
-        (fieldDef) => fieldDef.name === item.methodName,
+        (fieldDef) => fieldDef.schemaName === item.schemaName,
       );
     for (
       let _objectTypeRef = objectTypeRef;
@@ -430,7 +430,7 @@ export class TypeMetadataStorageHost {
     ) {
       const possibleTypeMetadata = getTypeMetadata(_objectTypeRef);
       objectOrInterfaceTypeField = possibleTypeMetadata?.properties.find(
-        (fieldDef) => fieldDef.name === item.methodName,
+        (fieldDef) => fieldDef.schemaName === item.schemaName,
       );
       if (objectOrInterfaceTypeField) {
         objectTypeRef = _objectTypeRef;
