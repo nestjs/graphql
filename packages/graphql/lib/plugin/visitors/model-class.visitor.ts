@@ -54,7 +54,8 @@ export class ModelClassVisitor {
     const metadataWithImports = [];
     Object.keys(this._collectedMetadata).forEach((filePath) => {
       const metadata = this._collectedMetadata[filePath];
-      const path = filePath.replace(/\.[jt]s$/, '');
+      // Emit explicit .js specifiers so generated metadata.ts stays NodeNext-compatible.
+      const path = filePath.replace(/\.[jt]s$/, '.js');
       const importExpr = ts.factory.createCallExpression(
         ts.factory.createToken(ts.SyntaxKind.ImportKeyword) as ts.Expression,
         undefined,
