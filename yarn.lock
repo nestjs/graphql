@@ -1984,7 +1984,16 @@
   resolved "https://registry.yarnpkg.com/@lukeed/ms/-/ms-2.0.2.tgz#07f09e59a74c52f4d88c6db5c1054e819538e2a8"
   integrity sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==
 
-"@mercuriusjs/federation@5.0.0", "@mercuriusjs/federation@^5.0.0":
+"@mercuriusjs/federation@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-5.1.0.tgz#b5693264d0311e61e98504bac8aa3b7cfd3af899"
+  integrity sha512-F2eJNySdqiWvNSFEVe8wPodw8aiTfpcSn/XQfqQ3h67HUc2R76NI+YZp5YL3JV/9I73y30CfCxJ5hza4nRXcMw==
+  dependencies:
+    "@fastify/error" "^4.0.0"
+    graphql "^16.6.0"
+    mercurius "^16.0.0"
+
+"@mercuriusjs/federation@^5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-5.0.0.tgz#054c328ac93a351f0abe9fbdb0cb4a4ab78e5dde"
   integrity sha512-5E2S3mgxq+yK4XZm0UMms3lcG3QG/83xh8mmo/XyjwQiT8DulX8ibBXvlQtmOO4g4U9N+AUEqrqPfnoC5I+TSA==
