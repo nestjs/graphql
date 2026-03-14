@@ -9,7 +9,7 @@ export default async () => {
     '@nestjs/graphql': {
       models: [
         [
-          import('./recipes/dto/new-recipe.input'),
+          import('./recipes/dto/new-recipe.input.js'),
           {
             NewRecipeInput: {
               title: {
@@ -22,7 +22,7 @@ export default async () => {
           }
         ],
         [
-          import('./recipes/dto/recipes.args'),
+          import('./recipes/dto/recipes.args.js'),
           {
             RecipesArgs: {
               skip: { type: () => Number },
@@ -31,7 +31,7 @@ export default async () => {
           }
         ],
         [
-          import('./recipes/models/ingredient.model'),
+          import('./recipes/models/ingredient.model.js'),
           {
             Ingredient: {
               id: { type: () => String },
@@ -40,7 +40,7 @@ export default async () => {
           }
         ],
         [
-          import('./recipes/models/recipe.model'),
+          import('./recipes/models/recipe.model.js'),
           {
             Recipe: {
               id: { type: () => String },
