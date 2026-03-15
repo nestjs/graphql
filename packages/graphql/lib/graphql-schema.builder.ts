@@ -43,7 +43,10 @@ export class GraphQLSchemaBuilder {
                 ) ?? true,
             ),
           ],
-        },
+          // Pass include modules for type filtering in Code First approach
+          // This property is handled internally by GraphQLSchemaFactory
+          includeModules: options.include,
+        } as BuildSchemaOptions & { includeModules?: Function[] },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
       );

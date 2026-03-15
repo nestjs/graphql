@@ -150,4 +150,18 @@ export class TypeDefinitionsStorage {
     }
     return;
   }
+
+  /**
+   * Clear all type definitions.
+   * Used when generating multiple schemas with different module configurations.
+   */
+  clear() {
+    this.interfaceTypeDefinitions.clear();
+    this.enumTypeDefinitions.clear();
+    this.unionTypeDefinitions.clear();
+    this.objectTypeDefinitions.clear();
+    this.inputTypeDefinitions.clear();
+    this.inputTypeDefinitionsLinks = undefined;
+    this.outputTypeDefinitionsLinks = undefined;
+  }
 }
