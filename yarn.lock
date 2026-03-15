@@ -1938,23 +1938,23 @@
     graphql "^16.6.0"
     mercurius "^16.0.0"
 
-"@mercuriusjs/gateway@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-5.0.0.tgz#462894864459ac5f05c82ea6c47ccdba7ed54d73"
-  integrity sha512-YpjSOZzz8Y99chHhI3j2Y0YTWTb6FqMBdgh19azYqp4rfXsniWKyUjoAhoNqrhYXraGTGJSXA72PgG5OGFAC1A==
+"@mercuriusjs/gateway@5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/gateway/-/gateway-5.2.0.tgz#14cdd8e9791d23c1b732e9bc7e00b12b9161e42a"
+  integrity sha512-o9dmAzfj9K25XO+SzNn0UawgyTVzkPQS5bA7gPmyPWnzpA4z0LesY3ZL13cFMu+Us4NUklU4qUZDBJFbNiP8+w==
   dependencies:
     "@mercuriusjs/federation" "^5.0.0"
     "@mercuriusjs/subscription-client" "^2.0.0"
-    fastify-plugin "^5.0.0"
-    graphql "^16.6.0"
-    graphql-ws "^5.11.2"
-    mercurius "^16.0.0"
-    p-map "^4.0.0"
-    single-user-cache "^1.0.0"
-    tiny-lru "^11.0.0"
-    undici "^7.2.1"
+    fastify-plugin "^5.1.0"
+    graphql "^16.12.0"
+    graphql-ws "^6.0.6"
+    mercurius "^16.6.0"
+    p-map "^7.0.4"
+    single-user-cache "^2.1.0"
+    tiny-lru "^11.4.5"
+    undici "^7.16.0"
     use-strict "1.0.1"
-    ws "^8.11.0"
+    ws "^8.18.3"
 
 "@mercuriusjs/subscription-client@^2.0.0":
   version "2.0.0"
@@ -5656,7 +5656,7 @@ fast-uri@^3.0.0, fast-uri@^3.0.1:
   resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.0.5.tgz#19f5f9691d0dab9b85861a7bb5d98fca961da9cd"
   integrity sha512-5JnBCWpFlMo0a3ciDy/JckMzzv1U9coZrIhedq+HXxxUfDTAiS0LA8OKVao4G9BxmCVck/jtA5r3KAtRWEyD8Q==
 
-fastify-plugin@5.1.0, fastify-plugin@^5.0.1:
+fastify-plugin@5.1.0, fastify-plugin@^5.0.1, fastify-plugin@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.1.0.tgz#7083e039d6418415f9a669f8c25e72fc5bf2d3e7"
   integrity sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==
@@ -6343,17 +6343,12 @@ graphql-tag@2.12.6:
   dependencies:
     tslib "^2.1.0"
 
-graphql-ws@6.0.7:
+graphql-ws@6.0.7, graphql-ws@^6.0.6:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-6.0.7.tgz#140307a513f0ba659ecec618d6cf15354a842f96"
   integrity sha512-yoLRW+KRlDmnnROdAu7sX77VNLC0bsFoZyGQJLy1cF+X/SkLg/fWkRGrEEYQK8o2cafJ2wmEaMqMEZB3U3DYDg==
 
-graphql-ws@^5.11.2:
-  version "5.16.2"
-  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.16.2.tgz#7b0306c1bdb0e97a05e800ccd523f46fb212e37c"
-  integrity sha512-E1uccsZxt/96jH/OwmLPuXMACILs76pKF2i3W861LpKBCYtGIyPQGtWLuBLkND4ox1KHns70e83PS4te50nvPQ==
-
-graphql@*, graphql@16.12.0, graphql@^16.6.0:
+graphql@*, graphql@16.12.0, graphql@^16.12.0, graphql@^16.6.0:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.12.0.tgz#28cc2462435b1ac3fdc6976d030cef83a0c13ac7"
   integrity sha512-DKKrynuQRne0PNpEbzuEdHlYOMksHSUI8Zc9Unei5gTsMNA2/vMpoMz/yKba50pejK56qj98qM0SjYxAKi13gQ==
@@ -8312,7 +8307,7 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.8.0:
+mercurius@16.8.0, mercurius@^16.6.0:
   version "16.8.0"
   resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.8.0.tgz#c180849755eaedcab94be606933b397beb1456ea"
   integrity sha512-b0ZxtmqgqH8GBvXxs5wITLNZdTOVd7FzkuvUkUgg0waEM1UD8buDcl0RVrqH745WOpGRqID2ltWRVfNeLIXh5w==
@@ -9323,6 +9318,11 @@ p-map@^7.0.2:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/p-map/-/p-map-7.0.3.tgz#7ac210a2d36f81ec28b736134810f7ba4418cdb6"
   integrity sha512-VkndIv2fIB99swvQoA65bm+fsmt6UNdGeIB0oxBs+WhAhdh08QA04JXpI7rbB9r08/nkbysKoya9rtDERYOYMA==
+
+p-map@^7.0.4:
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/p-map/-/p-map-7.0.4.tgz#b81814255f542e252d5729dca4d66e5ec14935b8"
+  integrity sha512-tkAQEw8ysMzmkhgw8k+1U/iPhWNhykKnSk4Rd5zLoPJCuJaGRPo6YposrZgaxHKzDHdDWWZvE/Sk7hsL2X/CpQ==
 
 p-pipe@3.1.0:
   version "3.1.0"
@@ -10553,6 +10553,13 @@ single-user-cache@^2.0.0:
   dependencies:
     safe-stable-stringify "^2.4.3"
 
+single-user-cache@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/single-user-cache/-/single-user-cache-2.1.0.tgz#287d27df9ed9b4138f12a7543f24099b9f083c8a"
+  integrity sha512-Wmu+uIEkabMoQPpJTOYhEsE6h/XjnjIhtuB1+tynxeO/hQxwQD0hIDq/ad65P1Tw9wt9f5SKnUe+63m6TMB4Uw==
+  dependencies:
+    safe-stable-stringify "^2.4.3"
+
 slash@3.0.0, slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
@@ -11108,6 +11115,11 @@ tiny-lru@^11.0.0:
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.2.11.tgz#5089a6a4a157f5a97b82aa930b44d550ac5c4778"
   integrity sha512-27BIW0dIWTYYoWNnqSmoNMKe5WIbkXsc0xaCQHd3/3xT2XMuMJrzHdrO9QBFR14emBz1Bu0dOAs2sCBBrvgPQA==
 
+tiny-lru@^11.4.5:
+  version "11.4.7"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.4.7.tgz#7ddfabe22720c98f7e48b2806d9d9a71a93ee0d6"
+  integrity sha512-w/Te7uMUVeH0CR8vZIjr+XiN41V+30lkDdK+NRIDCUYKKuL9VcmaUEmaPISuwGhLlrTGh5yu18lENtR9axSxYw==
+
 tinyexec@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/tinyexec/-/tinyexec-0.3.2.tgz#941794e657a85e496577995c6eef66f53f42b3d2"
@@ -11472,10 +11484,10 @@ undici@6.23.0:
   resolved "https://registry.yarnpkg.com/undici/-/undici-6.23.0.tgz#7953087744d9095a96f115de3140ca3828aff3a4"
   integrity sha512-VfQPToRA5FZs/qJxLIinmU59u0r7LXqoJkCzinq3ckNJp3vKEh7jTWN589YQ5+aoAC/TGRLyJLCPKcLQbM8r9g==
 
-undici@^7.2.1:
-  version "7.2.3"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-7.2.3.tgz#e3e8ff2ddee1c3ab624b3a4f275093cff4b2fc77"
-  integrity sha512-2oSLHaDalSt2/O/wHA9M+/ZPAOcU2yrSP/cdBYJ+YxZskiPYDSqHbysLSlD7gq3JMqOoJI5O31RVU3BxX/MnAA==
+undici@^7.16.0:
+  version "7.24.3"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-7.24.3.tgz#9c26a00b5e6cfbf10c1238471eb4ec0166b0374b"
+  integrity sha512-eJdUmK/Wrx2d+mnWWmwwLRyA7OQCkLap60sk3dOK4ViZR7DKwwptwuIvFBg2HaiP9ESaEdhtpSymQPvytpmkCA==
 
 unique-filename@^1.1.1:
   version "1.1.1"
@@ -11869,7 +11881,7 @@ write-file-atomic@^6.0.0:
     imurmurhash "^0.1.4"
     signal-exit "^4.0.1"
 
-ws@8.19.0:
+ws@8.19.0, ws@^8.18.3:
   version "8.19.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.19.0.tgz#ddc2bdfa5b9ad860204f5a72a4863a8895fd8c8b"
   integrity sha512-blAT2mjOEIi0ZzruJfIhb3nps74PRWTCz1IjglWEEpQl5XS/UNama6u2/rjFkDDouqr4L67ry+1aGIALViWjDg==
@@ -11879,7 +11891,7 @@ ws@8.19.0:
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
   integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
 
-ws@^8.11.0, ws@^8.12.1, ws@^8.16.0, ws@^8.2.2:
+ws@^8.12.1, ws@^8.16.0, ws@^8.2.2:
   version "8.18.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.0.tgz#0d7505a6eafe2b0e712d232b42279f53bc289bbc"
   integrity sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw==
