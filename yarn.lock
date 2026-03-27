@@ -1913,10 +1913,10 @@
   resolved "https://registry.yarnpkg.com/@lukeed/ms/-/ms-2.0.2.tgz#07f09e59a74c52f4d88c6db5c1054e819538e2a8"
   integrity sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==
 
-"@mercuriusjs/federation@5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-5.1.0.tgz#b5693264d0311e61e98504bac8aa3b7cfd3af899"
-  integrity sha512-F2eJNySdqiWvNSFEVe8wPodw8aiTfpcSn/XQfqQ3h67HUc2R76NI+YZp5YL3JV/9I73y30CfCxJ5hza4nRXcMw==
+"@mercuriusjs/federation@5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@mercuriusjs/federation/-/federation-5.1.1.tgz#82230ea1fc0981d146bc390602f74348a526604f"
+  integrity sha512-7Ch2vS4t6jwnu2qE6MHaGDRmv+zeywuzLQAdVyoH5HtLOSI/8BcRvoFme3uL+6YCMMioLXcN02ewSP8zxNVRCQ==
   dependencies:
     "@fastify/error" "^4.0.0"
     graphql "^16.6.0"
