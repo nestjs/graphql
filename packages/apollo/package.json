@@ -29,7 +29,7 @@
     "@as-integrations/express5": "^1.1.2",
     "@as-integrations/fastify": "3.1.0",
     "@nestjs/common": "11.1.17",
-    "@nestjs/core": "11.1.17",
+    "@nestjs/core": "11.1.18",
     "@nestjs/platform-express": "11.1.17",
     "@nestjs/platform-fastify": "11.1.17",
     "@nestjs/testing": "11.1.17",
