@@ -6090,10 +6090,10 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.8.0:
-  version "16.8.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.8.0.tgz#c180849755eaedcab94be606933b397beb1456ea"
-  integrity sha512-b0ZxtmqgqH8GBvXxs5wITLNZdTOVd7FzkuvUkUgg0waEM1UD8buDcl0RVrqH745WOpGRqID2ltWRVfNeLIXh5w==
+mercurius@16.9.0:
+  version "16.9.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.9.0.tgz#3fb68ff112cd8228879d5ca2dbbaaed37dfc2c14"
+  integrity sha512-3td+e+SZyA7Gp/Tb51ncYdOGD5OsXh6zK4FjUJx+2pSHbJJEWE11EjKAAqhf3Xrp2JjMlg6dBrmRWsdM9E5G1Q==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^9.0.0"
