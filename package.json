@@ -50,7 +50,7 @@
     "graphql": "16.13.2",
     "graphql-subscriptions": "3.0.0",
     "husky": "9.1.7",
-    "jest": "30.0.5",
+    "jest": "30.3.0",
     "lerna": "9.0.7",
     "lerna-changelog": "2.2.0",
     "lint-staged": "16.4.0",
