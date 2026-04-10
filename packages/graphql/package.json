@@ -14,8 +14,8 @@
     "access": "public"
   },
   "scripts": {
-    "test:e2e": "jest --config ./tests/jest-e2e.json",
-    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --watch"
+    "test:e2e": "vitest run",
+    "test:e2e:dev": "vitest watch"
   },
   "dependencies": {
     "@graphql-tools/merge": "9.1.7",

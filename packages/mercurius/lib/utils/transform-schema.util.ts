@@ -31,7 +31,7 @@ export const FEDERATION_SCHEMA = `
 `;
 
 export function gatherDirectives(type) {
-  let directives = [];
+  let directives: any[] = [];
   for (const node of type.extensionASTNodes || []) {
     if (node.directives) {
       directives = directives.concat(node.directives);

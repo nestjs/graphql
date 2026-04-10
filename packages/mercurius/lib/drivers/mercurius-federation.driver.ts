@@ -39,7 +39,7 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
 
     if (adapterOptions.definitions && adapterOptions.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
-        printSchema(adapterOptions.schema),
+        printSchema(adapterOptions.schema!),
         adapterOptions,
       );
     }

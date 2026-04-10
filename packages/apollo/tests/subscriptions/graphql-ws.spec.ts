@@ -4,7 +4,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import ApolloClient, { ApolloError } from 'apollo-client';
 import { gql } from 'graphql-tag';
 import { Client, Context, createClient } from 'graphql-ws';
-import * as ws from 'ws';
+import ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
 import { GraphQLWsLink } from './utils/graphql-ws.link';
@@ -22,6 +22,7 @@ const subscriptionQuery = gql`
 describe('graphql-ws protocol', () => {
   let app: INestApplication;
   let wsClient: Client;
+  let port: number;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -59,21 +60,24 @@ describe('graphql-ws protocol', () => {
 
     app = module.createNestApplication();
     await app.init();
-    await app.listen(3007);
+    await app.listen(0);
+    port = app.getHttpServer().address().port;
   });
 
-  it('should receive an error if missing token', (done) => {
+  it('should receive an error if missing token', async () => {
     wsClient = createClient({
-      url: 'ws://localhost:3007/graphql',
+      url: `ws://localhost:${port}/graphql`,
       webSocketImpl: ws,
       connectionParams: {},
       retryAttempts: 0,
     });
 
-    wsClient.on('closed', (ev: any) => {
-      expect(ev.code).toEqual(4000);
-      expect(ev.reason).toEqual('Missing authorization');
-      done();
+    const closedPromise = new Promise<void>((resolve) => {
+      wsClient.on('closed', (ev: any) => {
+        expect(ev.code).toEqual(4000);
+        expect(ev.reason).toEqual('Missing authorization');
+        resolve();
+      });
     });
 
     const apolloClient = new ApolloClient({
@@ -93,11 +97,13 @@ describe('graphql-ws protocol', () => {
         complete() {},
         error() {},
       });
+
+    await closedPromise;
   });
 
-  it('should receive an error if token is malformed', (done) => {
+  it('should receive an error if token is malformed', async () => {
     wsClient = createClient({
-      url: 'ws://localhost:3007/graphql',
+      url: `ws://localhost:${port}/graphql`,
       webSocketImpl: ws,
       connectionParams: {
         authorization: 'wrong token',
@@ -105,10 +111,12 @@ describe('graphql-ws protocol', () => {
       retryAttempts: 0,
     });
 
-    wsClient.on('closed', (ev: any) => {
-      expect(ev.code).toEqual(4500);
-      expect(ev.reason).toEqual('Malformed token');
-      done();
+    const closedPromise = new Promise<void>((resolve) => {
+      wsClient.on('closed', (ev: any) => {
+        expect(ev.code).toEqual(4500);
+        expect(ev.reason).toEqual('Malformed token');
+        resolve();
+      });
     });
 
     const apolloClient = new ApolloClient({
@@ -128,11 +136,13 @@ describe('graphql-ws protocol', () => {
         complete() {},
         error() {},
       });
+
+    await closedPromise;
   });
 
-  it('should receive error on subscription if guard fails', (done) => {
+  it('should receive error on subscription if guard fails', async () => {
     wsClient = createClient({
-      url: 'ws://localhost:3007/graphql',
+      url: `ws://localhost:${port}/graphql`,
       webSocketImpl: ws,
       connectionParams: {
         authorization: 'Bearer notest',
@@ -145,32 +155,38 @@ describe('graphql-ws protocol', () => {
       cache: new InMemoryCache(),
     });
 
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next() {},
-        complete() {},
-        error(error: unknown) {
-          expect(error).toBeInstanceOf(ApolloError);
-          expect((error as ApolloError).graphQLErrors[0].message).toEqual(
-            'Forbidden resource',
-          );
-          expect((error as ApolloError).graphQLErrors[0].path[0]).toEqual(
-            'newNotification',
-          );
-          done();
-        },
-      });
+    await new Promise<void>((resolve, reject) => {
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next() {},
+          complete() {},
+          error(error: unknown) {
+            try {
+              expect(error).toBeInstanceOf(ApolloError);
+              expect((error as ApolloError).graphQLErrors[0].message).toEqual(
+                'Forbidden resource',
+              );
+              expect((error as ApolloError).graphQLErrors[0].path[0]).toEqual(
+                'newNotification',
+              );
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+        });
+    });
   });
 
-  it('should connect to subscriptions', (done) => {
+  it('should connect to subscriptions', async () => {
     wsClient = createClient({
-      url: 'ws://localhost:3007/graphql',
+      url: `ws://localhost:${port}/graphql`,
       webSocketImpl: ws,
       connectionParams: {
         authorization: 'Bearer test',
@@ -210,26 +226,32 @@ describe('graphql-ws protocol', () => {
       cache: new InMemoryCache(),
     });
 
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next(value: any) {
-          expect(value.data.newNotification.id).toEqual('1');
-          expect(value.data.newNotification.message).toEqual(
-            'Hello graphql-ws',
-          );
-          done();
-        },
-        complete() {},
-        error(error: unknown) {
-          done(error);
-        },
-      });
+    await new Promise<void>((resolve, reject) => {
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next(value: any) {
+            try {
+              expect(value.data.newNotification.id).toEqual('1');
+              expect(value.data.newNotification.message).toEqual(
+                'Hello graphql-ws',
+              );
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          complete() {},
+          error(error: unknown) {
+            reject(error);
+          },
+        });
+    });
   });
 
   afterEach(async () => {

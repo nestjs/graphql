@@ -14,7 +14,7 @@ const gc = runInNewContext('gc');
 
 // https://github.com/apollographql/graphql-subscriptions/issues/212
 it('does not leak memory with promise chain #memory', async function () {
-  jest.setTimeout(5000);
+  vi.setConfig({ testTimeout: 5000 });
 
   let stopped = false;
   let index = 0;

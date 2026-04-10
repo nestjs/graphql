@@ -11,7 +11,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
-import * as omit from 'lodash.omit';
+import omit from 'lodash.omit';
 import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin';
 import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
 import { ApolloDriverConfig } from '../interfaces';
@@ -76,7 +76,9 @@ export abstract class ApolloBaseDriver<
       defaults = {
         ...defaults,
         plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
+          ApolloServerPluginLandingPageGraphQLPlayground(
+            playgroundOptions,
+          ) as any,
         ],
       };
     } else if (
@@ -117,7 +119,7 @@ export abstract class ApolloBaseDriver<
       ...args: [TPayload, TVariables, TContext, TInfo]
     ): any =>
       createAsyncIterator(createSubscribeContext()(...args), (payload: any) =>
-        filterFn.call(instanceRef, payload, ...args.slice(1)),
+        filterFn.call(instanceRef, payload, args[1], args[2]),
       );
   }
 

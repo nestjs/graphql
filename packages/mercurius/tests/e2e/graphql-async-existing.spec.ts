@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AsyncExistingApplicationModule } from '../graphql/async-options-existing.module';
 
 describe('GraphQL (async existing)', () => {

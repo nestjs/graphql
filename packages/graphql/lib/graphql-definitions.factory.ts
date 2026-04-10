@@ -1,6 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
-import * as chokidar from 'chokidar';
+import chokidar from 'chokidar';
 import { glob } from 'fast-glob';
 import { printSchema } from 'graphql';
 import { gql } from 'graphql-tag';

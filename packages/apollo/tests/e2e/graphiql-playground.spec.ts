@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { GraphiQLPlaygroundModule } from '../graphql/graphiql-playground.module';
 
 describe('GraphiQL Playground', () => {
@@ -16,15 +16,12 @@ describe('GraphiQL Playground', () => {
       await app.init();
     });
 
-    it(`should render GraphiQL Playground`, (done) => {
-      request(app.getHttpServer())
+    it(`should render GraphiQL Playground`, async () => {
+      const res = await request(app.getHttpServer())
         .get('/graphql')
         .set('Accept', 'text/html')
-        .expect(200, (err, res) => {
-          if (err) {
-            throw err;
-          }
-          expect(res.text).toEqual(`
+        .expect(200);
+      expect(res.text).toEqual(`
 <!--
  *  Copyright (c) 2021 GraphQL Contributors
  *  All rights reserved.
@@ -79,8 +76,6 @@ describe('GraphiQL Playground', () => {
   </body>
 </html>
 `);
-          done();
-        });
     });
 
     afterEach(async () => {
@@ -106,15 +101,12 @@ describe('GraphiQL Playground', () => {
       await app.init();
     });
 
-    it(`should render GraphiQL Playground`, (done) => {
-      request(app.getHttpServer())
+    it(`should render GraphiQL Playground`, async () => {
+      const res = await request(app.getHttpServer())
         .get('/graphql')
         .set('Accept', 'text/html')
-        .expect(200, (err, res) => {
-          if (err) {
-            throw err;
-          }
-          expect(res.text).toEqual(`
+        .expect(200);
+      expect(res.text).toEqual(`
 <!--
  *  Copyright (c) 2021 GraphQL Contributors
  *  All rights reserved.
@@ -169,8 +161,6 @@ describe('GraphiQL Playground', () => {
   </body>
 </html>
 `);
-          done();
-        });
     });
 
     afterEach(async () => {
@@ -192,17 +182,12 @@ describe('GraphiQL Playground', () => {
       await app.init();
     });
 
-    it(`should render GraphiQL Playground with inputValueDeprecation enabled`, (done) => {
-      request(app.getHttpServer())
+    it(`should render GraphiQL Playground with inputValueDeprecation enabled`, async () => {
+      const res = await request(app.getHttpServer())
         .get('/graphql')
         .set('Accept', 'text/html')
-        .expect(200, (err, res) => {
-          if (err) {
-            throw err;
-          }
-          expect(res.text).toContain('inputValueDeprecation: true');
-          done();
-        });
+        .expect(200);
+      expect(res.text).toContain('inputValueDeprecation: true');
     });
 
     afterEach(async () => {

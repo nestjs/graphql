@@ -110,7 +110,7 @@ describe.skip('Code-first - Federation with caching', () => {
     });
 
     it('findOne should called once', async () => {
-      const spy = jest.spyOn(postService, 'findOne');
+      const spy = vi.spyOn(postService, 'findOne');
       const request = {
         query: gql`
           {

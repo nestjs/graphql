@@ -7,7 +7,7 @@ import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 describe('GraphQL with transformAutoSchemaFile', () => {
   let app: INestApplication;
 
-  const writeFileMock = jest.fn().mockImplementation(() => Promise.resolve());
+  const writeFileMock = vi.fn().mockImplementation(() => Promise.resolve());
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [TransformAutoSchemaFileModule],

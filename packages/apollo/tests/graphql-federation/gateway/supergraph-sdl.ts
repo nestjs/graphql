@@ -84,3 +84,14 @@ id: ID!
 posts: [Post] @join__field(graph: POSTS)
 name: String! @join__field(graph: USERS)
 }`;
+export function getSupergraphSdl(usersPort: number, postsPort: number): string {
+  return supergraphSdl
+    .replace(
+      'http://localhost:3001/graphql',
+      `http://localhost:${usersPort}/graphql`,
+    )
+    .replace(
+      'http://localhost:3002/graphql',
+      `http://localhost:${postsPort}/graphql`,
+    );
+}

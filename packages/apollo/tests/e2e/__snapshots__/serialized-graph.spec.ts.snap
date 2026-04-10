@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Serialized graph should generate a post-initialization graph and match snapshot 1`] = `
+exports[`Serialized graph > should generate a post-initialization graph and match snapshot 1`] = `
 "{
   "nodes": {
     "68986468": {

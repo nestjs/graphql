@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { Guard } from '../graphql/hello/guards/request-scoped.guard';
 import { HelloModule } from '../graphql/hello/hello.module';
 import { HelloResolver } from '../graphql/hello/hello.resolver';

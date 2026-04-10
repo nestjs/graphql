@@ -41,7 +41,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
         () => require('@apollo/subgraph'),
       );
       await this.graphQlFactory.generateDefinitions(
-        printSubgraphSchema(options.schema),
+        printSubgraphSchema(options.schema!),
         options,
       );
     }
@@ -53,7 +53,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
         options.subscriptions || { 'subscriptions-transport-ws': {} };
       this._subscriptionService = new GqlSubscriptionService(
         {
-          schema: options.schema,
+          schema: options.schema!,
           path: options.path,
           context: options.context,
           ...subscriptionsOptions,

@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ApplicationModule } from '../code-first/app.module';
 import { CatsModule } from '../code-first/cats/cats.module';
 

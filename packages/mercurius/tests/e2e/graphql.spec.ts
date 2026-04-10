@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ApplicationModule } from '../graphql/app.module';
 
 describe('GraphQL', () => {

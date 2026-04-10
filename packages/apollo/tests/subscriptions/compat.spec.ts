@@ -6,7 +6,7 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { gql } from 'graphql-tag';
 import { Client, createClient } from 'graphql-ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
-import * as ws from 'ws';
+import ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
 import { GraphQLWsLink } from './utils/graphql-ws.link';
@@ -24,9 +24,10 @@ describe('Use graphql-ws + subscriptions-transport-ws', () => {
   let app: INestApplication;
   let wsClient: Client;
   let subWsClient: SubscriptionClient;
+  let port: number;
 
-  let gqlWsOnConnect = jest.fn();
-  let subTransWsOnConnect = jest.fn();
+  let gqlWsOnConnect = vi.fn();
+  let subTransWsOnConnect = vi.fn();
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -54,115 +55,128 @@ describe('Use graphql-ws + subscriptions-transport-ws', () => {
 
     app = module.createNestApplication();
     await app.init();
-    await app.listen(3002);
+    await app.listen(0);
+    port = app.getHttpServer().address().port;
   });
 
-  it('graphql-ws receives subscriptions', (done) => {
-    gqlWsOnConnect.mockReturnValue(true);
+  it('graphql-ws receives subscriptions', async () => {
+    await new Promise<void>((resolve, reject) => {
+      gqlWsOnConnect.mockReturnValue(true);
 
-    wsClient = createClient({
-      url: 'ws://localhost:3002/graphql',
-      webSocketImpl: ws,
-      connectionParams: {
-        authorization: 'Bearer test',
-      },
-      retryAttempts: 0,
+      wsClient = createClient({
+        url: `ws://localhost:${port}/graphql`,
+        webSocketImpl: ws,
+        connectionParams: {
+          authorization: 'Bearer test',
+        },
+        retryAttempts: 0,
+      });
+
+      wsClient.on('connected', () => {
+        // timeout needed to allow the subscription to be established
+        setTimeout(() => {
+          pubSub.publish('newNotification', {
+            newNotification: {
+              id: '1',
+              recipient: 'test',
+              message: 'Hello graphql-ws',
+            },
+          });
+        }, 100);
+      });
+
+      const apolloClient = new ApolloClient({
+        link: new GraphQLWsLink(wsClient),
+        cache: new InMemoryCache(),
+      });
+
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next(value: any) {
+            try {
+              expect(value.data.newNotification.id).toEqual('1');
+              expect(value.data.newNotification.message).toEqual(
+                'Hello graphql-ws',
+              );
+              expect(gqlWsOnConnect).toHaveBeenCalledTimes(1);
+              expect(subTransWsOnConnect).not.toHaveBeenCalled();
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          complete() {},
+          error(error: unknown) {
+            reject(error);
+          },
+        });
     });
+  });
 
-    wsClient.on('connected', () => {
-      // timeout needed to allow the subscription to be established
-      setTimeout(() => {
+  it('subscriptions-transport-ws receives subscriptions', async () => {
+    await new Promise<void>((resolve, reject) => {
+      subTransWsOnConnect.mockReturnValue({
+        user: 'test',
+      });
+
+      subWsClient = new SubscriptionClient(
+        `ws://localhost:${port}/graphql`,
+        {
+          connectionParams: {
+            authorization: 'Bearer test',
+          },
+        },
+        ws,
+      );
+
+      subWsClient.on('connected', () => {
         pubSub.publish('newNotification', {
           newNotification: {
             id: '1',
             recipient: 'test',
-            message: 'Hello graphql-ws',
+            message: 'Hello subscriptions-transport-ws',
           },
         });
-      }, 100);
-    });
-
-    const apolloClient = new ApolloClient({
-      link: new GraphQLWsLink(wsClient),
-      cache: new InMemoryCache(),
-    });
-
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next(value: any) {
-          expect(value.data.newNotification.id).toEqual('1');
-          expect(value.data.newNotification.message).toEqual(
-            'Hello graphql-ws',
-          );
-          expect(gqlWsOnConnect).toHaveBeenCalledTimes(1);
-          expect(subTransWsOnConnect).not.toHaveBeenCalled();
-          done();
-        },
-        complete() {},
-        error(error: unknown) {
-          done(error);
-        },
       });
-  });
 
-  it('subscriptions-transport-ws receives subscriptions', (done) => {
-    subTransWsOnConnect.mockReturnValue({
-      user: 'test',
-    });
-
-    subWsClient = new SubscriptionClient(
-      'ws://localhost:3002/graphql',
-      {
-        connectionParams: {
-          authorization: 'Bearer test',
-        },
-      },
-      ws,
-    );
-
-    subWsClient.on('connected', () => {
-      pubSub.publish('newNotification', {
-        newNotification: {
-          id: '1',
-          recipient: 'test',
-          message: 'Hello subscriptions-transport-ws',
-        },
+      const apolloClient = new ApolloClient({
+        link: new WebSocketLink(subWsClient),
+        cache: new InMemoryCache(),
       });
-    });
 
-    const apolloClient = new ApolloClient({
-      link: new WebSocketLink(subWsClient),
-      cache: new InMemoryCache(),
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next(value: any) {
+            try {
+              expect(value.data.newNotification.id).toEqual('1');
+              expect(value.data.newNotification.message).toEqual(
+                'Hello subscriptions-transport-ws',
+              );
+              expect(subTransWsOnConnect).toHaveBeenCalledTimes(1);
+              expect(gqlWsOnConnect).not.toHaveBeenCalled();
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          complete() {},
+          error(error: unknown) {
+            reject(error);
+          },
+        });
     });
-
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next(value: any) {
-          expect(value.data.newNotification.id).toEqual('1');
-          expect(value.data.newNotification.message).toEqual(
-            'Hello subscriptions-transport-ws',
-          );
-          expect(subTransWsOnConnect).toHaveBeenCalledTimes(1);
-          expect(gqlWsOnConnect).not.toHaveBeenCalled();
-          done();
-        },
-        complete() {},
-        error(error: unknown) {
-          done(error);
-        },
-      });
   });
 
   afterEach(async () => {
@@ -171,6 +185,6 @@ describe('Use graphql-ws + subscriptions-transport-ws', () => {
     } catch {}
     subWsClient?.close();
     await app.close();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 });
