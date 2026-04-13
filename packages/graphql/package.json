@@ -34,9 +34,9 @@
   },
   "devDependencies": {
     "@apollo/subgraph": "2.2.3",
-    "@nestjs/common": "11.1.18",
-    "@nestjs/core": "11.1.18",
-    "@nestjs/testing": "11.1.18",
+    "@nestjs/common": "11.1.19",
+    "@nestjs/core": "11.1.19",
+    "@nestjs/testing": "11.1.19",
     "graphql": "16.13.2",
     "reflect-metadata": "0.2.2",
     "ts-morph": "27.0.2"
