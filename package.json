@@ -52,7 +52,7 @@
     "rimraf": "6.1.3",
     "rxjs": "7.8.2",
     "supertest": "7.2.2",
-    "typescript": "6.0.2",
+    "typescript": "6.0.3",
     "vitest": "^4.1.4"
   },
   "changelog": {
