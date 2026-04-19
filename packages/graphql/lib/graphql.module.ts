@@ -6,10 +6,12 @@ import {
   OnModuleInit,
   Provider,
 } from '@nestjs/common/interfaces';
-import { HttpAdapterHost } from '@nestjs/core';
+import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { ROUTE_MAPPED_MESSAGE } from '@nestjs/core/helpers/messages';
 import { InitializeOnPreviewAllowlist } from '@nestjs/core/inspector';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
+import { ExcludeRouteMetadata } from '@nestjs/core/router/interfaces/exclude-route-metadata.interface';
+import { pathToRegexp } from 'path-to-regexp';
 import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver';
 import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
 import { TypeDefsDecoratorFactory } from './federation/type-defs-decorator.factory';
@@ -27,7 +29,7 @@ import {
 import { MetadataLoader } from './plugin/metadata-loader';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
 import { ResolversExplorerService, ScalarsExplorerService } from './services';
-import { extend, generateString } from './utils';
+import { extend, generateString, normalizeRoutePath } from './utils';
 
 /**
  * @publicApi
@@ -54,9 +56,8 @@ import { extend, generateString } from './utils';
   ],
 })
 export class GraphQLModule<
-    TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
-  >
-  implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
+  TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
+> implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
 {
   public completeOptions: GqlModuleOptions | undefined;
   private static readonly logger = new Logger(GraphQLModule.name, {
@@ -74,7 +75,37 @@ export class GraphQLModule<
     private readonly _graphQlAdapter: AbstractGraphQLDriver,
     private readonly graphQlTypesLoader: GraphQLTypesLoader,
     private readonly gqlSchemaHost: GraphQLSchemaHost,
-  ) {}
+    private readonly applicationConfig: ApplicationConfig,
+  ) {
+    if (!this.options.useGlobalPrefix) {
+      this.excludeFromGlobalPrefix();
+    }
+  }
+
+  /**
+   * Auto-excludes the GraphQL endpoint path from the application's global
+   * prefix so that user middleware registered via
+   * `consumer.apply(...).forRoutes('graphql')` resolves to the same path the
+   * GraphQL endpoint is mounted on. Without this, the middleware would be
+   * registered at `<prefix>/graphql` while the endpoint stays at `/graphql`.
+   * @see https://github.com/nestjs/graphql/issues/3180
+   */
+  private excludeFromGlobalPrefix() {
+    const prefixOptions = this.applicationConfig.getGlobalPrefixOptions();
+    const path = normalizeRoutePath(this.options.path ?? '/graphql');
+    const excludeRoute: ExcludeRouteMetadata = {
+      path,
+      requestMethod: RequestMethod.ALL,
+      pathRegex: pathToRegexp(path).regexp,
+    };
+    const exclude = prefixOptions.exclude
+      ? [...prefixOptions.exclude, excludeRoute]
+      : [excludeRoute];
+    this.applicationConfig.setGlobalPrefixOptions({
+      ...prefixOptions,
+      exclude,
+    });
+  }
 
   async onModuleDestroy() {
     if (!this.options.stopOnApplicationShutdown) {
