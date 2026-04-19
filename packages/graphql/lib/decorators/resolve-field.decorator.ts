@@ -1,5 +1,9 @@
 import { SetMetadata, Type } from '@nestjs/common';
-import { isFunction, isObject } from '@nestjs/common/utils/shared.utils';
+import {
+  isFunction,
+  isObject,
+  isString,
+} from '@nestjs/common/utils/shared.utils';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   RESOLVER_NAME_METADATA,
@@ -80,10 +84,18 @@ export function ResolveField(
   ) => {
     // eslint-disable-next-line prefer-const
     let [propertyName, typeFunc, options] = isFunction(propertyNameOrFunc)
-      ? typeFuncOrOptions && typeFuncOrOptions.name
-        ? [typeFuncOrOptions.name, propertyNameOrFunc, typeFuncOrOptions]
+      ? typeFuncOrOptions && (typeFuncOrOptions as ResolveFieldOptions).name
+        ? [
+            (typeFuncOrOptions as ResolveFieldOptions).name,
+            propertyNameOrFunc,
+            typeFuncOrOptions,
+          ]
         : [undefined, propertyNameOrFunc, typeFuncOrOptions]
-      : [propertyNameOrFunc, typeFuncOrOptions, resolveFieldOptions];
+      : isString(propertyNameOrFunc)
+      ? isFunction(typeFuncOrOptions)
+        ? [propertyNameOrFunc, typeFuncOrOptions, resolveFieldOptions]
+        : [propertyNameOrFunc, undefined, typeFuncOrOptions]
+      : [undefined, undefined, propertyNameOrFunc];
 
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
     SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
@@ -98,8 +110,8 @@ export function ResolveField(
           ...options,
         }
       : propertyName
-        ? { name: propertyName }
-        : {};
+      ? { name: propertyName }
+      : {};
 
     LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
       let typeOptions: TypeOptions, typeFn: (type?: any) => GqlTypeReference;
