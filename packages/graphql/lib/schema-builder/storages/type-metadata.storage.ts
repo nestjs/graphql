@@ -282,9 +282,7 @@ export class TypeMetadataStorageHost {
         item.properties = this.getClassFieldsByPredicate(item);
       }
       if (!item.directives) {
-        item.directives = this.metadataByTargetCollection
-          .get(item.target)
-          .classDirectives.getAll();
+        item.directives = this.getInheritedClassDirectives(item.target);
       }
       if (!item.extensions) {
         item.extensions = this.metadataByTargetCollection
@@ -295,6 +293,31 @@ export class TypeMetadataStorageHost {
           );
       }
     });
+  }
+
+  private getInheritedClassDirectives(
+    target: Function,
+  ): ClassDirectiveMetadata[] {
+    const directives: ClassDirectiveMetadata[] = [];
+    const seenSdls = new Set<string>();
+
+    let current: Function | null = target;
+    while (current && current !== Function.prototype) {
+      const targetDirectives = this.metadataByTargetCollection
+        .get(current)
+        .classDirectives.getAll();
+
+      targetDirectives.forEach((directive) => {
+        if (!seenSdls.has(directive.sdl)) {
+          seenSdls.add(directive.sdl);
+          directives.push(directive);
+        }
+      });
+
+      current = Object.getPrototypeOf(current);
+    }
+
+    return directives;
   }
 
   clear() {
