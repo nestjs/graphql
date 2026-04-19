@@ -1,12 +1,11 @@
-import {
-  GraphQLScalarLiteralParser,
-  GraphQLScalarSerializer,
-  GraphQLScalarValueParser,
-} from 'graphql';
+import { ValueNode } from 'graphql';
 
 export interface CustomScalar<T, K> {
   description?: string;
-  parseValue: GraphQLScalarValueParser<K>;
-  serialize: GraphQLScalarSerializer<T>;
-  parseLiteral: GraphQLScalarLiteralParser<K>;
+  parseValue: (value: unknown) => K | null | undefined;
+  serialize: (value: unknown) => T | null | undefined;
+  parseLiteral: (
+    valueNode: ValueNode,
+    variables?: { [key: string]: any } | null,
+  ) => K | null | undefined;
 }
