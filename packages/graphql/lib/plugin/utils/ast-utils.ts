@@ -53,7 +53,11 @@ export function isString(type: Type) {
 }
 
 export function isStringLiteral(type: Type) {
-  return hasFlag(type, TypeFlags.StringLiteral) && !type.isUnion();
+  return (
+    hasFlag(type, TypeFlags.StringLiteral) &&
+    !hasFlag(type, TypeFlags.EnumLiteral) &&
+    !type.isUnion()
+  );
 }
 
 export function isBigInt(type: Type) {
@@ -344,13 +348,10 @@ export function safelyMergeObjects(
   // if both of objects are ObjectLiterals, so merge property by property in compile time
   // if one or both of expressions not an object literal, produce rest spread and merge in runtime
   if (ts.isObjectLiteralExpression(a) && ts.isObjectLiteralExpression(b)) {
-    const aMap = a.properties.reduce(
-      (acc, prop) => {
-        acc[(prop.name as ts.Identifier).text] = prop;
-        return acc;
-      },
-      {} as { [propName: string]: ts.ObjectLiteralElementLike },
-    );
+    const aMap = a.properties.reduce((acc, prop) => {
+      acc[(prop.name as ts.Identifier).text] = prop;
+      return acc;
+    }, {} as { [propName: string]: ts.ObjectLiteralElementLike });
 
     b.properties.forEach((prop) => {
       aMap[(prop.name as ts.Identifier).text] = prop;

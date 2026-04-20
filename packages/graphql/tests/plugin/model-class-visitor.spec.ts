@@ -424,4 +424,27 @@ class Model {
       "
     `);
   });
+
+  it('should treat a single-key string enum as an enum, not a string', () => {
+    const source = `
+enum MultipleEnum {
+    One = 'One',
+    Two = 'Two',
+}
+
+enum SingleEnum {
+    Single = 'Single',
+}
+
+@ObjectType()
+export class ClassA {
+    multipleEnum: MultipleEnum;
+    singleEnum: SingleEnum;
+}
+`;
+
+    const actual = transpile(source, {});
+    expect(actual).toContain('multipleEnum: { type: () => MultipleEnum }');
+    expect(actual).toContain('singleEnum: { type: () => SingleEnum }');
+  });
 });
