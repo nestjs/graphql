@@ -298,26 +298,35 @@ export class TypeMetadataStorageHost {
   private getInheritedClassDirectives(
     target: Function,
   ): ClassDirectiveMetadata[] {
-    const directives: ClassDirectiveMetadata[] = [];
-    const seenSdls = new Set<string>();
+    const ownDirectives = this.metadataByTargetCollection
+      .get(target)
+      .classDirectives.getAll();
 
-    let current: Function | null = target;
+    const inherited: ClassDirectiveMetadata[] = [];
+    const seenSdls = new Set<string>(ownDirectives.map((d) => d.sdl));
+
+    let current: Function | null = Object.getPrototypeOf(target);
     while (current && current !== Function.prototype) {
-      const targetDirectives = this.metadataByTargetCollection
+      this.metadataByTargetCollection
         .get(current)
-        .classDirectives.getAll();
-
-      targetDirectives.forEach((directive) => {
-        if (!seenSdls.has(directive.sdl)) {
-          seenSdls.add(directive.sdl);
-          directives.push(directive);
-        }
-      });
-
+        .classDirectives.getAll()
+        .forEach((directive) => {
+          if (!seenSdls.has(directive.sdl)) {
+            seenSdls.add(directive.sdl);
+            inherited.push(directive);
+          }
+        });
       current = Object.getPrototypeOf(current);
     }
 
-    return directives;
+    // Preserve the shared-reference semantic when nothing is inherited: the
+    // compile() pass mutates the per-target `classDirectives` array in place
+    // (reverse() is called on it), and `item.directives` is expected to stay
+    // in sync with that mutation. Only produce a fresh array when we actually
+    // have to combine directives from an abstract parent.
+    return inherited.length === 0
+      ? ownDirectives
+      : [...ownDirectives, ...inherited];
   }
 
   clear() {
