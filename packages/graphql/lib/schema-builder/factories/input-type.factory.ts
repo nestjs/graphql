@@ -31,7 +31,16 @@ export class InputTypeFactory {
         typeRef as any,
       );
       if (!inputType) {
-        throw new CannotDetermineInputTypeError(hostType, typeRef);
+        const isRegisteredAsObjectType =
+          typeof typeRef === 'function' &&
+          !!this.typeDefinitionsStorage.getObjectTypeByTarget(
+            typeRef as Function,
+          );
+        throw new CannotDetermineInputTypeError(
+          hostType,
+          typeRef,
+          isRegisteredAsObjectType,
+        );
       }
     }
     return this.typeMapperService.mapToGqlType(
