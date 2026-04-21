@@ -1,6 +1,9 @@
 // this "shim" can be used on the frontend to prevent from errors on undefined
 // decorators in the models, when you are sharing same models across backend and frontend.
-// to use this shim simply configure your webpack configuration to use this file instead of @nestjs/graphql module.
+// The package exposes it automatically via the "browser" and "react-native"
+// conditional exports in package.json, so bundlers such as webpack, Metro or
+// Vite will pick this file up when bundling for those environments without
+// any additional configuration.
 /* eslint @typescript-eslint/no-empty-function: 0 */
 import {
   FieldOptions,
@@ -11,7 +14,8 @@ import {
 } from '..';
 import * as typeFactories from '../type-factories';
 
-// for webpack this is resolved this way:
+// If the conditional export cannot be leveraged (older bundler, custom setup),
+// the shim can still be aliased manually, for example with webpack:
 // resolve: { // see: https://webpack.js.org/configuration/resolve/
 //     alias: {
 //         @nestjs/graphql: path.resolve(__dirname, "../node_modules/@nestjs/graphql/dist/extra/graphql-model-shim")
