@@ -10,12 +10,12 @@ export interface Federation2Config {
   version: 2;
   /**
    * The imported directives
-   * @default ['@composeDirective', '@extends', '@external', '@inaccessible', '@interfaceObject', '@key', '@override', '@provides', '@requires', '@shareable', '@tag']
+   * @default ['@authenticated', '@cacheTag', '@composeDirective', '@context', '@cost', '@extends', '@external', '@fromContext', '@inaccessible', '@interfaceObject', '@key', '@listSize', '@override', '@policy', '@provides', '@requires', '@requiresScopes', '@shareable', '@tag']
    */
   directives?: (string | AliasDirectiveImport)[];
   /**
    * The import link
-   * @default 'https://specs.apollo.dev/federation/v2.3'
+   * @default 'https://specs.apollo.dev/federation/v2.12'
    */
   importUrl?: string;
 }

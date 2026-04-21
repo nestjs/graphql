@@ -9,19 +9,27 @@ export class TypeDefsFederation2Decorator {
   decorate(typeDefs: string, config: Federation2Config = { version: 2 }) {
     const {
       directives = [
+        '@authenticated',
+        '@cacheTag',
         '@composeDirective',
+        '@context',
+        '@cost',
         '@extends',
         '@external',
+        '@fromContext',
         '@inaccessible',
         '@interfaceObject',
         '@key',
+        '@listSize',
         '@override',
+        '@policy',
         '@provides',
         '@requires',
+        '@requiresScopes',
         '@shareable',
         '@tag',
       ],
-      importUrl = 'https://specs.apollo.dev/federation/v2.3',
+      importUrl = 'https://specs.apollo.dev/federation/v2.12',
     } = config;
     const mappedDirectives = directives
       .map((directive) => {
