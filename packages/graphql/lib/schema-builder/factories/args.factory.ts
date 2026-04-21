@@ -4,6 +4,7 @@ import { GraphQLFieldConfigArgumentMap } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
 import { CannotDetermineArgTypeError } from '../errors/cannot-determine-arg-type.error';
 import { getDefaultValue } from '../helpers/get-default-value.helper';
+import { normalizeEnumDefaultValue } from '../helpers/normalize-enum-default-value.helper';
 import { ClassMetadata, MethodArgsMetadata } from '../metadata';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage';
 import { InputTypeFactory } from './input-type.factory';
@@ -23,16 +24,21 @@ export class ArgsFactory {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
     args.forEach((param) => {
       if (param.kind === 'arg') {
+        const typeRef = param.typeFn();
         fieldConfigMap[param.name] = {
           description: param.description,
           deprecationReason: param.deprecationReason,
           type: this.inputTypeFactory.create(
             param.name,
-            param.typeFn(),
+            typeRef,
             options,
             param.options,
           ),
-          defaultValue: param.options.defaultValue,
+          defaultValue: normalizeEnumDefaultValue(
+            param.options.defaultValue,
+            typeRef,
+            TypeMetadataStorage.getEnumsMetadata(),
+          ),
         };
       } else if (param.kind === 'args') {
         const argumentTypes = TypeMetadataStorage.getArgumentsMetadata();
@@ -78,9 +84,10 @@ export class ArgsFactory {
       );
 
       const { schemaName } = field;
+      const typeRef = field.typeFn();
       const type = this.inputTypeFactory.create(
         field.name,
-        field.typeFn(),
+        typeRef,
         options,
         field.options,
       );
@@ -88,7 +95,11 @@ export class ArgsFactory {
         description: field.description,
         deprecationReason: field.deprecationReason,
         type,
-        defaultValue: field.options.defaultValue,
+        defaultValue: normalizeEnumDefaultValue(
+          field.options.defaultValue,
+          typeRef,
+          TypeMetadataStorage.getEnumsMetadata(),
+        ),
         /**
          * AST node has to be manually created in order to define directives
          * (more on this topic here: https://github.com/graphql/graphql-js/issues/1343)

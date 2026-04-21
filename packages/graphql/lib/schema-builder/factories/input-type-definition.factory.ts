@@ -3,9 +3,11 @@ import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces';
 import { getDefaultValue } from '../helpers/get-default-value.helper';
+import { normalizeEnumDefaultValue } from '../helpers/normalize-enum-default-value.helper';
 import { ClassMetadata } from '../metadata';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import { TypeMetadataStorage } from '../storages/type-metadata.storage';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
 import { InputTypeFactory } from './input-type.factory';
 
@@ -71,16 +73,21 @@ export class InputTypeDefinitionFactory {
           metadata.name,
         );
 
+        const typeRef = property.typeFn();
         const type = this.inputTypeFactory.create(
           property.name,
-          property.typeFn(),
+          typeRef,
           options,
           property.options,
         );
         fields[property.schemaName] = {
           description: property.description,
           type,
-          defaultValue: property.options.defaultValue,
+          defaultValue: normalizeEnumDefaultValue(
+            property.options.defaultValue,
+            typeRef,
+            TypeMetadataStorage.getEnumsMetadata(),
+          ),
           deprecationReason: property.deprecationReason,
           /**
            * AST node has to be manually created in order to define directives
