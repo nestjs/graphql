@@ -20,7 +20,7 @@ describe('ResolversExplorerService', () => {
 
       mockInstance = {
         constructor: class TestResolver {},
-        testMethod: jest.fn(),
+        testMethod: vi.fn(),
       };
     });
 
@@ -206,7 +206,7 @@ describe('ResolversExplorerService', () => {
 
   describe('fast-path field resolver behavior', () => {
     it('should correctly bind this context when using fast-path', () => {
-      const mockService = { getData: jest.fn().mockReturnValue('test-data') };
+      const mockService = { getData: vi.fn().mockReturnValue('test-data') };
 
       class TestResolver {
         private service = mockService;
