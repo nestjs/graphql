@@ -4,29 +4,34 @@ import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.st
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
 /**
- * Adds a directive to specified field, type, or handler.
+ * Adds one or more directives to a field, type, or handler. Passing an array
+ * attaches every directive in a single decorator call, equivalent to stacking
+ * multiple `@Directive(...)` decorators.
  *
  * @publicApi
  */
 export function Directive(
-  sdl: string,
+  sdl: string | string[],
 ): MethodDecorator & PropertyDecorator & ClassDecorator {
-  return (target: Function | object, key?: string | symbol) => {
-    validateDirective(sdl);
+  const sdls = Array.isArray(sdl) ? sdl : [sdl];
+  sdls.forEach(validateDirective);
 
+  return (target: Function | object, key?: string | symbol) => {
     LazyMetadataStorage.store(() => {
-      if (key) {
-        TypeMetadataStorage.addDirectivePropertyMetadata({
-          target: target.constructor,
-          fieldName: key as string,
-          sdl,
-        });
-      } else {
-        TypeMetadataStorage.addDirectiveMetadata({
-          target: target as Function,
-          sdl,
-        });
-      }
+      sdls.forEach((singleSdl) => {
+        if (key) {
+          TypeMetadataStorage.addDirectivePropertyMetadata({
+            target: target.constructor,
+            fieldName: key as string,
+            sdl: singleSdl,
+          });
+        } else {
+          TypeMetadataStorage.addDirectiveMetadata({
+            target: target as Function,
+            sdl: singleSdl,
+          });
+        }
+      });
     });
   };
 }
