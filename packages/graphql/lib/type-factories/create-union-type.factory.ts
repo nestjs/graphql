@@ -32,6 +32,11 @@ export interface UnionOptions<
    * Types that the union consist of.
    */
   types: () => T;
+  /**
+   * An array of directive SDL strings (e.g. `['@tag(name: "internal")']`) to be
+   * applied on the generated union type.
+   */
+  directives?: string[];
 }
 
 export type ArrayElement<ArrayType extends readonly unknown[]> =
@@ -45,7 +50,7 @@ export type Union<T extends readonly any[]> = InstanceType<ArrayElement<T>>;
 export function createUnionType<
   T extends readonly Type<unknown>[] = Type<unknown>[],
 >(options: UnionOptions<T>): Union<T> {
-  const { name, description, types, resolveType } = options;
+  const { name, description, types, resolveType, directives } = options;
   const id = Symbol(name);
 
   LazyMetadataStorage.store(() =>
@@ -55,6 +60,7 @@ export function createUnionType<
       description,
       typesFn: types,
       resolveType,
+      directives,
     }),
   );
   return id as any;

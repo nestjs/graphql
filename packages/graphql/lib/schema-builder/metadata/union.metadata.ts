@@ -9,4 +9,5 @@ export interface UnionMetadata<
   id?: symbol;
   description?: string;
   resolveType?: ResolveTypeFn;
+  directives?: string[];
 }
