@@ -142,7 +142,10 @@ export class TypeMetadataStorageHost {
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
     const classMetadata = this.metadataByTargetCollection.get(metadata.target);
-    if (!classMetadata.fieldDirectives.sdls.has(metadata.sdl)) {
+    const isDuplicate = classMetadata.classDirectives
+      .getAll()
+      .some((directive) => directive.sdl === metadata.sdl);
+    if (!isDuplicate) {
       classMetadata.classDirectives.push(metadata);
     }
   }
