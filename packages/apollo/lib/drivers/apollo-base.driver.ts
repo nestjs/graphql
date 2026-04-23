@@ -101,6 +101,7 @@ export abstract class ApolloBaseDriver<
       defaults.plugins || [],
     );
 
+    this.normalizeSubscriptionsPath(options);
     this.wrapContextResolver(options);
     this.wrapFormatErrorFn(options);
 
@@ -111,6 +112,22 @@ export abstract class ApolloBaseDriver<
       ];
     }
     return options;
+  }
+
+  private normalizeSubscriptionsPath(options: T) {
+    const subscriptions = (options as ApolloDriverConfig).subscriptions;
+    if (!subscriptions) {
+      return;
+    }
+    for (const protocol of [
+      'graphql-ws',
+      'subscriptions-transport-ws',
+    ] as const) {
+      const config = subscriptions[protocol];
+      if (config && typeof config === 'object' && config.path) {
+        config.path = this.applyGlobalPrefix(config.path, options);
+      }
+    }
   }
 
   public subscriptionWithFilter(

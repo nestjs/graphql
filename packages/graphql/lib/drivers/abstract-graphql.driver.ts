@@ -57,11 +57,15 @@ export abstract class AbstractGraphQLDriver<
   }
 
   protected getNormalizedPath(options: TOptions): string {
+    return this.applyGlobalPrefix(options.path, options);
+  }
+
+  protected applyGlobalPrefix(path: string, options: TOptions): string {
     const prefix = this.applicationConfig?.getGlobalPrefix() ?? '';
     const useGlobalPrefix = prefix && options.useGlobalPrefix;
-    const gqlOptionsPath = normalizeRoutePath(options.path);
+    const normalizedPath = normalizeRoutePath(path);
     return useGlobalPrefix
-      ? normalizeRoutePath(prefix) + gqlOptionsPath
-      : gqlOptionsPath;
+      ? normalizeRoutePath(prefix) + normalizedPath
+      : normalizedPath;
   }
 }
