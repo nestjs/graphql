@@ -32,11 +32,11 @@ describe('testMiddleware', () => {
       } as GraphQLResolveInfo,
     };
 
-    mockNext = jest.fn().mockResolvedValue('next result');
+    mockNext = vi.fn().mockResolvedValue('next result');
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call next when info is provided', () => {
