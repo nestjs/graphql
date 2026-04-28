@@ -38,8 +38,8 @@ export class TargetMetadataCollection {
   private _resolver: ResolverClassMetadata;
 
   set argumentType(val: ClassMetadata) {
+    this.replaceOrPush(this.all.argumentType, this._argumentType, val);
     this._argumentType = val;
-    this.all.argumentType.push(val);
   }
 
   get argumentType() {
@@ -56,8 +56,8 @@ export class TargetMetadataCollection {
   }
 
   set inputType(val: ClassMetadata) {
+    this.replaceOrPush(this.all.inputType, this._inputType, val);
     this._inputType = val;
-    this.all.inputType.push(val);
   }
 
   get inputType() {
@@ -65,8 +65,8 @@ export class TargetMetadataCollection {
   }
 
   set objectType(val: ObjectTypeMetadata) {
+    this.replaceOrPush(this.all.objectType, this._objectType, val);
     this._objectType = val;
-    this.all.objectType.push(val);
   }
 
   get objectType() {
@@ -74,11 +74,24 @@ export class TargetMetadataCollection {
   }
 
   set resolver(val: ResolverClassMetadata) {
+    this.replaceOrPush(this.all.resolver, this._resolver, val);
     this._resolver = val;
-    this.all.resolver.push(val);
   }
 
   get resolver() {
     return this._resolver;
+  }
+
+  private replaceOrPush<T>(list: T[], previous: T | undefined, next: T) {
+    if (previous === undefined) {
+      list.push(next);
+      return;
+    }
+    const index = list.indexOf(previous);
+    if (index === -1) {
+      list.push(next);
+    } else {
+      list[index] = next;
+    }
   }
 }
