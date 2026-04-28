@@ -50,6 +50,16 @@ export type Union<T extends readonly any[]> = InstanceType<ArrayElement<T>>;
 export function createUnionType<
   T extends readonly Type<unknown>[] = Type<unknown>[],
 >(options: UnionOptions<T>): Union<T> {
+  if (!options || typeof options.name !== 'string' || options.name === '') {
+    throw new Error(
+      `createUnionType requires an "options" object with a non-empty "name" (e.g. createUnionType({ name: 'MyUnion', types: () => [TypeA, TypeB] })).`,
+    );
+  }
+  if (typeof options.types !== 'function') {
+    throw new Error(
+      `createUnionType requires "options.types" to be a function returning the union member classes (e.g. types: () => [TypeA, TypeB]).`,
+    );
+  }
   const { name, description, types, resolveType, directives } = options;
   const id = Symbol(name);
 
