@@ -40,6 +40,11 @@ export function registerEnumType<T extends object = any>(
   enumRef: T,
   options?: EnumOptions<T>,
 ) {
+  if (!options || typeof options.name !== 'string' || options.name === '') {
+    throw new Error(
+      `registerEnumType requires an "options" object with a non-empty "name" (e.g. registerEnumType(MyEnum, { name: 'MyEnum' })).`,
+    );
+  }
   LazyMetadataStorage.store(() =>
     TypeMetadataStorage.addEnumMetadata({
       ref: enumRef,
