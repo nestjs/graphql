@@ -1,6 +1,7 @@
 export interface EnumMetadataValuesMapOptions {
   deprecationReason?: string;
   description?: string;
+  directives?: string[];
 }
 
 export type EnumMetadataValuesMap<T extends object> = Partial<
@@ -12,4 +13,5 @@ export interface EnumMetadata<T extends object = any> {
   name: string;
   description?: string;
   valuesMap?: EnumMetadataValuesMap<T>;
+  directives?: string[];
 }

@@ -25,6 +25,11 @@ export interface EnumOptions<T extends object = any> {
    * A map of options for the values of the enum.
    */
   valuesMap?: EnumMetadataValuesMap<T>;
+  /**
+   * An array of directive SDL strings (e.g. `['@tag(name: "internal")']`) to be
+   * applied on the generated enum type.
+   */
+  directives?: string[];
 }
 
 /**
@@ -41,6 +46,7 @@ export function registerEnumType<T extends object = any>(
       name: options.name,
       description: options.description,
       valuesMap: options.valuesMap || {},
+      directives: options.directives,
     }),
   );
 }

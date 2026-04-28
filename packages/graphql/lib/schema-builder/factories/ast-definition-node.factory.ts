@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import {
   ConstDirectiveNode,
+  EnumTypeDefinitionNode,
+  EnumValueDefinitionNode,
   FieldDefinitionNode,
   GraphQLInputType,
   GraphQLOutputType,
@@ -10,6 +12,7 @@ import {
   InterfaceTypeDefinitionNode,
   Kind,
   ObjectTypeDefinitionNode,
+  UnionTypeDefinitionNode,
   parse,
 } from 'graphql';
 import { head } from 'lodash';
@@ -156,8 +159,59 @@ export class AstDefinitionNodeFactory {
     };
   }
 
+  createEnumTypeNode(
+    name: string,
+    directives?: string[],
+  ): EnumTypeDefinitionNode | undefined {
+    if (isEmpty(directives)) {
+      return;
+    }
+    return {
+      kind: Kind.ENUM_TYPE_DEFINITION,
+      name: {
+        kind: Kind.NAME,
+        value: name,
+      },
+      directives: directives.map((sdl) => this.createDirectiveNode({ sdl })),
+    };
+  }
+
+  createEnumValueNode(
+    name: string,
+    directives?: string[],
+  ): EnumValueDefinitionNode | undefined {
+    if (isEmpty(directives)) {
+      return;
+    }
+    return {
+      kind: Kind.ENUM_VALUE_DEFINITION,
+      name: {
+        kind: Kind.NAME,
+        value: name,
+      },
+      directives: directives.map((sdl) => this.createDirectiveNode({ sdl })),
+    };
+  }
+
+  createUnionTypeNode(
+    name: string,
+    directives?: string[],
+  ): UnionTypeDefinitionNode | undefined {
+    if (isEmpty(directives)) {
+      return;
+    }
+    return {
+      kind: Kind.UNION_TYPE_DEFINITION,
+      name: {
+        kind: Kind.NAME,
+        value: name,
+      },
+      directives: directives.map((sdl) => this.createDirectiveNode({ sdl })),
+    };
+  }
+
   private createDirectiveNode(
-    directive: DirectiveMetadata,
+    directive: Pick<DirectiveMetadata, 'sdl'>,
   ): ConstDirectiveNode {
     const parsed = parse(`type String ${directive.sdl}`);
     const definitions = parsed.definitions as ObjectTypeDefinitionNode[];

@@ -142,7 +142,10 @@ export class TypeMetadataStorageHost {
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
     const classMetadata = this.metadataByTargetCollection.get(metadata.target);
-    if (!classMetadata.fieldDirectives.sdls.has(metadata.sdl)) {
+    const isDuplicate = classMetadata.classDirectives
+      .getAll()
+      .some((directive) => directive.sdl === metadata.sdl);
+    if (!isDuplicate) {
       classMetadata.classDirectives.push(metadata);
     }
   }
@@ -282,9 +285,7 @@ export class TypeMetadataStorageHost {
         item.properties = this.getClassFieldsByPredicate(item);
       }
       if (!item.directives) {
-        item.directives = this.metadataByTargetCollection
-          .get(item.target)
-          .classDirectives.getAll();
+        item.directives = this.getInheritedClassDirectives(item.target);
       }
       if (!item.extensions) {
         item.extensions = this.metadataByTargetCollection
@@ -295,6 +296,40 @@ export class TypeMetadataStorageHost {
           );
       }
     });
+  }
+
+  private getInheritedClassDirectives(
+    target: Function,
+  ): ClassDirectiveMetadata[] {
+    const ownDirectives = this.metadataByTargetCollection
+      .get(target)
+      .classDirectives.getAll();
+
+    const inherited: ClassDirectiveMetadata[] = [];
+    const seenSdls = new Set<string>(ownDirectives.map((d) => d.sdl));
+
+    let current: Function | null = Object.getPrototypeOf(target);
+    while (current && current !== Function.prototype) {
+      this.metadataByTargetCollection
+        .get(current)
+        .classDirectives.getAll()
+        .forEach((directive) => {
+          if (!seenSdls.has(directive.sdl)) {
+            seenSdls.add(directive.sdl);
+            inherited.push(directive);
+          }
+        });
+      current = Object.getPrototypeOf(current);
+    }
+
+    // Preserve the shared-reference semantic when nothing is inherited: the
+    // compile() pass mutates the per-target `classDirectives` array in place
+    // (reverse() is called on it), and `item.directives` is expected to stay
+    // in sync with that mutation. Only produce a fresh array when we actually
+    // have to combine directives from an abstract parent.
+    return inherited.length === 0
+      ? ownDirectives
+      : [...ownDirectives, ...inherited];
   }
 
   clear() {

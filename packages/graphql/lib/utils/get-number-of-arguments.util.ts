@@ -33,6 +33,14 @@ export function getNumberOfArguments(fn: Function): number | undefined {
     return argumentsArray.length;
   }
 
+  // Arrow functions with a single parameter can omit the parentheses
+  // (e.g. `x => x + 2` or `async x => x + 2`). Match a bare identifier
+  // immediately followed by `=>`, allowing an optional `async` prefix.
+  const parenlessArrowRegex = /^\s*(?:async\s+)?[a-zA-Z_$][\w$]*\s*=>/;
+  if (parenlessArrowRegex.test(functionAsStringWithoutNewLines)) {
+    return 1;
+  }
+
   return 0;
 }
 
