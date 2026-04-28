@@ -43,9 +43,9 @@
     "test:e2e:dev": "vitest watch"
   },
   "dependencies": {
-    "@graphql-tools/merge": "9.1.8",
-    "@graphql-tools/schema": "10.0.32",
-    "@graphql-tools/utils": "11.0.1",
+    "@graphql-tools/merge": "9.1.9",
+    "@graphql-tools/schema": "10.0.33",
+    "@graphql-tools/utils": "11.1.0",
     "@nestjs/mapped-types": "2.1.1",
     "chokidar": "4.0.3",
     "fast-glob": "3.3.3",
