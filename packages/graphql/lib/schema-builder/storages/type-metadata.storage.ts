@@ -142,17 +142,14 @@ export class TypeMetadataStorageHost {
     return this.unions;
   }
 
-  /**
-   * Resolves the registerIn value, which can be either a module class directly
-   * or a function that returns the module class (for circular dependency handling).
-   */
   private resolveRegisterIn(
     registerIn: RegisterInOption | undefined,
   ): Function | undefined {
     if (!registerIn) {
       return undefined;
     }
-    const isClass = registerIn.prototype && registerIn.prototype.constructor === registerIn;
+    const isClass =
+      registerIn.prototype && registerIn.prototype.constructor === registerIn;
     if (isClass) {
       return registerIn;
     }
@@ -167,9 +164,6 @@ export class TypeMetadataStorageHost {
     }
   }
 
-  /**
-   * Checks if the metadata should be included based on module filtering.
-   */
   private shouldIncludeInModules(
     registerIn: RegisterInOption | undefined,
     moduleSet: Set<Function>,
@@ -179,11 +173,6 @@ export class TypeMetadataStorageHost {
     return !resolvedModule || moduleSet.has(resolvedModule);
   }
 
-  /**
-   * Generic helper to filter metadata by modules.
-   * Returns items that either have no registerIn specified (included in all schemas)
-   * or are registered in one of the specified modules.
-   */
   private filterByModules<T extends { registerIn?: RegisterInOption }>(
     metadata: T[],
     modules: Function[],
@@ -194,9 +183,6 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  /**
-   * Get ObjectType metadata filtered by modules.
-   */
   getObjectTypesMetadataByModules(modules: Function[]): ObjectTypeMetadata[] {
     return this.filterByModules(
       this.metadataByTargetCollection.all.objectType,
@@ -204,9 +190,6 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  /**
-   * Get InputType metadata filtered by modules.
-   */
   getInputTypesMetadataByModules(modules: Function[]): ClassMetadata[] {
     return this.filterByModules(
       this.metadataByTargetCollection.all.inputType,
@@ -214,9 +197,6 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  /**
-   * Get InterfaceType metadata filtered by modules.
-   */
   getInterfacesMetadataByModules(modules: Function[]): InterfaceMetadata[] {
     return this.filterByModules(
       [...this.metadataByTargetCollection.all.interface.values()],
@@ -224,9 +204,6 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  /**
-   * Get ArgsType metadata filtered by modules.
-   */
   getArgumentsMetadataByModules(modules: Function[]): ClassMetadata[] {
     return this.filterByModules(
       this.metadataByTargetCollection.all.argumentType,
@@ -234,16 +211,10 @@ export class TypeMetadataStorageHost {
     );
   }
 
-  /**
-   * Get Enum metadata filtered by modules.
-   */
   getEnumsMetadataByModules(modules: Function[]): EnumMetadata[] {
     return this.filterByModules(this.enums, modules);
   }
 
-  /**
-   * Get Union metadata filtered by modules.
-   */
   getUnionsMetadataByModules(modules: Function[]): UnionMetadata[] {
     return this.filterByModules(this.unions, modules);
   }
