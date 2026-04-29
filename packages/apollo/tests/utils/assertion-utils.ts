@@ -1,5 +1,5 @@
 import { GraphQLResponse } from '@apollo/server';
-import * as assert from 'assert';
+import assert from 'assert';
 
 const expectSingleResult = <TData = Record<string, unknown>>(
   response: GraphQLResponse<TData>,

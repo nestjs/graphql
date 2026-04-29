@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { join } from 'path';
-import * as request from 'supertest';
+import request from 'supertest';
 import { ApolloDriver } from '../../lib/drivers';
 import { CatsRequestScopedService } from '../graphql/cats/cats-request-scoped.service';
 import { CatsModule } from '../graphql/cats/cats.module';

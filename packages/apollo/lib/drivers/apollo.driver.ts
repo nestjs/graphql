@@ -31,7 +31,7 @@ export class ApolloDriver extends ApolloBaseDriver {
 
     if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
-        printSchema(options.schema),
+        printSchema(options.schema!),
         options,
       );
     }
@@ -43,7 +43,7 @@ export class ApolloDriver extends ApolloBaseDriver {
         options.subscriptions || { 'subscriptions-transport-ws': {} };
       this._subscriptionService = new GqlSubscriptionService(
         {
-          schema: options.schema,
+          schema: options.schema!,
           path: options.path,
           context: options.context,
           ...subscriptionsOptions,

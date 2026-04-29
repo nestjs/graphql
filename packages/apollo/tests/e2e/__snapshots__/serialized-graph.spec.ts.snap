@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Serialized graph should generate a post-initialization graph and match snapshot 1`] = `
+exports[`Serialized graph > should generate a post-initialization graph and match snapshot 1`] = `
 "{
   "nodes": {
     "68986468": {
@@ -1642,6 +1642,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
       },
       "id": "1118498651"
     },
+    "1159932337": {
+      "source": "576628947",
+      "target": "-1155703408",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "EnumDefinitionFactory",
+        "targetClassName": "AstDefinitionNodeFactory",
+        "sourceClassToken": "EnumDefinitionFactory",
+        "targetClassToken": "AstDefinitionNodeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor"
+      },
+      "id": "1159932337"
+    },
     "1194720497": {
       "source": "543894580",
       "target": "-407945788",
@@ -2160,6 +2176,22 @@ exports[`Serialized graph should generate a post-initialization graph and match 
         "injectionType": "constructor"
       },
       "id": "-1647339849"
+    },
+    "-954715350": {
+      "source": "-1492607355",
+      "target": "-1155703408",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "UnionDefinitionFactory",
+        "targetClassName": "AstDefinitionNodeFactory",
+        "sourceClassToken": "UnionDefinitionFactory",
+        "targetClassToken": "AstDefinitionNodeFactory",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 2,
+        "injectionType": "constructor"
+      },
+      "id": "-954715350"
     },
     "-1795848503": {
       "source": "206199259",

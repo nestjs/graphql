@@ -1,6 +1,7 @@
 import { Inject, Logger, Module, RequestMethod } from '@nestjs/common';
 import {
   DynamicModule,
+  OnApplicationShutdown,
   OnModuleDestroy,
   OnModuleInit,
   Provider,
@@ -53,9 +54,8 @@ import { extend, generateString } from './utils';
   ],
 })
 export class GraphQLModule<
-    TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
-  >
-  implements OnModuleInit, OnModuleDestroy
+  TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
+> implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
 {
   public completeOptions: GqlModuleOptions | undefined;
   private static readonly logger = new Logger(GraphQLModule.name, {
@@ -76,7 +76,15 @@ export class GraphQLModule<
   ) {}
 
   async onModuleDestroy() {
-    await this._graphQlAdapter.stop();
+    if (!this.options.stopOnApplicationShutdown) {
+      await this._graphQlAdapter.stop();
+    }
+  }
+
+  async onApplicationShutdown() {
+    if (this.options.stopOnApplicationShutdown) {
+      await this._graphQlAdapter.stop();
+    }
   }
 
   static forRoot<TOptions extends Record<string, any> = GqlModuleOptions>(

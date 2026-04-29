@@ -8,14 +8,13 @@ import {
   GRAPHQL_TRANSPORT_WS_PROTOCOL,
   ServerOptions,
 } from 'graphql-ws';
-// @ts-expect-error TS says path is invalid, but it's valid
 import { useServer } from 'graphql-ws/use/ws';
 import {
   GRAPHQL_WS,
   SubscriptionServer,
   ServerOptions as SubscriptionTransportWsServerOptions,
 } from 'subscriptions-transport-ws';
-import * as ws from 'ws';
+import { WebSocketServer } from 'ws';
 
 export type GraphQLWsSubscriptionsConfig = Partial<
   Pick<
@@ -54,8 +53,8 @@ export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
 }
 
 export class GqlSubscriptionService {
-  private readonly wss: ws.Server;
-  private readonly subTransWs: ws.Server;
+  private readonly wss: WebSocketServer;
+  private readonly subTransWs: WebSocketServer;
   private wsGqlDisposable: Disposable;
   private subServer: SubscriptionServer;
 
@@ -63,13 +62,13 @@ export class GqlSubscriptionService {
     private readonly options: GqlSubscriptionServiceOptions,
     private readonly httpServer: any,
   ) {
-    this.wss = new ws.Server({
+    this.wss = new WebSocketServer({
       path:
         (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig)?.path ??
         this.options.path,
       noServer: true,
     });
-    this.subTransWs = new ws.Server({
+    this.subTransWs = new WebSocketServer({
       path:
         (
           this.options[

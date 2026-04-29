@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
-import { AppModule as GatewayModule } from '../graphql-federation/gateway/gateway-async.module';
+import request from 'supertest';
+import { ApolloGatewayDriver } from '../../lib/drivers';
+import { ApolloGatewayDriverConfig } from '../../lib/interfaces';
+import { getSupergraphSdl } from '../graphql-federation/gateway/supergraph-sdl';
 import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
 import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
 
@@ -16,17 +19,28 @@ describe('GraphQL Gateway async', () => {
     }).compile();
 
     usersApp = usersModule.createNestApplication();
-    await usersApp.listen(3001);
+    await usersApp.listen(0);
+    const usersPort = usersApp.getHttpServer().address().port;
 
     const postsModule = await Test.createTestingModule({
       imports: [PostsModule],
     }).compile();
 
     postsApp = postsModule.createNestApplication();
-    await postsApp.listen(3002);
+    await postsApp.listen(0);
+    const postsPort = postsApp.getHttpServer().address().port;
 
     const gatewayModule = await Test.createTestingModule({
-      imports: [GatewayModule],
+      imports: [
+        GraphQLModule.forRootAsync<ApolloGatewayDriverConfig>({
+          driver: ApolloGatewayDriver,
+          useFactory: async () => ({
+            gateway: {
+              supergraphSdl: getSupergraphSdl(usersPort, postsPort),
+            },
+          }),
+        }),
+      ],
     }).compile();
 
     gatewayApp = gatewayModule.createNestApplication();

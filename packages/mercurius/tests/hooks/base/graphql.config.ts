@@ -2,6 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 import { MercuriusDriverConfig } from '../../../lib/interfaces/mercurius-driver-config.interface';
 
+export const HOOKS_INVOCATIONS = {
+  preParsing: 0,
+  preValidation: 0,
+  preExecution: 0,
+  onResolution: 0,
+};
+
 @Injectable()
 export class GqlConfigService
   implements GqlOptionsFactory<MercuriusDriverConfig>
@@ -13,20 +20,20 @@ export class GqlConfigService
       autoSchemaFile: true,
       hooks: {
         preParsing: (schema, document, context) => {
+          HOOKS_INVOCATIONS.preParsing += 1;
           this.logger.warn('preParsing');
-          return { schema, document, context };
         },
         preValidation: (schema, document, context) => {
+          HOOKS_INVOCATIONS.preValidation += 1;
           this.logger.warn('preValidation');
-          return { schema, document, context };
         },
         preExecution: (schema, document, context) => {
+          HOOKS_INVOCATIONS.preExecution += 1;
           this.logger.warn('preExecution');
-          return { schema, document, context };
         },
         onResolution: (execution, context) => {
+          HOOKS_INVOCATIONS.onResolution += 1;
           this.logger.warn('onResolution');
-          return execution;
         },
       },
     };

@@ -40,6 +40,11 @@ export interface UnionOptions<
    * @see RegisterInOption for details
    */
   registerIn?: RegisterInOption;
+  /**
+   * An array of directive SDL strings (e.g. `['@tag(name: "internal")']`) to be
+   * applied on the generated union type.
+   */
+  directives?: string[];
 }
 
 export type ArrayElement<ArrayType extends readonly unknown[]> =
@@ -53,7 +58,18 @@ export type Union<T extends readonly any[]> = InstanceType<ArrayElement<T>>;
 export function createUnionType<
   T extends readonly Type<unknown>[] = Type<unknown>[],
 >(options: UnionOptions<T>): Union<T> {
-  const { name, description, types, resolveType, registerIn } = options;
+  if (!options || typeof options.name !== 'string' || options.name === '') {
+    throw new Error(
+      `createUnionType requires an "options" object with a non-empty "name" (e.g. createUnionType({ name: 'MyUnion', types: () => [TypeA, TypeB] })).`,
+    );
+  }
+  if (typeof options.types !== 'function') {
+    throw new Error(
+      `createUnionType requires "options.types" to be a function returning the union member classes (e.g. types: () => [TypeA, TypeB]).`,
+    );
+  }
+  const { name, description, types, resolveType, registerIn, directives } =
+    options;
   const id = Symbol(name);
 
   LazyMetadataStorage.store(() =>
@@ -64,6 +80,7 @@ export function createUnionType<
       typesFn: types,
       resolveType,
       registerIn,
+      directives,
     }),
   );
   return id as any;

@@ -4,6 +4,7 @@
     "module": "commonjs",
     "declaration": true,
     "declarationMap": true,
+    "strict": false,
     "noImplicitAny": false,
     "importHelpers": true,
     "removeComments": false,
@@ -13,6 +14,8 @@
     "target": "ES2021",
     "sourceMap": false,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
 }

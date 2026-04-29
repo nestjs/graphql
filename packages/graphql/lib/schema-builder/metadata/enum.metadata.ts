@@ -3,6 +3,7 @@ import { RegisterInOption } from './class.metadata';
 export interface EnumMetadataValuesMapOptions {
   deprecationReason?: string;
   description?: string;
+  directives?: string[];
 }
 
 export type EnumMetadataValuesMap<T extends object> = Partial<
@@ -19,4 +20,5 @@ export interface EnumMetadata<T extends object = any> {
    * @see RegisterInOption for details
    */
   registerIn?: RegisterInOption;
+  directives?: string[];
 }

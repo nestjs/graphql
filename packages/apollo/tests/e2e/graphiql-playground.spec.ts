@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { GraphiQLPlaygroundModule } from '../graphql/graphiql-playground.module';
 
 describe('GraphiQL Playground', () => {
@@ -16,15 +16,12 @@ describe('GraphiQL Playground', () => {
       await app.init();
     });
 
-    it(`should render GraphiQL Playground`, (done) => {
-      request(app.getHttpServer())
+    it(`should render GraphiQL Playground`, async () => {
+      const res = await request(app.getHttpServer())
         .get('/graphql')
         .set('Accept', 'text/html')
-        .expect(200, (err, res) => {
-          if (err) {
-            throw err;
-          }
-          expect(res.text).toEqual(`
+        .expect(200);
+      expect(res.text).toEqual(`
 <!--
  *  Copyright (c) 2021 GraphQL Contributors
  *  All rights reserved.
@@ -71,6 +68,7 @@ describe('GraphiQL Playground', () => {
           defaultEditorToolsVisibility: true,
           shouldPersistHeaders: true,
           isHeadersEditorEnabled: true,
+          inputValueDeprecation: false,
         }),
         document.getElementById('graphiql'),
       );
@@ -78,8 +76,6 @@ describe('GraphiQL Playground', () => {
   </body>
 </html>
 `);
-          done();
-        });
     });
 
     afterEach(async () => {
@@ -105,15 +101,12 @@ describe('GraphiQL Playground', () => {
       await app.init();
     });
 
-    it(`should render GraphiQL Playground`, (done) => {
-      request(app.getHttpServer())
+    it(`should render GraphiQL Playground`, async () => {
+      const res = await request(app.getHttpServer())
         .get('/graphql')
         .set('Accept', 'text/html')
-        .expect(200, (err, res) => {
-          if (err) {
-            throw err;
-          }
-          expect(res.text).toEqual(`
+        .expect(200);
+      expect(res.text).toEqual(`
 <!--
  *  Copyright (c) 2021 GraphQL Contributors
  *  All rights reserved.
@@ -160,6 +153,7 @@ describe('GraphiQL Playground', () => {
           defaultEditorToolsVisibility: true,
           shouldPersistHeaders: false,
           isHeadersEditorEnabled: false,
+          inputValueDeprecation: false,
         }),
         document.getElementById('graphiql'),
       );
@@ -167,8 +161,33 @@ describe('GraphiQL Playground', () => {
   </body>
 </html>
 `);
-          done();
-        });
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
+  describe('when "graphiql" has inputValueDeprecation enabled', () => {
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          GraphiQLPlaygroundModule.withEnabledAndCustomized({
+            inputValueDeprecation: true,
+          }),
+        ],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+    });
+
+    it(`should render GraphiQL Playground with inputValueDeprecation enabled`, async () => {
+      const res = await request(app.getHttpServer())
+        .get('/graphql')
+        .set('Accept', 'text/html')
+        .expect(200);
+      expect(res.text).toContain('inputValueDeprecation: true');
     });
 
     afterEach(async () => {

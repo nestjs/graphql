@@ -8,7 +8,7 @@
       "@nestjs/graphql/*": ["../graphql/lib/*"],
     }
   },
-  "exclude": ["node_modules", "dist", "tests/**/*", "*.spec.ts"],
+  "exclude": ["node_modules", "dist", "tests/**/*", "*.spec.ts", "vitest.config.mts"],
   "references": [
     {
       "path": "../graphql/tsconfig.build.json"

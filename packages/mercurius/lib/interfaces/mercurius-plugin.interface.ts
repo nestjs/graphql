@@ -9,7 +9,7 @@ import {
  * @publicApi
  */
 export interface MercuriusPlugin<
-  Options extends FastifyPluginOptions = unknown,
+  Options extends FastifyPluginOptions = FastifyPluginOptions,
 > {
   plugin:
     | FastifyPluginCallback<Options>
@@ -24,7 +24,7 @@ export interface MercuriusPlugin<
  * @publicApi
  */
 export interface MercuriusPlugins<
-  Options extends FastifyPluginOptions = unknown,
+  Options extends FastifyPluginOptions = FastifyPluginOptions,
 > {
   plugins?: MercuriusPlugin<Options>[];
 }

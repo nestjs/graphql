@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { GlobalPrefixAsyncOptionsClassModule } from '../graphql/global-prefix-async-options-class.module';
 import { GlobalPrefixAsyncOptionsModule } from '../graphql/global-prefix-async-options.module';
 import { GlobalPrefixModule } from '../graphql/global-prefix.module';

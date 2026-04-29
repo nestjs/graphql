@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/mercurius",
-  "version": "13.2.3",
+  "version": "13.3.0",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -17,8 +17,8 @@
     "url": "git+https://github.com/nestjs/graphql.git"
   },
   "scripts": {
-    "test:e2e": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config ./tests/jest-e2e.ts --runInBand",
-    "test:e2e:dev": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --config ./tests/jest-e2e.ts --runInBand --watch"
+    "test:e2e": "vitest run",
+    "test:e2e:dev": "vitest watch"
   },
   "bugs": {
     "url": "https://github.com/nestjs/graphql/issues"
@@ -27,13 +27,13 @@
     "tslib": "2.8.1"
   },
   "devDependencies": {
-    "@mercuriusjs/federation": "5.0.0",
-    "@mercuriusjs/gateway": "5.0.0",
-    "@nestjs/common": "11.1.12",
-    "@nestjs/platform-fastify": "11.1.12",
-    "@nestjs/testing": "11.1.12",
-    "fastify": "5.7.1",
-    "mercurius": "16.6.0",
+    "@mercuriusjs/federation": "5.1.1",
+    "@mercuriusjs/gateway": "5.2.0",
+    "@nestjs/common": "11.1.19",
+    "@nestjs/platform-fastify": "11.1.19",
+    "@nestjs/testing": "11.1.19",
+    "fastify": "5.8.5",
+    "mercurius": "16.9.0",
     "mercurius-integration-testing": "9.0.1"
   },
   "peerDependencies": {

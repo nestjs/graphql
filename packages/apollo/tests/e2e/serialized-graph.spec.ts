@@ -8,9 +8,9 @@ describe('Serialized graph', () => {
   let testingModule: TestingModule;
 
   beforeAll(async () => {
-    jest
-      .spyOn(Injector.prototype as any, 'getNowTimestamp')
-      .mockImplementation(() => 0);
+    vi.spyOn(Injector.prototype as any, 'getNowTimestamp').mockImplementation(
+      () => 0,
+    );
 
     testingModule = await Test.createTestingModule({
       imports: [ApplicationModule],

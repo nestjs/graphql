@@ -16,6 +16,6 @@ export async function registerMercuriusPlugin(
   }
 
   for (const plugin of plugins) {
-    await app.register(plugin.plugin, plugin.options);
+    await app.register(plugin.plugin as any, plugin.options ?? {});
   }
 }

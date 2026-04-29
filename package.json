@@ -13,7 +13,7 @@
     "changelog": "lerna-changelog",
     "clean": "tsc -b --clean packages",
     "format": "prettier packages/**/*.ts --ignore-path ./.prettierignore --write",
-    "lint": "eslint 'packages/**/*.ts' --fix",
+    "lint": "oxlint --fix",
     "prepublish:npm": "yarn build && yarn changelog | pbcopy",
     "publish:npm": "lerna publish",
     "prepublish:next": "yarn build",
@@ -26,45 +26,34 @@
     "prepare": "husky"
   },
   "resolutions": {
-    "graphql": "16.12.0"
+    "graphql": "16.13.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.3.1",
-    "@commitlint/config-angular": "20.3.1",
-    "@eslint/js": "9.39.2",
-    "@types/graphql": "14.5.0",
-    "@types/jest": "30.0.0",
-    "@types/node": "24.10.9",
+    "@commitlint/cli": "20.5.2",
+    "@commitlint/config-angular": "20.5.0",
+    "@types/node": "24.12.2",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.2",
-    "@types/supertest": "6.0.3",
+    "@types/supertest": "7.2.0",
     "@types/ws": "8.18.1",
-    "@typescript-eslint/eslint-plugin": "8.53.0",
-    "@typescript-eslint/parser": "8.53.0",
     "class-transformer": "0.5.1",
-    "class-validator": "0.14.3",
-    "eslint": "9.39.2",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-import": "2.32.0",
-    "eslint-plugin-prettier": "5.5.5",
-    "graphql": "16.12.0",
+    "class-validator": "0.15.1",
+    "graphql": "16.13.2",
     "graphql-subscriptions": "3.0.0",
     "husky": "9.1.7",
-    "jest": "30.0.5",
-    "lerna": "9.0.3",
+    "lerna": "9.0.7",
     "lerna-changelog": "2.2.0",
-    "lint-staged": "16.2.7",
-    "prettier": "3.8.0",
+    "lint-staged": "16.4.0",
+    "oxlint": "1.62.0",
+    "prettier": "3.8.3",
     "prettierv2": "npm:prettier@2.8.8",
     "reflect-metadata": "0.2.2",
-    "release-it": "19.2.3",
-    "rimraf": "6.1.2",
+    "release-it": "20.0.1",
+    "rimraf": "6.1.3",
     "rxjs": "7.8.2",
     "supertest": "7.2.2",
-    "ts-jest": "29.4.6",
-    "ts-node": "10.9.2",
-    "typescript": "5.9.3",
-    "typescript-eslint": "8.53.0"
+    "typescript": "6.0.3",
+    "vitest": "^4.1.4"
   },
   "changelog": {
     "labels": {
@@ -78,7 +67,7 @@
   "lint-staged": {
     "*.ts": [
       "prettier --write",
-      "eslint --fix"
+      "oxlint --fix"
     ]
   },
   "repository": {

@@ -1,7 +1,7 @@
 import { INestApplication, Type } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module';
 import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module';
 import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module';

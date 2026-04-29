@@ -11,7 +11,7 @@ import { loadPackage } from '@nestjs/common/utils/load-package.util';
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
-import * as omit from 'lodash.omit';
+import omit from 'lodash.omit';
 import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin';
 import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
 import { ApolloDriverConfig } from '../interfaces';
@@ -76,7 +76,9 @@ export abstract class ApolloBaseDriver<
       defaults = {
         ...defaults,
         plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(playgroundOptions),
+          ApolloServerPluginLandingPageGraphQLPlayground(
+            playgroundOptions,
+          ) as any,
         ],
       };
     } else if (
@@ -101,6 +103,13 @@ export abstract class ApolloBaseDriver<
 
     this.wrapContextResolver(options);
     this.wrapFormatErrorFn(options);
+
+    if (options.autoTransformHttpErrors !== false) {
+      (options as ApolloDriverConfig).plugins = [
+        ...((options as ApolloDriverConfig).plugins || []),
+        this.createPreserveHttpStatusPlugin(),
+      ];
+    }
     return options;
   }
 
@@ -117,7 +126,7 @@ export abstract class ApolloBaseDriver<
       ...args: [TPayload, TVariables, TContext, TInfo]
     ): any =>
       createAsyncIterator(createSubscribeContext()(...args), (payload: any) =>
-        filterFn.call(instanceRef, payload, ...args.slice(1)),
+        filterFn.call(instanceRef, payload, args[1], args[2]),
       );
   }
 
@@ -213,6 +222,34 @@ export abstract class ApolloBaseDriver<
     });
 
     this.apolloServer = server;
+  }
+
+  private createPreserveHttpStatusPlugin() {
+    // When a resolver throws an error whose `extensions.http.status` is set
+    // (either directly via GraphQLError or transitively via NestJS HTTP
+    // exceptions in user code), Apollo Server uses that value as the HTTP
+    // response status. Some GraphQL clients/UIs then refuse to parse the
+    // response as a normal `{ data, errors }` payload and instead wrap it as
+    // a transport-level error. Reset the HTTP status to 200 once execution
+    // has run so the response shape stays stable. Request-level failures
+    // (parse, validate) are unaffected because their body has no `data` key.
+    // @see https://github.com/nestjs/graphql/issues/2940
+    return {
+      async requestDidStart() {
+        return {
+          async willSendResponse(requestContext: any) {
+            const body = requestContext.response?.body;
+            if (
+              body?.kind === 'single' &&
+              'data' in (body.singleResult ?? {}) &&
+              requestContext.response?.http
+            ) {
+              requestContext.response.http.status = 200;
+            }
+          },
+        };
+      },
+    };
   }
 
   private wrapFormatErrorFn(options: T) {

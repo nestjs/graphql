@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { Guard } from '../graphql/hello/guards/request-scoped.guard';
 import { HelloModule } from '../graphql/hello/hello.module';
 import { HelloResolver } from '../graphql/hello/hello.resolver';
@@ -79,6 +79,14 @@ describe('Request scope', () => {
     it(`should create request scoped guard for each request`, async () => {
       expect(Guard.COUNTER).toEqual(3);
       expect(Guard.REQUEST_SCOPED_DATA).toEqual([1, 1, 1]);
+    });
+
+    it(`should inject REQUEST context into request-scoped services`, async () => {
+      expect(UsersService.REQUEST_CONTEXTS).toHaveLength(3);
+      UsersService.REQUEST_CONTEXTS.forEach((context) => {
+        expect(context).toBeDefined();
+        expect(context.req).toBeDefined();
+      });
     });
   });
 

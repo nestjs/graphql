@@ -5,7 +5,7 @@ import ApolloClient, { ApolloError } from 'apollo-client';
 import { WebSocketLink } from 'apollo-link-ws';
 import { gql } from 'graphql-tag';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
-import * as ws from 'ws';
+import ws from 'ws';
 import { AppModule } from './app/app.module';
 import { pubSub } from './app/notification.resolver';
 
@@ -21,6 +21,7 @@ const subscriptionQuery = gql`
 describe('subscriptions-transport-ws protocol', () => {
   let app: INestApplication;
   let wsClient: SubscriptionClient;
+  let port: number;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -49,176 +50,201 @@ describe('subscriptions-transport-ws protocol', () => {
 
     app = module.createNestApplication();
     await app.init();
-    await app.listen(3006);
+    await app.listen(0);
+    port = app.getHttpServer().address().port;
   });
 
-  it('should receive an error if missing token', (done) => {
-    wsClient = new SubscriptionClient(
-      'ws://localhost:3006/graphql',
-      {
-        connectionCallback: (errors) => {
-          const error = errors as unknown as Error;
-          expect(error.message).toEqual('Missing authorization header');
-          done();
+  it('should receive an error if missing token', async () => {
+    await new Promise<void>((resolve, reject) => {
+      wsClient = new SubscriptionClient(
+        `ws://localhost:${port}/graphql`,
+        {
+          connectionCallback: (errors) => {
+            try {
+              const error = errors as unknown as Error;
+              expect(error.message).toEqual('Missing authorization header');
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          connectionParams: {},
         },
-        connectionParams: {},
-      },
-      ws,
-    );
+        ws,
+      );
 
-    const apolloClient = new ApolloClient({
-      link: new WebSocketLink(wsClient),
-      cache: new InMemoryCache(),
-    });
-
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next() {},
-        complete() {},
-        error() {},
+      const apolloClient = new ApolloClient({
+        link: new WebSocketLink(wsClient),
+        cache: new InMemoryCache(),
       });
+
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next() {},
+          complete() {},
+          error() {},
+        });
+    });
   });
 
-  it('should receive an error if token is malformed', (done) => {
-    wsClient = new SubscriptionClient(
-      'ws://localhost:3006/graphql',
-      {
-        connectionCallback: (errors) => {
-          const error = errors as unknown as Error;
-          expect(error.message).toEqual('Malformed authorization token');
-          done();
+  it('should receive an error if token is malformed', async () => {
+    await new Promise<void>((resolve, reject) => {
+      wsClient = new SubscriptionClient(
+        `ws://localhost:${port}/graphql`,
+        {
+          connectionCallback: (errors) => {
+            try {
+              const error = errors as unknown as Error;
+              expect(error.message).toEqual('Malformed authorization token');
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          connectionParams: {
+            authorization: 'wrong token',
+          },
         },
-        connectionParams: {
-          authorization: 'wrong token',
-        },
-      },
-      ws,
-    );
+        ws,
+      );
 
-    const apolloClient = new ApolloClient({
-      link: new WebSocketLink(wsClient),
-      cache: new InMemoryCache(),
-    });
-
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next() {},
-        complete() {},
-        error() {},
+      const apolloClient = new ApolloClient({
+        link: new WebSocketLink(wsClient),
+        cache: new InMemoryCache(),
       });
+
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next() {},
+          complete() {},
+          error() {},
+        });
+    });
   });
 
-  it('should fail to connect if no authorization is provided', (done) => {
-    wsClient = new SubscriptionClient(
-      'ws://localhost:3006/graphql',
-      {
-        connectionParams: {
-          authorization: 'Bearer notest',
+  it('should fail to connect if no authorization is provided', async () => {
+    await new Promise<void>((resolve, reject) => {
+      wsClient = new SubscriptionClient(
+        `ws://localhost:${port}/graphql`,
+        {
+          connectionParams: {
+            authorization: 'Bearer notest',
+          },
         },
-      },
-      ws,
-    );
+        ws,
+      );
 
-    const apolloClient = new ApolloClient({
-      link: new WebSocketLink(wsClient),
-      cache: new InMemoryCache(),
-    });
-
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next() {},
-        complete() {},
-        error(error: unknown) {
-          expect(error).toBeInstanceOf(ApolloError);
-          expect((error as ApolloError).graphQLErrors[0].message).toEqual(
-            'Forbidden resource',
-          );
-          expect((error as ApolloError).graphQLErrors[0].path[0]).toEqual(
-            'newNotification',
-          );
-          done();
-        },
+      const apolloClient = new ApolloClient({
+        link: new WebSocketLink(wsClient),
+        cache: new InMemoryCache(),
       });
+
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next() {},
+          complete() {},
+          error(error: unknown) {
+            try {
+              expect(error).toBeInstanceOf(ApolloError);
+              expect((error as ApolloError).graphQLErrors[0].message).toEqual(
+                'Forbidden resource',
+              );
+              expect((error as ApolloError).graphQLErrors[0].path[0]).toEqual(
+                'newNotification',
+              );
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+        });
+    });
   });
 
-  it('should receive subscriptions', (done) => {
-    wsClient = new SubscriptionClient(
-      'ws://localhost:3006/graphql',
-      {
-        connectionParams: {
-          authorization: 'Bearer test',
+  it('should receive subscriptions', async () => {
+    await new Promise<void>((resolve, reject) => {
+      wsClient = new SubscriptionClient(
+        `ws://localhost:${port}/graphql`,
+        {
+          connectionParams: {
+            authorization: 'Bearer test',
+          },
         },
-      },
-      ws,
-    );
+        ws,
+      );
 
-    wsClient.on('connected', () => {
-      pubSub.publish('newNotification', {
-        newNotification: {
-          id: '2',
-          recipient: 'test',
-          message: 'wrong message!',
-        },
+      wsClient.on('connected', () => {
+        pubSub.publish('newNotification', {
+          newNotification: {
+            id: '2',
+            recipient: 'test',
+            message: 'wrong message!',
+          },
+        });
+        pubSub.publish('newNotification', {
+          newNotification: {
+            id: '1',
+            recipient: 'someone-else',
+            message: 'wrong message!',
+          },
+        });
+        pubSub.publish('newNotification', {
+          newNotification: {
+            id: '1',
+            recipient: 'test',
+            message: 'Hello subscriptions-transport-ws',
+          },
+        });
       });
-      pubSub.publish('newNotification', {
-        newNotification: {
-          id: '1',
-          recipient: 'someone-else',
-          message: 'wrong message!',
-        },
+
+      const apolloClient = new ApolloClient({
+        link: new WebSocketLink(wsClient),
+        cache: new InMemoryCache(),
       });
-      pubSub.publish('newNotification', {
-        newNotification: {
-          id: '1',
-          recipient: 'test',
-          message: 'Hello subscriptions-transport-ws',
-        },
-      });
+
+      apolloClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+        })
+        .subscribe({
+          next(value: any) {
+            try {
+              expect(value.data.newNotification.id).toEqual('1');
+              expect(value.data.newNotification.message).toEqual(
+                'Hello subscriptions-transport-ws',
+              );
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          complete() {},
+          error(error: unknown) {
+            reject(error);
+          },
+        });
     });
-
-    const apolloClient = new ApolloClient({
-      link: new WebSocketLink(wsClient),
-      cache: new InMemoryCache(),
-    });
-
-    apolloClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
-          id: '1',
-        },
-      })
-      .subscribe({
-        next(value: any) {
-          expect(value.data.newNotification.id).toEqual('1');
-          expect(value.data.newNotification.message).toEqual(
-            'Hello subscriptions-transport-ws',
-          );
-          done();
-        },
-        complete() {},
-        error(error: unknown) {
-          done(error);
-        },
-      });
   });
 
   afterEach(async () => {

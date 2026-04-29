@@ -3,3 +3,4 @@ packages/**/tests/**/*.fixture.ts
 
 packages/**/tests/cases/**/*.ts
 packages/**/tests/cases/**/*.ts
+jest-e2e.ts

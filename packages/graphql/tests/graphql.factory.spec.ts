@@ -9,12 +9,12 @@ import { GraphQLSchema } from 'graphql';
 
 describe('GraphQLFactory', () => {
   let graphqlFactory: GraphQLFactory;
-  let resolverExplorer: { explore: jest.Mock };
-  let scalarExplorer: { explore: jest.Mock };
+  let resolverExplorer: { explore: vi.Mock };
+  let scalarExplorer: { explore: vi.Mock };
 
   beforeEach(async () => {
-    resolverExplorer = { explore: jest.fn() };
-    scalarExplorer = { explore: jest.fn() };
+    resolverExplorer = { explore: vi.fn() };
+    scalarExplorer = { explore: vi.fn() };
     const module = await Test.createTestingModule({
       providers: [
         {
@@ -27,11 +27,11 @@ describe('GraphQLFactory', () => {
         },
         {
           provide: GraphQLAstExplorer,
-          useValue: jest.fn(),
+          useValue: vi.fn(),
         },
         {
           provide: GraphQLSchemaBuilder,
-          useValue: jest.fn(),
+          useValue: vi.fn(),
         },
         GraphQLFactory,
       ],
@@ -42,12 +42,12 @@ describe('GraphQLFactory', () => {
 
   describe('generateSchema', () => {
     it('should support transforming the resolvers', async () => {
-      const resolvers = [{ Query: { echo: jest.fn() } }];
+      const resolvers = [{ Query: { echo: vi.fn() } }];
 
       resolverExplorer.explore.mockReturnValueOnce(resolvers);
       scalarExplorer.explore.mockReturnValueOnce([]);
 
-      const transformResolvers = jest.fn((r) => r);
+      const transformResolvers = vi.fn((r) => r);
 
       const schema = await graphqlFactory.generateSchema({
         transformResolvers,
@@ -65,7 +65,7 @@ describe('GraphQLFactory', () => {
     });
 
     it('should support undefined transformResolvers option', async () => {
-      const resolvers = [{ Query: { echo: jest.fn() } }];
+      const resolvers = [{ Query: { echo: vi.fn() } }];
 
       resolverExplorer.explore.mockReturnValueOnce(resolvers);
       scalarExplorer.explore.mockReturnValueOnce([]);

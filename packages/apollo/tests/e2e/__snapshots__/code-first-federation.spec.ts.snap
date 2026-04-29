@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Code-first - Federation should return query result 1`] = `
+exports[`Code-first - Federation > should return query result 1`] = `
 {
   "_service": {
     "sdl": "directive @key(fields: String!, resolvable: Boolean = true) repeatable on OBJECT | INTERFACE

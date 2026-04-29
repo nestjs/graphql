@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { CustomContextModule } from '../graphql/custom-context/custom-context.module';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 

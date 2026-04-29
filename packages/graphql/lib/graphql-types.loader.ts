@@ -1,6 +1,6 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
-import * as glob from 'fast-glob';
+import glob from 'fast-glob';
 import * as fs from 'fs';
 import { flatten } from 'lodash';
 import * as util from 'util';

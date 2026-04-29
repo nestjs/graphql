@@ -15,4 +15,5 @@ export interface UnionMetadata<
    * @see RegisterInOption for details
    */
   registerIn?: RegisterInOption;
+  directives?: string[];
 }

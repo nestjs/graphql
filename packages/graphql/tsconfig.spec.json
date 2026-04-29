@@ -4,6 +4,7 @@
     "sourceMap": true,
     "outDir": "./dist/tests",
     "rootDir": ".",
-    "types": ["jest", "node"]
+    "types": ["vitest/globals", "node"]
   },
+  "include": ["lib/**/*.ts", "tests/**/*.ts"]
 }

@@ -1,7 +1,7 @@
 import { isFunction } from '@nestjs/common/utils/shared.utils';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
-import { printSchema } from 'graphql';
+import { GraphQLSchema, printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
@@ -26,7 +26,7 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
 
     if (options.definitions && options.definitions.path) {
       await this.graphQlFactory.generateDefinitions(
-        printSchema(options.schema),
+        printSchema(options.schema as GraphQLSchema),
         options,
       );
     }
@@ -66,7 +66,8 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
   ) {
     return mercurius.withFilter(
       createSubscribeContext(),
-      (...args: unknown[]) => filterFn.call(instanceRef, ...args),
+      (payload: any, variables: any, context: any) =>
+        filterFn.call(instanceRef, payload, variables, context),
     ) as any;
   }
 

@@ -13,10 +13,10 @@ import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 describe('GraphQL sort autoSchemaFile and new line at the end of the schema', () => {
   let app: INestApplication;
   let schema: GraphQLSchema;
-  let writeFileMock: jest.Mock;
+  let writeFileMock: vi.Mock;
 
   beforeEach(async () => {
-    writeFileMock = jest.fn().mockImplementation(() => Promise.resolve());
+    writeFileMock = vi.fn().mockImplementation(() => Promise.resolve());
     const module = await Test.createTestingModule({
       imports: [SortAutoSchemaModule],
     })

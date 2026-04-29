@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../graphql-federation/users-service/federation-users.async-class.module';
 
 describe('GraphQL Federation async-class', () => {

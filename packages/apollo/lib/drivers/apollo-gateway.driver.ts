@@ -19,6 +19,7 @@ export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverCon
   }
 
   public async start(options: ApolloGatewayDriverConfig): Promise<void> {
+    options.server ??= {};
     options.server.plugins = extend(
       options.server.plugins || [],
       this.pluginsExplorerService.explore(options),

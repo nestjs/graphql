@@ -75,91 +75,104 @@ describe('Subscriptions', () => {
     }).compile();
 
     app = module.createNestApplication(new FastifyAdapter());
-    await app.listen(3077);
+    await app.listen(0);
   });
 
   // TODO: After merging this PR https://github.com/mercurius-js/mercurius/pull/1105
   // errors started being serialized as [object Object] instead of the actual error message
-  it.skip('should receive error on subscription if guard fails', (done) => {
-    const testClient = createMercuriusTestClient(
-      app.getHttpAdapter().getInstance(),
-    );
-    const examplePayload = {
-      newNotification: {
-        id: '1',
-        recipient: 'test',
-        message: 'Hello ws',
-      },
-    };
-    testClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
+  it.skip('should receive error on subscription if guard fails', async () => {
+    await new Promise<void>((resolve, reject) => {
+      const testClient = createMercuriusTestClient(
+        app.getHttpAdapter().getInstance(),
+      );
+      const examplePayload = {
+        newNotification: {
           id: '1',
+          recipient: 'test',
+          message: 'Hello ws',
         },
-        headers: {
-          authorization: 'test',
-        },
-        onData(response) {
-          expect(response.errors![0].message).toEqual('Forbidden resource');
-          done();
-        },
-      })
-      .then(() => {
-        // timeout needed to allow the subscription to be established
-        setTimeout(
-          () =>
-            pubsub.publish({
-              topic: 'newNotification',
-              payload: examplePayload,
-            }),
-          1000,
-        );
-      })
-      .catch(console.log);
+      };
+      testClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+          headers: {
+            authorization: 'test',
+          },
+          onData(response) {
+            try {
+              expect(response.errors![0].message).toEqual('Forbidden resource');
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+        })
+        .then(() => {
+          // timeout needed to allow the subscription to be established
+          setTimeout(
+            () =>
+              pubsub.publish({
+                topic: 'newNotification',
+                payload: examplePayload,
+              }),
+            1000,
+          );
+        })
+        .catch(reject);
+    });
   });
 
-  it('should connect to subscriptions', (done) => {
-    const testClient = createMercuriusTestClient(
-      app.getHttpAdapter().getInstance(),
-    );
-    const examplePayload = {
-      newNotification: {
-        id: '1',
-        recipient: 'test',
-        message: 'Hello ws',
-      },
-    };
-    testClient
-      .subscribe({
-        query: subscriptionQuery,
-        variables: {
+  it('should connect to subscriptions', async () => {
+    await new Promise<void>((resolve, reject) => {
+      const testClient = createMercuriusTestClient(
+        app.getHttpAdapter().getInstance(),
+      );
+      const examplePayload = {
+        newNotification: {
           id: '1',
+          recipient: 'test',
+          message: 'Hello ws',
         },
-        headers: {
-          authorization: 'Bearer test',
-        },
-        onData(response) {
-          expect(response.data).toEqual({
-            newNotification: {
-              id: examplePayload.newNotification.id,
-              message: examplePayload.newNotification.message,
-            },
-          });
-          done();
-        },
-      })
-      .then(() => {
-        // timeout needed to allow the subscription to be established
-        setTimeout(
-          () =>
-            pubsub.publish({
-              topic: 'newNotification',
-              payload: examplePayload,
-            }),
-          1000,
-        );
-      });
+      };
+      testClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '1',
+          },
+          headers: {
+            authorization: 'Bearer test',
+          },
+          onData(response) {
+            try {
+              expect(response.data).toEqual({
+                newNotification: {
+                  id: examplePayload.newNotification.id,
+                  message: examplePayload.newNotification.message,
+                },
+              });
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+        })
+        .then(() => {
+          // timeout needed to allow the subscription to be established
+          setTimeout(
+            () =>
+              pubsub.publish({
+                topic: 'newNotification',
+                payload: examplePayload,
+              }),
+            1000,
+          );
+        })
+        .catch(reject);
+    });
   });
 
   afterEach(async () => {
