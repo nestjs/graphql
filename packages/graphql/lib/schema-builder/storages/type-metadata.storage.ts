@@ -152,13 +152,8 @@ export class TypeMetadataStorageHost {
     if (!registerIn) {
       return undefined;
     }
-    // Check if it's a class (has prototype with constructor)
-    // or an arrow function / factory function (no prototype)
-    if (
-      registerIn.prototype &&
-      registerIn.prototype.constructor === registerIn
-    ) {
-      // It's a class, return directly
+    const isClass = registerIn.prototype && registerIn.prototype.constructor === registerIn;
+    if (isClass) {
       return registerIn;
     }
     // It's a factory function, call it to get the actual module
