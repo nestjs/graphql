@@ -360,6 +360,7 @@ export class GraphQLFederationFactory {
         },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
+        await this.getFederationSchemaPrinter(),
       );
     } catch (err) {
       if (err && err.details) {
@@ -367,6 +368,25 @@ export class GraphQLFederationFactory {
       }
       throw err;
     }
+  }
+
+  private async getFederationSchemaPrinter(): Promise<
+    (schema: GraphQLSchema) => string
+  > {
+    const apolloSubgraph = loadPackage(
+      '@apollo/subgraph',
+      'ApolloFederation',
+      () => require('@apollo/subgraph'),
+    );
+    const apolloSubgraphVersion = (
+      await import('@apollo/subgraph/package.json')
+    ).version;
+    const apolloSubgraphMajorVersion = Number(
+      apolloSubgraphVersion.split('.')[0],
+    );
+    return apolloSubgraphMajorVersion >= 2
+      ? (schema) => printSchemaWithDirectives(schema)
+      : apolloSubgraph.printSubgraphSchema;
   }
 
   private getFederationVersionAndConfig(

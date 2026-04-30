@@ -66,6 +66,7 @@ export class GraphQLSchemaBuilder {
     transformSchema?: (
       schema: GraphQLSchema,
     ) => GraphQLSchema | Promise<GraphQLSchema>,
+    printSchemaFn?: (schema: GraphQLSchema) => string,
   ): Promise<GraphQLSchema> {
     const schema = await this.gqlSchemaFactory.create(resolvers, options);
     const filename = getPathForAutoSchemaFile(autoSchemaFile);
@@ -74,13 +75,11 @@ export class GraphQLSchemaBuilder {
       const transformedSchema = transformSchema
         ? await transformSchema(schema)
         : schema;
-      let fileContent =
-        GRAPHQL_SDL_FILE_HEADER +
-        printSchema(
-          sortSchema
-            ? lexicographicSortSchema(transformedSchema)
-            : transformedSchema,
-        );
+      const finalSchema = sortSchema
+        ? lexicographicSortSchema(transformedSchema)
+        : transformedSchema;
+      const print = printSchemaFn ?? printSchema;
+      let fileContent = GRAPHQL_SDL_FILE_HEADER + print(finalSchema);
 
       if (options.addNewlineAtEnd) {
         fileContent = fileContent.concat(GRAPHQL_SDL_FILE_END);
