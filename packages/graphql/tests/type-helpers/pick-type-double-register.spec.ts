@@ -1,8 +1,4 @@
-import {
-  Field,
-  InputType,
-  TypeMetadataStorage,
-} from '../../lib';
+import { Field, InputType, TypeMetadataStorage } from '../../lib';
 import { PickType } from '../../lib/type-helpers';
 import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage';
 
