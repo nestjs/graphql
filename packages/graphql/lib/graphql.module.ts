@@ -54,9 +54,8 @@ import { extend, generateString } from './utils';
   ],
 })
 export class GraphQLModule<
-    TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
-  >
-  implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
+  TAdapter extends AbstractGraphQLDriver = AbstractGraphQLDriver,
+> implements OnModuleInit, OnModuleDestroy, OnApplicationShutdown
 {
   public completeOptions: GqlModuleOptions | undefined;
   private static readonly logger = new Logger(GraphQLModule.name, {

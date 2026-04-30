@@ -15,7 +15,10 @@ import {
 import { Test } from '@nestjs/testing';
 import assert from 'assert';
 import { gql } from 'graphql-tag';
-import { ApolloFederationDriver, ApolloFederationDriverConfig } from '../../lib';
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '../../lib';
 
 enum Visibility {
   PUBLIC = 'PUBLIC',

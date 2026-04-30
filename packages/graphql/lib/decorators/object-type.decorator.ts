@@ -7,6 +7,7 @@
 
 import { isString } from '@nestjs/common/utils/shared.utils';
 import { ClassType } from '../enums/class-type.enum';
+import { RegisterInOption } from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
@@ -34,6 +35,13 @@ export interface ObjectTypeOptions {
    * Also works on classes marked with `isAbstract: true`.
    */
   inheritDescription?: boolean;
+  /**
+   * NestJS module that this type belongs to.
+   * When specified, this type will only be included in GraphQL schemas
+   * that include this module via the `include` option.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
 }
 
 /**
@@ -85,6 +93,7 @@ export function ObjectType(
         interfaces: options.implements,
         isAbstract: options.isAbstract,
         inheritDescription: options.inheritDescription,
+        registerIn: options.registerIn,
       });
 
     // This function must be called eagerly to allow resolvers

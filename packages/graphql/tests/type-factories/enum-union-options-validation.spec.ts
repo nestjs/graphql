@@ -32,11 +32,9 @@ describe('registerEnumType / createUnionType options validation', () => {
   });
 
   it('should throw a descriptive error when createUnionType is called without options', () => {
-    expect(() =>
-      (
-        createUnionType as unknown as () => unknown
-      )(),
-    ).toThrowError(/createUnionType requires an "options" object/);
+    expect(() => (createUnionType as unknown as () => unknown)()).toThrowError(
+      /createUnionType requires an "options" object/,
+    );
   });
 
   it('should throw a descriptive error when createUnionType is called without a name', () => {

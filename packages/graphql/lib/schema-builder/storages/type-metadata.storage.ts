@@ -1,4 +1,4 @@
-import { Type } from '@nestjs/common';
+import { Logger, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import { addFieldMetadata } from '../../decorators';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
@@ -16,6 +16,7 @@ import {
   PropertyDirectiveMetadata,
   PropertyExtensionsMetadata,
   PropertyMetadata,
+  RegisterInOption,
   ResolverClassMetadata,
   ResolverTypeMetadata,
   UnionMetadata,
@@ -25,6 +26,7 @@ import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
 import { isThrowing } from '../utils/is-throwing.util';
 
 export class TypeMetadataStorageHost {
+  private readonly logger = new Logger(TypeMetadataStorageHost.name);
   private queries = new Array<ResolverTypeMetadata>();
   private mutations = new Array<ResolverTypeMetadata>();
   private subscriptions = new Array<ResolverTypeMetadata>();
@@ -138,6 +140,83 @@ export class TypeMetadataStorageHost {
 
   getUnionsMetadata(): UnionMetadata[] {
     return this.unions;
+  }
+
+  private resolveRegisterIn(
+    registerIn: RegisterInOption | undefined,
+  ): Function | undefined {
+    if (!registerIn) {
+      return undefined;
+    }
+    const isClass =
+      registerIn.prototype && registerIn.prototype.constructor === registerIn;
+    if (isClass) {
+      return registerIn;
+    }
+    // It's a factory function, call it to get the actual module
+    try {
+      return registerIn();
+    } catch (error) {
+      this.logger.warn(
+        `Failed to resolve registerIn function. The type will be included in all schemas (backward compatible behavior). Error: ${error}`,
+      );
+      return undefined;
+    }
+  }
+
+  private shouldIncludeInModules(
+    registerIn: RegisterInOption | undefined,
+    moduleSet: Set<Function>,
+  ): boolean {
+    const resolvedModule = this.resolveRegisterIn(registerIn);
+    // Include if no registerIn specified (included in all schemas) or if in the module set
+    return !resolvedModule || moduleSet.has(resolvedModule);
+  }
+
+  private filterByModules<T extends { registerIn?: RegisterInOption }>(
+    metadata: T[],
+    modules: Function[],
+  ): T[] {
+    const moduleSet = new Set(modules);
+    return metadata.filter((item) =>
+      this.shouldIncludeInModules(item.registerIn, moduleSet),
+    );
+  }
+
+  getObjectTypesMetadataByModules(modules: Function[]): ObjectTypeMetadata[] {
+    return this.filterByModules(
+      this.metadataByTargetCollection.all.objectType,
+      modules,
+    );
+  }
+
+  getInputTypesMetadataByModules(modules: Function[]): ClassMetadata[] {
+    return this.filterByModules(
+      this.metadataByTargetCollection.all.inputType,
+      modules,
+    );
+  }
+
+  getInterfacesMetadataByModules(modules: Function[]): InterfaceMetadata[] {
+    return this.filterByModules(
+      [...this.metadataByTargetCollection.all.interface.values()],
+      modules,
+    );
+  }
+
+  getArgumentsMetadataByModules(modules: Function[]): ClassMetadata[] {
+    return this.filterByModules(
+      this.metadataByTargetCollection.all.argumentType,
+      modules,
+    );
+  }
+
+  getEnumsMetadataByModules(modules: Function[]): EnumMetadata[] {
+    return this.filterByModules(this.enums, modules);
+  }
+
+  getUnionsMetadataByModules(modules: Function[]): UnionMetadata[] {
+    return this.filterByModules(this.unions, modules);
   }
 
   addDirectiveMetadata(metadata: ClassDirectiveMetadata) {
