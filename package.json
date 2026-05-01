@@ -67,7 +67,7 @@
   "lint-staged": {
     "*.ts": [
       "prettier --write",
-      "oxlint --fix"
+      "oxlint --fix --no-error-on-unmatched-pattern"
     ]
   },
   "repository": {
