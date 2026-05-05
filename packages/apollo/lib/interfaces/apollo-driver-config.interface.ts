@@ -29,7 +29,7 @@ export interface ApolloDriverConfig
     ServerRegistration,
     GqlModuleOptions {
   /**
-   * If enabled, "subscriptions-transport-ws" will be automatically registered.
+   * If enabled, graphql-ws will be automatically registered.
    */
   installSubscriptionHandlers?: boolean;
 

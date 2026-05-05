@@ -7,13 +7,14 @@ import {
 import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema, printSchema } from 'graphql';
+import { type Mock, vi } from 'vitest';
 import { SortAutoSchemaModule } from '../graphql/sort-auto-schema.module';
 import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot';
 
 describe('GraphQL sort autoSchemaFile and new line at the end of the schema', () => {
   let app: INestApplication;
   let schema: GraphQLSchema;
-  let writeFileMock: vi.Mock;
+  let writeFileMock: Mock;
 
   beforeEach(async () => {
     writeFileMock = vi.fn().mockImplementation(() => Promise.resolve());

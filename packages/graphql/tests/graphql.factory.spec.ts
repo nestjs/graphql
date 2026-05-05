@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { type Mock, vi } from 'vitest';
 
 import { GraphQLAstExplorer, GraphQLFactory } from '../lib';
 import { GraphQLSchemaBuilder } from '../lib/graphql-schema.builder';
@@ -8,8 +9,8 @@ import { GraphQLSchema } from 'graphql';
 
 describe('GraphQLFactory', () => {
   let graphqlFactory: GraphQLFactory;
-  let resolverExplorer: { explore: vi.Mock };
-  let scalarExplorer: { explore: vi.Mock };
+  let resolverExplorer: { explore: Mock };
+  let scalarExplorer: { explore: Mock };
 
   beforeEach(async () => {
     resolverExplorer = { explore: vi.fn() };

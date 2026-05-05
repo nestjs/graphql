@@ -43,8 +43,7 @@
     "@nestjs/platform-fastify": "11.1.19",
     "@nestjs/testing": "11.1.19",
     "apollo-cache-inmemory": "1.6.6",
-    "apollo-client": "2.6.10",
-    "apollo-link-ws": "1.0.20"
+    "apollo-client": "2.6.10"
   },
   "dependencies": {
     "@apollo/server-plugin-landing-page-graphql-playground": "4.0.1",

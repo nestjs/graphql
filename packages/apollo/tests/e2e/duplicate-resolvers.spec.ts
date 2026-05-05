@@ -1,7 +1,7 @@
+import { ApolloServer } from '@apollo/server';
 import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import { ApolloServerBase } from 'apollo-server-core';
 import { gql } from 'graphql-tag';
 import { ApolloDriver } from '../../lib';
 import { AppModule as CodeFirstModule } from '../code-first-duplicate-resolvers/app.module';
@@ -10,7 +10,7 @@ import { expectSingleResult } from '../utils/assertion-utils';
 
 describe('Duplicate resolvers', () => {
   let app: INestApplication;
-  let apolloClient: ApolloServerBase;
+  let apolloClient: ApolloServer;
 
   describe('code-first', () => {
     beforeEach(async () => {
