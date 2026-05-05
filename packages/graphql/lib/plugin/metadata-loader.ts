@@ -4,7 +4,10 @@ export class MetadataLoader {
   private static readonly refreshHooks = new Array<() => void>();
 
   static addRefreshHook(hook: () => void) {
-    return MetadataLoader.refreshHooks.unshift(hook);
+    // Hooks must run in registration (insertion) order so that nested mapped
+    // type compositions (e.g. PartialType(OmitType(Foo))) refresh their inner
+    // wrappers before the outer wrappers read fields from them.
+    return MetadataLoader.refreshHooks.push(hook);
   }
 
   async load(metadata: Record<string, any>) {

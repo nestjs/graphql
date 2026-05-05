@@ -23,6 +23,15 @@ import { LazyMetadataStorage } from './storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from './storages/type-metadata.storage';
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
 
+/**
+ * Internal options interface that extends BuildSchemaOptions with includeModules.
+ * This is used internally by GraphQLSchemaBuilder to pass module filtering options.
+ * @internal
+ */
+interface InternalBuildSchemaOptions extends BuildSchemaOptions {
+  includeModules?: Function[];
+}
+
 @Injectable()
 export class GraphQLSchemaFactory {
   private readonly logger = new Logger(GraphQLSchemaFactory.name);
@@ -63,7 +72,12 @@ export class GraphQLSchemaFactory {
     LazyMetadataStorage.load(resolvers);
     TypeMetadataStorage.compile(options.orphanedTypes);
 
-    this.typeDefinitionsGenerator.generate(options);
+    // includeModules is passed internally from GraphQLSchemaBuilder
+    const internalOptions = options as InternalBuildSchemaOptions;
+    this.typeDefinitionsGenerator.generate(
+      options,
+      internalOptions.includeModules,
+    );
 
     const schema = new GraphQLSchema({
       mutation: this.mutationTypeFactory.create(resolvers, options),

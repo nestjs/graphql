@@ -26,7 +26,6 @@ export function PickType<T, K extends keyof T>(
       inheritPropertyInitializers(this, classRef, isInheritedPredicate);
     }
   }
-  decoratorFactory({ isAbstract: true })(PickObjectType);
   if (decorator) {
     decorator({ isAbstract: true })(PickObjectType);
   } else {

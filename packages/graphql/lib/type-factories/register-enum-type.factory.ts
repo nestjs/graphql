@@ -5,7 +5,10 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
-import { EnumMetadataValuesMap } from '../schema-builder/metadata';
+import {
+  EnumMetadataValuesMap,
+  RegisterInOption,
+} from '../schema-builder/metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
 
@@ -26,6 +29,13 @@ export interface EnumOptions<T extends object = any> {
    */
   valuesMap?: EnumMetadataValuesMap<T>;
   /**
+   * NestJS module that this enum belongs to.
+   * When specified, this enum will only be included in GraphQL schemas
+   * that include this module via the `include` option.
+   * @see RegisterInOption for details
+   */
+  registerIn?: RegisterInOption;
+  /**
    * An array of directive SDL strings (e.g. `['@tag(name: "internal")']`) to be
    * applied on the generated enum type.
    */
@@ -40,12 +50,18 @@ export function registerEnumType<T extends object = any>(
   enumRef: T,
   options?: EnumOptions<T>,
 ) {
+  if (!options || typeof options.name !== 'string' || options.name === '') {
+    throw new Error(
+      `registerEnumType requires an "options" object with a non-empty "name" (e.g. registerEnumType(MyEnum, { name: 'MyEnum' })).`,
+    );
+  }
   LazyMetadataStorage.store(() =>
     TypeMetadataStorage.addEnumMetadata({
       ref: enumRef,
       name: options.name,
       description: options.description,
       valuesMap: options.valuesMap || {},
+      registerIn: options.registerIn,
       directives: options.directives,
     }),
   );

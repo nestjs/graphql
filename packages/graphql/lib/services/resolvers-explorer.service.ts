@@ -192,8 +192,8 @@ export class ResolversExplorerService extends BaseExplorerService {
       resolver.methodName === FIELD_TYPENAME
         ? { guards: false, filters: false, interceptors: false }
         : isPropertyResolver
-          ? this.fieldResolverEnhancersLookup
-          : undefined;
+        ? this.fieldResolverEnhancersLookup
+        : undefined;
 
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
