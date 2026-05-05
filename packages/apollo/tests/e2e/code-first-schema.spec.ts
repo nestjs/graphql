@@ -60,9 +60,17 @@ describe('Code-first - schema factory', () => {
         { orphanedTypes: [SampleOrphanedType, SampleOrphanedEnum] },
       );
 
-      introspectionSchema = await (
-        await graphql({ schema, source: getIntrospectionQuery() })
-      ).data.__schema;
+      const introspectionResult = await graphql({
+        schema,
+        source: getIntrospectionQuery(),
+      });
+
+      if (!introspectionResult.data?.__schema) {
+        throw new Error('Missing introspection schema data');
+      }
+
+      introspectionSchema = introspectionResult.data
+        .__schema as IntrospectionSchema;
     });
     it('should be valid', async () => {
       expect(schema).toBeInstanceOf(GraphQLSchema);

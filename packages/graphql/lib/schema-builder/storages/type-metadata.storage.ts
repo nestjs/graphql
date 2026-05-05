@@ -93,7 +93,7 @@ export class TypeMetadataStorageHost {
   }
 
   getInterfaceMetadataByTarget(
-    target: Type<unknown>,
+    target: Function,
   ): InterfaceMetadata | undefined {
     return this.metadataByTargetCollection.get(target).interface;
   }

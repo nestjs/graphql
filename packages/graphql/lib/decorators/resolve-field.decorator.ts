@@ -53,8 +53,23 @@ export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
  *
  * @publicApi
  */
+export function ResolveField(options?: ResolveFieldOptions): MethodDecorator;
+/**
+ * Property resolver (method) Decorator.
+ *
+ * @publicApi
+ */
 export function ResolveField(
   typeFunc?: ReturnTypeFunc,
+  options?: ResolveFieldOptions,
+): MethodDecorator;
+/**
+ * Property resolver (method) Decorator.
+ *
+ * @publicApi
+ */
+export function ResolveField(
+  propertyName?: string,
   options?: ResolveFieldOptions,
 ): MethodDecorator;
 /**
@@ -73,7 +88,7 @@ export function ResolveField(
  * @publicApi
  */
 export function ResolveField(
-  propertyNameOrFunc?: string | ReturnTypeFunc,
+  propertyNameOrFunc?: string | ReturnTypeFunc | ResolveFieldOptions,
   typeFuncOrOptions?: ReturnTypeFunc | ResolveFieldOptions,
   resolveFieldOptions?: ResolveFieldOptions,
 ): MethodDecorator {

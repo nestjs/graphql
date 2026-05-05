@@ -40,10 +40,11 @@ describe('graphql-ws protocol', () => {
             'graphql-ws': {
               onConnect: (context: Context<any>) => {
                 if (!context.connectionParams.authorization) {
-                  return context.extra.socket.close(
-                    4000,
-                    'Missing authorization',
-                  );
+                  return (
+                    context.extra as {
+                      socket: { close: (code: number, reason: string) => void };
+                    }
+                  ).socket.close(4000, 'Missing authorization');
                 }
                 const authorization = context.connectionParams
                   .authorization as string;
