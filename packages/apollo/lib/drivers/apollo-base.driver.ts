@@ -1,5 +1,4 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import {
   ApolloServerErrorCode,
   unwrapResolverError,
@@ -57,7 +56,14 @@ export abstract class ApolloBaseDriver<
       stopOnTerminationSignals: false,
     };
 
-    if (options.graphiql) {
+    const useGraphiQL =
+      options.graphiql ||
+      options.playground === true ||
+      (options.graphiql === undefined &&
+        options.playground === undefined &&
+        process.env.NODE_ENV !== 'production');
+
+    if (useGraphiQL) {
       const graphiQlPlaygroundOpts: GraphiQLOptions =
         typeof options.graphiql === 'object' ? options.graphiql : {};
       graphiQlPlaygroundOpts.url ??= options.path;
@@ -65,21 +71,6 @@ export abstract class ApolloBaseDriver<
       defaults = {
         ...defaults,
         plugins: [new GraphiQLPlaygroundPlugin(graphiQlPlaygroundOpts)],
-      };
-    } else if (
-      (options.playground === undefined &&
-        process.env.NODE_ENV !== 'production') ||
-      options.playground
-    ) {
-      const playgroundOptions =
-        typeof options.playground === 'object' ? options.playground : undefined;
-      defaults = {
-        ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(
-            playgroundOptions,
-          ) as any,
-        ],
       };
     } else if (
       (options.playground === undefined &&
@@ -161,7 +152,7 @@ export abstract class ApolloBaseDriver<
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
 
-    // Workaround: GraphQL playground requires body to be present
+    // Workaround: the landing page requires body to be present
     // otherwise, it shows the "req.body is not set; this probably means you forgot to set up the json middleware before the Apollo Server middleware." error.
     // The latest version of "body-parser" does not set the body if there is no payload.
     // @see https://github.com/nestjs/graphql/issues/3451

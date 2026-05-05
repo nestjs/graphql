@@ -10,6 +10,33 @@ import { CatsModule } from './cats/cats.module';
   imports: [CatsModule],
 })
 export class GraphiQLPlaygroundModule {
+  static withDefaults() {
+    return {
+      module: GraphiQLPlaygroundModule,
+      imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+          driver: ApolloDriver,
+          csrfPrevention: false,
+          typePaths: [join(__dirname, '**', '*.graphql')],
+        }),
+      ],
+    };
+  }
+
+  static withPlaygroundEnabled() {
+    return {
+      module: GraphiQLPlaygroundModule,
+      imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+          driver: ApolloDriver,
+          csrfPrevention: false,
+          playground: true,
+          typePaths: [join(__dirname, '**', '*.graphql')],
+        }),
+      ],
+    };
+  }
+
   static withEnabled() {
     return {
       module: GraphiQLPlaygroundModule,

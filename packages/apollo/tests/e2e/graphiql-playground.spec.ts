@@ -6,6 +6,52 @@ import { GraphiQLPlaygroundModule } from '../graphql/graphiql-playground.module'
 describe('GraphiQL Playground', () => {
   let app: INestApplication;
 
+  describe('when no landing page option is configured', () => {
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [GraphiQLPlaygroundModule.withDefaults()],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+    });
+
+    it(`should render GraphiQL Playground by default`, async () => {
+      const res = await request(app.getHttpServer())
+        .get('/graphql')
+        .set('Accept', 'text/html')
+        .expect(200);
+      expect(res.text).toContain('<title>GraphiQL</title>');
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
+  describe('when "playground" is true', () => {
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [GraphiQLPlaygroundModule.withPlaygroundEnabled()],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+    });
+
+    it(`should render GraphiQL Playground as a migration alias`, async () => {
+      const res = await request(app.getHttpServer())
+        .get('/graphql')
+        .set('Accept', 'text/html')
+        .expect(200);
+      expect(res.text).toContain('<title>GraphiQL</title>');
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
   describe('when "graphiql" is true', () => {
     beforeEach(async () => {
       const module = await Test.createTestingModule({
