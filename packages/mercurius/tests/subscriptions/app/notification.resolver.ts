@@ -1,8 +1,8 @@
 import { Logger, UseGuards } from '@nestjs/common';
 import { Args, Context, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'mercurius';
-import { AuthGuard } from './auth.guard';
-import { Notification } from './notification';
+import { AuthGuard } from './auth.guard.js';
+import { Notification } from './notification.js';
 
 @Resolver(() => Notification)
 export class NotificationResolver {

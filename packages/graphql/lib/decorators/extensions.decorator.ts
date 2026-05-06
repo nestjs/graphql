@@ -1,5 +1,5 @@
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
 
 /**
  * Adds arbitrary data accessible through the "extensions" property to specified field, type, or handler.

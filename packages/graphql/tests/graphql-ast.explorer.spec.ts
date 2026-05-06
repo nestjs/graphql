@@ -1,4 +1,4 @@
-import { GraphQLAstExplorer } from '../lib';
+import { GraphQLAstExplorer } from '../lib/index.js';
 import { gql } from 'graphql-tag';
 
 describe('GraphQLAstExplorer', () => {

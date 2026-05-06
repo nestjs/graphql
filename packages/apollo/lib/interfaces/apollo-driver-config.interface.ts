@@ -5,7 +5,7 @@ import {
   GqlOptionsFactory,
   SubscriptionConfig,
 } from '@nestjs/graphql';
-import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
 
 /**
  *  @publicApi

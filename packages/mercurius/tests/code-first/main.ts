@@ -2,7 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import mercurius from 'mercurius';
-import { ApplicationModule } from './app.module';
+import { ApplicationModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule, new FastifyAdapter());

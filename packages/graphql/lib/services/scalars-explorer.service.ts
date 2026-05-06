@@ -1,16 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import { ModulesContainer } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
 import {
   GRAPHQL_MODULE_OPTIONS,
   SCALAR_NAME_METADATA,
   SCALAR_TYPE_METADATA,
-} from '../graphql.constants';
-import { ScalarsTypeMap } from '../interfaces';
-import { GqlModuleOptions } from '../interfaces/gql-module-options.interface';
-import { createScalarType } from '../utils/scalar-types.utils';
-import { BaseExplorerService } from './base-explorer.service';
+} from '../graphql.constants.js';
+import { ScalarsTypeMap } from '../interfaces/index.js';
+import { GqlModuleOptions } from '../interfaces/gql-module-options.interface.js';
+import { createScalarType } from '../utils/scalar-types.utils.js';
+import { BaseExplorerService } from './base-explorer.service.js';
 
 @Injectable()
 export class ScalarsExplorerService extends BaseExplorerService {

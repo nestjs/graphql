@@ -1,6 +1,6 @@
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { GqlTypeReference } from '../../interfaces';
-import { EnumMetadata } from '../metadata';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
+import { GqlTypeReference } from '../../interfaces/index.js';
+import { EnumMetadata } from '../metadata/index.js';
 
 /**
  * Normalizes a `defaultValue` declared on an argument / input field whose

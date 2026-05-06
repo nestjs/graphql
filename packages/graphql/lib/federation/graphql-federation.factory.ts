@@ -1,8 +1,8 @@
 import { mergeSchemas, addResolversToSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLAbstractType,
   GraphQLField,
@@ -23,21 +23,25 @@ import {
   specifiedDirectives,
 } from 'graphql';
 import { gql } from 'graphql-tag';
-import { forEach, isEmpty } from 'lodash';
-import { GraphQLSchemaBuilder } from '../graphql-schema.builder';
+import lodash from 'lodash';
+import { GraphQLSchemaBuilder } from '../graphql-schema.builder.js';
 import {
   AutoSchemaFileValue,
   BuildFederatedSchemaOptions,
   FederationConfig,
   FederationVersion,
   GqlModuleOptions,
-} from '../interfaces';
-import { ResolversExplorerService, ScalarsExplorerService } from '../services';
-import { extend } from '../utils';
-import { transformSchema } from '../utils/transform-schema.util';
-import { TypeDefsDecoratorFactory } from './type-defs-decorator.factory';
+} from '../interfaces/index.js';
+import {
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from '../services/index.js';
+import { extend } from '../utils/index.js';
+import { transformSchema } from '../utils/transform-schema.util.js';
+import { TypeDefsDecoratorFactory } from './type-defs-decorator.factory.js';
 
 const DEFAULT_FEDERATION_VERSION: FederationVersion = 1;
+const { forEach, isEmpty } = lodash;
 
 /**
  * @publicApi
@@ -109,7 +113,9 @@ export class GraphQLFederationFactory {
       () => require('@apollo/subgraph'),
     );
     const apolloSubgraphVersion = (
-      await import('@apollo/subgraph/package.json')
+      (await import('@apollo/subgraph/package.json')).default as {
+        version: string;
+      }
     ).version;
 
     const apolloSubgraphMajorVersion = Number(

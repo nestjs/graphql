@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloDriver } from '../../lib/drivers';
-import { GraphiQLOptions } from '../../lib/graphiql/interfaces/graphiql-options.interface';
-import { CatsModule } from './cats/cats.module';
+import { ApolloDriverConfig } from '../../lib/index.js';
+import { ApolloDriver } from '../../lib/drivers/index.js';
+import { GraphiQLOptions } from '../../lib/graphiql/interfaces/graphiql-options.interface.js';
+import { CatsModule } from './cats/cats.module.js';
 
 @Module({
   imports: [CatsModule],
@@ -17,7 +17,7 @@ export class GraphiQLPlaygroundModule {
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,
           csrfPrevention: false,
-          typePaths: [join(__dirname, '**', '*.graphql')],
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
         }),
       ],
     };
@@ -31,7 +31,7 @@ export class GraphiQLPlaygroundModule {
           driver: ApolloDriver,
           csrfPrevention: false,
           playground: true,
-          typePaths: [join(__dirname, '**', '*.graphql')],
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
         }),
       ],
     };
@@ -45,7 +45,7 @@ export class GraphiQLPlaygroundModule {
           driver: ApolloDriver,
           csrfPrevention: false,
           graphiql: true,
-          typePaths: [join(__dirname, '**', '*.graphql')],
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
         }),
       ],
     };
@@ -58,7 +58,7 @@ export class GraphiQLPlaygroundModule {
         GraphQLModule.forRoot<ApolloDriverConfig>({
           driver: ApolloDriver,
           csrfPrevention: false,
-          typePaths: [join(__dirname, '**', '*.graphql')],
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
           graphiql: options,
         }),
       ],

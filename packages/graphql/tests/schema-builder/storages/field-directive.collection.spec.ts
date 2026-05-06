@@ -1,5 +1,5 @@
-import { FieldDirectiveCollection } from '../../../lib/schema-builder/collections/';
-import { PropertyDirectiveMetadata } from '../../../lib/schema-builder/metadata';
+import { FieldDirectiveCollection } from '../../../lib/schema-builder/collections/index.js';
+import { PropertyDirectiveMetadata } from '../../../lib/schema-builder/metadata/index.js';
 
 describe('FieldDirectiveCollection', () => {
   const directive1: PropertyDirectiveMetadata = {

@@ -1,8 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
-import { Injector } from '@nestjs/core/injector/injector';
-import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph';
+import { Injector } from '@nestjs/core/injector/injector.js';
+import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph.js';
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApplicationModule } from '../code-first/app.module';
+import { ApplicationModule } from '../code-first/app.module.js';
 
 describe('Serialized graph', () => {
   let testingModule: TestingModule;

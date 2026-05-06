@@ -6,15 +6,15 @@ import {
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { HttpStatus } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import omit from 'lodash.omit';
-import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin';
-import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
-import { ApolloDriverConfig } from '../interfaces';
-import { createAsyncIterator } from '../utils/async-iterator.util';
+import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin.js';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
+import { ApolloDriverConfig } from '../interfaces/index.js';
+import { createAsyncIterator } from '../utils/async-iterator.util.js';
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,

@@ -1,5 +1,5 @@
 import { Extensions, Field, ID, ObjectType } from '@nestjs/graphql';
-import { Status } from './user-status.dto';
+import { Status } from './user-status.dto.js';
 
 @ObjectType()
 export class User {

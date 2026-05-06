@@ -4,11 +4,11 @@ import {
   InputType,
   GraphQLSchemaBuilderModule,
   TypeMetadataStorage,
-  Extensions
-} from '../../../lib';
-import { TypeDefinitionsGenerator } from '../../../lib/schema-builder/type-definitions.generator';
-import { TypeDefinitionsStorage } from '../../../lib/schema-builder/storages/type-definitions.storage';
-import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage';
+  Extensions,
+} from '../../../lib/index.js';
+import { TypeDefinitionsGenerator } from '../../../lib/schema-builder/type-definitions.generator.js';
+import { TypeDefinitionsStorage } from '../../../lib/schema-builder/storages/type-definitions.storage.js';
+import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 @InputType('DeprecationInput')
 class DeprecationInput {
@@ -59,7 +59,7 @@ describe('InputTypeDefinitionFactory (deprecation)', () => {
     expect(fields.oldField.deprecationReason).toBe('use something else');
   });
 
-   it('should add extensions to the field', () => {
+  it('should add extensions to the field', () => {
     // Generate type definitions (inputs included)
     generator.generate({} as any);
 
@@ -67,7 +67,7 @@ describe('InputTypeDefinitionFactory (deprecation)', () => {
     expect(inputType).toBeDefined();
 
     const fields = inputType.getFields();
-    expect(fields.extendedField.extensions).toBeDefined()
-    expect(fields.extendedField.extensions.metadata).toBe('field')
+    expect(fields.extendedField.extensions).toBeDefined();
+    expect(fields.extendedField.extensions.metadata).toBe('field');
   });
 });

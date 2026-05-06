@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { type Mock, vi } from 'vitest';
 
-import { GraphQLAstExplorer, GraphQLFactory } from '../lib';
-import { GraphQLSchemaBuilder } from '../lib/graphql-schema.builder';
-import { ResolversExplorerService } from '../lib/services/resolvers-explorer.service';
-import { ScalarsExplorerService } from '../lib/services/scalars-explorer.service';
+import { GraphQLAstExplorer, GraphQLFactory } from '../lib/index.js';
+import { GraphQLSchemaBuilder } from '../lib/graphql-schema.builder.js';
+import { ResolversExplorerService } from '../lib/services/resolvers-explorer.service.js';
+import { ScalarsExplorerService } from '../lib/services/scalars-explorer.service.js';
 import { GraphQLSchema } from 'graphql';
 
 describe('GraphQLFactory', () => {

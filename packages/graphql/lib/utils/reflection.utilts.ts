@@ -1,11 +1,13 @@
 import { Type } from '@nestjs/common';
-import { get } from 'lodash';
+import lodash from 'lodash';
 import {
   GqlTypeReference,
   ReturnTypeFunc,
-} from '../interfaces/return-type-func.interface';
-import { TypeOptions } from '../interfaces/type-options.interface';
-import { UndefinedTypeError } from '../schema-builder/errors/undefined-type.error';
+} from '../interfaces/return-type-func.interface.js';
+import { TypeOptions } from '../interfaces/type-options.interface.js';
+import { UndefinedTypeError } from '../schema-builder/errors/undefined-type.error.js';
+
+const { get } = lodash;
 
 const NOT_ALLOWED_TYPES: Type<any>[] = [Promise, Array, Object, Function];
 

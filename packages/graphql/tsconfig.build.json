@@ -3,6 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./lib",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "exclude": ["node_modules", "dist", "tests/**/*", "*.spec.ts", "vitest.config.mts"],
 }

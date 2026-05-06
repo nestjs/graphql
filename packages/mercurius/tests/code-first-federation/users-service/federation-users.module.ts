@@ -3,8 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import {
   MercuriusFederationDriver,
   MercuriusFederationDriverConfig,
-} from '../../../lib';
-import { UserModule } from './users/user.module';
+} from '../../../lib/index.js';
+import { UserModule } from './users/user.module.js';
 
 @Module({
   imports: [

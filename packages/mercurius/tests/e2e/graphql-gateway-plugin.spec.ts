@@ -2,10 +2,10 @@ import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
-import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
-import { AppModule as GatewayModule } from '../plugins/graphql-federation-plugin/gateway/gateway.module';
-import { BASE_PLUGIN_URL } from '../plugins/mocks/utils/constants';
+import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module.js';
+import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module.js';
+import { AppModule as GatewayModule } from '../plugins/graphql-federation-plugin/gateway/gateway.module.js';
+import { BASE_PLUGIN_URL } from '../plugins/mocks/utils/constants.js';
 
 // TODO: temporarily skip (flaky tests)
 // @ref https://app.circleci.com/pipelines/github/nestjs/graphql/6155/workflows/6329f2a8-00b4-4159-9241-224db1685173/jobs/11141

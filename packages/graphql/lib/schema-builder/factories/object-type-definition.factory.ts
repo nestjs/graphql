@@ -1,22 +1,22 @@
 import { Injectable, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
   GraphQLObjectType,
 } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
-import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util';
-import { PropertyMetadata } from '../metadata';
-import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
-import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
-import { TypeFieldsAccessor } from '../services/type-fields.accessor';
-import { TypeMetadataStorage } from '../storages';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
-import { getInterfacesArray } from '../utils/get-interfaces-array.util';
-import { ArgsFactory } from './args.factory';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
-import { OutputTypeFactory } from './output-type.factory';
+import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util.js';
+import { PropertyMetadata } from '../metadata/index.js';
+import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
+import { TypeFieldsAccessor } from '../services/type-fields.accessor.js';
+import { TypeMetadataStorage } from '../storages/index.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util.js';
+import { ArgsFactory } from './args.factory.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
+import { OutputTypeFactory } from './output-type.factory.js';
 
 export interface ObjectTypeDefinition {
   target: Function;

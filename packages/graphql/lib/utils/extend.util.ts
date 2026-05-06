@@ -1,4 +1,6 @@
-import { defaultTo, isArray, isString } from 'lodash';
+import lodash from 'lodash';
+
+const { defaultTo, isArray, isString } = lodash;
 
 export function extend(obj1: unknown, obj2: unknown) {
   if (isString(obj1)) {

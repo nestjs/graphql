@@ -1,4 +1,4 @@
-import { replaceImportPath } from '../../lib/plugin/utils/plugin-utils';
+import { replaceImportPath } from '../../lib/plugin/utils/plugin-utils.js';
 
 describe('plugin-utils', () => {
   describe('replaceImportPath', () => {

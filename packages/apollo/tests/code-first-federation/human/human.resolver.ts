@@ -1,6 +1,6 @@
 import { Query, Resolver, ResolveField } from '@nestjs/graphql';
-import { Human } from './human.entity';
-import { Character } from './character.entity';
+import { Human } from './human.entity.js';
+import { Character } from './character.entity.js';
 
 @Resolver(() => Character)
 export class HumanResolver {

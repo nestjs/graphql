@@ -2,7 +2,7 @@ import {
   MercuriusDriverAsyncConfig,
   MercuriusDriverConfig,
   MercuriusDriverConfigFactory,
-} from './mercurius-driver-config.interface';
+} from './mercurius-driver-config.interface.js';
 
 export type MercuriusFederationDriverConfig = MercuriusDriverConfig;
 export type MercuriusFederationDriverConfigFactory =

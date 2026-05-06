@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MiddlewareContext, NextFn } from '../../lib/interfaces';
+import { MiddlewareContext, NextFn } from '../../lib/interfaces/index.js';
 
 export const testMiddleware = async (ctx: MiddlewareContext, next: NextFn) => {
   let logData: MiddlewareContext = {

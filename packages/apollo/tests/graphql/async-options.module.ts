@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloDriver } from '../../lib/drivers';
-import { CatsModule } from './cats/cats.module';
+import { ApolloDriverConfig } from '../../lib/index.js';
+import { ApolloDriver } from '../../lib/drivers/index.js';
+import { CatsModule } from './cats/cats.module.js';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import { CatsModule } from './cats/cats.module';
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       useFactory: async () => ({
-        typePaths: [join(__dirname, '**', '*.graphql')],
+        typePaths: [join(import.meta.dirname, '**', '*.graphql')],
       }),
     }),
   ],

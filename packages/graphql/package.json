@@ -4,6 +4,7 @@
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "browser": "./dist/extra/graphql-model-shim.js",
@@ -25,15 +26,15 @@
     },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
-      "require": "./plugin.js",
-      "default": "./plugin.js"
+      "require": "./plugin.cjs",
+      "default": "./plugin.cjs"
     },
     "./package.json": "./package.json",
     "./*": "./*"
   },
   "files": [
     "dist",
-    "plugin.js"
+    "plugin.cjs"
   ],
   "publishConfig": {
     "access": "public"

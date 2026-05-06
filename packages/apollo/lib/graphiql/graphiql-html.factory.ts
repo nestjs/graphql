@@ -1,4 +1,4 @@
-import { GraphiQLOptions } from './interfaces/graphiql-options.interface';
+import { GraphiQLOptions } from './interfaces/graphiql-options.interface.js';
 
 export class GraphiQLHTMLFactory {
   create(options: GraphiQLOptions): string {

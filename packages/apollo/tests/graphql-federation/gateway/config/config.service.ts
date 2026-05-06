@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import {
   ApolloGatewayDriverConfig,
   ApolloGatewayDriverConfigFactory,
-} from '../../../../lib';
-import { supergraphSdl } from '../supergraph-sdl';
+} from '../../../../lib/index.js';
+import { supergraphSdl } from '../supergraph-sdl.js';
 
 @Injectable()
 export class ConfigService implements ApolloGatewayDriverConfigFactory {

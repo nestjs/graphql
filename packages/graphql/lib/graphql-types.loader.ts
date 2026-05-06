@@ -2,11 +2,12 @@ import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
 import glob from 'fast-glob';
 import * as fs from 'fs';
-import { flatten } from 'lodash';
+import lodash from 'lodash';
 import * as util from 'util';
 
 const normalize = require('normalize-path');
 const readFile = util.promisify(fs.readFile);
+const { flatten } = lodash;
 
 @Injectable()
 export class GraphQLTypesLoader {

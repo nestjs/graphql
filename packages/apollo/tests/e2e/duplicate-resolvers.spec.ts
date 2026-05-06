@@ -3,10 +3,10 @@ import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { gql } from 'graphql-tag';
-import { ApolloDriver } from '../../lib';
-import { AppModule as CodeFirstModule } from '../code-first-duplicate-resolvers/app.module';
-import { AppModule as SchemaFirstModule } from '../duplicate-resolvers/app.module';
-import { expectSingleResult } from '../utils/assertion-utils';
+import { ApolloDriver } from '../../lib/index.js';
+import { AppModule as CodeFirstModule } from '../code-first-duplicate-resolvers/app.module.js';
+import { AppModule as SchemaFirstModule } from '../duplicate-resolvers/app.module.js';
+import { expectSingleResult } from '../utils/assertion-utils.js';
 
 describe('Duplicate resolvers', () => {
   let app: INestApplication;

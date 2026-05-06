@@ -1,9 +1,9 @@
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { MercuriusGatewayDriverConfig } from '../interfaces';
-import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
-import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
+import { MercuriusGatewayDriverConfig } from '../interfaces/index.js';
+import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
+import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
 
 /**
  * @publicApi

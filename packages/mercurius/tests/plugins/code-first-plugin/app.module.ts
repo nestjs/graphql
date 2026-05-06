@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusDriverConfig } from '../../../lib';
-import { MercuriusDriver } from '../../../lib/drivers';
-import { mockPlugin } from '../mocks/mock.plugin';
-import { NEW_PLUGIN_URL } from '../mocks/utils/constants';
-import { DogsModule } from './dogs/dogs.module';
+import { MercuriusDriverConfig } from '../../../lib/index.js';
+import { MercuriusDriver } from '../../../lib/drivers/index.js';
+import { mockPlugin } from '../mocks/mock.plugin.js';
+import { NEW_PLUGIN_URL } from '../mocks/utils/constants.js';
+import { DogsModule } from './dogs/dogs.module.js';
 
 @Module({
   imports: [

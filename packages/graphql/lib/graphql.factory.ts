@@ -11,15 +11,20 @@ import {
   printSchema,
 } from 'graphql';
 import { gql } from 'graphql-tag';
-import { forEach, isEmpty } from 'lodash';
+import lodash from 'lodash';
 import {
   DefinitionsGeneratorOptions,
   GraphQLAstExplorer,
-} from './graphql-ast.explorer';
-import { GraphQLSchemaBuilder } from './graphql-schema.builder';
-import { GqlModuleOptions } from './interfaces';
-import { ResolversExplorerService, ScalarsExplorerService } from './services';
-import { extend, removeTempField } from './utils';
+} from './graphql-ast.explorer.js';
+import { GraphQLSchemaBuilder } from './graphql-schema.builder.js';
+import { GqlModuleOptions } from './interfaces/index.js';
+import {
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from './services/index.js';
+import { extend, removeTempField } from './utils/index.js';
+
+const { forEach, isEmpty } = lodash;
 
 @Injectable()
 export class GraphQLFactory {

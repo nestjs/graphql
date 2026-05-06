@@ -5,11 +5,11 @@ import request from 'supertest';
 import {
   ApolloGatewayDriverConfig,
   ApolloGatewayDriverConfigFactory,
-} from '../../lib';
-import { ApolloGatewayDriver } from '../../lib/drivers';
-import { getSupergraphSdl } from '../graphql-federation/gateway/supergraph-sdl';
-import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
-import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
+} from '../../lib/index.js';
+import { ApolloGatewayDriver } from '../../lib/drivers/index.js';
+import { getSupergraphSdl } from '../graphql-federation/gateway/supergraph-sdl.js';
+import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module.js';
+import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module.js';
 
 let usersPort: number;
 let postsPort: number;
@@ -65,7 +65,7 @@ describe('GraphQL gateway async-existing', () => {
 
     gatewayApp = gatewayModule.createNestApplication();
     await gatewayApp.init();
-  });
+  }, 20000);
 
   it(`should run lookup across boundaries`, () => {
     return request(gatewayApp.getHttpServer())

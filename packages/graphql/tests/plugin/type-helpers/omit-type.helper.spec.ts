@@ -1,6 +1,6 @@
-import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
-import { OmitType } from '../../../lib/type-helpers';
-import { CreateUserDto } from './fixtures/create-user-dto.fixture';
+import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util.js';
+import { OmitType } from '../../../lib/type-helpers/index.js';
+import { CreateUserDto } from './fixtures/create-user-dto.fixture.js';
 
 describe('OmitType', () => {
   class UpdateUserDto extends OmitType(CreateUserDto, ['login', '_id']) {}
