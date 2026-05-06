@@ -1,11 +1,11 @@
 import { validate } from 'class-validator';
-import { ArgsType, Field, ObjectType } from '../../../lib/decorators';
-import { MetadataLoader } from '../../../lib/plugin/metadata-loader';
-import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
-import { PickType } from '../../../lib/type-helpers';
-import { CreateUserDto } from './fixtures/create-user-dto.fixture';
-import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture';
-import { getValidationMetadataByTarget } from './type-helpers.test-utils';
+import { ArgsType, Field, ObjectType } from '../../../lib/decorators/index.js';
+import { MetadataLoader } from '../../../lib/plugin/metadata-loader.js';
+import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util.js';
+import { PickType } from '../../../lib/type-helpers/index.js';
+import { CreateUserDto } from './fixtures/create-user-dto.fixture.js';
+import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture.js';
+import { getValidationMetadataByTarget } from './type-helpers.test-utils.js';
 
 class UpdateUserDto extends PickType(CreateUserDto, ['login']) {}
 

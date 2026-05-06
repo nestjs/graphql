@@ -11,7 +11,7 @@ import {
   Query,
   Resolver,
   TypeMetadataStorage,
-} from '../../../lib';
+} from '../../../lib/index.js';
 
 @ObjectType()
 class OType {

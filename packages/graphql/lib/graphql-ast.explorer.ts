@@ -20,7 +20,7 @@ import {
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
 } from 'graphql';
-import { get, map, sortBy, upperFirst } from 'lodash';
+import lodash from 'lodash';
 import type {
   ClassDeclarationStructure,
   EnumDeclarationStructure,
@@ -34,7 +34,9 @@ import type {
   SourceFile,
   TypeAliasDeclarationStructure,
 } from 'ts-morph';
-import { DEFINITIONS_FILE_HEADER } from './graphql.constants';
+import { DEFINITIONS_FILE_HEADER } from './graphql.constants.js';
+
+const { get, map, sortBy, upperFirst } = lodash;
 
 let tsMorphLib: typeof import('ts-morph') | undefined;
 
@@ -336,8 +338,7 @@ export class GraphQLAstExplorer {
     return {
       name: propertyName,
       type: this.addSymbolIfRoot(type),
-      hasQuestionToken:
-        !required || (item as FieldDefinitionNode).arguments?.length > 0,
+      hasQuestionToken: !required,
     };
   }
 

@@ -1,4 +1,9 @@
-import { ArgsType, InputType, InterfaceType, ObjectType } from '../decorators';
+import {
+  ArgsType,
+  InputType,
+  InterfaceType,
+  ObjectType,
+} from '../decorators/index.js';
 
 export type ClassDecoratorFactory =
   | typeof ArgsType

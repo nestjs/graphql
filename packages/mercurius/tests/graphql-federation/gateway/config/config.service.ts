@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   MercuriusGatewayDriverConfig,
   MercuriusGatewayDriverConfigFactory,
-} from '../../../../lib';
+} from '../../../../lib/index.js';
 
 @Injectable()
 export class ConfigService implements MercuriusGatewayDriverConfigFactory {

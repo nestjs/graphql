@@ -15,7 +15,7 @@ import { gql } from 'graphql-tag';
 import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
-} from '../../lib';
+} from '../../lib/index.js';
 
 @ObjectType()
 class Reading {

@@ -1,14 +1,18 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import ApolloClient from 'apollo-client';
+import ApolloClientPackage from 'apollo-client';
 import { gql } from 'graphql-tag';
 import { Client, createClient } from 'graphql-ws';
 import request from 'supertest';
 import ws from 'ws';
-import { FederationAppModule } from './federation-app/federation-app.module';
-import { pubSub } from './federation-app/notification.resolver';
-import { GraphQLWsLink } from './utils/graphql-ws.link';
+import { FederationAppModule } from './federation-app/federation-app.module.js';
+import { pubSub } from './federation-app/notification.resolver.js';
+import { GraphQLWsLink } from './utils/graphql-ws.link.js';
+
+const ApolloClient = ApolloClientPackage as unknown as new (
+  ...args: any[]
+) => any;
 
 const subscriptionQuery = gql`
   subscription FederatedSubscription($id: String!, $recipient: String!) {

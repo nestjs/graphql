@@ -1,4 +1,4 @@
-import { ObjectType } from '../../../../../../lib/decorators';
+import { ObjectType } from '../../../../../../lib/decorators/index.js';
 
 /**
  * Ingredient model definition

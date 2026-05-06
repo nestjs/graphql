@@ -11,7 +11,7 @@ import {
   TypeMetadataStorage,
   createUnionType,
   registerEnumType,
-} from '../../../lib';
+} from '../../../lib/index.js';
 
 enum MovieGenre {
   ACTION = 'ACTION',

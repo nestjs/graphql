@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
 import { ModulesContainer } from '@nestjs/core';
 import {
   extend,
@@ -8,9 +8,9 @@ import {
   SubscriptionConfig,
 } from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
-import { ApolloDriverConfig } from '../interfaces';
-import { PluginsExplorerService } from '../services/plugins-explorer.service';
-import { ApolloBaseDriver } from './apollo-base.driver';
+import { ApolloDriverConfig } from '../interfaces/index.js';
+import { PluginsExplorerService } from '../services/plugins-explorer.service.js';
+import { ApolloBaseDriver } from './apollo-base.driver.js';
 
 /**
  * @publicApi
@@ -50,7 +50,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
 
     if (options.installSubscriptionHandlers || options.subscriptions) {
       const subscriptionsOptions: SubscriptionConfig =
-        options.subscriptions || { 'subscriptions-transport-ws': {} };
+        options.subscriptions || { 'graphql-ws': {} };
       this._subscriptionService = new GqlSubscriptionService(
         {
           schema: options.schema!,

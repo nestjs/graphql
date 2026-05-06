@@ -1,1 +1,1 @@
-export * from './apollo.constants';
+export * from './apollo.constants.js';

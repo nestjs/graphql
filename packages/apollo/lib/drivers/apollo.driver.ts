@@ -6,9 +6,9 @@ import {
   SubscriptionConfig,
 } from '@nestjs/graphql';
 import { printSchema } from 'graphql';
-import { ApolloDriverConfig } from '../interfaces';
-import { PluginsExplorerService } from '../services/plugins-explorer.service';
-import { ApolloBaseDriver } from './apollo-base.driver';
+import { ApolloDriverConfig } from '../interfaces/index.js';
+import { PluginsExplorerService } from '../services/plugins-explorer.service.js';
+import { ApolloBaseDriver } from './apollo-base.driver.js';
 
 /**
  *  @publicApi
@@ -40,7 +40,7 @@ export class ApolloDriver extends ApolloBaseDriver {
 
     if (options.installSubscriptionHandlers || options.subscriptions) {
       const subscriptionsOptions: SubscriptionConfig =
-        options.subscriptions || { 'subscriptions-transport-ws': {} };
+        options.subscriptions || { 'graphql-ws': {} };
       this._subscriptionService = new GqlSubscriptionService(
         {
           schema: options.schema!,

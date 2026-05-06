@@ -1,10 +1,10 @@
 import { Logger, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { addFieldMetadata } from '../../decorators';
-import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants';
-import { MetadataByTargetCollection } from '../collections/';
-import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error';
-import { UndefinedTypeError } from '../errors/undefined-type.error';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
+import { addFieldMetadata } from '../../decorators/index.js';
+import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants.js';
+import { MetadataByTargetCollection } from '../collections/index.js';
+import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error.js';
+import { UndefinedTypeError } from '../errors/undefined-type.error.js';
 import {
   BaseResolverMetadata,
   ClassDirectiveMetadata,
@@ -20,10 +20,10 @@ import {
   ResolverClassMetadata,
   ResolverTypeMetadata,
   UnionMetadata,
-} from '../metadata';
-import { InterfaceMetadata } from '../metadata/interface.metadata';
-import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
-import { isThrowing } from '../utils/is-throwing.util';
+} from '../metadata/index.js';
+import { InterfaceMetadata } from '../metadata/interface.metadata.js';
+import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
+import { isThrowing } from '../utils/is-throwing.util.js';
 
 export class TypeMetadataStorageHost {
   private readonly logger = new Logger(TypeMetadataStorageHost.name);
@@ -93,7 +93,7 @@ export class TypeMetadataStorageHost {
   }
 
   getInterfaceMetadataByTarget(
-    target: Type<unknown>,
+    target: Function,
   ): InterfaceMetadata | undefined {
     return this.metadataByTargetCollection.get(target).interface;
   }
@@ -535,7 +535,7 @@ export class TypeMetadataStorageHost {
     }
     let objectOrInterfaceTypeField =
       objectOrInterfaceTypeMetadata.properties.find(
-        (fieldDef) => fieldDef.name === item.methodName,
+        (fieldDef) => fieldDef.schemaName === item.schemaName,
       );
     for (
       let _objectTypeRef = objectTypeRef;
@@ -544,7 +544,7 @@ export class TypeMetadataStorageHost {
     ) {
       const possibleTypeMetadata = getTypeMetadata(_objectTypeRef);
       objectOrInterfaceTypeField = possibleTypeMetadata?.properties.find(
-        (fieldDef) => fieldDef.name === item.methodName,
+        (fieldDef) => fieldDef.schemaName === item.schemaName,
       );
       if (objectOrInterfaceTypeField) {
         objectTypeRef = _objectTypeRef;

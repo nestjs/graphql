@@ -1,9 +1,9 @@
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { gql } from 'graphql-tag';
-import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
-import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory';
-import { extend } from '../utils';
 import { mergeTypeDefs } from '@graphql-tools/merge';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { gql } from 'graphql-tag';
+import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer.js';
+import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory.js';
+import { extend } from '../utils/index.js';
 
 /**
  * @publicApi

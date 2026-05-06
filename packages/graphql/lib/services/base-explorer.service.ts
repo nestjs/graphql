@@ -1,7 +1,9 @@
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Module } from '@nestjs/core/injector/module';
-import { flattenDeep, groupBy, identity, isEmpty, mapValues } from 'lodash';
-import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
+import { Module } from '@nestjs/core/injector/module.js';
+import lodash from 'lodash';
+import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
+
+const { flattenDeep, groupBy, identity, isEmpty, mapValues } = lodash;
 
 export class BaseExplorerService {
   getModules(

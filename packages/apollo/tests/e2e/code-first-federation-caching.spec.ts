@@ -5,7 +5,7 @@ import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
+import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants.js';
 import { Test } from '@nestjs/testing';
 import {
   DirectiveLocation,
@@ -19,14 +19,14 @@ import {
   printSchema,
 } from 'graphql';
 import { gql } from 'graphql-tag';
-import { ApolloFederationDriver } from '../../lib';
-import { CachingApplicationModule } from '../code-first-federation/caching.module';
-import { Post } from '../code-first-federation/post/post.entity';
-import { PostResolver } from '../code-first-federation/post/post.resolver';
-import { PostService } from '../code-first-federation/post/post.service';
-import { IRecipeResolver } from '../code-first-federation/recipe/irecipe.resolver';
-import { UserResolver } from '../code-first-federation/user/user.resolver';
-import { printedSchemaSnapshot } from '../utils/printed-schema-with-cache-control.snapshot';
+import { ApolloFederationDriver } from '../../lib/index.js';
+import { CachingApplicationModule } from '../code-first-federation/caching.module.js';
+import { Post } from '../code-first-federation/post/post.entity.js';
+import { PostResolver } from '../code-first-federation/post/post.resolver.js';
+import { PostService } from '../code-first-federation/post/post.service.js';
+import { IRecipeResolver } from '../code-first-federation/recipe/irecipe.resolver.js';
+import { UserResolver } from '../code-first-federation/user/user.resolver.js';
+import { printedSchemaSnapshot } from '../utils/printed-schema-with-cache-control.snapshot.js';
 
 describe.skip('Code-first - Federation with caching', () => {
   describe('generated schema', () => {

@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { CustomContextModule } from '../graphql/custom-context/custom-context.module';
+import { CustomContextModule } from '../graphql/custom-context/custom-context.module.js';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 
 describe('GraphQL (custom context)', () => {

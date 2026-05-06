@@ -1,5 +1,5 @@
 import { Injectable, Logger, Type } from '@nestjs/common';
-import { isEmpty, isFunction } from '@nestjs/common/utils/shared.utils';
+import { isEmpty, isFunction } from '@nestjs/common/utils/shared.utils.js';
 import {
   getIntrospectionQuery,
   graphql,
@@ -11,17 +11,17 @@ import {
 import {
   SCALAR_NAME_METADATA,
   SCALAR_TYPE_METADATA,
-} from '../graphql.constants';
-import { BuildSchemaOptions, ScalarsTypeMap } from '../interfaces';
-import { createScalarType } from '../utils/scalar-types.utils';
-import { SchemaGenerationError } from './errors/schema-generation.error';
-import { MutationTypeFactory } from './factories/mutation-type.factory';
-import { OrphanedTypesFactory } from './factories/orphaned-types.factory';
-import { QueryTypeFactory } from './factories/query-type.factory';
-import { SubscriptionTypeFactory } from './factories/subscription-type.factory';
-import { LazyMetadataStorage } from './storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from './storages/type-metadata.storage';
-import { TypeDefinitionsGenerator } from './type-definitions.generator';
+} from '../graphql.constants.js';
+import { BuildSchemaOptions, ScalarsTypeMap } from '../interfaces/index.js';
+import { createScalarType } from '../utils/scalar-types.utils.js';
+import { SchemaGenerationError } from './errors/schema-generation.error.js';
+import { MutationTypeFactory } from './factories/mutation-type.factory.js';
+import { OrphanedTypesFactory } from './factories/orphaned-types.factory.js';
+import { QueryTypeFactory } from './factories/query-type.factory.js';
+import { SubscriptionTypeFactory } from './factories/subscription-type.factory.js';
+import { LazyMetadataStorage } from './storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from './storages/type-metadata.storage.js';
+import { TypeDefinitionsGenerator } from './type-definitions.generator.js';
 
 /**
  * Internal options interface that extends BuildSchemaOptions with includeModules.

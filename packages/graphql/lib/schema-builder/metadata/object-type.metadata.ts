@@ -1,4 +1,4 @@
-import { ClassMetadata } from './class.metadata';
+import { ClassMetadata } from './class.metadata.js';
 
 export interface ObjectTypeMetadata extends ClassMetadata {
   interfaces?: Function | Function[] | (() => Function | Function[]);

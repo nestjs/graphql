@@ -1,7 +1,7 @@
 import { parse } from 'graphql';
-import { DirectiveParsingError } from '../schema-builder/errors/directive-parsing.error';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { DirectiveParsingError } from '../schema-builder/errors/directive-parsing.error.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
 
 /**
  * Adds one or more directives to a field, type, or handler. Passing an array

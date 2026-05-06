@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
   GraphQLObjectType,
 } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
-import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error';
-import { InterfaceMetadata } from '../metadata/interface.metadata';
-import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
-import { TypeFieldsAccessor } from '../services/type-fields.accessor';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
-import { TypeMetadataStorage } from '../storages/type-metadata.storage';
-import { getInterfacesArray } from '../utils/get-interfaces-array.util';
-import { ArgsFactory } from './args.factory';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
-import { OutputTypeFactory } from './output-type.factory';
-import { ResolveTypeFactory } from './resolve-type.factory';
+import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error.js';
+import { InterfaceMetadata } from '../metadata/interface.metadata.js';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
+import { TypeFieldsAccessor } from '../services/type-fields.accessor.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
+import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util.js';
+import { ArgsFactory } from './args.factory.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
+import { OutputTypeFactory } from './output-type.factory.js';
+import { ResolveTypeFactory } from './resolve-type.factory.js';
 
 export interface InterfaceTypeDefinition {
   target: Function;

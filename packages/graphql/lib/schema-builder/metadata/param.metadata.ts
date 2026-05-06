@@ -1,5 +1,5 @@
-import { GqlTypeReference } from '../../interfaces';
-import { TypeOptions } from '../../interfaces/type-options.interface';
+import { GqlTypeReference } from '../../interfaces/index.js';
+import { TypeOptions } from '../../interfaces/type-options.interface.js';
 
 export interface BaseArgMetadata {
   target: Function;

@@ -4,8 +4,8 @@ import { Test } from '@nestjs/testing';
 import { gql } from 'graphql-tag';
 import { createMercuriusTestClient } from 'mercurius-integration-testing';
 import { EventEmitter } from 'stream';
-import { MockLogger } from '../hooks/mocks/logger.mock';
-import { AppModule } from './app/app.module';
+import { MockLogger } from '../hooks/mocks/logger.mock.js';
+import { AppModule } from './app/app.module.js';
 
 class CustomPubSub {
   emitter: EventEmitter;

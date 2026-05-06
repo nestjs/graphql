@@ -1,10 +1,10 @@
 import { Injectable, Type } from '@nestjs/common';
 import { GraphQLUnionType } from 'graphql';
-import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error';
-import { UnionMetadata } from '../metadata';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
-import { ResolveTypeFactory } from './resolve-type.factory';
+import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error.js';
+import { UnionMetadata } from '../metadata/index.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
+import { ResolveTypeFactory } from './resolve-type.factory.js';
 
 export interface UnionDefinition {
   id: symbol;

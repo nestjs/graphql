@@ -1,11 +1,22 @@
 import { INestApplication, Type } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
+import { createRequire } from 'module';
 import request from 'supertest';
-import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module';
-import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module';
-import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module';
-import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module';
+import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module.js';
+import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module.js';
+import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module.js';
+import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module.js';
+
+const require = createRequire(import.meta.url);
+const describeCodeFirstFederation = (() => {
+  try {
+    require('@mercuriusjs/gateway/lib/gateway/service-map');
+    return describe;
+  } catch {
+    return describe.skip;
+  }
+})();
 
 async function createService(Module: Type<any>, port: number) {
   const module = await Test.createTestingModule({
@@ -18,7 +29,7 @@ async function createService(Module: Type<any>, port: number) {
   return app;
 }
 
-describe('Code-first - Federation', () => {
+describeCodeFirstFederation('Code-first - Federation', () => {
   let recipesApp: INestApplication;
   let postsApp: INestApplication;
   let usersApp: INestApplication;

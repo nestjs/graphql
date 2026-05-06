@@ -1,5 +1,4 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import {
   ApolloServerErrorCode,
   unwrapResolverError,
@@ -7,15 +6,15 @@ import {
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { HttpStatus } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import omit from 'lodash.omit';
-import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin';
-import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
-import { ApolloDriverConfig } from '../interfaces';
-import { createAsyncIterator } from '../utils/async-iterator.util';
+import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin.js';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
+import { ApolloDriverConfig } from '../interfaces/index.js';
+import { createAsyncIterator } from '../utils/async-iterator.util.js';
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
@@ -57,7 +56,14 @@ export abstract class ApolloBaseDriver<
       stopOnTerminationSignals: false,
     };
 
-    if (options.graphiql) {
+    const useGraphiQL =
+      options.graphiql ||
+      options.playground === true ||
+      (options.graphiql === undefined &&
+        options.playground === undefined &&
+        process.env.NODE_ENV !== 'production');
+
+    if (useGraphiQL) {
       const graphiQlPlaygroundOpts: GraphiQLOptions =
         typeof options.graphiql === 'object' ? options.graphiql : {};
       graphiQlPlaygroundOpts.url ??= options.path;
@@ -65,21 +71,6 @@ export abstract class ApolloBaseDriver<
       defaults = {
         ...defaults,
         plugins: [new GraphiQLPlaygroundPlugin(graphiQlPlaygroundOpts)],
-      };
-    } else if (
-      (options.playground === undefined &&
-        process.env.NODE_ENV !== 'production') ||
-      options.playground
-    ) {
-      const playgroundOptions =
-        typeof options.playground === 'object' ? options.playground : undefined;
-      defaults = {
-        ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(
-            playgroundOptions,
-          ) as any,
-        ],
       };
     } else if (
       (options.playground === undefined &&
@@ -101,6 +92,7 @@ export abstract class ApolloBaseDriver<
       defaults.plugins || [],
     );
 
+    this.normalizeSubscriptionsPath(options);
     this.wrapContextResolver(options);
     this.wrapFormatErrorFn(options);
 
@@ -111,6 +103,22 @@ export abstract class ApolloBaseDriver<
       ];
     }
     return options;
+  }
+
+  private normalizeSubscriptionsPath(options: T) {
+    const subscriptions = (options as ApolloDriverConfig).subscriptions;
+    if (!subscriptions) {
+      return;
+    }
+    for (const protocol of [
+      'graphql-ws',
+      'subscriptions-transport-ws',
+    ] as const) {
+      const config = subscriptions[protocol];
+      if (config && typeof config === 'object' && config.path) {
+        config.path = this.applyGlobalPrefix(config.path, options);
+      }
+    }
   }
 
   public subscriptionWithFilter(
@@ -144,7 +152,7 @@ export abstract class ApolloBaseDriver<
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
 
-    // Workaround: GraphQL playground requires body to be present
+    // Workaround: the landing page requires body to be present
     // otherwise, it shows the "req.body is not set; this probably means you forgot to set up the json middleware before the Apollo Server middleware." error.
     // The latest version of "body-parser" does not set the body if there is no payload.
     // @see https://github.com/nestjs/graphql/issues/3451

@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from '../graphql-federation/posts-service/federation-posts.module';
+import { AppModule } from '../graphql-federation/posts-service/federation-posts.module.js';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 
 describe('GraphQL federation with fastify', () => {

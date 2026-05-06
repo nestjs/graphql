@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import { ApplicationModule } from '../code-first/app.module';
-import { CatsModule } from '../code-first/cats/cats.module';
+import { ApplicationModule } from '../code-first/app.module.js';
+import { CatsModule } from '../code-first/cats/cats.module.js';
 
 describe('GraphQL - Resolver registration methods', () => {
   let app: INestApplication;

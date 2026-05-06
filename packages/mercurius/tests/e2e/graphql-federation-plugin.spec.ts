@@ -2,12 +2,12 @@ import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import { FastifyInstance } from 'fastify';
-import { AppModule as PostsModule } from '../plugins/graphql-federation-plugin/posts-service/federation-posts.module';
-import { AppModule as UsersModule } from '../plugins/graphql-federation-plugin/users-service/federation-users.module';
+import { AppModule as PostsModule } from '../plugins/graphql-federation-plugin/posts-service/federation-posts.module.js';
+import { AppModule as UsersModule } from '../plugins/graphql-federation-plugin/users-service/federation-users.module.js';
 import {
   BASE_PLUGIN_URL,
   NEW_PLUGIN_URL,
-} from '../plugins/mocks/utils/constants';
+} from '../plugins/mocks/utils/constants.js';
 
 describe('GraphQL Federation with plugins', () => {
   let app: INestApplication;

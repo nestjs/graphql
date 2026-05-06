@@ -1,6 +1,6 @@
 import { Kind, ValueNode } from 'graphql';
-import { CustomScalar } from '../../lib/interfaces';
-import { createScalarType } from '../../lib/utils/scalar-types.utils';
+import { CustomScalar } from '../../lib/interfaces/index.js';
+import { createScalarType } from '../../lib/utils/scalar-types.utils.js';
 
 describe('createScalarType', () => {
   class BaseScalar implements CustomScalar<number, Date> {
