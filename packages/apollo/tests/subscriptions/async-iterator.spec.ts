@@ -7,7 +7,7 @@ import { runInNewContext } from 'vm';
 import {
   AsyncIterator,
   createAsyncIterator,
-} from '../../lib/utils/async-iterator.util';
+} from '../../lib/utils/async-iterator.util.js';
 
 setFlagsFromString('--expose_gc');
 const gc = runInNewContext('gc');

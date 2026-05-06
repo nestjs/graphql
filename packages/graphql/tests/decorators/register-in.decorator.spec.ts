@@ -7,8 +7,8 @@ import {
   registerEnumType,
   createUnionType,
   TypeMetadataStorage,
-} from '../../lib';
-import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage';
+} from '../../lib/index.js';
+import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 /**
  * Integration tests for the registerIn decorator option.

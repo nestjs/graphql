@@ -1,9 +1,9 @@
 import { Inject } from '@nestjs/common';
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { GraphQLSchema } from 'graphql';
-import { GraphQLFactory } from '../graphql.factory';
-import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
-import { normalizeRoutePath } from '../utils';
+import { GraphQLFactory } from '../graphql.factory.js';
+import { GqlModuleOptions, GraphQLDriver } from '../interfaces/index.js';
+import { normalizeRoutePath } from '../utils/index.js';
 
 /**
  * @publicApi

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CatsResolver } from './cats.resolver';
+import { CatsResolver } from './cats.resolver.js';
 
 @Module({
   providers: [CatsResolver],

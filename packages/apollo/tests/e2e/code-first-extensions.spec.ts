@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { GraphQLSchemaHost } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { GraphQLObjectType } from 'graphql';
-import { AppModule } from '../code-first-extensions/app.module';
+import { AppModule } from '../code-first-extensions/app.module.js';
 
 describe('Code-first extensions', () => {
   let app: INestApplication;

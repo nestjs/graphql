@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
 import { ModulesContainer } from '@nestjs/core';
 import { extend } from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
-import { ApolloGatewayDriverConfig } from '../interfaces';
-import { PluginsExplorerService } from '../services/plugins-explorer.service';
-import { ApolloBaseDriver } from './apollo-base.driver';
+import { ApolloGatewayDriverConfig } from '../interfaces/index.js';
+import { PluginsExplorerService } from '../services/plugins-explorer.service.js';
+import { ApolloBaseDriver } from './apollo-base.driver.js';
 
 /**
  *  @publicApi

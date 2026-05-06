@@ -1,6 +1,6 @@
 import { createUnionType } from '@nestjs/graphql';
-import { Ingredient } from '../models/ingredient';
-import { Recipe } from '../models/recipe';
+import { Ingredient } from '../models/ingredient.js';
+import { Recipe } from '../models/recipe.js';
 
 export const SearchResultUnion = createUnionType({
   name: 'SearchResultUnion',

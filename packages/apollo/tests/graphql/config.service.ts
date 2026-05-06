@@ -3,13 +3,13 @@ import { join } from 'path';
 import {
   ApolloDriverConfig,
   ApolloDriverConfigFactory,
-} from '../../lib/interfaces';
+} from '../../lib/interfaces/index.js';
 
 @Injectable()
 export class ConfigService implements ApolloDriverConfigFactory {
   createGqlOptions(): ApolloDriverConfig {
     return {
-      typePaths: [join(__dirname, '**', '*.graphql')],
+      typePaths: [join(import.meta.dirname, '**', '*.graphql')],
     };
   }
 }

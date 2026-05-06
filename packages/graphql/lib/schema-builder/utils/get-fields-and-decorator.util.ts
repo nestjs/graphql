@@ -5,13 +5,13 @@ import {
   InputType,
   InterfaceType,
   ObjectType,
-} from '../../decorators';
-import { ClassType } from '../../enums/class-type.enum';
-import { CLASS_TYPE_METADATA } from '../../graphql.constants';
-import { UnableToFindFieldsError } from '../errors/unable-to-find-fields.error';
-import { ClassMetadata, PropertyMetadata } from '../metadata';
-import { LazyMetadataStorage } from '../storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../storages/type-metadata.storage';
+} from '../../decorators/index.js';
+import { ClassType } from '../../enums/class-type.enum.js';
+import { CLASS_TYPE_METADATA } from '../../graphql.constants.js';
+import { UnableToFindFieldsError } from '../errors/unable-to-find-fields.error.js';
+import { ClassMetadata, PropertyMetadata } from '../metadata/index.js';
+import { LazyMetadataStorage } from '../storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
 
 export function getFieldsAndDecoratorForType<T>(
   objType: Type<T>,

@@ -1,4 +1,4 @@
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
 import { BuildFederatedSchemaOptions, transformSchema } from '@nestjs/graphql';
 import { buildASTSchema, GraphQLSchema, isObjectType } from 'graphql';
 

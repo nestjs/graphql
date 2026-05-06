@@ -7,10 +7,10 @@ import {
   InputType,
   InterfaceType,
   ObjectType,
-} from '../../decorators';
-import { PluginOptions } from '../merge-options';
-import { METADATA_FACTORY_NAME } from '../plugin-constants';
-import { pluginDebugLogger } from '../plugin-debug-logger';
+} from '../../decorators/index.js';
+import { PluginOptions } from '../merge-options.js';
+import { METADATA_FACTORY_NAME } from '../plugin-constants.js';
+import { pluginDebugLogger } from '../plugin-debug-logger.js';
 import {
   createImportEquals,
   findNullableTypeFromUnion,
@@ -26,9 +26,12 @@ import {
   safelyMergeObjects,
   serializePrimitiveObjectToAst,
   updateDecoratorArguments,
-} from '../utils/ast-utils';
-import { convertPath, getTypeReferenceAsString } from '../utils/plugin-utils';
-import { typeReferenceToIdentifier } from '../utils/type-reference-to-identifier.util';
+} from '../utils/ast-utils.js';
+import {
+  convertPath,
+  getTypeReferenceAsString,
+} from '../utils/plugin-utils.js';
+import { typeReferenceToIdentifier } from '../utils/type-reference-to-identifier.util.js';
 
 const CLASS_DECORATORS = [
   ObjectType.name,

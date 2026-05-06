@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { GraphiQLPlaygroundModule } from '../graphql/graphiql-playground.module';
+import { GraphiQLPlaygroundModule } from '../graphql/graphiql-playground.module.js';
 
 describe('GraphiQL Playground', () => {
   let app: INestApplication;

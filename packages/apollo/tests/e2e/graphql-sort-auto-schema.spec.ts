@@ -3,13 +3,13 @@ import { GraphQLSchemaHost } from '@nestjs/graphql';
 import {
   GRAPHQL_SDL_FILE_HEADER,
   GRAPHQL_SDL_FILE_END,
-} from '@nestjs/graphql/graphql.constants';
-import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper';
+} from '@nestjs/graphql/graphql.constants.js';
+import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper.js';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { type Mock, vi } from 'vitest';
-import { SortAutoSchemaModule } from '../graphql/sort-auto-schema.module';
-import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot';
+import { SortAutoSchemaModule } from '../graphql/sort-auto-schema.module.js';
+import { sortedPrintedSchemaSnapshot } from '../utils/printed-schema.snapshot.js';
 
 describe('GraphQL sort autoSchemaFile and new line at the end of the schema', () => {
   let app: INestApplication;

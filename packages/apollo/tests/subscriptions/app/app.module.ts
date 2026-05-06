@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DynamicModule } from '@nestjs/common/interfaces';
+import { DynamicModule } from '@nestjs/common/interfaces/index.js';
 import { GraphQLModule } from '@nestjs/graphql';
-import { GqlModuleOptions } from '@nestjs/graphql/interfaces/gql-module-options.interface';
-import { ApolloDriverConfig } from '../../../lib';
-import { ApolloDriver } from '../../../lib/drivers';
-import { NotificationModule } from './notification.module';
+import { GqlModuleOptions } from '@nestjs/graphql/interfaces/gql-module-options.interface.js';
+import { ApolloDriverConfig } from '../../../lib/index.js';
+import { ApolloDriver } from '../../../lib/drivers/index.js';
+import { NotificationModule } from './notification.module.js';
 
 export type AppModuleConfig = {
   context?: GqlModuleOptions['context'];

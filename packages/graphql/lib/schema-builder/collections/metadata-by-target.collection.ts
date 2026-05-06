@@ -1,6 +1,6 @@
-import { MetadataCollectionModel } from './metada-collection-model.interface';
-import { TargetMetadataCollection } from './target-metadata.collection';
-import { ClassMetadata } from '../metadata';
+import { MetadataCollectionModel } from './metada-collection-model.interface.js';
+import { TargetMetadataCollection } from './target-metadata.collection.js';
+import { ClassMetadata } from '../metadata/index.js';
 
 export class MetadataByTargetCollection {
   public readonly all: MetadataCollectionModel = {

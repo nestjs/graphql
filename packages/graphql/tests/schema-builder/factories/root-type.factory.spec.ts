@@ -5,11 +5,11 @@ import {
   Query,
   Resolver,
   TypeMetadataStorage,
-} from '../../../lib';
-import { MultipleFieldsWithSameNameError } from '../../../lib/schema-builder/errors/multiple-fields-with-same-name.error';
-import { RootTypeFactory } from '../../../lib/schema-builder/factories/root-type.factory';
-import { ResolverTypeMetadata } from '../../../lib/schema-builder/metadata';
-import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage';
+} from '../../../lib/index.js';
+import { MultipleFieldsWithSameNameError } from '../../../lib/schema-builder/errors/multiple-fields-with-same-name.error.js';
+import { RootTypeFactory } from '../../../lib/schema-builder/factories/root-type.factory.js';
+import { ResolverTypeMetadata } from '../../../lib/schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 function booleanResolverFactory(Decorator: typeof Query | typeof Mutation) {
   @Resolver()

@@ -9,12 +9,12 @@ import {
   GraphQLEnumType,
   GraphQLInt,
 } from 'graphql';
-import { ApolloFederationDriverConfig } from '../../lib';
-import { ApolloFederationDriver } from '../../lib/drivers';
-import { PostModule } from './post/post.module';
-import { RecipeModule } from './recipe/recipe.module';
-import { User } from './user/user.entity';
-import { UserModule } from './user/user.module';
+import { ApolloFederationDriverConfig } from '../../lib/index.js';
+import { ApolloFederationDriver } from '../../lib/drivers/index.js';
+import { PostModule } from './post/post.module.js';
+import { RecipeModule } from './recipe/recipe.module.js';
+import { User } from './user/user.entity.js';
+import { UserModule } from './user/user.module.js';
 
 @Module({
   imports: [

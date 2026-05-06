@@ -7,10 +7,10 @@ import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
-import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
-import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
-import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
-import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
+import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface.js';
+import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util.js';
+import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
+import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
 // TODO:
 // const { mercuriusFederationPlugin } = require('@mercuriusjs/federation');
 

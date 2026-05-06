@@ -1,11 +1,11 @@
 import { IResolvers, IResolverValidationOptions } from '@graphql-tools/utils';
 import { Type } from '@nestjs/common';
-import { ModuleMetadata } from '@nestjs/common/interfaces';
+import { ModuleMetadata } from '@nestjs/common/interfaces/index.js';
 import { GraphQLSchema } from 'graphql';
-import { GraphQLDriver } from '.';
-import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
-import { BuildSchemaOptions } from './build-schema-options.interface';
-import { AutoSchemaFileValue } from './schema-file-config.interface';
+import { GraphQLDriver } from './index.js';
+import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer.js';
+import { BuildSchemaOptions } from './build-schema-options.interface.js';
+import { AutoSchemaFileValue } from './schema-file-config.interface.js';
 
 export type Enhancer = 'guards' | 'interceptors' | 'filters';
 

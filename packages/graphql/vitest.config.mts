@@ -7,7 +7,7 @@ export default defineConfig({
       {
         find: 'graphql',
         replacement: path.resolve(
-          __dirname,
+          import.meta.dirname,
           '../../node_modules/graphql/index.js',
         ),
       },

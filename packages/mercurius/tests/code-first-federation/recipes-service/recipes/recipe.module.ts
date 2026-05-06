@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { IRecipeResolver } from './irecipe.resolver';
+import { IRecipeResolver } from './irecipe.resolver.js';
 
 @Module({
   providers: [IRecipeResolver],

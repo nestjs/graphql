@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusGatewayDriver } from '../../../../lib/drivers';
-import { mockPlugin } from '../../mocks/mock.plugin';
+import { MercuriusGatewayDriver } from '../../../../lib/drivers/index.js';
+import { mockPlugin } from '../../mocks/mock.plugin.js';
 
 @Module({
   imports: [

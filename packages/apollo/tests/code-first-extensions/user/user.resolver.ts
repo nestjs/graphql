@@ -6,10 +6,10 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { User } from './user.dto';
-import { UserService } from './user.service';
-import { CreateUserInput } from './create-user.input';
-import { Status } from './user-status.dto';
+import { User } from './user.dto.js';
+import { UserService } from './user.service.js';
+import { CreateUserInput } from './create-user.input.js';
+import { Status } from './user-status.dto.js';
 
 @Resolver(() => User)
 export class UserResolver {

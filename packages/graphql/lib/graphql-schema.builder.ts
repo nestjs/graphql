@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 import { GraphQLSchema, lexicographicSortSchema, printSchema } from 'graphql';
 import { resolve } from 'path';
 import {
   GRAPHQL_SDL_FILE_HEADER,
   GRAPHQL_SDL_FILE_END,
-} from './graphql.constants';
-import { AutoSchemaFileValue, GqlModuleOptions } from './interfaces';
-import { BuildSchemaOptions } from './interfaces/build-schema-options.interface';
-import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
-import { FileSystemHelper } from './schema-builder/helpers/file-system.helper';
-import { ScalarsExplorerService } from './services';
-import { getPathForAutoSchemaFile } from './utils';
+} from './graphql.constants.js';
+import { AutoSchemaFileValue, GqlModuleOptions } from './interfaces/index.js';
+import { BuildSchemaOptions } from './interfaces/build-schema-options.interface.js';
+import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory.js';
+import { FileSystemHelper } from './schema-builder/helpers/file-system.helper.js';
+import { ScalarsExplorerService } from './services/index.js';
+import { getPathForAutoSchemaFile } from './utils/index.js';
 
 @Injectable()
 export class GraphQLSchemaBuilder {
