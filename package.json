@@ -29,8 +29,8 @@
     "graphql": "16.13.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.5.3",
-    "@commitlint/config-angular": "20.5.3",
+    "@commitlint/cli": "21.0.0",
+    "@commitlint/config-angular": "21.0.0",
     "@types/node": "24.12.3",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "3.0.2",
