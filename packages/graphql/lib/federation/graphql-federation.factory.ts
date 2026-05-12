@@ -385,7 +385,9 @@ export class GraphQLFederationFactory {
       () => require('@apollo/subgraph'),
     );
     const apolloSubgraphVersion = (
-      await import('@apollo/subgraph/package.json')
+      (await import('@apollo/subgraph/package.json')).default as {
+        version: string;
+      }
     ).version;
     const apolloSubgraphMajorVersion = Number(
       apolloSubgraphVersion.split('.')[0],

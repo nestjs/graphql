@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
-import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper';
+import { FileSystemHelper } from '@nestjs/graphql/schema-builder/helpers/file-system.helper.js';
 import { Test } from '@nestjs/testing';
-import { FederationAutoSchemaFileModule } from '../code-first-federation/federation-auto-schema-file.module';
+import { FederationAutoSchemaFileModule } from '../code-first-federation/federation-auto-schema-file.module.js';
 
 describe('Federation - autoSchemaFile generation (issue #3722)', () => {
   let app: INestApplication;

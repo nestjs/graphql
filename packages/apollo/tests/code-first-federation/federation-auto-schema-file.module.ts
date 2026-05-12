@@ -1,13 +1,13 @@
 import { ApolloServerPluginInlineTraceDisabled } from '@apollo/server/plugin/disabled';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloFederationDriver } from '../../lib/drivers';
-import { HumanModule } from './human/human.module';
-import { PostModule } from './post/post.module';
-import { RecipeModule } from './recipe/recipe.module';
-import { User } from './user/user.entity';
-import { UserModule } from './user/user.module';
+import { ApolloDriverConfig } from '../../lib/index.js';
+import { ApolloFederationDriver } from '../../lib/drivers/index.js';
+import { HumanModule } from './human/human.module.js';
+import { PostModule } from './post/post.module.js';
+import { RecipeModule } from './recipe/recipe.module.js';
+import { User } from './user/user.entity.js';
+import { UserModule } from './user/user.module.js';
 
 @Module({
   imports: [
