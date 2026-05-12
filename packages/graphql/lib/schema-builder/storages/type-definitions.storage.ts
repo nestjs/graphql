@@ -15,7 +15,7 @@ import { UnionDefinition } from '../factories/union-definition.factory';
 export type GqlInputTypeKey = Function | object;
 export type GqlInputType = InputTypeDefinition | EnumDefinition;
 
-export type GqlOutputTypeKey = Function | object | symbol;
+export type GqlOutputTypeKey = Function | object | symbol | string;
 export type GqlOutputType =
   | InterfaceTypeDefinition
   | ObjectTypeDefinition
@@ -38,13 +38,15 @@ export class TypeDefinitionsStorage {
     Function,
     InputTypeDefinition
   >();
+  private readonly outputTypesByName = new Map<string, GqlOutputType>();
   private inputTypeDefinitionsLinks?: Map<GqlInputTypeKey, GqlInputType>;
   private outputTypeDefinitionsLinks?: Map<GqlOutputTypeKey, GqlOutputType>;
 
   addEnums(enumDefs: EnumDefinition[]) {
-    enumDefs.forEach((item) =>
-      this.enumTypeDefinitions.set(item.enumRef, item),
-    );
+    enumDefs.forEach((item) => {
+      this.enumTypeDefinitions.set(item.enumRef, item);
+      this.outputTypesByName.set(item.type.name, item);
+    });
   }
 
   getEnumByObject(obj: object): EnumDefinition {
@@ -56,7 +58,10 @@ export class TypeDefinitionsStorage {
   }
 
   addUnions(unionDefs: UnionDefinition[]) {
-    unionDefs.forEach((item) => this.unionTypeDefinitions.set(item.id, item));
+    unionDefs.forEach((item) => {
+      this.unionTypeDefinitions.set(item.id, item);
+      this.outputTypesByName.set(item.type.name, item);
+    });
   }
 
   getUnionBySymbol(key: symbol): UnionDefinition {
@@ -68,9 +73,10 @@ export class TypeDefinitionsStorage {
   }
 
   addInterfaces(interfaceDefs: InterfaceTypeDefinition[]) {
-    interfaceDefs.forEach((item) =>
-      this.interfaceTypeDefinitions.set(item.target, item),
-    );
+    interfaceDefs.forEach((item) => {
+      this.interfaceTypeDefinitions.set(item.target, item);
+      this.outputTypesByName.set(item.type.name, item);
+    });
   }
 
   getInterfaceByTarget(type: Function): InterfaceTypeDefinition {
@@ -96,9 +102,10 @@ export class TypeDefinitionsStorage {
   }
 
   addObjectTypes(objectDefs: ObjectTypeDefinition[]) {
-    objectDefs.forEach((item) =>
-      this.objectTypeDefinitions.set(item.target, item),
-    );
+    objectDefs.forEach((item) => {
+      this.objectTypeDefinitions.set(item.target, item);
+      this.outputTypesByName.set(item.type.name, item);
+    });
   }
 
   getObjectTypeByTarget(type: Function): ObjectTypeDefinition {
@@ -142,6 +149,7 @@ export class TypeDefinitionsStorage {
         ...this.interfaceTypeDefinitions.entries(),
         ...this.enumTypeDefinitions.entries(),
         ...this.unionTypeDefinitions.entries(),
+        ...this.outputTypesByName.entries(),
       ]);
     }
     const definition = this.outputTypeDefinitionsLinks.get(key);
