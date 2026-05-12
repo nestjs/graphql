@@ -6,7 +6,8 @@ export type GqlTypeReference<T = any> =
   | GraphQLScalarType
   | Function
   | object
-  | symbol;
+  | symbol
+  | string;
 export type ReturnTypeFuncValue = GqlTypeReference | [GqlTypeReference];
 export type ReturnTypeFunc<T extends ReturnTypeFuncValue = any> = (
   returns?: void,
