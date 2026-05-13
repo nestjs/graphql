@@ -20,8 +20,8 @@ export class CannotDetermineInputTypeError extends Error {
     }
 
     super(
-      `Cannot determine a GraphQL input type ${
-        inputObjectName ? `("${inputObjectName}")` : null
+      `Cannot determine a GraphQL input type${
+        inputObjectName ? ` ("${inputObjectName}")` : ''
       } for the "${hostType}". Make sure your class is decorated with an appropriate decorator.`,
     );
   }
