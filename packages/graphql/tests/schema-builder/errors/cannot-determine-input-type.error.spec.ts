@@ -30,4 +30,12 @@ describe('CannotDetermineInputTypeError', () => {
     const error = new CannotDetermineInputTypeError('field', undefined, true);
     expect(error.message).toContain('Cannot determine a GraphQL input type');
   });
+
+  it('should not embed the literal string "null" when no type reference is provided', () => {
+    const error = new CannotDetermineInputTypeError('field', undefined);
+    expect(error.message).not.toContain('null');
+    expect(error.message).toBe(
+      'Cannot determine a GraphQL input type for the "field". Make sure your class is decorated with an appropriate decorator.',
+    );
+  });
 });
