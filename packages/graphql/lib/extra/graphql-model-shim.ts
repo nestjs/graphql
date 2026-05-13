@@ -27,7 +27,7 @@ export function ArgsType(): ClassDecorator {
 }
 
 export function Directive(
-  sdl: string,
+  sdl: string | string[],
 ): MethodDecorator & PropertyDecorator & ClassDecorator {
   return (target: Function | object, key?: string | symbol) => {};
 }
