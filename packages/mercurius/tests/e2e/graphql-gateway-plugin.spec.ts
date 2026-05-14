@@ -7,9 +7,9 @@ import { AppModule as UsersModule } from '../graphql-federation/users-service/fe
 import { AppModule as GatewayModule } from '../plugins/graphql-federation-plugin/gateway/gateway.module.js';
 import { BASE_PLUGIN_URL } from '../plugins/mocks/utils/constants.js';
 
-// TODO: temporarily skip (flaky tests)
-// @ref https://app.circleci.com/pipelines/github/nestjs/graphql/6155/workflows/6329f2a8-00b4-4159-9241-224db1685173/jobs/11141
-describe.skip('GraphQL Gateway', () => {
+describe('GraphQL Gateway', () => {
+  const usersPort = 3111;
+  const postsPort = 3112;
   let postsApp: INestApplication;
   let usersApp: INestApplication;
   let gatewayApp: INestApplication;
@@ -20,14 +20,14 @@ describe.skip('GraphQL Gateway', () => {
     }).compile();
 
     usersApp = usersModule.createNestApplication(new FastifyAdapter());
-    await usersApp.listen(3011);
+    await usersApp.listen(usersPort);
 
     const postsModule = await Test.createTestingModule({
       imports: [PostsModule],
     }).compile();
 
     postsApp = postsModule.createNestApplication(new FastifyAdapter());
-    await postsApp.listen(3012);
+    await postsApp.listen(postsPort);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],

@@ -30,15 +30,18 @@ async function createService(Module: Type<any>, port: number) {
 }
 
 describeCodeFirstFederation('Code-first - Federation', () => {
+  const recipesPort = 3211;
+  const postsPort = 3212;
+  const usersPort = 3213;
   let recipesApp: INestApplication;
   let postsApp: INestApplication;
   let usersApp: INestApplication;
   let gatewayApp: INestApplication;
 
   beforeEach(async () => {
-    recipesApp = await createService(RecipesModule, 3011);
-    postsApp = await createService(PostsModule, 3012);
-    usersApp = await createService(UsersModule, 3013);
+    recipesApp = await createService(RecipesModule, recipesPort);
+    postsApp = await createService(PostsModule, postsPort);
+    usersApp = await createService(UsersModule, usersPort);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
@@ -162,8 +165,7 @@ scalar link__Import`,
   });
 
   /**
-   * TODO: Temporarily skipped due to the following issue:
-   * https://github.com/mercurius-js/mercurius-gateway/issues/59
+   * Still blocked upstream by https://github.com/mercurius-js/mercurius-gateway/issues/59.
    */
   it.skip('should return posts query result from gateway', async () => {
     return request(gatewayApp.getHttpServer())

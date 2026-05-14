@@ -9,8 +9,8 @@ import { mockPlugin } from '../../mocks/mock.plugin.js';
       driver: MercuriusGatewayDriver,
       gateway: {
         services: [
-          { name: 'users', url: 'http://localhost:3011/graphql' },
-          { name: 'posts', url: 'http://localhost:3012/graphql' },
+          { name: 'users', url: 'http://localhost:3111/graphql' },
+          { name: 'posts', url: 'http://localhost:3112/graphql' },
         ],
       },
       plugins: [
