@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { isEmpty } from '@nestjs/common/utils/shared.utils.js';
+import { head } from 'es-toolkit';
 import {
   ConstDirectiveNode,
   EnumTypeDefinitionNode,
@@ -15,12 +16,9 @@ import {
   UnionTypeDefinitionNode,
   parse,
 } from 'graphql';
-import lodash from 'lodash';
 
 import { DirectiveParsingError } from '../errors/directive-parsing.error.js';
 import { DirectiveMetadata } from '../metadata/directive.metadata.js';
-
-const { head } = lodash;
 
 @Injectable()
 export class AstDefinitionNodeFactory {

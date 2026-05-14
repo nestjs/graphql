@@ -1,4 +1,4 @@
-import lodash from 'lodash';
+import { head } from 'es-toolkit';
 import { isAbsolute, posix } from 'path';
 import * as ts from 'typescript';
 import { PluginOptions } from '../merge-options.js';
@@ -14,8 +14,6 @@ import {
   isString,
   isStringLiteral,
 } from './ast-utils.js';
-
-const { head } = lodash;
 
 export function getTypeReferenceAsString(
   type: ts.Type,

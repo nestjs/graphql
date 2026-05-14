@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { upperFirst } from 'es-toolkit';
 import {
   DocumentNode,
   EnumTypeDefinitionNode,
@@ -20,7 +21,6 @@ import {
   UnionTypeDefinitionNode,
   UnionTypeExtensionNode,
 } from 'graphql';
-import lodash from 'lodash';
 import type {
   ClassDeclarationStructure,
   EnumDeclarationStructure,
@@ -36,9 +36,15 @@ import type {
 } from 'ts-morph';
 import { DEFINITIONS_FILE_HEADER } from './graphql.constants.js';
 
-const { get, map, sortBy, upperFirst } = lodash;
-
 let tsMorphLib: typeof import('ts-morph') | undefined;
+
+function getNodeName(node: any): string | undefined {
+  return node?.name?.value;
+}
+
+function getNestedTypeNode(node: any): TypeNode | undefined {
+  return node?.type;
+}
 
 export interface DefinitionsGeneratorOptions {
   /**
@@ -122,7 +128,9 @@ export class GraphQLAstExplorer {
     });
 
     let { definitions } = documentNode;
-    definitions = sortBy(definitions, ['kind', 'name']);
+    definitions = [...definitions].sort((left, right) =>
+      left.kind.localeCompare(right.kind),
+    );
 
     const fileStructure = tsFile.getStructure();
 
@@ -202,7 +210,7 @@ export class GraphQLAstExplorer {
       .filter(Boolean)
       .map((item) => {
         const tempOperationName = item.operation;
-        const typeName = get(item, 'type.name.value');
+        const typeName = getNodeName(item.type);
         const interfaceName = typeName || tempOperationName;
         return {
           name: interfaceName,
@@ -230,7 +238,7 @@ export class GraphQLAstExplorer {
     mode: 'class' | 'interface',
     options: DefinitionsGeneratorOptions,
   ): ClassDeclarationStructure | InterfaceDeclarationStructure {
-    const parentName = get(item, 'name.value');
+    const parentName = getNodeName(item);
     if (!parentName) {
       return;
     }
@@ -254,12 +262,12 @@ export class GraphQLAstExplorer {
       methods: [],
     };
 
-    const interfaces = get(item, 'interfaces');
-    if (interfaces) {
+    const interfaces = 'interfaces' in item ? item.interfaces ?? [] : [];
+    if (interfaces.length > 0) {
       if (mode === 'class') {
         (parentStructure as ClassDeclarationStructure).implements = interfaces
           .map((element) => {
-            const interfaceName = get(element, 'name.value');
+            const interfaceName = getNodeName(element);
             return interfaceName
               ? this.getTransformedTypeName(interfaceName, options)
               : null;
@@ -268,7 +276,7 @@ export class GraphQLAstExplorer {
       } else {
         parentStructure.extends = interfaces
           .map((element) => {
-            const interfaceName = get(element, 'name.value');
+            const interfaceName = getNodeName(element);
             return interfaceName
               ? this.getTransformedTypeName(interfaceName, options)
               : null;
@@ -321,7 +329,7 @@ export class GraphQLAstExplorer {
     options: DefinitionsGeneratorOptions,
   ): OptionalKind<PropertyDeclarationStructure> &
     OptionalKind<PropertySignatureStructure> {
-    const propertyName = get(item, 'name.value');
+    const propertyName = getNodeName(item);
     if (!propertyName) {
       return undefined;
     }
@@ -348,7 +356,7 @@ export class GraphQLAstExplorer {
     options: DefinitionsGeneratorOptions,
   ): OptionalKind<MethodDeclarationStructure> &
     OptionalKind<MethodSignatureStructure> {
-    const propertyName = get(item, 'name.value');
+    const propertyName = getNodeName(item);
     if (!propertyName) {
       return;
     }
@@ -382,12 +390,15 @@ export class GraphQLAstExplorer {
       const isArray = type.kind === 'ListType';
 
       if (isArray) {
-        const arrayType = get(type, 'type');
+        const arrayType = getNestedTypeNode(type);
+        if (!arrayType) {
+          return 'unknown';
+        }
         return required
           ? `${stringifyType(arrayType)}[]`
           : `Nullable<${stringifyType(arrayType)}[]>`;
       }
-      const typeName = this.addSymbolIfRoot(get(type, 'name.value'));
+      const typeName = this.addSymbolIfRoot(getNodeName(type) ?? 'unknown');
       return required
         ? this.getType(typeName, options)
         : `Nullable<${this.getType(typeName, options)}>`;
@@ -406,8 +417,9 @@ export class GraphQLAstExplorer {
   } {
     const isNonNullType = type.kind === 'NonNullType';
     if (isNonNullType) {
+      const nestedType = getNestedTypeNode(type);
       return {
-        type: this.unwrapTypeIfNonNull(get(type, 'type')).type,
+        type: nestedType ? this.unwrapTypeIfNonNull(nestedType).type : type,
         required: isNonNullType,
       };
     }
@@ -443,25 +455,31 @@ export class GraphQLAstExplorer {
     if (!inputs) {
       return [];
     }
-    return inputs.map((element) => {
-      const { name, required } = this.getFieldTypeDefinition(
-        element.type,
-        options,
-      );
-      return {
-        name: get(element, 'name.value'),
-        type: name,
-        hasQuestionToken: !required,
-        kind: tsMorphLib.StructureKind.Parameter,
-      };
-    });
+    return inputs
+      .map((element) => {
+        const { name, required } = this.getFieldTypeDefinition(
+          element.type,
+          options,
+        );
+        const elementName = getNodeName(element);
+        if (!elementName) {
+          return undefined;
+        }
+        return {
+          name: elementName,
+          type: name,
+          hasQuestionToken: !required,
+          kind: tsMorphLib.StructureKind.Parameter,
+        };
+      })
+      .filter(Boolean) as ParameterDeclarationStructure[];
   }
 
   toScalarDefinitionStructure(
     item: ScalarTypeDefinitionNode | ScalarTypeExtensionNode,
     options: DefinitionsGeneratorOptions,
   ): TypeAliasDeclarationStructure {
-    const name = get(item, 'name.value');
+    const name = getNodeName(item);
     if (!name || name === 'Date') {
       return undefined;
     }
@@ -484,16 +502,14 @@ export class GraphQLAstExplorer {
     item: EnumTypeDefinitionNode | EnumTypeExtensionNode,
     options: DefinitionsGeneratorOptions,
   ): TypeAliasDeclarationStructure | EnumDeclarationStructure {
-    const name = get(item, 'name.value');
+    const name = getNodeName(item);
     if (!name) {
       return undefined;
     }
     const transformedName = this.getTransformedTypeName(name, options);
 
     if (options.enumsAsTypes) {
-      const values = item.values.map(
-        (value) => `"${get(value, 'name.value')}"`,
-      );
+      const values = item.values.map((value) => `"${getNodeName(value)}"`);
       return {
         kind: tsMorphLib.StructureKind.TypeAlias,
         name: transformedName,
@@ -501,9 +517,9 @@ export class GraphQLAstExplorer {
         isExported: true,
       };
     }
-    const members = map(item.values, (value) => ({
-      name: get(value, 'name.value'),
-      value: get(value, 'name.value'),
+    const members = item.values.map((value) => ({
+      name: getNodeName(value),
+      value: getNodeName(value),
     }));
     return {
       kind: tsMorphLib.StructureKind.Enum,
@@ -517,16 +533,18 @@ export class GraphQLAstExplorer {
     item: UnionTypeDefinitionNode | UnionTypeExtensionNode,
     options: DefinitionsGeneratorOptions,
   ): TypeAliasDeclarationStructure {
-    const name = get(item, 'name.value');
+    const name = getNodeName(item);
     if (!name) {
       return undefined;
     }
     const transformedName = this.getTransformedTypeName(name, options);
 
-    const types: string[] = map(item.types, (value) => {
-      const typeName = get(value, 'name.value');
-      return typeName ? this.getTransformedTypeName(typeName, options) : null;
-    }).filter(Boolean);
+    const types: string[] = item.types
+      .map((value) => {
+        const typeName = getNodeName(value);
+        return typeName ? this.getTransformedTypeName(typeName, options) : null;
+      })
+      .filter(Boolean) as string[];
 
     return {
       kind: tsMorphLib.StructureKind.TypeAlias,

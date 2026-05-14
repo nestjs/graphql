@@ -20,8 +20,8 @@ import { Module } from '@nestjs/core/injector/module.js';
 import { Entrypoint } from '@nestjs/core/inspector/interfaces/entrypoint.interface.js';
 import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph.js';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants.js';
+import { identity } from 'es-toolkit';
 import { GraphQLResolveInfo } from 'graphql';
-import lodash from 'lodash';
 import { SubscriptionOptions } from '../decorators/subscription.decorator.js';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver.js';
 import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
@@ -42,8 +42,6 @@ import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-res
 import { extractMetadata } from '../utils/extract-metadata.util.js';
 import { BaseExplorerService } from './base-explorer.service.js';
 import { GqlContextType } from './gql-execution-context.js';
-
-const { identity } = lodash;
 
 const ROOT_RESOLVER_TYPES = new Set<string>([
   Resolver.MUTATION,
