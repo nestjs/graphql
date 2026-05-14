@@ -7,6 +7,7 @@ import {
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces/index.js';
 import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util.js';
+import { InterfaceNotRegisteredError } from '../errors/interface-not-registered.error.js';
 import { PropertyMetadata } from '../metadata/index.js';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
@@ -78,10 +79,14 @@ export class ObjectTypeDefinitionFactory {
     return () => {
       const interfaces: GraphQLInterfaceType[] = getInterfacesArray(
         metadata.interfaces,
-      ).map(
-        (item: Function) =>
-          this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
-      );
+      ).map((item: Function) => {
+        const definition =
+          this.typeDefinitionsStorage.getInterfaceByTarget(item);
+        if (!definition) {
+          throw new InterfaceNotRegisteredError(metadata.name, item);
+        }
+        return definition.type;
+      });
       if (!isUndefined(prototype)) {
         const parentClass = getParentType();
         if (!parentClass) {

@@ -34,7 +34,7 @@ export class MetadataListByNameCollection<T> extends MetadataByNameCollection<
     }
 
     arrayResult.unshift(value);
-    this.all.push(value);
+    this.all.unshift(value);
 
     if (this.globalArray) {
       this.globalArray.unshift(value);

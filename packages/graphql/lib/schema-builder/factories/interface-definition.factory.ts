@@ -6,6 +6,7 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { InterfaceNotRegisteredError } from '../errors/interface-not-registered.error.js';
 import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error.js';
 import { InterfaceMetadata } from '../metadata/interface.metadata.js';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
@@ -188,10 +189,14 @@ export class InterfaceDefinitionFactory {
     return () => {
       const interfaces: GraphQLInterfaceType[] = getInterfacesArray(
         metadata.interfaces,
-      ).map(
-        (item: Function) =>
-          this.typeDefinitionsStorage.getInterfaceByTarget(item).type,
-      );
+      ).map((item: Function) => {
+        const definition =
+          this.typeDefinitionsStorage.getInterfaceByTarget(item);
+        if (!definition) {
+          throw new InterfaceNotRegisteredError(metadata.name, item);
+        }
+        return definition.type;
+      });
       if (!isUndefined(prototype)) {
         const parentClass = getParentType();
         if (!parentClass) {

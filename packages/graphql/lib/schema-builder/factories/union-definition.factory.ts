@@ -1,6 +1,7 @@
 import { Injectable, Type } from '@nestjs/common';
 import { GraphQLUnionType } from 'graphql';
 import { ReturnTypeCannotBeResolvedError } from '../errors/return-type-cannot-be-resolved.error.js';
+import { UnionMemberNotObjectTypeError } from '../errors/union-member-not-object-type.error.js';
 import { UnionMetadata } from '../metadata/index.js';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
@@ -20,8 +21,14 @@ export class UnionDefinitionFactory {
   ) {}
 
   public create(metadata: UnionMetadata): UnionDefinition {
-    const getObjectType = (item: Type<unknown>) =>
-      this.typeDefinitionsStorage.getObjectTypeByTarget(item).type;
+    const getObjectType = (item: Type<unknown>) => {
+      const definition =
+        this.typeDefinitionsStorage.getObjectTypeByTarget(item);
+      if (!definition) {
+        throw new UnionMemberNotObjectTypeError(metadata.name, item);
+      }
+      return definition.type;
+    };
     const types = () => metadata.typesFn().map((item) => getObjectType(item));
 
     return {
