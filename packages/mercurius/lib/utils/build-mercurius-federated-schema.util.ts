@@ -1,4 +1,4 @@
-import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { loadPackageSync } from '@nestjs/common/utils/load-package.util.js';
 import { BuildFederatedSchemaOptions, transformSchema } from '@nestjs/graphql';
 import { buildASTSchema, GraphQLSchema, isObjectType } from 'graphql';
 
@@ -6,7 +6,7 @@ export function buildMercuriusFederatedSchema({
   typeDefs,
   resolvers,
 }: BuildFederatedSchemaOptions) {
-  const { buildSubgraphSchema, printSubgraphSchema } = loadPackage(
+  const { buildSubgraphSchema, printSubgraphSchema } = loadPackageSync(
     '@apollo/subgraph',
     'MercuriusFederation',
     () => require('@apollo/subgraph'),

@@ -35,7 +35,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
     );
 
     if (options.definitions && options.definitions.path) {
-      const { printSubgraphSchema } = loadPackage(
+      const { printSubgraphSchema } = await loadPackage(
         '@apollo/subgraph',
         'ApolloFederation',
         () => require('@apollo/subgraph'),

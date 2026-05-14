@@ -1,7 +1,10 @@
 import { mergeSchemas, addResolversToSchema } from '@graphql-tools/schema';
 import { printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import {
+  loadPackage,
+  loadPackageSync,
+} from '@nestjs/common/utils/load-package.util.js';
 import { isString } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLAbstractType,
@@ -73,15 +76,17 @@ export class GraphQLFederationFactory {
     } else if (isEmpty(options.typeDefs)) {
       schema = options.schema;
     } else {
-      schema = this.buildSchemaFromTypeDefs(options);
+      schema = await this.buildSchemaFromTypeDefs(options);
     }
 
     return await transformSchema(schema);
   }
 
-  private buildSchemaFromTypeDefs<T extends GqlModuleOptions>(options: T) {
+  private async buildSchemaFromTypeDefs<T extends GqlModuleOptions>(
+    options: T,
+  ) {
     const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
-      loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
+      await loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
         require('@apollo/subgraph'),
       );
 
@@ -107,7 +112,7 @@ export class GraphQLFederationFactory {
       options: BuildFederatedSchemaOptions,
     ) => GraphQLSchema,
   ): Promise<GraphQLSchema> {
-    const apolloSubgraph = loadPackage(
+    const apolloSubgraph = await loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
       () => require('@apollo/subgraph'),
@@ -379,7 +384,7 @@ export class GraphQLFederationFactory {
   private async getFederationSchemaPrinter(): Promise<
     (schema: GraphQLSchema) => string
   > {
-    const apolloSubgraph = loadPackage(
+    const apolloSubgraph = await loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
       () => require('@apollo/subgraph'),
@@ -414,7 +419,7 @@ export class GraphQLFederationFactory {
 
   private loadFederationDirectives() {
     const { federationDirectives, directivesWithNoDefinitionNeeded } =
-      loadPackage('@apollo/subgraph/dist/directives', 'SchemaBuilder', () =>
+      loadPackageSync('@apollo/subgraph/dist/directives', 'SchemaBuilder', () =>
         require('@apollo/subgraph/dist/directives'),
       );
     return federationDirectives ?? directivesWithNoDefinitionNeeded;

@@ -162,7 +162,7 @@ scalar link__Import`,
   });
 
   /**
-   * TODO: Temporarirly skipped due to the following issue:
+   * TODO: Temporarily skipped due to the following issue:
    * https://github.com/mercurius-js/mercurius-gateway/issues/59
    */
   it.skip('should return posts query result from gateway', async () => {

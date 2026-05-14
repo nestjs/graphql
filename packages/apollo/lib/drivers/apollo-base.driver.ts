@@ -142,7 +142,7 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { expressMiddleware } = loadPackage(
+    const { expressMiddleware } = await loadPackage(
       '@as-integrations/express5',
       'GraphQLModule',
       () => require('@as-integrations/express5'),
@@ -195,11 +195,10 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { fastifyApolloDrainPlugin, fastifyApolloHandler } = loadPackage(
-      '@as-integrations/fastify',
-      'GraphQLModule',
-      () => require('@as-integrations/fastify'),
-    );
+    const { fastifyApolloDrainPlugin, fastifyApolloHandler } =
+      await loadPackage('@as-integrations/fastify', 'GraphQLModule', () =>
+        require('@as-integrations/fastify'),
+      );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
