@@ -5809,10 +5809,10 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-lint-staged@17.0.4:
-  version "17.0.4"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-17.0.4.tgz#7fecff62ab416b9ec88f3b49a53fbbc86a95f462"
-  integrity sha512-+rU9lSUyVOZ/hDUmRLVGzyS2v73cDdQjX+XQz1AaOdIE4RysLq0HoPW2HrrgeNCLklkhi904VBU1bmgWLHVnkA==
+lint-staged@17.0.5:
+  version "17.0.5"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-17.0.5.tgz#f9de89d870663eb9227557c37a1e9dde7bdafc0e"
+  integrity sha512-d12yC+/e8RhBjZtaxZn71FyrgU/P5e+uAPifhCLwdosQZP/zamSdKRWDC30ocVIbzDKiFG1McHc/LUgB92GIPw==
   dependencies:
     listr2 "^10.2.1"
     picomatch "^4.0.4"
