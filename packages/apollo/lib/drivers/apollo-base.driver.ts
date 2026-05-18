@@ -104,7 +104,7 @@ export abstract class ApolloBaseDriver<
     this.wrapContextResolver(options);
     this.wrapFormatErrorFn(options);
 
-    if (options.autoTransformHttpErrors !== false) {
+    if (options.preserveHttpStatusForExecutionErrors !== false) {
       (options as ApolloDriverConfig).plugins = [
         ...((options as ApolloDriverConfig).plugins || []),
         this.createPreserveHttpStatusPlugin(),

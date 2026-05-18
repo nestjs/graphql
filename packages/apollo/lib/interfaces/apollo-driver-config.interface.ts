@@ -55,6 +55,21 @@ export interface ApolloDriverConfig
    * @default true
    */
   autoTransformHttpErrors?: boolean;
+
+  /**
+   * Controls whether the Apollo Server plugin that preserves HTTP status codes
+   * for execution errors is injected. When enabled, execution errors (errors that
+   * occur during resolver execution) will have their HTTP status reset to 200,
+   * ensuring the response maintains a stable {data, errors} shape. When disabled,
+   * HTTP status codes from extensions.http.status will be preserved in the response.
+   * 
+   * This flag is independent of autoTransformHttpErrors and provides granular
+   * control over HTTP status handling for high-throughput APIs that need to
+   * distinguish between execution errors and request-level errors.
+   * @default true
+   * @see https://github.com/nestjs/graphql/issues/3997
+   */
+  preserveHttpStatusForExecutionErrors?: boolean;
 }
 
 export type ApolloDriverConfigFactory = GqlOptionsFactory<ApolloDriverConfig>;
