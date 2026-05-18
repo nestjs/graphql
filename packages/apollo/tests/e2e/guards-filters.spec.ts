@@ -23,7 +23,7 @@ describe('GraphQL - Guards', () => {
         variables: {},
         query: '{\n  recipe(id: "3") {\n    id\n  }\n}\n',
       })
-      .expect(200, {
+      .expect(401, {
         errors: [
           {
             message: 'Unauthorized error',

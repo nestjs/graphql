@@ -55,6 +55,14 @@ export interface ApolloDriverConfig
    * @default true
    */
   autoTransformHttpErrors?: boolean;
+
+  /**
+   * If enabled, execution-level GraphQL errors will return HTTP 200 status.
+   * Request-level errors, such as parsing and validation failures, keep their
+   * original HTTP status code.
+   * @default false
+   */
+  forceHttpStatus200ForExecutionErrors?: boolean;
 }
 
 export type ApolloDriverConfigFactory = GqlOptionsFactory<ApolloDriverConfig>;

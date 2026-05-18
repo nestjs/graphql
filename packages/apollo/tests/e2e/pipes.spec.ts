@@ -25,7 +25,7 @@ describe('GraphQL - Pipes', () => {
         query:
           'mutation {\n  addRecipe(newRecipeData: {title: "test", ingredients: []}) {\n    id\n  }\n}\n',
       })
-      .expect(200, {
+      .expect(400, {
         data: null,
         errors: [
           {
