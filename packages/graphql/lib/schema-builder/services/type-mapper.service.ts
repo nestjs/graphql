@@ -1,5 +1,4 @@
 import { Injectable, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -18,7 +17,6 @@ import {
 } from '../../interfaces';
 import { TypeOptions } from '../../interfaces/type-options.interface';
 import { GraphQLISODateTime, GraphQLTimestamp } from '../../scalars';
-import { DefaultNullableConflictError } from '../errors/default-nullable-conflict.error';
 import { InvalidNullableOptionError } from '../errors/invalid-nullable-option.error';
 
 @Injectable()
@@ -75,15 +73,6 @@ export class TypeMapperService {
   private validateTypeOptions(hostType: string, options: TypeOptions) {
     if (!options.isArray && this.hasArrayOptions(options)) {
       throw new InvalidNullableOptionError(hostType, options.nullable);
-    }
-
-    const isNotNullable = options.nullable === 'items';
-    if (!isUndefined(options.defaultValue) && isNotNullable) {
-      throw new DefaultNullableConflictError(
-        hostType,
-        options.defaultValue,
-        options.nullable,
-      );
     }
     return true;
   }
