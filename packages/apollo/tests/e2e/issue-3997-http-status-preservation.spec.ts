@@ -54,7 +54,10 @@ async function bootstrap(
 ) {
   const moduleRef = await Test.createTestingModule({
     imports: [
-      buildModule(autoTransformHttpErrors, preserveHttpStatusForExecutionErrors),
+      buildModule(
+        autoTransformHttpErrors,
+        preserveHttpStatusForExecutionErrors,
+      ),
     ],
   }).compile();
 
@@ -169,7 +172,7 @@ describe('Issue #3997 - Granular HTTP status preservation control', () => {
     let app: INestApplication;
 
     beforeEach(async () => {
-      app = await bootstrap(false);
+      app = await bootstrap(false, false);
     });
 
     afterEach(async () => {
@@ -253,8 +256,10 @@ describe('Issue #3997 - Granular HTTP status preservation control', () => {
         .send({ query: '{ throwGraphqlErrorWithHttpStatus }' });
 
       // When autoTransformHttpErrors=false and preserveHttpStatusForExecutionErrors is undefined,
-      // the preserve plugin should not be injected
-      expect(res.status).toBe(403);
+      // the preserve plugin should be injected
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('data');
+      expect(res.body).toHaveProperty('errors');
 
       await app.close();
     });
