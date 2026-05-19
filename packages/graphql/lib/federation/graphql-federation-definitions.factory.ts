@@ -1,9 +1,9 @@
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { gql } from 'graphql-tag';
-import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer';
-import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory';
-import { extend } from '../utils';
 import { mergeTypeDefs } from '@graphql-tools/merge';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { gql } from 'graphql-tag';
+import { DefinitionsGeneratorOptions } from '../graphql-ast.explorer.js';
+import { GraphQLDefinitionsFactory } from '../graphql-definitions.factory.js';
+import { extend } from '../utils/index.js';
 
 /**
  * @publicApi
@@ -20,12 +20,10 @@ export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFacto
     const typePathDefs = await this.gqlTypesLoader.mergeTypesByPaths(typePaths);
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
 
-    const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
-      loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
-        require('@apollo/subgraph'),
-      );
-
-    const { printSubgraphSchema } = loadPackage(
+    const {
+      buildSubgraphSchema,
+      printSubgraphSchema,
+    }: typeof import('@apollo/subgraph') = await loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
       () => require('@apollo/subgraph'),

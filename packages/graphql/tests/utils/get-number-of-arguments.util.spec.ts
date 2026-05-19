@@ -1,4 +1,7 @@
-import { getNumberOfArguments, stringifyWithoutQuotes } from '../../lib/utils';
+import {
+  getNumberOfArguments,
+  stringifyWithoutQuotes,
+} from '../../lib/utils/index.js';
 
 describe('getNumberOfArguments', () => {
   describe('when using function', () => {

@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, MinLength } from 'class-validator';
-import { Directive, Extensions, Field, ObjectType } from '../../../../lib/decorators';
+import { Directive, Extensions, Field, ObjectType } from '../../../../lib/decorators/index.js';
 
 @ObjectType()
 export class CreateUserDto {

@@ -3,13 +3,13 @@ import { join } from 'path';
 import {
   MercuriusDriverConfig,
   MercuriusDriverConfigFactory,
-} from '../../lib/interfaces';
+} from '../../lib/interfaces/index.js';
 
 @Injectable()
 export class ConfigService implements MercuriusDriverConfigFactory {
   createGqlOptions(): MercuriusDriverConfig {
     return {
-      typePaths: [join(__dirname, '**', '*.graphql')],
+      typePaths: [join(import.meta.dirname, '**', '*.graphql')],
     };
   }
 }

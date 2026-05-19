@@ -5,29 +5,35 @@ import {
   OnModuleDestroy,
   OnModuleInit,
   Provider,
-} from '@nestjs/common/interfaces';
+} from '@nestjs/common/interfaces/index.js';
 import { HttpAdapterHost } from '@nestjs/core';
-import { ROUTE_MAPPED_MESSAGE } from '@nestjs/core/helpers/messages';
-import { InitializeOnPreviewAllowlist } from '@nestjs/core/inspector';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
-import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver';
-import { GraphQLFederationFactory } from './federation/graphql-federation.factory';
-import { TypeDefsDecoratorFactory } from './federation/type-defs-decorator.factory';
-import { GraphQLAstExplorer } from './graphql-ast.explorer';
-import { GraphQLSchemaBuilder } from './graphql-schema.builder';
-import { GraphQLSchemaHost } from './graphql-schema.host';
-import { GraphQLTypesLoader } from './graphql-types.loader';
-import { GRAPHQL_MODULE_ID, GRAPHQL_MODULE_OPTIONS } from './graphql.constants';
-import { GraphQLFactory } from './graphql.factory';
+import { ROUTE_MAPPED_MESSAGE } from '@nestjs/core/helpers/messages.js';
+import { InitializeOnPreviewAllowlist } from '@nestjs/core/inspector/index.js';
+import { MetadataScanner } from '@nestjs/core/metadata-scanner.js';
+import { AbstractGraphQLDriver } from './drivers/abstract-graphql.driver.js';
+import { GraphQLFederationFactory } from './federation/graphql-federation.factory.js';
+import { TypeDefsDecoratorFactory } from './federation/type-defs-decorator.factory.js';
+import { GraphQLAstExplorer } from './graphql-ast.explorer.js';
+import { GraphQLSchemaBuilder } from './graphql-schema.builder.js';
+import { GraphQLSchemaHost } from './graphql-schema.host.js';
+import { GraphQLTypesLoader } from './graphql-types.loader.js';
+import {
+  GRAPHQL_MODULE_ID,
+  GRAPHQL_MODULE_OPTIONS,
+} from './graphql.constants.js';
+import { GraphQLFactory } from './graphql.factory.js';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
-} from './interfaces/gql-module-options.interface';
-import { MetadataLoader } from './plugin/metadata-loader';
-import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
-import { ResolversExplorerService, ScalarsExplorerService } from './services';
-import { extend, generateString } from './utils';
+} from './interfaces/gql-module-options.interface.js';
+import { MetadataLoader } from './plugin/metadata-loader.js';
+import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module.js';
+import {
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from './services/index.js';
+import { extend, generateString } from './utils/index.js';
 
 /**
  * @publicApi

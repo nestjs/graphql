@@ -1,11 +1,10 @@
 import { Type } from '@nestjs/common';
-import { get } from 'lodash';
 import {
   GqlTypeReference,
   ReturnTypeFunc,
-} from '../interfaces/return-type-func.interface';
-import { TypeOptions } from '../interfaces/type-options.interface';
-import { UndefinedTypeError } from '../schema-builder/errors/undefined-type.error';
+} from '../interfaces/return-type-func.interface.js';
+import { TypeOptions } from '../interfaces/type-options.interface.js';
+import { UndefinedTypeError } from '../schema-builder/errors/undefined-type.error.js';
 
 const NOT_ALLOWED_TYPES: Type<any>[] = [Promise, Array, Object, Function];
 
@@ -51,7 +50,7 @@ export function reflectTypeFromMetadata(
   if (hasNoExplicitAndImplicitIsNotAllowed || hasNoImplicitNorExplicitType) {
     if (!reflectOptions.ignoreOnUndefinedType) {
       throw new UndefinedTypeError(
-        get(prototype, 'constructor.name'),
+        (prototype as { constructor?: { name?: string } }).constructor?.name,
         propertyKey,
         index,
       );

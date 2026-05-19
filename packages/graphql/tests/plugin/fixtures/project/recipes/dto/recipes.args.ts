@@ -1,5 +1,5 @@
 import { Max, Min } from 'class-validator';
-import { ArgsType } from '../../../../../../lib/decorators';
+import { ArgsType } from '../../../../../../lib/decorators/index.js';
 
 @ArgsType()
 export class RecipesArgs {

@@ -1,4 +1,4 @@
-import { Post } from './post.entity';
+import { Post } from './post.entity.js';
 import { Injectable } from '@nestjs/common';
 
 const data = [

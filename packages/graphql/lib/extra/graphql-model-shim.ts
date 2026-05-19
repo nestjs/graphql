@@ -11,8 +11,8 @@ import {
   InterfaceTypeOptions,
   ObjectTypeOptions,
   ReturnTypeFunc,
-} from '..';
-import * as typeFactories from '../type-factories';
+} from '../index.js';
+import * as typeFactories from '../type-factories/index.js';
 
 // If the conditional export cannot be leveraged (older bundler, custom setup),
 // the shim can still be aliased manually, for example with webpack:

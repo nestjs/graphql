@@ -1,6 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
-import { ResolveField, ResolveFieldOptions } from './resolve-field.decorator';
+import { ReturnTypeFunc } from '../interfaces/return-type-func.interface.js';
+import {
+  ResolveField,
+  ResolveFieldOptions,
+} from './resolve-field.decorator.js';
 
 const logger = new Logger('GraphQLModule');
 

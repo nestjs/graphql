@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { MercuriusPlugin } from '../interfaces/mercurius-plugin.interface';
-import { isArray, isNull, isUndefined } from './validation.util';
+import { MercuriusPlugin } from '../interfaces/mercurius-plugin.interface.js';
+import { isArray, isNull, isUndefined } from './validation.util.js';
 
 export async function registerMercuriusPlugin(
   app: FastifyInstance,

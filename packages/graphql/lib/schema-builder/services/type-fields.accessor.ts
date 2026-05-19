@@ -7,7 +7,6 @@ import {
   GraphQLInterfaceType,
   GraphQLObjectType,
 } from 'graphql';
-import { omit } from 'lodash';
 
 @Injectable()
 export class TypeFieldsAccessor {
@@ -40,7 +39,14 @@ export class TypeFieldsAccessor {
       const targetField = fieldsMap[key];
       const args: GraphQLFieldConfigArgumentMap = {};
       targetField.args.forEach((item) => {
-        args[item.name] = omit(item, 'name');
+        args[item.name] = {
+          type: item.type,
+          defaultValue: item.defaultValue,
+          description: item.description,
+          deprecationReason: item.deprecationReason,
+          astNode: item.astNode,
+          extensions: item.extensions,
+        };
       });
 
       fieldsConfig[key] = {

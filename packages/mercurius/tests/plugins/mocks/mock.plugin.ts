@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify';
-import { PluginOptions } from './interfaces/plugin-options.interface';
-import { BASE_PLUGIN_URL } from './utils/constants';
-import { pluginResponse } from './utils/plugin-response';
+import { PluginOptions } from './interfaces/plugin-options.interface.js';
+import { BASE_PLUGIN_URL } from './utils/constants.js';
+import { pluginResponse } from './utils/plugin-response.js';
 
 export async function mockPlugin(
   fastify: FastifyInstance,

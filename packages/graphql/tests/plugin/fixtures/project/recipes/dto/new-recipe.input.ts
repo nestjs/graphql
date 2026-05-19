@@ -1,5 +1,5 @@
 import { IsOptional, Length, MaxLength } from 'class-validator';
-import { InputType } from '../../../../../../lib/decorators';
+import { InputType } from '../../../../../../lib/decorators/index.js';
 
 @InputType()
 export class NewRecipeInput {

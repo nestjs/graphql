@@ -1,5 +1,5 @@
-import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { createGqlParamDecorator } from './param.utils';
+import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
+import { createGqlParamDecorator } from './param.utils.js';
 
 /**
  * Resolver method parameter decorator. Extracts the parent/root

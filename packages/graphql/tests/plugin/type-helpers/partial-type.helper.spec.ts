@@ -1,12 +1,12 @@
 import { Expose, Transform } from 'class-transformer';
 import { IsString, validate } from 'class-validator';
-import { Field, ObjectType } from '../../../lib/decorators';
-import { MetadataLoader } from '../../../lib/plugin/metadata-loader';
-import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
-import { PartialType } from '../../../lib/type-helpers';
-import { BaseType } from './fixtures/base-type.fixture';
-import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture';
-import { getValidationMetadataByTarget } from './type-helpers.test-utils';
+import { Field, ObjectType } from '../../../lib/decorators/index.js';
+import { MetadataLoader } from '../../../lib/plugin/metadata-loader.js';
+import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util.js';
+import { PartialType } from '../../../lib/type-helpers/index.js';
+import { BaseType } from './fixtures/base-type.fixture.js';
+import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture.js';
+import { getValidationMetadataByTarget } from './type-helpers.test-utils.js';
 
 @ObjectType()
 class CreateUserDto extends BaseType {

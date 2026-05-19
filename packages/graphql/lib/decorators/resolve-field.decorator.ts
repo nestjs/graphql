@@ -3,22 +3,22 @@ import {
   isFunction,
   isObject,
   isString,
-} from '@nestjs/common/utils/shared.utils';
+} from '@nestjs/common/utils/shared.utils.js';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
-} from '../graphql.constants';
-import { Complexity, FieldMiddleware } from '../interfaces';
-import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
+} from '../graphql.constants.js';
+import { Complexity, FieldMiddleware } from '../interfaces/index.js';
+import { BaseTypeOptions } from '../interfaces/base-type-options.interface.js';
 import {
   GqlTypeReference,
   ReturnTypeFunc,
-} from '../interfaces/return-type-func.interface';
-import { TypeOptions } from '../interfaces/type-options.interface';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
+} from '../interfaces/return-type-func.interface.js';
+import { TypeOptions } from '../interfaces/type-options.interface.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts.js';
 
 /**
  * Interface defining options that can be passed to `@ResolveField()` decorator.
@@ -53,8 +53,23 @@ export type ResolveFieldOptions<T = any> = BaseTypeOptions<T> & {
  *
  * @publicApi
  */
+export function ResolveField(options?: ResolveFieldOptions): MethodDecorator;
+/**
+ * Property resolver (method) Decorator.
+ *
+ * @publicApi
+ */
 export function ResolveField(
   typeFunc?: ReturnTypeFunc,
+  options?: ResolveFieldOptions,
+): MethodDecorator;
+/**
+ * Property resolver (method) Decorator.
+ *
+ * @publicApi
+ */
+export function ResolveField(
+  propertyName?: string,
   options?: ResolveFieldOptions,
 ): MethodDecorator;
 /**
@@ -73,7 +88,7 @@ export function ResolveField(
  * @publicApi
  */
 export function ResolveField(
-  propertyNameOrFunc?: string | ReturnTypeFunc,
+  propertyNameOrFunc?: string | ReturnTypeFunc | ResolveFieldOptions,
   typeFuncOrOptions?: ReturnTypeFunc | ResolveFieldOptions,
   resolveFieldOptions?: ResolveFieldOptions,
 ): MethodDecorator {

@@ -1,4 +1,4 @@
-import { ArgsParamMetadata } from '../metadata';
+import { ArgsParamMetadata } from '../metadata/index.js';
 
 export class CannotDetermineArgTypeError extends Error {
   constructor(hostType: string, param: ArgsParamMetadata) {

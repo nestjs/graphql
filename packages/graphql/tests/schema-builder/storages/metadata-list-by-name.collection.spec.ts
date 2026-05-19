@@ -1,4 +1,4 @@
-import { MetadataListByNameCollection } from '../../../lib/schema-builder/collections/';
+import { MetadataListByNameCollection } from '../../../lib/schema-builder/collections/index.js';
 
 describe('MapArrayByName', () => {
   it('should return an empty array if a name is not found', () => {

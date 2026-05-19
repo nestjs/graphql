@@ -1,4 +1,4 @@
-import { NullableList } from '../../interfaces';
+import { NullableList } from '../../interfaces/index.js';
 
 export class InvalidNullableOptionError extends Error {
   constructor(name: string, nullable?: boolean | NullableList) {

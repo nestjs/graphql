@@ -6,7 +6,7 @@ import {
   NextFn,
   ObjectType,
 } from '@nestjs/graphql';
-import { METADATA_FACTORY_NAME } from '@nestjs/graphql/plugin/plugin-constants';
+import { METADATA_FACTORY_NAME } from '@nestjs/graphql/plugin/plugin-constants.js';
 
 @InterfaceType()
 export abstract class Base {

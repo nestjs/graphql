@@ -1,12 +1,11 @@
 import { ApolloServerOptionsWithTypeDefs } from '@apollo/server';
-import { ApolloServerPluginLandingPageGraphQLPlaygroundOptions } from '@apollo/server-plugin-landing-page-graphql-playground';
 import {
   GqlModuleAsyncOptions,
   GqlModuleOptions,
   GqlOptionsFactory,
   SubscriptionConfig,
 } from '@nestjs/graphql';
-import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
 
 /**
  *  @publicApi
@@ -29,7 +28,7 @@ export interface ApolloDriverConfig
     ServerRegistration,
     GqlModuleOptions {
   /**
-   * If enabled, "subscriptions-transport-ws" will be automatically registered.
+   * If enabled, graphql-ws will be automatically registered.
    */
   installSubscriptionHandlers?: boolean;
 
@@ -39,13 +38,14 @@ export interface ApolloDriverConfig
   subscriptions?: SubscriptionConfig;
 
   /**
-   * GraphQL playground options.
-   * The built-in playground is deprecated and will be replaced with GraphiQL in the future.
+   * Deprecated boolean alias for GraphiQL.
+   * Set to `true` to enable GraphiQL, or `false` to disable the landing page.
    */
-  playground?: boolean | ApolloServerPluginLandingPageGraphQLPlaygroundOptions;
+  playground?: boolean;
 
   /**
    * GraphiQL options, or a boolean to enable GraphiQL with default options.
+   * GraphiQL is enabled by default in non-production when neither landing page option is configured.
    */
   graphiql?: boolean | GraphiQLOptions;
 

@@ -1,5 +1,5 @@
 import { ResolveField, Resolver } from '@nestjs/graphql';
-import { PostsService } from './posts.service';
+import { PostsService } from './posts.service.js';
 @Resolver('User')
 export class UsersResolvers {
   constructor(private readonly postsService: PostsService) {}

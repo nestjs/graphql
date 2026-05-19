@@ -5,8 +5,8 @@ import {
   PropertyDirectiveMetadata,
   PropertyExtensionsMetadata,
   ResolverClassMetadata,
-} from '../metadata';
-import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
+} from '../metadata/index.js';
+import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
 
 export interface MetadataCollectionModel {
   argumentType: ClassMetadata[];

@@ -1,3 +1,3 @@
-export * from './mercurius-federation.driver';
-export * from './mercurius-gateway.driver';
-export * from './mercurius.driver';
+export * from './mercurius-federation.driver.js';
+export * from './mercurius-gateway.driver.js';
+export * from './mercurius.driver.js';

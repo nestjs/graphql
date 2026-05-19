@@ -38,7 +38,7 @@ interface ApolloSubgraphExtensions<TContext> {
   resolveReference?: GraphQLReferenceResolver<TContext>;
 }
 
-declare module 'graphql/type/definition' {
+declare module 'graphql/type/definition.js' {
   interface GraphQLObjectTypeExtensions<_TSource = any, _TContext = any> {
     apollo?: {
       subgraph?: ApolloSubgraphExtensions<_TContext>;
@@ -102,15 +102,21 @@ export function transformSchema(
         fields: () => replaceFields(config.fields),
       });
 
-      if (type.extensions?.apollo?.subgraph?.resolveReference) {
+      const typeApolloExtensions = type.extensions?.apollo as
+        | { subgraph?: ApolloSubgraphExtensions<unknown> }
+        | undefined;
+      const objectApolloExtensions = objectType.extensions?.apollo as
+        | { subgraph?: ApolloSubgraphExtensions<unknown> }
+        | undefined;
+
+      if (typeApolloExtensions?.subgraph?.resolveReference) {
         objectType.extensions = {
           ...objectType.extensions,
           apollo: {
-            ...objectType.extensions.apollo,
+            ...objectApolloExtensions,
             subgraph: {
-              ...objectType.extensions.apollo.subgraph,
-              resolveReference:
-                type.extensions.apollo.subgraph.resolveReference,
+              ...objectApolloExtensions?.subgraph,
+              resolveReference: typeApolloExtensions.subgraph.resolveReference,
             },
           },
         };

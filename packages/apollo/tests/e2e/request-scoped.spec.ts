@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { Guard } from '../graphql/hello/guards/request-scoped.guard';
-import { HelloModule } from '../graphql/hello/hello.module';
-import { HelloResolver } from '../graphql/hello/hello.resolver';
-import { Interceptor } from '../graphql/hello/interceptors/logging.interceptor';
-import { UsersService } from '../graphql/hello/users/users.service';
+import { Guard } from '../graphql/hello/guards/request-scoped.guard.js';
+import { HelloModule } from '../graphql/hello/hello.module.js';
+import { HelloResolver } from '../graphql/hello/hello.resolver.js';
+import { Interceptor } from '../graphql/hello/interceptors/logging.interceptor.js';
+import { UsersService } from '../graphql/hello/users/users.service.js';
 
 class Meta {
   static COUNTER = 0;

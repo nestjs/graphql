@@ -1,5 +1,5 @@
-import { ResolveTypeFn } from '../../interfaces';
-import { ClassMetadata } from './class.metadata';
+import { ResolveTypeFn } from '../../interfaces/index.js';
+import { ClassMetadata } from './class.metadata.js';
 
 export interface InterfaceMetadata extends ClassMetadata {
   resolveType?: ResolveTypeFn;

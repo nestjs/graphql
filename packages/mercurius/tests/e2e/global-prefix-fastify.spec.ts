@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { GlobalPrefixModule } from '../graphql/global-prefix.module';
+import { GlobalPrefixModule } from '../graphql/global-prefix.module.js';
 
 describe('GraphQL Fastify (global prefix)', () => {
   let app: INestApplication;

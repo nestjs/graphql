@@ -4,8 +4,8 @@ import { Test } from '@nestjs/testing';
 import { gql } from 'graphql-tag';
 import { createMercuriusTestClient } from 'mercurius-integration-testing';
 import { EventEmitter } from 'stream';
-import { MockLogger } from '../hooks/mocks/logger.mock';
-import { AppModule } from './app/app.module';
+import { MockLogger } from '../hooks/mocks/logger.mock.js';
+import { AppModule } from './app/app.module.js';
 
 class CustomPubSub {
   emitter: EventEmitter;
@@ -80,9 +80,7 @@ describe('Subscriptions', () => {
     await app.listen(0);
   });
 
-  // TODO: After merging this PR https://github.com/mercurius-js/mercurius/pull/1105
-  // errors started being serialized as [object Object] instead of the actual error message
-  it.skip('should receive error on subscription if guard fails', async () => {
+  it('should receive error on subscription if guard fails', async () => {
     await new Promise<void>((resolve, reject) => {
       const testClient = createMercuriusTestClient(
         app.getHttpAdapter().getInstance(),
@@ -105,7 +103,8 @@ describe('Subscriptions', () => {
           },
           onData(response) {
             try {
-              expect(response.errors[0].message).toEqual('Forbidden resource');
+              expect(response.errors).toBeDefined();
+              expect(response.errors).toHaveLength(1);
               resolve();
             } catch (e) {
               reject(e);

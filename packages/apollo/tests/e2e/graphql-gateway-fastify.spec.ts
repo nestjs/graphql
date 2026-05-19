@@ -3,10 +3,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { ApolloGatewayDriver } from '../../lib/drivers';
-import { getSupergraphSdl } from '../graphql-federation/gateway/supergraph-sdl';
-import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module';
-import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module';
+import { ApolloGatewayDriver } from '../../lib/drivers/index.js';
+import { getSupergraphSdl } from '../graphql-federation/gateway/supergraph-sdl.js';
+import { AppModule as PostsModule } from '../graphql-federation/posts-service/federation-posts.module.js';
+import { AppModule as UsersModule } from '../graphql-federation/users-service/federation-users.module.js';
 
 describe('GraphQL Gateway with fastify', () => {
   let postsApp: INestApplication;

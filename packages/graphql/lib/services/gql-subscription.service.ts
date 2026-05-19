@@ -9,11 +9,6 @@ import {
   ServerOptions,
 } from 'graphql-ws';
 import { useServer } from 'graphql-ws/use/ws';
-import {
-  GRAPHQL_WS,
-  SubscriptionServer,
-  ServerOptions as SubscriptionTransportWsServerOptions,
-} from 'subscriptions-transport-ws';
 import { WebSocketServer } from 'ws';
 
 export type GraphQLWsSubscriptionsConfig = Partial<
@@ -30,18 +25,8 @@ export type GraphQLWsSubscriptionsConfig = Partial<
   path?: string;
 };
 
-export type GraphQLSubscriptionTransportWsConfig = Partial<
-  Pick<
-    SubscriptionTransportWsServerOptions,
-    'onConnect' | 'onDisconnect' | 'onOperation' | 'keepAlive'
-  >
-> & {
-  path?: string;
-};
-
 export type SubscriptionConfig = {
   'graphql-ws'?: GraphQLWsSubscriptionsConfig | boolean;
-  'subscriptions-transport-ws'?: GraphQLSubscriptionTransportWsConfig | boolean;
 };
 
 export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
@@ -54,9 +39,7 @@ export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
 
 export class GqlSubscriptionService {
   private readonly wss: WebSocketServer;
-  private readonly subTransWs: WebSocketServer;
   private wsGqlDisposable: Disposable;
-  private subServer: SubscriptionServer;
 
   constructor(
     private readonly options: GqlSubscriptionServiceOptions,
@@ -68,27 +51,16 @@ export class GqlSubscriptionService {
         this.options.path,
       noServer: true,
     });
-    this.subTransWs = new WebSocketServer({
-      path:
-        (
-          this.options[
-            'subscriptions-transport-ws'
-          ] as GraphQLSubscriptionTransportWsConfig
-        )?.path ?? this.options.path,
-      noServer: true,
-    });
     this.initialize();
   }
 
   private initialize() {
-    const supportedProtocols = [];
     const { execute = graphqlExecute, subscribe = graphqlSubscribe } =
       this.options;
 
     if ('graphql-ws' in this.options) {
       const graphqlWsOptions =
         this.options['graphql-ws'] === true ? {} : this.options['graphql-ws'];
-      supportedProtocols.push(GRAPHQL_TRANSPORT_WS_PROTOCOL);
       this.wsGqlDisposable = useServer(
         {
           schema: this.options.schema,
@@ -101,24 +73,6 @@ export class GqlSubscriptionService {
       );
     }
 
-    if ('subscriptions-transport-ws' in this.options) {
-      const subscriptionsWsOptions =
-        this.options['subscriptions-transport-ws'] === true
-          ? {}
-          : this.options['subscriptions-transport-ws'];
-
-      supportedProtocols.push(GRAPHQL_WS);
-      this.subServer = SubscriptionServer.create(
-        {
-          schema: this.options.schema,
-          execute,
-          subscribe,
-          ...subscriptionsWsOptions,
-        },
-        this.subTransWs,
-      );
-    }
-
     this.httpServer.on('upgrade', (req, socket, head) => {
       const protocol = req.headers['sec-websocket-protocol'] as
         | string
@@ -128,15 +82,12 @@ export class GqlSubscriptionService {
         ? protocol
         : protocol?.split(',').map((p) => p.trim());
 
-      protocols = protocols?.filter((protocol) =>
-        supportedProtocols.includes(protocol),
+      protocols = protocols?.filter(
+        (supportedProtocol) =>
+          supportedProtocol === GRAPHQL_TRANSPORT_WS_PROTOCOL,
       );
 
-      const wss =
-        protocols?.includes(GRAPHQL_WS) && // subscriptions-transport-ws subprotocol
-        !protocols.includes(GRAPHQL_TRANSPORT_WS_PROTOCOL) // graphql-ws subprotocol
-          ? this.subTransWs
-          : this.wss;
+      const wss = this.wss;
 
       if (req.url?.startsWith(wss.options.path)) {
         wss.handleUpgrade(req, socket, head, (ws) => {
@@ -148,6 +99,5 @@ export class GqlSubscriptionService {
 
   async stop() {
     await this.wsGqlDisposable?.dispose();
-    this.subServer?.close();
   }
 }

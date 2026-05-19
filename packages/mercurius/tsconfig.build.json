@@ -3,6 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./lib",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "@nestjs/graphql": ["../graphql/lib"],
       "@nestjs/graphql/*": ["../graphql/lib/*"],

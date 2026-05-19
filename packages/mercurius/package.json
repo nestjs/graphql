@@ -4,6 +4,7 @@
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -38,9 +39,9 @@
   "devDependencies": {
     "@mercuriusjs/federation": "5.1.1",
     "@mercuriusjs/gateway": "5.2.0",
-    "@nestjs/common": "11.1.19",
-    "@nestjs/platform-fastify": "11.1.19",
-    "@nestjs/testing": "11.1.19",
+    "@nestjs/common": "next",
+    "@nestjs/platform-fastify": "next",
+    "@nestjs/testing": "next",
     "fastify": "5.8.5",
     "mercurius": "16.9.0",
     "mercurius-integration-testing": "9.0.1"
@@ -49,7 +50,7 @@
     "@apollo/subgraph": "^2.0.0",
     "@mercuriusjs/federation": "^5.0.0",
     "@mercuriusjs/gateway": "^5.0.0",
-    "@nestjs/common": "^11.0.1",
+    "@nestjs/common": "next",
     "@nestjs/graphql": "^13.0.0",
     "fastify": "^5.2.1",
     "graphql": "^16.10.0",

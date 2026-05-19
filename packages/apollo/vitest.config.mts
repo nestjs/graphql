@@ -6,12 +6,12 @@ export default defineConfig({
     alias: [
       {
         find: /^@nestjs\/graphql(\/.*)?$/,
-        replacement: path.resolve(__dirname, '../graphql/lib') + '$1',
+        replacement: path.resolve(import.meta.dirname, '../graphql/lib') + '$1',
       },
       {
         find: 'graphql',
         replacement: path.resolve(
-          __dirname,
+          import.meta.dirname,
           '../../node_modules/graphql/index.js',
         ),
       },

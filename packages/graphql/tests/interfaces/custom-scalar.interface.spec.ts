@@ -1,6 +1,6 @@
 import { Kind, ValueNode } from 'graphql';
 import { expectTypeOf } from 'vitest';
-import { CustomScalar } from '../../lib/interfaces';
+import { CustomScalar } from '../../lib/interfaces/index.js';
 
 describe('CustomScalar', () => {
   it('should allow parseLiteral, parseValue and serialize to return null or undefined', () => {

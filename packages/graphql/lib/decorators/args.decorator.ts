@@ -3,15 +3,15 @@ import {
   isFunction,
   isObject,
   isString,
-} from '@nestjs/common/utils/shared.utils';
+} from '@nestjs/common/utils/shared.utils.js';
 import 'reflect-metadata';
-import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { BaseTypeOptions } from '../interfaces';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { isPipe } from '../utils/is-pipe.util';
-import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
-import { addPipesMetadata } from './param.utils';
+import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
+import { BaseTypeOptions } from '../interfaces/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { isPipe } from '../utils/is-pipe.util.js';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts.js';
+import { addPipesMetadata } from './param.utils.js';
 
 /**
  * Interface defining options that can be passed to `@Args()` decorator.

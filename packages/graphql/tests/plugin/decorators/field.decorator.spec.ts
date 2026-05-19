@@ -1,4 +1,4 @@
-import { Field } from '../../../lib/decorators';
+import { Field } from '../../../lib/decorators/index.js';
 
 class Inner {
   test: string;

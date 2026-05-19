@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriverConfig } from '../../lib';
-import { ApolloDriver } from '../../lib/drivers';
-import { DirectionsModule } from './directions/directions.module';
-import { RecipesModule } from './recipes/recipes.module';
+import { ApolloDriverConfig } from '../../lib/index.js';
+import { ApolloDriver } from '../../lib/drivers/index.js';
+import { DirectionsModule } from './directions/directions.module.js';
+import { RecipesModule } from './recipes/recipes.module.js';
 
 @Module({
   imports: [

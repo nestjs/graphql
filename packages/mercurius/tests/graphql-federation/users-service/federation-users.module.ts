@@ -4,14 +4,14 @@ import { join } from 'path';
 import {
   MercuriusFederationDriver,
   MercuriusFederationDriverConfig,
-} from '../../../lib';
-import { UsersModule } from './users/users.module';
+} from '../../../lib/index.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
       driver: MercuriusFederationDriver,
-      typePaths: [join(__dirname, '**/*.graphql')],
+      typePaths: [join(import.meta.dirname, '**/*.graphql')],
     }),
     UsersModule,
   ],

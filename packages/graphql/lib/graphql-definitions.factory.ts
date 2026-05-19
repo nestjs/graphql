@@ -1,15 +1,15 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { isEmpty } from '@nestjs/common/utils/shared.utils';
+import { isEmpty } from '@nestjs/common/utils/shared.utils.js';
 import chokidar from 'chokidar';
-import { glob } from 'fast-glob';
+import glob from 'fast-glob';
 import { printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 import {
   DefinitionsGeneratorOptions,
   GraphQLAstExplorer,
-} from './graphql-ast.explorer';
-import { GraphQLTypesLoader } from './graphql-types.loader';
-import { extend, removeTempField } from './utils';
+} from './graphql-ast.explorer.js';
+import { GraphQLTypesLoader } from './graphql-types.loader.js';
+import { extend, removeTempField } from './utils/index.js';
 
 export type GenerateOptions = DefinitionsGeneratorOptions & {
   typePaths: string[];

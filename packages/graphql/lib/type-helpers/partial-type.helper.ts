@@ -1,5 +1,5 @@
 import { Type } from '@nestjs/common';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import {
   applyIsOptionalDecorator,
   applyValidateIfDefinedDecorator,
@@ -7,13 +7,13 @@ import {
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
-import { Field } from '../decorators';
-import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
-import { MetadataLoader } from '../plugin/metadata-loader';
-import { METADATA_FACTORY_NAME } from '../plugin/plugin-constants';
-import { PropertyMetadata } from '../schema-builder/metadata';
-import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
-import { applyFieldDecorators } from './type-helpers.utils';
+import { Field } from '../decorators/index.js';
+import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface.js';
+import { MetadataLoader } from '../plugin/metadata-loader.js';
+import { METADATA_FACTORY_NAME } from '../plugin/plugin-constants.js';
+import { PropertyMetadata } from '../schema-builder/metadata/index.js';
+import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util.js';
+import { applyFieldDecorators } from './type-helpers.utils.js';
 
 interface PartialTypeOptions {
   decorator?: ClassDecoratorFactory;

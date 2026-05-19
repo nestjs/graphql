@@ -1,5 +1,5 @@
 import { GraphQLDirective, GraphQLScalarType } from 'graphql';
-import { FieldMiddleware } from './field-middleware.interface';
+import { FieldMiddleware } from './field-middleware.interface.js';
 
 export type DateScalarMode = 'isoDate' | 'timestamp';
 export type NumberScalarMode = 'float' | 'integer';

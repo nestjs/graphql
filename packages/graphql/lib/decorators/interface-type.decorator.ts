@@ -5,13 +5,13 @@
  * To avoid numerous breaking changes, the public API is backward-compatible and may resemble "type-graphql".
  */
 
-import { isString } from '@nestjs/common/utils/shared.utils';
-import { ClassType } from '../enums/class-type.enum';
-import { ResolveTypeFn } from '../interfaces';
-import { RegisterInOption } from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
+import { ClassType } from '../enums/class-type.enum.js';
+import { ResolveTypeFn } from '../interfaces/index.js';
+import { RegisterInOption } from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util.js';
 
 /**
  * Interface defining options that can be passed to `@InterfaceType()` decorator.

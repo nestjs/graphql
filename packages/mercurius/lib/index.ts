@@ -1,2 +1,2 @@
-export * from './drivers';
-export * from './interfaces';
+export * from './drivers/index.js';
+export * from './interfaces/index.js';

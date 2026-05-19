@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
-import { PluginOptions } from '../merge-options';
-import { pluginDebugLogger } from '../plugin-debug-logger';
-import { replaceImportPath } from './plugin-utils';
+import { PluginOptions } from '../merge-options.js';
+import { pluginDebugLogger } from '../plugin-debug-logger.js';
+import { replaceImportPath } from './plugin-utils.js';
 
 export function typeReferenceToIdentifier(
   typeReferenceDescriptor: {

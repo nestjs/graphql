@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriverConfig } from '../../../lib';
-import { ApolloDriver } from '../../../lib/drivers';
-import { CustomContextResolver } from './custom-context.resolver';
+import { ApolloDriverConfig } from '../../../lib/index.js';
+import { ApolloDriver } from '../../../lib/drivers/index.js';
+import { CustomContextResolver } from './custom-context.resolver.js';
 
 @Module({
   imports: [

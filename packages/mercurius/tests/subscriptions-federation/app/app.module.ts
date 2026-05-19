@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { DynamicModule } from '@nestjs/common/interfaces';
+import { DynamicModule } from '@nestjs/common/interfaces/index.js';
 import { GraphQLModule } from '@nestjs/graphql';
 import {
   MercuriusFederationDriver,
   MercuriusFederationDriverConfig,
-} from '../../../lib';
-import { NotificationModule } from './notification.module';
+} from '../../../lib/index.js';
+import { NotificationModule } from './notification.module.js';
 
 export type AppModuleConfig = {
   context?: MercuriusFederationDriverConfig['context'];

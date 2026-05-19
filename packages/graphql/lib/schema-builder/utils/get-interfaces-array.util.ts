@@ -1,5 +1,5 @@
-import { isFunction } from '@nestjs/common/utils/shared.utils';
-import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
+import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
 
 function isNativeClass(fn: Function) {
   return (

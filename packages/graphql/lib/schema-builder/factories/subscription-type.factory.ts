@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLObjectType } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
-import { TypeMetadataStorage } from '../storages/type-metadata.storage';
-import { RootTypeFactory } from './root-type.factory';
+import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
+import { RootTypeFactory } from './root-type.factory.js';
 
 @Injectable()
 export class SubscriptionTypeFactory {

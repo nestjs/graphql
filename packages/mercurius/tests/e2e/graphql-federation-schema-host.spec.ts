@@ -3,7 +3,7 @@ import { GraphQLSchemaHost } from '@nestjs/graphql';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import { GraphQLSchema } from 'graphql';
-import { AppModule } from '../graphql-federation/posts-service/federation-posts.module';
+import { AppModule } from '../graphql-federation/posts-service/federation-posts.module.js';
 
 describe('GraphQL federation GraphQLSchemaHost using', () => {
   let app: INestApplication;

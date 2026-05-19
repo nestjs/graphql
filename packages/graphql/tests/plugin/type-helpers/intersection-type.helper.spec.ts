@@ -4,9 +4,9 @@ import {
   Field,
   IntersectionType,
   ObjectType,
-} from '../../../lib';
-import { METADATA_FACTORY_NAME } from '../../../lib/plugin/plugin-constants';
-import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
+} from '../../../lib/index.js';
+import { METADATA_FACTORY_NAME } from '../../../lib/plugin/plugin-constants.js';
+import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util.js';
 
 describe('IntersectionType', () => {
   @ObjectType()

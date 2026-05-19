@@ -1,16 +1,16 @@
 import { Type } from '@nestjs/common';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import {
   inheritPropertyInitializers,
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
-import { Field } from '../decorators';
-import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface';
-import { MetadataLoader } from '../plugin/metadata-loader';
-import { PropertyMetadata } from '../schema-builder/metadata';
-import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util';
-import { applyFieldDecorators } from './type-helpers.utils';
+import { Field } from '../decorators/index.js';
+import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface.js';
+import { MetadataLoader } from '../plugin/metadata-loader.js';
+import { PropertyMetadata } from '../schema-builder/metadata/index.js';
+import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util.js';
+import { applyFieldDecorators } from './type-helpers.utils.js';
 
 export function OmitType<T, K extends keyof T>(
   classRef: Type<T>,

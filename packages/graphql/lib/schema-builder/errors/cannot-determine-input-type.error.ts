@@ -1,4 +1,4 @@
-import { GqlTypeReference } from '../../interfaces';
+import { GqlTypeReference } from '../../interfaces/index.js';
 
 export class CannotDetermineInputTypeError extends Error {
   constructor(

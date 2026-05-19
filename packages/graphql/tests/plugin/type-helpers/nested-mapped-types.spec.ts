@@ -1,13 +1,13 @@
-import { MetadataLoader } from '../../../lib/plugin/metadata-loader';
-import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util';
+import { MetadataLoader } from '../../../lib/plugin/metadata-loader.js';
+import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util.js';
 import {
   IntersectionType,
   OmitType,
   PartialType,
   PickType,
-} from '../../../lib/type-helpers';
-import { CreateUserDto } from './fixtures/create-user-dto.fixture';
-import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture';
+} from '../../../lib/type-helpers/index.js';
+import { CreateUserDto } from './fixtures/create-user-dto.fixture.js';
+import { SERIALIZED_METADATA } from './fixtures/serialized-metadata.fixture.js';
 
 // Regression coverage for issue #3313 — when mapped type helpers are nested
 // (e.g. PartialType(OmitType(...))) the SWC plugin's metadata refresh hooks

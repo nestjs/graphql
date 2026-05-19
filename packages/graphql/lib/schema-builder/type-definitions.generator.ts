@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { BuildSchemaOptions } from '../interfaces';
-import { ClassMetadata, EnumMetadata, UnionMetadata } from './metadata';
-import { InterfaceMetadata } from './metadata/interface.metadata';
-import { ObjectTypeMetadata } from './metadata/object-type.metadata';
-import { EnumDefinitionFactory } from './factories/enum-definition.factory';
-import { InputTypeDefinitionFactory } from './factories/input-type-definition.factory';
-import { InterfaceDefinitionFactory } from './factories/interface-definition.factory';
-import { ObjectTypeDefinitionFactory } from './factories/object-type-definition.factory';
-import { UnionDefinitionFactory } from './factories/union-definition.factory';
-import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
-import { TypeMetadataStorage } from './storages/type-metadata.storage';
+import { BuildSchemaOptions } from '../interfaces/index.js';
+import {
+  ClassMetadata,
+  EnumMetadata,
+  UnionMetadata,
+} from './metadata/index.js';
+import { InterfaceMetadata } from './metadata/interface.metadata.js';
+import { ObjectTypeMetadata } from './metadata/object-type.metadata.js';
+import { EnumDefinitionFactory } from './factories/enum-definition.factory.js';
+import { InputTypeDefinitionFactory } from './factories/input-type-definition.factory.js';
+import { InterfaceDefinitionFactory } from './factories/interface-definition.factory.js';
+import { ObjectTypeDefinitionFactory } from './factories/object-type-definition.factory.js';
+import { UnionDefinitionFactory } from './factories/union-definition.factory.js';
+import { TypeDefinitionsStorage } from './storages/type-definitions.storage.js';
+import { TypeMetadataStorage } from './storages/type-metadata.storage.js';
 
 @Injectable()
 export class TypeDefinitionsGenerator {

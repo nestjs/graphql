@@ -1,7 +1,7 @@
 import { PipeTransform, Type } from '@nestjs/common';
 import 'reflect-metadata';
-import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { createGqlPipesParamDecorator } from './param.utils';
+import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
+import { createGqlPipesParamDecorator } from './param.utils.js';
 
 /**
  * Resolver method parameter decorator. Extracts the `Info`

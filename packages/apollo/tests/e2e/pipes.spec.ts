@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { ApplicationModule } from '../code-first/app.module';
+import { ApplicationModule } from '../code-first/app.module.js';
 
 describe('GraphQL - Pipes', () => {
   let app: INestApplication;

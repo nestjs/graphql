@@ -1,6 +1,6 @@
 import { Args, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { Notification } from './notification';
+import { Notification } from './notification.js';
 
 export const pubSub = new PubSub();
 

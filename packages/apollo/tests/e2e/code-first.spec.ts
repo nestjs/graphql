@@ -3,9 +3,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
-import { ApolloDriver } from '../../lib';
-import { ApplicationModule } from '../code-first/app.module';
-import { expectSingleResult } from '../utils/assertion-utils';
+import { ApolloDriver } from '../../lib/index.js';
+import { ApplicationModule } from '../code-first/app.module.js';
+import { expectSingleResult } from '../utils/assertion-utils.js';
 
 describe('Code-first', () => {
   let app: INestApplication;

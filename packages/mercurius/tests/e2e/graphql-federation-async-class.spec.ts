@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from '../graphql-federation/users-service/federation-users.async-class.module';
+import { AppModule } from '../graphql-federation/users-service/federation-users.async-class.module.js';
 
 describe('GraphQL Federation async-class', () => {
   let app: INestApplication;

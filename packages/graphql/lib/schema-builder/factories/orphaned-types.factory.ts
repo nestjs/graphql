@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLNamedType } from 'graphql';
-import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
-import { getInterfacesArray } from '../utils/get-interfaces-array.util';
-import { ObjectTypeDefinition } from './object-type-definition.factory';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
+import { getInterfacesArray } from '../utils/get-interfaces-array.util.js';
+import { ObjectTypeDefinition } from './object-type-definition.factory.js';
 
 @Injectable()
 export class OrphanedTypesFactory {

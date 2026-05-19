@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusFederationDriver } from '../../../lib/drivers';
-import { ConfigModule } from './config/config.module';
-import { ConfigService } from './config/config.service';
-import { UsersModule } from './users/users.module';
+import { MercuriusFederationDriver } from '../../../lib/drivers/index.js';
+import { ConfigModule } from './config/config.module.js';
+import { ConfigService } from './config/config.service.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [

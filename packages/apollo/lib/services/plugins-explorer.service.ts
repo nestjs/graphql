@@ -1,7 +1,7 @@
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { ModulesContainer } from '@nestjs/core/injector/modules-container';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
+import { ModulesContainer } from '@nestjs/core/injector/modules-container.js';
 import { BaseExplorerService, GqlModuleOptions } from '@nestjs/graphql';
-import { PLUGIN_METADATA } from '../constants';
+import { PLUGIN_METADATA } from '../constants/index.js';
 
 export class PluginsExplorerService extends BaseExplorerService {
   constructor(private readonly modulesContainer: ModulesContainer) {

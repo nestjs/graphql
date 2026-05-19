@@ -1,6 +1,6 @@
-import { applyFieldDecorators } from '../../lib/type-helpers/type-helpers.utils';
-import { TypeMetadataStorage } from '../../lib';
-import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage';
+import { applyFieldDecorators } from '../../lib/type-helpers/type-helpers.utils.js';
+import { TypeMetadataStorage } from '../../lib/index.js';
+import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 class Holder {
   field: string;

@@ -3,7 +3,8 @@
  * https://github.com/mercurius-js/mercurius/blob/master/lib/federation.js
  *
  */
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
+import { MER_ERR_GQL_GATEWAY_INVALID_SCHEMA } from '@mercuriusjs/gateway/lib/errors.js';
+import { loadPackageSync } from '@nestjs/common/utils/load-package.util.js';
 import {
   extendSchema,
   GraphQLObjectType,
@@ -11,7 +12,6 @@ import {
   isObjectType,
   parse,
 } from 'graphql';
-import { MER_ERR_GQL_GATEWAY_INVALID_SCHEMA } from 'mercurius/lib/errors';
 
 const BASE_FEDERATION_TYPES = `
   scalar _Any
@@ -68,7 +68,7 @@ function addTypeNameToResult(result, typename) {
 export function transformFederatedSchema(schema: GraphQLSchema) {
   // FIXME remove this dependency
   // but graphql#printSchema does not print necessary federation directives
-  const { printSubgraphSchema } = loadPackage(
+  const { printSubgraphSchema } = loadPackageSync(
     '@apollo/subgraph',
     'FederationFactory',
     () => require('@apollo/subgraph'),

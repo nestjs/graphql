@@ -4,15 +4,15 @@ import { join } from 'path';
 import {
   MercuriusFederationDriver,
   MercuriusFederationDriverConfig,
-} from '../../../lib';
-import { PostsModule } from './posts/posts.module';
-import { upperDirectiveTransformer } from './posts/upper.directive';
+} from '../../../lib/index.js';
+import { PostsModule } from './posts/posts.module.js';
+import { upperDirectiveTransformer } from './posts/upper.directive.js';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<MercuriusFederationDriverConfig>({
       driver: MercuriusFederationDriver,
-      typePaths: [join(__dirname, '**/*.graphql')],
+      typePaths: [join(import.meta.dirname, '**/*.graphql')],
       transformSchema: (schema) => upperDirectiveTransformer(schema, 'upper'),
     }),
     PostsModule,

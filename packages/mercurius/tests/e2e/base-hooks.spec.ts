@@ -2,9 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import request from 'supertest';
-import { HOOKS_INVOCATIONS } from '../hooks/base/graphql.config';
-import { ApplicationModule } from '../hooks/base/hooks.module';
-import { MockLogger } from '../hooks/mocks/logger.mock';
+import { HOOKS_INVOCATIONS } from '../hooks/base/graphql.config.js';
+import { ApplicationModule } from '../hooks/base/hooks.module.js';
+import { MockLogger } from '../hooks/mocks/logger.mock.js';
 
 describe('Base hooks', () => {
   let app: INestApplication;

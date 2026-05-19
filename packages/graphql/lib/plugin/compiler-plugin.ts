@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
-import { mergePluginOptions } from './merge-options';
-import { isFilenameMatched } from './utils/is-filename-matched.util';
-import { ModelClassVisitor } from './visitors/model-class.visitor';
+import { mergePluginOptions } from './merge-options.js';
+import { isFilenameMatched } from './utils/is-filename-matched.util.js';
+import { ModelClassVisitor } from './visitors/model-class.visitor.js';
 
 const typeClassVisitor = new ModelClassVisitor();
 

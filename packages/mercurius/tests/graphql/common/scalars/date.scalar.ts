@@ -1,5 +1,5 @@
 import { Kind } from 'graphql';
-import { Scalar } from '../../../../lib';
+import { Scalar } from '../../../../lib/index.js';
 
 @Scalar('Date')
 export class DateScalar {

@@ -1,8 +1,8 @@
-import { ClassType } from '../enums/class-type.enum';
-import { RegisterInOption } from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
+import { ClassType } from '../enums/class-type.enum.js';
+import { RegisterInOption } from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util.js';
 
 /**
  * Interface defining options that can be passed to `@ArgsType()` decorator.

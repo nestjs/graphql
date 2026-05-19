@@ -1,4 +1,4 @@
-import { TypeDefsFederation2Decorator } from '../lib/federation/type-defs-federation2.decorator';
+import { TypeDefsFederation2Decorator } from '../lib/federation/type-defs-federation2.decorator.js';
 
 describe('TypeDefsFederation2Decorator', () => {
   let decorator: TypeDefsFederation2Decorator;

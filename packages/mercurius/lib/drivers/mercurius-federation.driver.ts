@@ -7,12 +7,10 @@ import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { GraphQLSchema, printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
-import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface';
-import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util';
-import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util';
-import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util';
-// TODO:
-// const { mercuriusFederationPlugin } = require('@mercuriusjs/federation');
+import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface.js';
+import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util.js';
+import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
+import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
 
 /**
  * @publicApi
@@ -51,7 +49,8 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
       throw new Error(`No support for current HttpAdapter: ${platformName}`);
     }
     const app = httpAdapter.getInstance<FastifyInstance>();
-    // TODO: replace with mercuriusFederationPlugin
+    // The federation plugin only accepts SDL/DocumentNode input, while this
+    // driver passes a fully-built GraphQLSchema produced by Nest's federation factory.
     await app.register(mercurius, {
       ...adapterOptions,
     });

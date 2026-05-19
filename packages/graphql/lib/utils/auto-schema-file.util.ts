@@ -1,5 +1,5 @@
-import { isObject, isString } from '@nestjs/common/utils/shared.utils';
-import { AutoSchemaFileValue } from '../interfaces';
+import { isObject, isString } from '@nestjs/common/utils/shared.utils.js';
+import { AutoSchemaFileValue } from '../interfaces/index.js';
 
 export function getPathForAutoSchemaFile(
   autoSchemaFile: AutoSchemaFileValue,

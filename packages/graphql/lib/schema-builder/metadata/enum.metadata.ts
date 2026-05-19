@@ -1,4 +1,4 @@
-import { RegisterInOption } from './class.metadata';
+import { RegisterInOption } from './class.metadata.js';
 
 export interface EnumMetadataValuesMapOptions {
   deprecationReason?: string;

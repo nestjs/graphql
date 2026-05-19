@@ -1,5 +1,5 @@
 import { flatten, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 
 const NO_TARGET_METADATA = Symbol('NO_TARGET_METADATA');
 const FIELD_LAZY_METADATA = Symbol('FIELD_LAZY_METADATA');

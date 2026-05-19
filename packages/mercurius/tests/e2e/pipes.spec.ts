@@ -2,7 +2,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import mercurius from 'mercurius';
-import { ApplicationModule } from '../code-first/app.module';
+import { ApplicationModule } from '../code-first/app.module.js';
 
 describe('GraphQL - Pipes', () => {
   let app: INestApplication;

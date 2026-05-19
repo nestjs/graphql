@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusGatewayDriver } from '../../../lib/drivers';
-import { MercuriusGatewayDriverConfig } from '../../../lib/interfaces/mercurius-gateway-driver-config.interface';
+import { MercuriusGatewayDriver } from '../../../lib/drivers/index.js';
+import { MercuriusGatewayDriverConfig } from '../../../lib/interfaces/mercurius-gateway-driver-config.interface.js';
 
 @Module({
   imports: [
@@ -9,9 +9,9 @@ import { MercuriusGatewayDriverConfig } from '../../../lib/interfaces/mercurius-
       driver: MercuriusGatewayDriver,
       gateway: {
         services: [
-          { name: 'recipes', url: 'http://localhost:3011/graphql' },
-          { name: 'posts', url: 'http://localhost:3012/graphql' },
-          { name: 'users', url: 'http://localhost:3013/graphql' },
+          { name: 'recipes', url: 'http://localhost:3211/graphql' },
+          { name: 'posts', url: 'http://localhost:3212/graphql' },
+          { name: 'users', url: 'http://localhost:3213/graphql' },
         ],
       },
     }),

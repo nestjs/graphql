@@ -1,2 +1,2 @@
-export * from './graphql-federation-definitions.factory';
-export * from './graphql-federation.factory';
+export * from './graphql-federation-definitions.factory.js';
+export * from './graphql-federation.factory.js';

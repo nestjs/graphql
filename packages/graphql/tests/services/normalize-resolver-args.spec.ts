@@ -1,4 +1,4 @@
-import { normalizeResolverArgs } from '../../lib/utils/normalize-resolver-args';
+import { normalizeResolverArgs } from '../../lib/utils/normalize-resolver-args.js';
 
 describe('normalizeResolverArgs', () => {
   describe('standard resolver arguments (4 args)', () => {

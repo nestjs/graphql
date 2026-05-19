@@ -3,9 +3,9 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { GlobalPrefixAsyncOptionsClassModule } from '../graphql/global-prefix-async-options-class.module';
-import { GlobalPrefixAsyncOptionsModule } from '../graphql/global-prefix-async-options.module';
-import { GlobalPrefixModule } from '../graphql/global-prefix.module';
+import { GlobalPrefixAsyncOptionsClassModule } from '../graphql/global-prefix-async-options-class.module.js';
+import { GlobalPrefixAsyncOptionsModule } from '../graphql/global-prefix-async-options.module.js';
+import { GlobalPrefixModule } from '../graphql/global-prefix.module.js';
 
 describe('GraphQL (global prefix)', () => {
   let app: INestApplication;

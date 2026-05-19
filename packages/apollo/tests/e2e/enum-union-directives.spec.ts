@@ -18,7 +18,7 @@ import { gql } from 'graphql-tag';
 import {
   ApolloFederationDriver,
   ApolloFederationDriverConfig,
-} from '../../lib';
+} from '../../lib/index.js';
 
 enum Visibility {
   PUBLIC = 'PUBLIC',

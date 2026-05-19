@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { MercuriusHooksObject } from '../interfaces/mercurius-hook.interface';
-import { isArray, isNull, isUndefined } from './validation.util';
+import { MercuriusHooksObject } from '../interfaces/mercurius-hook.interface.js';
+import { isArray, isNull, isUndefined } from './validation.util.js';
 
 export function registerMercuriusHooks(
   app: FastifyInstance,

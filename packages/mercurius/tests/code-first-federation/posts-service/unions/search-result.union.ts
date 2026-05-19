@@ -1,6 +1,6 @@
 import { createUnionType } from '@nestjs/graphql';
-import { Post } from '../posts/post.entity';
-import { User } from '../users/user.entity';
+import { Post } from '../posts/post.entity.js';
+import { User } from '../users/user.entity.js';
 
 export const FederationSearchResultUnion = createUnionType({
   name: 'FederationSearchResultUnion',

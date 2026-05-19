@@ -1,6 +1,6 @@
 import { Kind, ValueNode } from 'graphql';
-import { Scalar } from '../../../../../../lib/decorators';
-import { CustomScalar } from '../../../../../../lib/interfaces';
+import { Scalar } from '../../../../../../lib/decorators/index.js';
+import { CustomScalar } from '../../../../../../lib/interfaces/index.js';
 
 @Scalar('Date', (type) => Date)
 export class DateScalar implements CustomScalar<number, Date> {

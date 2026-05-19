@@ -1,4 +1,4 @@
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 
 export class UndefinedTypeError extends Error {
   constructor(name: string, key: string, index?: number) {

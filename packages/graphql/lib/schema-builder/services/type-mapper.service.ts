@@ -1,5 +1,5 @@
 import { Injectable, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -15,11 +15,11 @@ import {
   GqlTypeReference,
   NumberScalarMode,
   ScalarsTypeMap,
-} from '../../interfaces';
-import { TypeOptions } from '../../interfaces/type-options.interface';
-import { GraphQLISODateTime, GraphQLTimestamp } from '../../scalars';
-import { DefaultNullableConflictError } from '../errors/default-nullable-conflict.error';
-import { InvalidNullableOptionError } from '../errors/invalid-nullable-option.error';
+} from '../../interfaces/index.js';
+import { TypeOptions } from '../../interfaces/type-options.interface.js';
+import { GraphQLISODateTime, GraphQLTimestamp } from '../../scalars/index.js';
+import { DefaultNullableConflictError } from '../errors/default-nullable-conflict.error.js';
+import { InvalidNullableOptionError } from '../errors/invalid-nullable-option.error.js';
 
 @Injectable()
 export class TypeMapperService {
