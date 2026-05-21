@@ -36,9 +36,9 @@
     uuid "^9.0.0"
 
 "@apollo/federation-internals@^2.2.3":
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.9.3.tgz#c6fa913dd10c74c0e0fffd6a7b369923b2a5d665"
-  integrity sha512-r50Ykc331CZUw4TxpcqprAZOlGkbzoHEiHObUqUhQopTx8i0aXNt+0pc3nzqUAoT9OD83yJqPJV1EiZF2vCupQ==
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/@apollo/federation-internals/-/federation-internals-2.14.0.tgz#6bb5c9b229ee9375921e75152c3c1ea046bf16eb"
+  integrity sha512-Kw1vfyTU3oG38HkmYym+QGtebdTg1fcEfsjdIjJFKQXgYa/fTwr+NZcfT4FHli8ws9WNvCp+f5pUuklM2e9OHQ==
   dependencies:
     "@types/uuid" "^9.0.0"
     chalk "^4.1.0"
