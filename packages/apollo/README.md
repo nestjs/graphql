@@ -32,10 +32,10 @@ If you are using `express` HTTP engine, install the following packages:
 $ npm i --save @nestjs/graphql @nestjs/apollo apollo-server-express graphql
 ```
 
-In case of `fastify`, you should install `apollo-server-fastify` instead.
+In case of `fastify`, install the Apollo fastify adapter package from the `@as-integrations` namespace.
 
 ```bash
-$ npm i --save @nestjs/graphql @nestjs/apollo apollo-server-fastify graphql
+$ npm i --save @nestjs/graphql @nestjs/apollo fastify @as-integrations/fastify graphql
 ```
 
 ## Quick Start
