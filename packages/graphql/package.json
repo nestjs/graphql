@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "13.4.0",
+  "version": "14.0.0-next.0",
   "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
@@ -44,12 +44,12 @@
     "test:e2e:dev": "vitest watch"
   },
   "dependencies": {
-    "es-toolkit": "1.39.3",
     "@graphql-tools/merge": "9.1.9",
     "@graphql-tools/schema": "10.0.33",
     "@graphql-tools/utils": "11.1.0",
     "@nestjs/mapped-types": "2.1.1",
     "chokidar": "4.0.3",
+    "es-toolkit": "1.39.3",
     "fast-glob": "3.3.3",
     "graphql-tag": "2.12.6",
     "graphql-ws": "6.0.8",
