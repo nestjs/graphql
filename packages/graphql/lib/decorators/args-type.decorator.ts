@@ -1,3 +1,4 @@
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 import { ClassType } from '../enums/class-type.enum.js';
 import { RegisterInOption } from '../schema-builder/metadata/index.js';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
@@ -36,10 +37,26 @@ export function ArgsType(options: ArgsTypeOptions): ClassDecorator;
  *
  * @publicApi
  */
-export function ArgsType(options?: ArgsTypeOptions): ClassDecorator {
+export function ArgsType(
+  name: string,
+  options?: ArgsTypeOptions,
+): ClassDecorator;
+/**
+ * Decorator that marks a class as a resolver arguments type.
+ *
+ * @publicApi
+ */
+export function ArgsType(
+  nameOrOptions?: string | ArgsTypeOptions,
+  argsTypeOptions?: ArgsTypeOptions,
+): ClassDecorator {
+  const [name, options = {}] = isString(nameOrOptions)
+    ? [nameOrOptions, argsTypeOptions]
+    : [undefined, nameOrOptions];
+
   return (target: Function) => {
     const metadata = {
-      name: target.name,
+      name: name || target.name,
       target,
       registerIn: options?.registerIn,
     };
