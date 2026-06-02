@@ -6,6 +6,7 @@
 // any additional configuration.
 /* eslint @typescript-eslint/no-empty-function: 0 */
 import {
+  ArgsTypeOptions,
   FieldOptions,
   InputTypeOptions,
   InterfaceTypeOptions,
@@ -22,7 +23,10 @@ import * as typeFactories from '../type-factories/index.js';
 //     }
 // }
 
-export function ArgsType(): ClassDecorator {
+export function ArgsType(
+  nameOrOptions?: string | ArgsTypeOptions,
+  argsTypeOptions?: ArgsTypeOptions,
+): ClassDecorator {
   return (target: Function) => {};
 }
 
