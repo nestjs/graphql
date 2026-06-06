@@ -26,10 +26,9 @@ export class ApolloGatewayDriver extends ApolloBaseDriver<ApolloGatewayDriverCon
       this.pluginsExplorerService.explore(options),
     );
 
-    const { ApolloGateway } = loadPackage(
+    const { ApolloGateway } = await loadPackage(
       '@apollo/gateway',
       'ApolloGateway',
-      () => require('@apollo/gateway'),
     );
     const {
       server: serverOpts = {},
