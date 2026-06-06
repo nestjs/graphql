@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import lodash from 'lodash';
 import * as util from 'util';
 
-const normalize = require('normalize-path');
+import normalize from 'normalize-path';
 const readFile = util.promisify(fs.readFile);
 const { flatten } = lodash;
 

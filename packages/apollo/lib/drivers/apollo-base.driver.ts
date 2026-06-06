@@ -145,7 +145,7 @@ export abstract class ApolloBaseDriver<
     const { expressMiddleware } = loadPackage(
       '@as-integrations/express5',
       'GraphQLModule',
-      () => require('@as-integrations/express5'),
+      () => import('@as-integrations/express5'),
     );
 
     const { path, typeDefs, resolvers, schema } = options;
@@ -198,7 +198,7 @@ export abstract class ApolloBaseDriver<
     const { fastifyApolloDrainPlugin, fastifyApolloHandler } = loadPackage(
       '@as-integrations/fastify',
       'GraphQLModule',
-      () => require('@as-integrations/fastify'),
+      () => import('@as-integrations/fastify'),
     );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
