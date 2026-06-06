@@ -5,8 +5,7 @@ import {
 } from '@apollo/server/errors';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import { HttpStatus } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { HttpStatus, Logger } from '@nestjs/common';
 import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
@@ -15,6 +14,9 @@ import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin
 import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
 import { ApolloDriverConfig } from '../interfaces/index.js';
 import { createAsyncIterator } from '../utils/async-iterator.util.js';
+
+const MISSING_REQUIRED_DEPENDENCY = (name: string, reason: string) =>
+  `The "${name}" package is missing. Please, make sure to install it to use ${reason}.`;
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
@@ -142,11 +144,13 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { expressMiddleware } = loadPackage(
-      '@as-integrations/express5',
-      'GraphQLModule',
-      () => require('@as-integrations/express5'),
-    );
+    let expressMiddleware: Function;
+    try {
+      ({ expressMiddleware } = await import('@as-integrations/express5'));
+    } catch {
+      Logger.error(MISSING_REQUIRED_DEPENDENCY('@as-integrations/express5', 'GraphQLModule'), 'GraphQLModule');
+      process.exit(1);
+    }
 
     const { path, typeDefs, resolvers, schema } = options;
 
@@ -195,11 +199,16 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { fastifyApolloDrainPlugin, fastifyApolloHandler } = loadPackage(
-      '@as-integrations/fastify',
-      'GraphQLModule',
-      () => require('@as-integrations/fastify'),
-    );
+    let fastifyApolloDrainPlugin: Function;
+    let fastifyApolloHandler: Function;
+    try {
+      const mod = await import('@as-integrations/fastify');
+      fastifyApolloDrainPlugin = mod.fastifyApolloDrainPlugin;
+      fastifyApolloHandler = mod.fastifyApolloHandler;
+    } catch {
+      Logger.error(MISSING_REQUIRED_DEPENDENCY('@as-integrations/fastify', 'GraphQLModule'), 'GraphQLModule');
+      process.exit(1);
+    }
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();
