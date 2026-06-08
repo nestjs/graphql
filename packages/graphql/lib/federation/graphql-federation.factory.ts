@@ -59,7 +59,7 @@ export class GraphQLFederationFactory {
     options: T = {} as T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
-    ) => GraphQLSchema,
+    ) => GraphQLSchema | Promise<GraphQLSchema>,
   ): Promise<GraphQLSchema> {
     const transformSchema =
       options.transformSchema ?? ((schema: GraphQLSchema) => schema);
@@ -79,7 +79,9 @@ export class GraphQLFederationFactory {
     return await transformSchema(schema);
   }
 
-  private async buildSchemaFromTypeDefs<T extends GqlModuleOptions>(options: T) {
+  private async buildSchemaFromTypeDefs<T extends GqlModuleOptions>(
+    options: T,
+  ) {
     const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
       await loadPackage('@apollo/subgraph', 'ApolloFederation');
 
@@ -103,7 +105,7 @@ export class GraphQLFederationFactory {
     options: T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
-    ) => GraphQLSchema,
+    ) => GraphQLSchema | Promise<GraphQLSchema>,
   ): Promise<GraphQLSchema> {
     const apolloSubgraph = await loadPackage(
       '@apollo/subgraph',
@@ -146,11 +148,12 @@ export class GraphQLFederationFactory {
     }
 
     const resolvers = this.getResolvers(options.resolvers);
+    const federatedSchema = await buildFederatedSchema({
+      typeDefs: gql(typeDefs),
+      resolvers,
+    });
     let executableSchema: GraphQLSchema = addResolversToSchema({
-      schema: buildFederatedSchema({
-        typeDefs: gql(typeDefs),
-        resolvers,
-      }),
+      schema: federatedSchema,
       resolvers,
       resolverValidationOptions: options.resolverValidationOptions,
       inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
@@ -388,8 +391,9 @@ export class GraphQLFederationFactory {
   }
 
   private async loadFederationDirectives() {
-    const { federationDirectives } =
-      await import('@apollo/subgraph/dist/directives.js');
+    const { federationDirectives } = await import(
+      '@apollo/subgraph/dist/directives.js'
+    );
     return federationDirectives;
   }
 }
