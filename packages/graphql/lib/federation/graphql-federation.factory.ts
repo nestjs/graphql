@@ -59,7 +59,7 @@ export class GraphQLFederationFactory {
     options: T = {} as T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
-    ) => GraphQLSchema,
+    ) => GraphQLSchema | Promise<GraphQLSchema>,
   ): Promise<GraphQLSchema> {
     const transformSchema =
       options.transformSchema ?? ((schema: GraphQLSchema) => schema);
@@ -73,17 +73,17 @@ export class GraphQLFederationFactory {
     } else if (isEmpty(options.typeDefs)) {
       schema = options.schema;
     } else {
-      schema = this.buildSchemaFromTypeDefs(options);
+      schema = await this.buildSchemaFromTypeDefs(options);
     }
 
     return await transformSchema(schema);
   }
 
-  private buildSchemaFromTypeDefs<T extends GqlModuleOptions>(options: T) {
+  private async buildSchemaFromTypeDefs<T extends GqlModuleOptions>(
+    options: T,
+  ) {
     const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
-      loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
-        require('@apollo/subgraph'),
-      );
+      await loadPackage('@apollo/subgraph', 'ApolloFederation');
 
     const resolvers = this.getResolvers(options.resolvers);
     return addResolversToSchema({
@@ -105,12 +105,11 @@ export class GraphQLFederationFactory {
     options: T,
     buildFederatedSchema?: (
       options: BuildFederatedSchemaOptions,
-    ) => GraphQLSchema,
+    ) => GraphQLSchema | Promise<GraphQLSchema>,
   ): Promise<GraphQLSchema> {
-    const apolloSubgraph = loadPackage(
+    const apolloSubgraph = await loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
-      () => require('@apollo/subgraph'),
     );
     const apolloSubgraphVersion = (
       (await import('@apollo/subgraph/package.json')).default as {
@@ -149,11 +148,12 @@ export class GraphQLFederationFactory {
     }
 
     const resolvers = this.getResolvers(options.resolvers);
+    const federatedSchema = await buildFederatedSchema({
+      typeDefs: gql(typeDefs),
+      resolvers,
+    });
     let executableSchema: GraphQLSchema = addResolversToSchema({
-      schema: buildFederatedSchema({
-        typeDefs: gql(typeDefs),
-        resolvers,
-      }),
+      schema: federatedSchema,
       resolvers,
       resolverValidationOptions: options.resolverValidationOptions,
       inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
@@ -349,7 +349,7 @@ export class GraphQLFederationFactory {
         this.getFederationVersionAndConfig(autoSchemaFile);
 
       if (federationVersion < 2) {
-        directives.push(...this.loadFederationDirectives());
+        directives.push(...(await this.loadFederationDirectives()));
       }
       if (buildSchemaOptions?.directives) {
         directives.push(...buildSchemaOptions.directives);
@@ -390,11 +390,10 @@ export class GraphQLFederationFactory {
     ];
   }
 
-  private loadFederationDirectives() {
-    const { federationDirectives, directivesWithNoDefinitionNeeded } =
-      loadPackage('@apollo/subgraph/dist/directives', 'SchemaBuilder', () =>
-        require('@apollo/subgraph/dist/directives'),
-      );
-    return federationDirectives ?? directivesWithNoDefinitionNeeded;
+  private async loadFederationDirectives() {
+    const { federationDirectives } = await import(
+      '@apollo/subgraph/dist/directives.js'
+    );
+    return federationDirectives;
   }
 }

@@ -589,8 +589,7 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "scope": 2,
         "transient": false,
         "exported": true,
-        "token": "REQUEST",
-        "initTime": 0
+        "token": "REQUEST"
       }
     },
     "1977125601": {
@@ -670,8 +669,7 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "scope": 1,
         "transient": true,
         "exported": true,
-        "token": "INQUIRER",
-        "initTime": 0
+        "token": "INQUIRER"
       }
     },
     "-26938366": {
@@ -886,7 +884,8 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "transient": false,
         "exported": false,
         "token": "AuthGuard",
-        "subtype": "guard"
+        "subtype": "guard",
+        "initTime": 0
       }
     },
     "-1682923264": {
@@ -2015,6 +2014,22 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
       },
       "id": "2086827720"
     },
+    "-658225180": {
+      "source": "327064966",
+      "target": "1977125601",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "RecipesModule",
+        "sourceClassName": "RecipesResolver",
+        "targetClassName": "RecipesService",
+        "sourceClassToken": "RecipesResolver",
+        "targetClassToken": "RecipesService",
+        "targetModuleName": "RecipesModule",
+        "keyOrIndex": 0,
+        "injectionType": "constructor"
+      },
+      "id": "-658225180"
+    },
     "-1796955647": {
       "source": "-1046435906",
       "target": "-973488942",
@@ -2096,22 +2111,6 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "internal": true
       },
       "id": "-1036206953"
-    },
-    "-658225180": {
-      "source": "327064966",
-      "target": "1977125601",
-      "metadata": {
-        "type": "class-to-class",
-        "sourceModuleName": "RecipesModule",
-        "sourceClassName": "RecipesResolver",
-        "targetClassName": "RecipesService",
-        "sourceClassToken": "RecipesResolver",
-        "targetClassToken": "RecipesService",
-        "targetModuleName": "RecipesModule",
-        "keyOrIndex": 0,
-        "injectionType": "constructor"
-      },
-      "id": "-658225180"
     },
     "-1301730010": {
       "source": "-1399120880",

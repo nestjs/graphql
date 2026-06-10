@@ -21,14 +21,11 @@ export class GraphQLFederationDefinitionsFactory extends GraphQLDefinitionsFacto
     const mergedTypeDefs = extend(typePathDefs, typeDefs);
 
     const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
-      loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
-        require('@apollo/subgraph'),
-      );
+      await loadPackage('@apollo/subgraph', 'ApolloFederation');
 
-    const { printSubgraphSchema } = loadPackage(
+    const { printSubgraphSchema } = await loadPackage(
       '@apollo/subgraph',
       'ApolloFederation',
-      () => require('@apollo/subgraph'),
     );
 
     const schema = buildSubgraphSchema([

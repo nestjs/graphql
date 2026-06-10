@@ -65,13 +65,12 @@ function addTypeNameToResult(result, typename) {
  * Accept a GraphQLSchema to transform instead of a plain string containing a graphql schema
  * @param schema
  */
-export function transformFederatedSchema(schema: GraphQLSchema) {
+export async function transformFederatedSchema(schema: GraphQLSchema) {
   // FIXME remove this dependency
   // but graphql#printSchema does not print necessary federation directives
-  const { printSubgraphSchema } = loadPackage(
+  const { printSubgraphSchema } = await loadPackage(
     '@apollo/subgraph',
     'FederationFactory',
-    () => require('@apollo/subgraph'),
   );
 
   // Workaround for https://github.com/mercurius-js/mercurius/issues/273
