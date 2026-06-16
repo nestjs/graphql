@@ -39,7 +39,7 @@
     "@mercuriusjs/federation": "5.1.1",
     "@mercuriusjs/gateway": "5.2.0",
     "@nestjs/common": "11.1.22",
-    "@nestjs/platform-fastify": "11.1.22",
+    "@nestjs/platform-fastify": "11.1.24",
     "@nestjs/testing": "11.1.22",
     "fastify": "5.8.5",
     "mercurius": "16.9.0",
