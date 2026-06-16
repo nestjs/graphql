@@ -1195,10 +1195,10 @@
     path-to-regexp "8.4.2"
     tslib "2.8.1"
 
-"@nestjs/platform-fastify@11.1.22":
-  version "11.1.22"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.1.22.tgz#a6f5b3c12aab64f52e41855a24facefdc4790bdc"
-  integrity sha512-RN4wlHcFuoVP3jOI8vxMRrc2gTQVoO8kjAVcz1qSXDLxSorPWRHBduxveSZiPpqzLKXME/6LfqW4uMwFyUvStQ==
+"@nestjs/platform-fastify@11.1.24":
+  version "11.1.24"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.1.24.tgz#ffedcb93ccebb5db8fee0be419d236b9e36851e5"
+  integrity sha512-AJAVZZKCLQcDkQipD+NfrmV69DoQRNnrE+EB0VBS7FEZRjsnNmkmZFDFnhl/JWgzm6rjxsI3Qdaj/0+VlgbfSg==
   dependencies:
     "@fastify/cors" "11.2.0"
     "@fastify/formbody" "8.0.2"
