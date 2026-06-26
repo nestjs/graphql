@@ -7792,10 +7792,10 @@ regexp.prototype.flags@^1.5.1:
     gopd "^1.2.0"
     set-function-name "^2.0.2"
 
-release-it@20.2.0:
-  version "20.2.0"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-20.2.0.tgz#3c98d816e97a07f3980c09925628b4cef1ce7fb1"
-  integrity sha512-9ZTk9ripgctC6VTqH+P54KuboK29A5mG/I3tFfS5hnoAnkwtFFAMHRidYz93ylrW995vF50Ny1aOGJiyRmEN7w==
+release-it@20.2.1:
+  version "20.2.1"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-20.2.1.tgz#6743cda062be9d108a47b6cb84be9c2c5fc9abb7"
+  integrity sha512-xd0mqTGduwQlEzVBKOJcoVZxDrRLzjmFv3W8tWwkPIPDYtwYBWYjULiSk6VhfuGKocfz7GmptAqViKMQV4Zzbw==
   dependencies:
     "@inquirer/prompts" "8.4.2"
     "@octokit/rest" "22.0.1"
@@ -7816,7 +7816,7 @@ release-it@20.2.0:
     proxy-agent "7.0.0"
     semver "7.7.4"
     tinyglobby "0.2.15"
-    undici "7.24.5"
+    undici "7.28.0"
     url-join "5.0.0"
     wildcard-match "5.1.4"
     yargs-parser "22.0.0"
@@ -8977,10 +8977,10 @@ undici-types@~7.18.0:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.18.2.tgz#29357a89e7b7ca4aef3bf0fd3fd0cd73884229e9"
   integrity sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==
 
-undici@7.24.5:
-  version "7.24.5"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-7.24.5.tgz#7debcf5623df2d1cb469b6face01645d9c852ae2"
-  integrity sha512-3IWdCpjgxp15CbJnsi/Y9TCDE7HWVN19j1hmzVhoAkY/+CJx449tVxT5wZc1Gwg8J+P0LWvzlBzxYRnHJ+1i7Q==
+undici@7.28.0:
+  version "7.28.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-7.28.0.tgz#97d64564198b285bc281f0e8e29597e3d11fe7ec"
+  integrity sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==
 
 undici@^7.16.0:
   version "7.24.7"
