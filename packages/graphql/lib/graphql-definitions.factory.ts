@@ -39,6 +39,7 @@ export class GraphQLDefinitionsFactory {
       additionalHeader: options.additionalHeader,
       defaultTypeMapping: options.defaultTypeMapping,
       enumsAsTypes: options.enumsAsTypes,
+      emitDescriptions: options.emitDescriptions,
       typeName: options.typeName,
     };
 
