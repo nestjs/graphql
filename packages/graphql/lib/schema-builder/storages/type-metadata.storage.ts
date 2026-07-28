@@ -23,7 +23,7 @@ import {
 } from '../metadata';
 import { InterfaceMetadata } from '../metadata/interface.metadata';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
-import { isThrowing } from '../utils/is-throwing.util';
+import { ResolverImplementationMap } from './resolver-implementation.map';
 
 export class TypeMetadataStorageHost {
   private readonly logger = new Logger(TypeMetadataStorageHost.name);
@@ -559,86 +559,33 @@ export class TypeMetadataStorageHost {
     ];
   }
 
+  /**
+   * Reassigns every handler declared on a base class to the resolver class that implements it. See
+   * {@link ResolverImplementationMap} for why that is necessary.
+   */
   private compileExtendedResolversMetadata() {
-    let queries = this.queries,
-      mutations = this.mutations,
-      subscriptions = this.subscriptions;
-
-    this.metadataByTargetCollection.all.resolver.forEach((item) => {
-      let parentClass = Object.getPrototypeOf(item.target);
-
-      while (parentClass.prototype) {
-        const parentMetadata = this.metadataByTargetCollection.get(
-          item.target,
-        ).resolver;
-
-        if (parentMetadata) {
-          queries = this.mergeParentResolverHandlers(
-            queries,
-            parentClass,
-            item,
-          );
-          mutations = this.mergeParentResolverHandlers(
-            mutations,
-            parentClass,
-            item,
-          );
-          subscriptions = this.mergeParentResolverHandlers(
-            subscriptions,
-            parentClass,
-            item,
-          );
-          this.fieldResolvers = this.mergeParentFieldHandlers(
-            this.fieldResolvers,
-            parentClass,
-            item,
-          );
-        }
-        parentClass = Object.getPrototypeOf(parentClass);
-      }
-    });
-
-    return { queries, mutations, subscriptions };
-  }
-
-  private mergeParentResolverHandlers<
-    T extends ResolverTypeMetadata | FieldResolverMetadata,
-  >(
-    metadata: T[],
-    parentClass: Function,
-    classMetadata: ResolverClassMetadata,
-  ): T[] {
-    return metadata.map((metadata) => {
-      return metadata.target !== parentClass
-        ? metadata
-        : {
-            ...metadata,
-            target: classMetadata.target,
-            classMetadata,
-          };
-    });
-  }
-
-  private mergeParentFieldHandlers(
-    metadata: FieldResolverMetadata[],
-    parentClass: Function,
-    classMetadata: ResolverClassMetadata,
-  ) {
-    const parentMetadata = this.mergeParentResolverHandlers(
-      metadata,
-      parentClass,
-      classMetadata,
+    const implementations = new ResolverImplementationMap(
+      this.metadataByTargetCollection.all.resolver,
+      [this.queries, this.mutations, this.subscriptions, this.fieldResolvers],
     );
-    return parentMetadata.map((metadata) => {
-      return metadata.target === parentClass
-        ? metadata
-        : {
-            ...metadata,
-            objectTypeFn: isThrowing(metadata.objectTypeFn)
-              ? classMetadata.typeFn
-              : metadata.objectTypeFn,
-          };
-    });
+
+    if (implementations.isEmpty) {
+      return {
+        queries: this.queries,
+        mutations: this.mutations,
+        subscriptions: this.subscriptions,
+      };
+    }
+
+    this.fieldResolvers = implementations.collectFieldResolversMetadata(
+      this.fieldResolvers,
+    );
+
+    return {
+      queries: implementations.collectAllMetadata(this.queries),
+      mutations: implementations.collectAllMetadata(this.mutations),
+      subscriptions: implementations.collectAllMetadata(this.subscriptions),
+    };
   }
 }
 
