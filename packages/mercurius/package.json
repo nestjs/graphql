@@ -52,7 +52,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/graphql": "^13.0.0",
     "fastify": "^5.2.1",
-    "graphql": "^16.10.0",
+    "graphql": "^16.10.0 || ^17.0.0",
     "mercurius": "^16.0.1"
   },
   "peerDependenciesMeta": {
