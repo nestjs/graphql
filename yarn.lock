@@ -7760,10 +7760,10 @@ regexp.prototype.flags@^1.5.1:
     gopd "^1.2.0"
     set-function-name "^2.0.2"
 
-release-it@21.0.0:
-  version "21.0.0"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-21.0.0.tgz#0c26328cf1b0cd7f628f60b1418888632f432e68"
-  integrity sha512-oAOiUcDpJEbLSOT0HqnHByDTomSvpwRktU2fnk7zbpJK9wOiXbHnP1mFy+80P6k5cJnMBx1PIuHmwXzd5R1jLw==
+release-it@21.0.1:
+  version "21.0.1"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-21.0.1.tgz#17c755982b5c2ba6aa45396f192541ffcf7c870f"
+  integrity sha512-xbPuv2tau3gb0Xw0NVqV3QjOhytFvbsBZDqzmURqlwtgNpFIlIbpDbuZG64ptytFOX4H/7k65bbPSLTwAL34/g==
   dependencies:
     "@inquirer/prompts" "8.5.2"
     "@octokit/rest" "22.0.1"
