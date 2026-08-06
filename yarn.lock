@@ -4611,7 +4611,12 @@ graphql-tag@2.12.6:
   dependencies:
     tslib "^2.1.0"
 
-graphql-ws@6.0.8, graphql-ws@^6.0.6:
+graphql-ws@6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-6.2.1.tgz#9d881c13b1446d220dcef289e0f347a00d34c3ae"
+  integrity sha512-NMbPNeTwXpUOxmczdMtzEnynLNbbR267E9hRcJ81SSbQeIvZup3cMjbD1ZT3jpS2xkpxooisitvO7LZNOyz17Q==
+
+graphql-ws@^6.0.6:
   version "6.0.8"
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-6.0.8.tgz#6712bb9da8462937e92343e3146726f89424df68"
   integrity sha512-m3EOaNsUBXwAnkBWbzPfe0Nq8pXUfxsWnolC54sru3FzHvhTZL0Ouf/BoQsaGAXqM+YPerXOJ47BUnmgmoupCw==
