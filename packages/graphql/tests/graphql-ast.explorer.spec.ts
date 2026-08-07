@@ -29,5 +29,70 @@ describe('GraphQLAstExplorer', () => {
           ).toBe(true);
         });
     });
+
+    it('should not emit descriptions as TSDoc comments by default', async () => {
+      const astExplorer = new GraphQLAstExplorer();
+
+      const document = gql`
+        """
+        A feline animal.
+        """
+        type Cat {
+          """
+          The name of the cat.
+          """
+          name: String!
+        }
+      `;
+
+      const sourceFile = await astExplorer.explore(
+        document,
+        '/dev/null',
+        'interface',
+        {},
+      );
+
+      expect(sourceFile.getFullText()).not.toContain('A feline animal.');
+      expect(sourceFile.getFullText()).not.toContain('The name of the cat.');
+    });
+
+    it('should emit descriptions as TSDoc comments when "emitDescriptions" is enabled', async () => {
+      const astExplorer = new GraphQLAstExplorer();
+
+      const document = gql`
+        """
+        A feline animal.
+        """
+        type Cat {
+          """
+          The name of the cat.
+          """
+          name: String!
+        }
+
+        """
+        The available colors.
+        """
+        enum Color {
+          """
+          The color red.
+          """
+          RED
+        }
+      `;
+
+      const sourceFile = await astExplorer.explore(
+        document,
+        '/dev/null',
+        'interface',
+        { emitDescriptions: true },
+      );
+      const text = sourceFile.getFullText();
+
+      expect(text).toContain('/** A feline animal. */');
+      expect(text).toContain('/** The name of the cat. */');
+      expect(text).toContain('/** The available colors. */');
+      expect(text).toContain('/** The color red. */');
+    });
   });
 });
