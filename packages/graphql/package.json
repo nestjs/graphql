@@ -49,7 +49,7 @@
     "@nestjs/mapped-types": "2.1.1",
     "chokidar": "4.0.3",
     "fast-glob": "3.3.3",
-    "graphql-tag": "2.12.6",
+    "graphql-tag": "2.12.7",
     "graphql-ws": "6.0.8",
     "lodash": "4.18.1",
     "normalize-path": "3.0.0",
@@ -58,7 +58,7 @@
     "ws": "8.20.1"
   },
   "devDependencies": {
-    "@apollo/subgraph": "2.2.3",
+    "@apollo/subgraph": "2.14.3",
     "@nestjs/common": "11.1.22",
     "@nestjs/core": "11.1.22",
     "@nestjs/testing": "11.1.22",
