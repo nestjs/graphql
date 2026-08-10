@@ -42,6 +42,7 @@ import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-res
 import { extractMetadata } from '../utils/extract-metadata.util';
 import { BaseExplorerService } from './base-explorer.service';
 import { GqlContextType } from './gql-execution-context';
+import { ResolverDecoratorHost } from './resolver-decorator-host';
 
 const ROOT_RESOLVER_TYPES = new Set<string>([
   Resolver.MUTATION,
@@ -72,6 +73,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     private readonly gqlOptions: GqlModuleOptions,
     private readonly moduleRef: ModuleRef,
     private readonly serializedGraph: SerializedGraph,
+    private readonly resolverDecoratorHost: ResolverDecoratorHost,
   ) {
     super();
   }
@@ -229,7 +231,7 @@ export class ResolversExplorerService extends BaseExplorerService {
             instance,
             resolver.methodName,
           )
-        : resolverCallback;
+        : this.resolverDecoratorHost.decorate(resolverCallback);
     }
 
     if (
@@ -267,7 +269,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           instance,
           resolver.methodName,
         )
-      : resolverCallback;
+      : this.resolverDecoratorHost.decorate(resolverCallback);
   }
 
   createSubscriptionMetadata(

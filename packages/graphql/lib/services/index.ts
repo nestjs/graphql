@@ -2,5 +2,6 @@ export * from './base-explorer.service';
 export * from './gql-arguments-host';
 export * from './gql-execution-context';
 export * from './gql-subscription.service';
+export * from './resolver-decorator-host';
 export * from './resolvers-explorer.service';
 export * from './scalars-explorer.service';
