@@ -2563,6 +2563,22 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
       },
       "id": "-190123713"
     },
+    "-1277229271": {
+      "source": "-195456258",
+      "target": "1562179768",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLModule",
+        "sourceClassName": "ApolloDriver",
+        "targetClassName": "ResolverDecoratorHost",
+        "sourceClassToken": "AbstractGraphQLDriver",
+        "targetClassToken": "ResolverDecoratorHost",
+        "targetModuleName": "GraphQLModule",
+        "keyOrIndex": "resolverDecoratorHost",
+        "injectionType": "property"
+      },
+      "id": "-1277229271"
+    },
     "-832631943": {
       "source": "-1497318880",
       "target": "-326832201",

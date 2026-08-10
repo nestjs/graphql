@@ -110,6 +110,11 @@ export abstract class ApolloBaseDriver<
         this.createPreserveHttpStatusPlugin(),
       ];
     }
+
+    (options as ApolloDriverConfig).plugins = [
+      ...((options as ApolloDriverConfig).plugins || []),
+      this.createRequestLifecycleHooksPlugin(),
+    ];
     return options;
   }
 
@@ -222,6 +227,47 @@ export abstract class ApolloBaseDriver<
     });
 
     this.apolloServer = server;
+  }
+
+  private createRequestLifecycleHooksPlugin() {
+    // Exposes the "request start"/"request end" hooks registered through the
+    // `ResolverDecoratorHost` so that consumers can instrument (and measure)
+    // the entire lifecycle of a single GraphQL operation.
+    const resolverDecoratorHost = () => this.resolverDecoratorHost;
+
+    return {
+      async requestDidStart(requestContext: any) {
+        const host = resolverDecoratorHost();
+        if (!host?.hasRequestHooks()) {
+          return;
+        }
+
+        const hookContext = {
+          query: requestContext.request?.query,
+          operationName: requestContext.request?.operationName,
+          variables: requestContext.request?.variables,
+          context: requestContext.contextValue,
+        };
+        const state = host.onRequestStart(hookContext);
+
+        return {
+          async willSendResponse(endRequestContext: any) {
+            const body = endRequestContext.response?.body;
+            const errors =
+              endRequestContext.errors ??
+              (body?.kind === 'single' ? body.singleResult?.errors : undefined);
+
+            host.onRequestEnd({
+              ...hookContext,
+              operationName:
+                endRequestContext.operationName ?? hookContext.operationName,
+              errors,
+              state,
+            });
+          },
+        };
+      },
+    };
   }
 
   private createPreserveHttpStatusPlugin() {
