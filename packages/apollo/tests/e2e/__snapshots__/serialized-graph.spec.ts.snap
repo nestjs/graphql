@@ -486,6 +486,22 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "initTime": 0
       }
     },
+    "1562179768": {
+      "id": "1562179768",
+      "label": "ResolverDecoratorHost",
+      "parent": "954997704",
+      "metadata": {
+        "type": "provider",
+        "internal": false,
+        "sourceModuleName": "GraphQLModule",
+        "durable": false,
+        "static": true,
+        "transient": false,
+        "exported": true,
+        "token": "ResolverDecoratorHost",
+        "initTime": 0
+      }
+    },
     "1595755396": {
       "id": "1595755396",
       "label": "RecipesModule",
@@ -2113,6 +2129,22 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "internal": true
       },
       "id": "-1036206953"
+    },
+    "-1019984524": {
+      "source": "-1181044340",
+      "target": "1562179768",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLModule",
+        "sourceClassName": "ResolversExplorerService",
+        "targetClassName": "ResolverDecoratorHost",
+        "sourceClassToken": "ResolversExplorerService",
+        "targetClassToken": "ResolverDecoratorHost",
+        "targetModuleName": "GraphQLModule",
+        "keyOrIndex": 6,
+        "injectionType": "constructor"
+      },
+      "id": "-1019984524"
     },
     "-1301730010": {
       "source": "-1399120880",
