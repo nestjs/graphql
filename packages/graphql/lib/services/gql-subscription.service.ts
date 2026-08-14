@@ -28,6 +28,12 @@ export type GraphQLWsSubscriptionsConfig = Partial<
   >
 > & {
   path?: string;
+  /**
+   * A custom WebSocket server instance to use instead of the default
+   * `ws` WebSocketServer. When provided, the default WebSocket server
+   * will not be created for this protocol.
+   */
+  server?: WebSocketServer;
 };
 
 export type GraphQLSubscriptionTransportWsConfig = Partial<
@@ -37,6 +43,12 @@ export type GraphQLSubscriptionTransportWsConfig = Partial<
   >
 > & {
   path?: string;
+  /**
+   * A custom WebSocket server instance to use instead of the default
+   * `ws` WebSocketServer. When provided, the default WebSocket server
+   * will not be created for this protocol.
+   */
+  server?: WebSocketServer;
 };
 
 export type SubscriptionConfig = {
@@ -62,21 +74,25 @@ export class GqlSubscriptionService {
     private readonly options: GqlSubscriptionServiceOptions,
     private readonly httpServer: any,
   ) {
-    this.wss = new WebSocketServer({
-      path:
-        (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig)?.path ??
-        this.options.path,
-      noServer: true,
-    });
-    this.subTransWs = new WebSocketServer({
-      path:
-        (
-          this.options[
-            'subscriptions-transport-ws'
-          ] as GraphQLSubscriptionTransportWsConfig
-        )?.path ?? this.options.path,
-      noServer: true,
-    });
+    const graphqlWsConfig = this.options[
+      'graphql-ws'
+    ] as GraphQLWsSubscriptionsConfig;
+    this.wss =
+      (typeof graphqlWsConfig === 'object' && graphqlWsConfig?.server) ||
+      new WebSocketServer({
+        path: graphqlWsConfig?.path ?? this.options.path,
+        noServer: true,
+      });
+
+    const subTransWsConfig = this.options[
+      'subscriptions-transport-ws'
+    ] as GraphQLSubscriptionTransportWsConfig;
+    this.subTransWs =
+      (typeof subTransWsConfig === 'object' && subTransWsConfig?.server) ||
+      new WebSocketServer({
+        path: subTransWsConfig?.path ?? this.options.path,
+        noServer: true,
+      });
     this.initialize();
   }
 
@@ -86,8 +102,14 @@ export class GqlSubscriptionService {
       this.options;
 
     if ('graphql-ws' in this.options) {
-      const graphqlWsOptions =
-        this.options['graphql-ws'] === true ? {} : this.options['graphql-ws'];
+      const {
+        server: _wsServer,
+        path: _wsPath,
+        ...graphqlWsOptions
+      } =
+        this.options['graphql-ws'] === true
+          ? ({} as GraphQLWsSubscriptionsConfig)
+          : (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig);
       supportedProtocols.push(GRAPHQL_TRANSPORT_WS_PROTOCOL);
       this.wsGqlDisposable = useServer(
         {
@@ -102,10 +124,16 @@ export class GqlSubscriptionService {
     }
 
     if ('subscriptions-transport-ws' in this.options) {
-      const subscriptionsWsOptions =
+      const {
+        server: _subServer,
+        path: _subPath,
+        ...subscriptionsWsOptions
+      } =
         this.options['subscriptions-transport-ws'] === true
-          ? {}
-          : this.options['subscriptions-transport-ws'];
+          ? ({} as GraphQLSubscriptionTransportWsConfig)
+          : (this.options[
+              'subscriptions-transport-ws'
+            ] as GraphQLSubscriptionTransportWsConfig);
 
       supportedProtocols.push(GRAPHQL_WS);
       this.subServer = SubscriptionServer.create(
@@ -132,13 +160,23 @@ export class GqlSubscriptionService {
         supportedProtocols.includes(protocol),
       );
 
-      const wss =
+      const isSubTransWs =
         protocols?.includes(GRAPHQL_WS) && // subscriptions-transport-ws subprotocol
-        !protocols.includes(GRAPHQL_TRANSPORT_WS_PROTOCOL) // graphql-ws subprotocol
-          ? this.subTransWs
-          : this.wss;
+        !protocols.includes(GRAPHQL_TRANSPORT_WS_PROTOCOL); // graphql-ws subprotocol
 
-      if (req.url?.startsWith(wss.options.path)) {
+      const wss = isSubTransWs ? this.subTransWs : this.wss;
+      const subConfig = isSubTransWs
+        ? (this.options[
+            'subscriptions-transport-ws'
+          ] as GraphQLSubscriptionTransportWsConfig)
+        : (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig);
+
+      const path =
+        (typeof subConfig === 'object' && subConfig?.path) ||
+        this.options.path ||
+        wss?.options?.path;
+
+      if (!path || req.url?.startsWith(path)) {
         wss.handleUpgrade(req, socket, head, (ws) => {
           wss.emit('connection', ws, req);
         });
