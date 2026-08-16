@@ -38,7 +38,7 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
       const { printSubgraphSchema } = await loadPackage(
         '@apollo/subgraph',
         'ApolloFederation',
-        () => require('@apollo/subgraph'),
+        () => import('@apollo/subgraph'),
       );
       await this.graphQlFactory.generateDefinitions(
         printSubgraphSchema(options.schema!),

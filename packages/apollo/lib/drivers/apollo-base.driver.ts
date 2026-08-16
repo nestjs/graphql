@@ -56,27 +56,23 @@ export abstract class ApolloBaseDriver<
       stopOnTerminationSignals: false,
     };
 
+    // `graphiql` wins over the deprecated `playground` alias; when neither is
+    // set, GraphiQL is enabled outside of production.
     const useGraphiQL =
-      options.graphiql ||
-      options.playground === true ||
-      (options.graphiql === undefined &&
-        options.playground === undefined &&
-        process.env.NODE_ENV !== 'production');
+      options.graphiql ??
+      options.playground ??
+      process.env.NODE_ENV !== 'production';
 
     if (useGraphiQL) {
       const graphiQlPlaygroundOpts: GraphiQLOptions =
-        typeof options.graphiql === 'object' ? options.graphiql : {};
+        typeof useGraphiQL === 'object' ? { ...useGraphiQL } : {};
       graphiQlPlaygroundOpts.url ??= options.path;
 
       defaults = {
         ...defaults,
         plugins: [new GraphiQLPlaygroundPlugin(graphiQlPlaygroundOpts)],
       };
-    } else if (
-      (options.playground === undefined &&
-        process.env.NODE_ENV === 'production') ||
-      options.playground === false
-    ) {
+    } else {
       defaults = {
         ...defaults,
         plugins: [ApolloServerPluginLandingPageDisabled()],
@@ -110,15 +106,22 @@ export abstract class ApolloBaseDriver<
     if (!subscriptions) {
       return;
     }
+    // Rewrite a copy: the caller's configuration object may be reused across
+    // applications, and prefixing it in place compounds on every merge.
+    const normalized = { ...subscriptions };
     for (const protocol of [
       'graphql-ws',
       'subscriptions-transport-ws',
     ] as const) {
-      const config = subscriptions[protocol];
+      const config = normalized[protocol];
       if (config && typeof config === 'object' && config.path) {
-        config.path = this.applyGlobalPrefix(config.path, options);
+        normalized[protocol] = {
+          ...config,
+          path: this.applyGlobalPrefix(config.path, options),
+        };
       }
     }
+    (options as ApolloDriverConfig).subscriptions = normalized;
   }
 
   public subscriptionWithFilter(
@@ -145,7 +148,7 @@ export abstract class ApolloBaseDriver<
     const { expressMiddleware } = await loadPackage(
       '@as-integrations/express5',
       'GraphQLModule',
-      () => require('@as-integrations/express5'),
+      () => import('@as-integrations/express5'),
     );
 
     const { path, typeDefs, resolvers, schema } = options;
@@ -196,8 +199,10 @@ export abstract class ApolloBaseDriver<
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
     const { fastifyApolloDrainPlugin, fastifyApolloHandler } =
-      await loadPackage('@as-integrations/fastify', 'GraphQLModule', () =>
-        require('@as-integrations/fastify'),
+      await loadPackage(
+        '@as-integrations/fastify',
+        'GraphQLModule',
+        () => import('@as-integrations/fastify'),
       );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;

@@ -51,6 +51,49 @@ export class GraphiQLPlaygroundModule {
     };
   }
 
+  static withDisabled() {
+    return {
+      module: GraphiQLPlaygroundModule,
+      imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+          driver: ApolloDriver,
+          csrfPrevention: false,
+          graphiql: false,
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
+        }),
+      ],
+    };
+  }
+
+  static withPlaygroundDisabled() {
+    return {
+      module: GraphiQLPlaygroundModule,
+      imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+          driver: ApolloDriver,
+          csrfPrevention: false,
+          playground: false,
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
+        }),
+      ],
+    };
+  }
+
+  static withDisabledOverridingPlayground() {
+    return {
+      module: GraphiQLPlaygroundModule,
+      imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+          driver: ApolloDriver,
+          csrfPrevention: false,
+          graphiql: false,
+          playground: true,
+          typePaths: [join(import.meta.dirname, '**', '*.graphql')],
+        }),
+      ],
+    };
+  }
+
   static withEnabledAndCustomized(options: GraphiQLOptions) {
     return {
       module: GraphiQLPlaygroundModule,

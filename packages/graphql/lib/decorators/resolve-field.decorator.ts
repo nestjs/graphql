@@ -110,7 +110,11 @@ export function ResolveField(
       ? isFunction(typeFuncOrOptions)
         ? [propertyNameOrFunc, typeFuncOrOptions, resolveFieldOptions]
         : [propertyNameOrFunc, undefined, typeFuncOrOptions]
-      : [undefined, undefined, propertyNameOrFunc];
+      : [
+          (propertyNameOrFunc as ResolveFieldOptions)?.name,
+          undefined,
+          propertyNameOrFunc,
+        ];
 
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
     SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);

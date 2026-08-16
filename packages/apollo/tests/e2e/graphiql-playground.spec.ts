@@ -240,4 +240,73 @@ describe('GraphiQL Playground', () => {
       await app.close();
     });
   });
+
+  describe('when "graphiql" is false', () => {
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [GraphiQLPlaygroundModule.withDisabled()],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+    });
+
+    it(`should serve no landing page`, async () => {
+      const res = await request(app.getHttpServer())
+        .get('/graphql')
+        .set('Accept', 'text/html')
+        .expect(406);
+      expect(res.text).not.toContain('<title>GraphiQL</title>');
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
+  describe('when "playground" is false', () => {
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [GraphiQLPlaygroundModule.withPlaygroundDisabled()],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+    });
+
+    it(`should serve no landing page`, async () => {
+      const res = await request(app.getHttpServer())
+        .get('/graphql')
+        .set('Accept', 'text/html')
+        .expect(406);
+      expect(res.text).not.toContain('<title>GraphiQL</title>');
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
+
+  describe('when "graphiql" is false and "playground" is true', () => {
+    beforeEach(async () => {
+      const module = await Test.createTestingModule({
+        imports: [GraphiQLPlaygroundModule.withDisabledOverridingPlayground()],
+      }).compile();
+
+      app = module.createNestApplication();
+      await app.init();
+    });
+
+    it(`should let "graphiql" take precedence over the deprecated alias`, async () => {
+      const res = await request(app.getHttpServer())
+        .get('/graphql')
+        .set('Accept', 'text/html')
+        .expect(406);
+      expect(res.text).not.toContain('<title>GraphiQL</title>');
+    });
+
+    afterEach(async () => {
+      await app.close();
+    });
+  });
 });

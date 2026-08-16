@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { flatten } from 'es-toolkit';
 import glob from 'fast-glob';
 import * as fs from 'fs';
+import normalize from 'normalize-path';
 import * as util from 'util';
 
-const normalize = require('normalize-path');
 const readFile = util.promisify(fs.readFile);
 
 @Injectable()

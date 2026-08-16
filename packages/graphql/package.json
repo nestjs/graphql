@@ -26,6 +26,7 @@
     },
     "./plugin": {
       "types": "./dist/plugin/index.d.ts",
+      "import": "./dist/plugin/index.js",
       "require": "./plugin.cjs",
       "default": "./plugin.cjs"
     },

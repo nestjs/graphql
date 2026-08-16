@@ -87,4 +87,33 @@ describe('Subscription path with global prefix', () => {
 
     expect(merged.subscriptions?.['graphql-ws']).toBe(true);
   });
+
+  it('does not compound the prefix when the same options object is merged twice', async () => {
+    const driver = await createDriver('api');
+    const options = {
+      useGlobalPrefix: true,
+      subscriptions: {
+        'graphql-ws': { path: '/graphql' },
+      },
+    } as ApolloDriverConfig;
+
+    await driver.mergeDefaultOptions(options);
+    const merged = await driver.mergeDefaultOptions(options);
+
+    expect(merged.subscriptions?.['graphql-ws']).toMatchObject({
+      path: '/api/graphql',
+    });
+  });
+
+  it('leaves the caller subscriptions config untouched', async () => {
+    const driver = await createDriver('api');
+    const subscriptions = { 'graphql-ws': { path: '/graphql' } };
+
+    await driver.mergeDefaultOptions({
+      useGlobalPrefix: true,
+      subscriptions,
+    } as ApolloDriverConfig);
+
+    expect(subscriptions['graphql-ws'].path).toBe('/graphql');
+  });
 });

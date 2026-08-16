@@ -26,6 +26,7 @@ import {
   specifiedDirectives,
 } from 'graphql';
 import { gql } from 'graphql-tag';
+import { createRequire } from 'module';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder.js';
 import {
   AutoSchemaFileValue,
@@ -43,6 +44,7 @@ import { transformSchema } from '../utils/transform-schema.util.js';
 import { TypeDefsDecoratorFactory } from './type-defs-decorator.factory.js';
 
 const DEFAULT_FEDERATION_VERSION: FederationVersion = 1;
+const nodeRequire = createRequire(import.meta.url);
 
 /**
  * @publicApi
@@ -84,8 +86,10 @@ export class GraphQLFederationFactory {
     options: T,
   ) {
     const { buildSubgraphSchema }: typeof import('@apollo/subgraph') =
-      await loadPackage('@apollo/subgraph', 'ApolloFederation', () =>
-        require('@apollo/subgraph'),
+      await loadPackage(
+        '@apollo/subgraph',
+        'ApolloFederation',
+        () => import('@apollo/subgraph'),
       );
 
     const resolvers = this.getResolvers(options.resolvers);
@@ -110,20 +114,10 @@ export class GraphQLFederationFactory {
       options: BuildFederatedSchemaOptions,
     ) => GraphQLSchema,
   ): Promise<GraphQLSchema> {
-    const apolloSubgraph = await loadPackage(
-      '@apollo/subgraph',
-      'ApolloFederation',
-      () => require('@apollo/subgraph'),
-    );
-    const apolloSubgraphVersion = (
-      (await import('@apollo/subgraph/package.json')).default as {
-        version: string;
-      }
-    ).version;
-
-    const apolloSubgraphMajorVersion = Number(
-      apolloSubgraphVersion.split('.')[0],
-    );
+    const {
+      subgraph: apolloSubgraph,
+      majorVersion: apolloSubgraphMajorVersion,
+    } = await this.loadApolloSubgraph();
     const printSubgraphSchema = apolloSubgraph.printSubgraphSchema;
 
     if (!buildFederatedSchema) {
@@ -380,25 +374,28 @@ export class GraphQLFederationFactory {
     }
   }
 
+  private async loadApolloSubgraph(): Promise<{
+    subgraph: typeof import('@apollo/subgraph');
+    majorVersion: number;
+  }> {
+    const subgraph = await loadPackage(
+      '@apollo/subgraph',
+      'ApolloFederation',
+      () => import('@apollo/subgraph'),
+    );
+    const { version } = nodeRequire('@apollo/subgraph/package.json') as {
+      version: string;
+    };
+    return { subgraph, majorVersion: Number(version.split('.')[0]) };
+  }
+
   private async getFederationSchemaPrinter(): Promise<
     (schema: GraphQLSchema) => string
   > {
-    const apolloSubgraph = await loadPackage(
-      '@apollo/subgraph',
-      'ApolloFederation',
-      () => require('@apollo/subgraph'),
-    );
-    const apolloSubgraphVersion = (
-      (await import('@apollo/subgraph/package.json')).default as {
-        version: string;
-      }
-    ).version;
-    const apolloSubgraphMajorVersion = Number(
-      apolloSubgraphVersion.split('.')[0],
-    );
-    return apolloSubgraphMajorVersion >= 2
+    const { subgraph, majorVersion } = await this.loadApolloSubgraph();
+    return majorVersion >= 2
       ? (schema) => printSchemaWithDirectives(schema)
-      : apolloSubgraph.printSubgraphSchema;
+      : subgraph.printSubgraphSchema;
   }
 
   private getFederationVersionAndConfig(
@@ -419,7 +416,7 @@ export class GraphQLFederationFactory {
   private loadFederationDirectives() {
     const { federationDirectives, directivesWithNoDefinitionNeeded } =
       loadPackageSync('@apollo/subgraph/dist/directives', 'SchemaBuilder', () =>
-        require('@apollo/subgraph/dist/directives'),
+        nodeRequire('@apollo/subgraph/dist/directives'),
       );
     return federationDirectives ?? directivesWithNoDefinitionNeeded;
   }

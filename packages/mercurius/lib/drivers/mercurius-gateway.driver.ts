@@ -1,3 +1,4 @@
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
@@ -33,7 +34,12 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatew
       ...mercuriusOptions
     } = options;
     const app = httpAdapter.getInstance<FastifyInstance>();
-    await app.register(require('@mercuriusjs/gateway'), {
+    const mercuriusGateway = await loadPackage(
+      '@mercuriusjs/gateway',
+      'MercuriusGatewayDriver',
+      () => import('@mercuriusjs/gateway'),
+    );
+    await app.register(mercuriusGateway.default ?? mercuriusGateway, {
       ...mercuriusOptions,
     });
     await registerMercuriusPlugin(app, plugins);

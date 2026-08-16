@@ -3,7 +3,7 @@
  * https://github.com/mercurius-js/mercurius/blob/master/lib/federation.js
  *
  */
-import { MER_ERR_GQL_GATEWAY_INVALID_SCHEMA } from '@mercuriusjs/gateway/lib/errors.js';
+import gatewayErrors from '@mercuriusjs/gateway/lib/errors.js';
 import { loadPackageSync } from '@nestjs/common/utils/load-package.util.js';
 import {
   extendSchema,
@@ -12,6 +12,13 @@ import {
   isObjectType,
   parse,
 } from 'graphql';
+import { createRequire } from 'module';
+
+const nodeRequire = createRequire(import.meta.url);
+
+// `@mercuriusjs/gateway` is CommonJS and this error class is not detected as a
+// named export by Node's ESM loader, so it has to be read off the default export.
+const { MER_ERR_GQL_GATEWAY_INVALID_SCHEMA } = gatewayErrors;
 
 const BASE_FEDERATION_TYPES = `
   scalar _Any
@@ -71,7 +78,7 @@ export function transformFederatedSchema(schema: GraphQLSchema) {
   const { printSubgraphSchema } = loadPackageSync(
     '@apollo/subgraph',
     'FederationFactory',
-    () => require('@apollo/subgraph'),
+    () => nodeRequire('@apollo/subgraph'),
   );
 
   // Workaround for https://github.com/mercurius-js/mercurius/issues/273
