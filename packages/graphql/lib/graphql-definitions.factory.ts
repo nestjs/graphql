@@ -1,7 +1,6 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { isEmpty } from '@nestjs/common/utils/shared.utils';
 import chokidar from 'chokidar';
-import { glob } from 'fast-glob';
 import { printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 import {
@@ -10,6 +9,7 @@ import {
 } from './graphql-ast.explorer';
 import { GraphQLTypesLoader } from './graphql-types.loader';
 import { extend, removeTempField } from './utils';
+import { globPaths } from './utils/glob.util';
 
 export type GenerateOptions = DefinitionsGeneratorOptions & {
   typePaths: string[];
@@ -48,7 +48,7 @@ export class GraphQLDefinitionsFactory {
         'GraphQL factory is watching your files...',
         isDebugEnabled,
       );
-      const watcher = chokidar.watch(await glob(options.typePaths));
+      const watcher = chokidar.watch(await globPaths(options.typePaths));
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       watcher.on('change', async (file) => {
         this.printMessage(
