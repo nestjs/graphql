@@ -58,62 +58,72 @@ describe('GraphQL Federation - graphql-ws subscriptions', () => {
       retryAttempts: 0,
     });
 
-    wsClient.on('connected', () => {
-      setTimeout(() => {
-        pubSub.publish('newFederatedNotification', {
-          newFederatedNotification: {
-            id: '99',
-            recipient: 'alice',
-            message: 'wrong id',
-          },
-        });
-        pubSub.publish('newFederatedNotification', {
-          newFederatedNotification: {
-            id: '1',
-            recipient: 'bob',
-            message: 'wrong recipient',
-          },
-        });
-        pubSub.publish('newFederatedNotification', {
-          newFederatedNotification: {
-            id: '1',
-            recipient: 'alice',
-            message: 'Hello from federation',
-          },
-        });
-      }, 100);
-    });
+    const publishNotifications = () => {
+      pubSub.publish('newFederatedNotification', {
+        newFederatedNotification: {
+          id: '99',
+          recipient: 'alice',
+          message: 'wrong id',
+        },
+      });
+      pubSub.publish('newFederatedNotification', {
+        newFederatedNotification: {
+          id: '1',
+          recipient: 'bob',
+          message: 'wrong recipient',
+        },
+      });
+      pubSub.publish('newFederatedNotification', {
+        newFederatedNotification: {
+          id: '1',
+          recipient: 'alice',
+          message: 'Hello from federation',
+        },
+      });
+    };
 
     const apolloClient = new ApolloClient({
       link: new GraphQLWsLink(wsClient),
       cache: new InMemoryCache(),
     });
 
-    await new Promise<void>((resolve, reject) => {
-      apolloClient
-        .subscribe({
-          query: subscriptionQuery,
-          variables: { id: '1', recipient: 'alice' },
-        })
-        .subscribe({
-          next(value: any) {
-            try {
-              expect(value.data.newFederatedNotification.id).toEqual('1');
-              expect(value.data.newFederatedNotification.recipient).toEqual(
-                'alice',
-              );
-              expect(value.data.newFederatedNotification.message).toEqual(
-                'Hello from federation',
-              );
-              resolve();
-            } catch (e) {
-              reject(e);
-            }
-          },
-          complete() {},
-          error: reject,
-        });
-    });
+    let publishTimer: ReturnType<typeof setInterval> | undefined;
+    try {
+      await new Promise<void>((resolve, reject) => {
+        apolloClient
+          .subscribe({
+            query: subscriptionQuery,
+            variables: { id: '1', recipient: 'alice' },
+          })
+          .subscribe({
+            next(value: any) {
+              try {
+                expect(value.data.newFederatedNotification.id).toEqual('1');
+                expect(value.data.newFederatedNotification.recipient).toEqual(
+                  'alice',
+                );
+                expect(value.data.newFederatedNotification.message).toEqual(
+                  'Hello from federation',
+                );
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            },
+            complete() {},
+            error: reject,
+          });
+
+        // The server registers the subscription asynchronously after the socket
+        // comes up, so republish until the payload lands instead of racing a
+        // fixed delay. Events published too early are simply dropped, and the
+        // filtered-out ones stay filtered out however often they are resent.
+        publishNotifications();
+        publishTimer = setInterval(publishNotifications, 25);
+      });
+    } finally {
+      clearInterval(publishTimer);
+    }
   });
 
   it('should expose the Subscription type in the federation SDL', async () => {

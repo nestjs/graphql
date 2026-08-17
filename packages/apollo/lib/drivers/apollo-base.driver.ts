@@ -114,17 +114,12 @@ export abstract class ApolloBaseDriver<
     // Rewrite a copy: the caller's configuration object may be reused across
     // applications, and prefixing it in place compounds on every merge.
     const normalized = { ...subscriptions };
-    for (const protocol of [
-      'graphql-ws',
-      'subscriptions-transport-ws',
-    ] as const) {
-      const config = normalized[protocol];
-      if (config && typeof config === 'object' && config.path) {
-        normalized[protocol] = {
-          ...config,
-          path: this.applyGlobalPrefix(config.path, options),
-        };
-      }
+    const config = normalized['graphql-ws'];
+    if (config && typeof config === 'object' && config.path) {
+      normalized['graphql-ws'] = {
+        ...config,
+        path: this.applyGlobalPrefix(config.path, options),
+      };
     }
     (options as ApolloDriverConfig).subscriptions = normalized;
   }

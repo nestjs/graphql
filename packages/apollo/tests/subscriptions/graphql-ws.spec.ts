@@ -199,64 +199,73 @@ describe('graphql-ws protocol', () => {
       retryAttempts: 0,
     });
 
-    wsClient.on('connected', () => {
-      // timeout needed to allow the subscription to be established
-      setTimeout(() => {
-        pubSub.publish('newNotification', {
-          newNotification: {
-            id: '2',
-            recipient: 'test',
-            message: 'wrong message!',
-          },
-        });
-        pubSub.publish('newNotification', {
-          newNotification: {
-            id: '1',
-            recipient: 'someone-else',
-            message: 'wrong message!',
-          },
-        });
-        pubSub.publish('newNotification', {
-          newNotification: {
-            id: '1',
-            recipient: 'test',
-            message: 'Hello graphql-ws',
-          },
-        });
-      }, 100);
-    });
+    const publishNotifications = () => {
+      pubSub.publish('newNotification', {
+        newNotification: {
+          id: '2',
+          recipient: 'test',
+          message: 'wrong message!',
+        },
+      });
+      pubSub.publish('newNotification', {
+        newNotification: {
+          id: '1',
+          recipient: 'someone-else',
+          message: 'wrong message!',
+        },
+      });
+      pubSub.publish('newNotification', {
+        newNotification: {
+          id: '1',
+          recipient: 'test',
+          message: 'Hello graphql-ws',
+        },
+      });
+    };
 
     const apolloClient = new ApolloClient({
       link: new GraphQLWsLink(wsClient),
       cache: new InMemoryCache(),
     });
 
-    await new Promise<void>((resolve, reject) => {
-      apolloClient
-        .subscribe({
-          query: subscriptionQuery,
-          variables: {
-            id: '1',
-          },
-        })
-        .subscribe({
-          next(value: any) {
-            try {
-              expect(value.data.newNotification.id).toEqual('1');
-              expect(value.data.newNotification.message).toEqual(
-                'Hello graphql-ws',
-              );
-              resolve();
-            } catch (e) {
-              reject(e);
-            }
-          },
-          complete() {},
-          error(error: unknown) {
-            reject(error);
-          },
-        });
-    });
+    let publishTimer: ReturnType<typeof setInterval> | undefined;
+    try {
+      await new Promise<void>((resolve, reject) => {
+        apolloClient
+          .subscribe({
+            query: subscriptionQuery,
+            variables: {
+              id: '1',
+            },
+          })
+          .subscribe({
+            next(value: any) {
+              try {
+                expect(value.data.newNotification.id).toEqual('1');
+                expect(value.data.newNotification.message).toEqual(
+                  'Hello graphql-ws',
+                );
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            },
+            complete() {},
+            error(error: unknown) {
+              reject(error);
+            },
+          });
+
+        // The server registers the subscription asynchronously after the socket
+        // comes up, so republish until the payload lands instead of racing a
+        // fixed delay. Events published too early are simply dropped, and the
+        // filtered-out ones stay filtered out however often they are resent.
+        publishNotifications();
+        publishTimer = setInterval(publishNotifications, 25);
+      });
+    } finally {
+      clearInterval(publishTimer);
+    }
   });
 
   afterEach(async () => {

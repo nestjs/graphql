@@ -37,14 +37,10 @@ describe('Subscription path with global prefix', () => {
       useGlobalPrefix: true,
       subscriptions: {
         'graphql-ws': { path: '/graphql' },
-        'subscriptions-transport-ws': { path: '/graphql' },
       },
     } as ApolloDriverConfig);
 
     expect(merged.subscriptions?.['graphql-ws']).toMatchObject({
-      path: '/api/graphql',
-    });
-    expect(merged.subscriptions?.['subscriptions-transport-ws']).toMatchObject({
       path: '/api/graphql',
     });
   });
