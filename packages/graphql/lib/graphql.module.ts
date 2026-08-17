@@ -26,7 +26,11 @@ import {
 } from './interfaces/gql-module-options.interface';
 import { MetadataLoader } from './plugin/metadata-loader';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module';
-import { ResolversExplorerService, ScalarsExplorerService } from './services';
+import {
+  ResolverDecoratorHost,
+  ResolversExplorerService,
+  ScalarsExplorerService,
+} from './services';
 import { extend, generateString } from './utils';
 
 /**
@@ -45,12 +49,14 @@ import { extend, generateString } from './utils';
     GraphQLSchemaHost,
     GraphQLFederationFactory,
     TypeDefsDecoratorFactory,
+    ResolverDecoratorHost,
   ],
   exports: [
     GraphQLTypesLoader,
     GraphQLAstExplorer,
     GraphQLSchemaHost,
     GraphQLFederationFactory,
+    ResolverDecoratorHost,
   ],
 })
 export class GraphQLModule<

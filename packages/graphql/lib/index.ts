@@ -15,6 +15,7 @@ export * from './services/base-explorer.service';
 export * from './services/gql-arguments-host';
 export * from './services/gql-execution-context';
 export * from './services/gql-subscription.service';
+export * from './services/resolver-decorator-host';
 export * from './tokens';
 export * from './type-factories';
 export * from './type-helpers';

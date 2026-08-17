@@ -3,6 +3,7 @@ import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
 import { GraphQLSchema } from 'graphql';
 import { GraphQLFactory } from '../graphql.factory';
 import { GqlModuleOptions, GraphQLDriver } from '../interfaces';
+import { ResolverDecoratorHost } from '../services/resolver-decorator-host';
 import { normalizeRoutePath } from '../utils';
 
 /**
@@ -20,6 +21,9 @@ export abstract class AbstractGraphQLDriver<
 
   @Inject()
   protected readonly graphQlFactory: GraphQLFactory;
+
+  @Inject()
+  protected readonly resolverDecoratorHost?: ResolverDecoratorHost;
 
   public abstract start(options: TOptions): Promise<unknown>;
   public abstract stop(): Promise<void>;
