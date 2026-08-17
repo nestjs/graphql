@@ -40,6 +40,8 @@ import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.int
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util.js';
 import { extractMetadata } from '../utils/extract-metadata.util.js';
+import { createArgsMapper } from '../utils/map-args-to-props.util.js';
+import { normalizeResolverArgs } from '../utils/normalize-resolver-args.js';
 import { BaseExplorerService } from './base-explorer.service.js';
 import { GqlContextType } from './gql-execution-context.js';
 
@@ -179,6 +181,7 @@ export class ResolversExplorerService extends BaseExplorerService {
   ) {
     const paramsFactory = this.gqlParamsFactory;
     const isPropertyResolver = !ROOT_RESOLVER_TYPES.has(resolver.type);
+    const mapArgs = createArgsMapper(instance.constructor, resolver.methodName);
 
     if (this.fieldResolverEnhancersLookup === null) {
       const enhancers = this.gqlOptions.fieldResolverEnhancers || [];
@@ -223,13 +226,14 @@ export class ResolversExplorerService extends BaseExplorerService {
         );
         return callback(...args);
       };
+      const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
       return isPropertyResolver
         ? this.registerFieldMiddlewareIfExists(
-            resolverCallback,
+            wrappedCallback,
             instance,
             resolver.methodName,
           )
-        : resolverCallback;
+        : wrappedCallback;
     }
 
     if (
@@ -260,14 +264,43 @@ export class ResolversExplorerService extends BaseExplorerService {
       contextOptions,
       'graphql',
     );
+    const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
 
     return isPropertyResolver
       ? this.registerFieldMiddlewareIfExists(
-          resolverCallback,
+          wrappedCallback,
           instance,
           resolver.methodName,
         )
-      : resolverCallback;
+      : wrappedCallback;
+  }
+
+  /**
+   * Rewrites the incoming arguments object onto the property names declared by
+   * the `@ArgsType()`/`@InputType()` classes of the method before the resolver
+   * context (and therefore any pipe, global ones included) runs.
+   */
+  private withMappedArgs<T extends (...args: any[]) => any>(
+    resolverFn: T,
+    mapArgs: ((args: any) => any) | null,
+  ): T {
+    if (!mapArgs) {
+      return resolverFn;
+    }
+    return ((...args: any[]) => {
+      // Reference resolvers and "resolveType" callbacks receive no arguments
+      // object, which is exactly what normalizeResolverArgs() detects.
+      if (args.length < 2 || normalizeResolverArgs(args) !== args) {
+        return resolverFn(...args);
+      }
+      const mappedArgs = mapArgs(args[1]);
+      if (mappedArgs === args[1]) {
+        return resolverFn(...args);
+      }
+      const nextArgs = [...args];
+      nextArgs[1] = mappedArgs;
+      return resolverFn(...nextArgs);
+    }) as T;
   }
 
   createSubscriptionMetadata(
