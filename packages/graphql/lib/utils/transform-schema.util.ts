@@ -13,6 +13,7 @@ import {
   GraphQLList,
   GraphQLNamedType,
   GraphQLNonNull,
+  GraphQLNullableType,
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLResolveInfo,
@@ -157,7 +158,7 @@ export function transformSchema(
   function replaceType<T extends GraphQLType>(
     type: GraphQLList<T>,
   ): GraphQLList<T>;
-  function replaceType<T extends GraphQLType>(
+  function replaceType<T extends GraphQLNullableType>(
     type: GraphQLNonNull<T>,
   ): GraphQLNonNull<T>;
   function replaceType(type: GraphQLNamedType): GraphQLNamedType;
@@ -167,7 +168,9 @@ export function transformSchema(
     if (isListType(type)) {
       return new GraphQLList(replaceType(type.ofType as GraphQLInputType));
     } else if (isNonNullType(type)) {
-      return new GraphQLNonNull(replaceType(type.ofType as GraphQLInputType));
+      return new GraphQLNonNull(
+        replaceType(type.ofType as GraphQLInputType) as GraphQLNullableType,
+      );
     }
     return replaceNamedType(type);
   }
