@@ -35,6 +35,10 @@ export function ArgsType(options: ArgsTypeOptions): ClassDecorator;
 /**
  * Decorator that marks a class as a resolver arguments type.
  *
+ * Note: arguments classes are flattened into the individual arguments of every
+ * field they are used in, so the explicit name is only reflected in the type
+ * metadata and does not appear in the generated schema.
+ *
  * @publicApi
  */
 export function ArgsType(
@@ -58,7 +62,7 @@ export function ArgsType(
     const metadata = {
       name: name || target.name,
       target,
-      registerIn: options?.registerIn,
+      registerIn: options.registerIn,
     };
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addArgsMetadata(metadata),
