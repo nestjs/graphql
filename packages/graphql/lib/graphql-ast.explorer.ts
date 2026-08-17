@@ -14,6 +14,7 @@ import {
   OperationTypeDefinitionNode,
   ScalarTypeDefinitionNode,
   ScalarTypeExtensionNode,
+  StringValueNode,
   TypeNode,
   TypeSystemDefinitionNode,
   TypeSystemExtensionNode,
@@ -25,6 +26,7 @@ import type {
   ClassDeclarationStructure,
   EnumDeclarationStructure,
   InterfaceDeclarationStructure,
+  JSDocStructure,
   MethodDeclarationStructure,
   MethodSignatureStructure,
   OptionalKind,
@@ -84,6 +86,13 @@ export interface DefinitionsGeneratorOptions {
    * @default false
    */
   enumsAsTypes?: boolean;
+
+  /**
+   * If true, GraphQL descriptions are emitted as TSDoc/JSDoc comments
+   * on the generated types and fields.
+   * @default false
+   */
+  emitDescriptions?: boolean;
 
   /**
    * If provided, specifies a function to transform type names.
@@ -248,6 +257,7 @@ export class GraphQLAstExplorer {
       isExported: true,
       isAbstract: isRoot && mode === 'class',
       kind: structureKind,
+      docs: this.getDescriptionDocs(item, options),
       properties: [],
       methods: [],
     };
@@ -338,6 +348,7 @@ export class GraphQLAstExplorer {
       type: this.addSymbolIfRoot(type),
       hasQuestionToken:
         !required || (item as FieldDefinitionNode).arguments?.length > 0,
+      docs: this.getDescriptionDocs(item, options),
     };
   }
 
@@ -362,6 +373,7 @@ export class GraphQLAstExplorer {
       isAbstract: mode === 'class',
       name: propertyName,
       returnType: `${type} | Promise<${type}>`,
+      docs: this.getDescriptionDocs(item, options),
       parameters: this.getFunctionParameters(
         (item as FieldDefinitionNode).arguments,
         options,
@@ -476,6 +488,7 @@ export class GraphQLAstExplorer {
       name: transformedName,
       type: mappedTypeName ?? options.defaultScalarType ?? 'any',
       isExported: true,
+      docs: this.getDescriptionDocs(item, options),
     };
   }
 
@@ -498,17 +511,20 @@ export class GraphQLAstExplorer {
         name: transformedName,
         type: values.join(' | '),
         isExported: true,
+        docs: this.getDescriptionDocs(item, options),
       };
     }
     const members = map(item.values, (value) => ({
       name: get(value, 'name.value'),
       value: get(value, 'name.value'),
+      docs: this.getDescriptionDocs(value, options),
     }));
     return {
       kind: tsMorphLib.StructureKind.Enum,
       name: transformedName,
       members,
       isExported: true,
+      docs: this.getDescriptionDocs(item, options),
     };
   }
 
@@ -532,6 +548,7 @@ export class GraphQLAstExplorer {
       name: transformedName,
       type: types.join(' | '),
       isExported: true,
+      docs: this.getDescriptionDocs(item, options),
     };
   }
 
@@ -551,5 +568,19 @@ export class GraphQLAstExplorer {
       return name;
     }
     return options.typeName(name);
+  }
+
+  private getDescriptionDocs(
+    item: {
+      readonly kind: string;
+      readonly description?: StringValueNode | null;
+    },
+    options: DefinitionsGeneratorOptions,
+  ): OptionalKind<JSDocStructure>[] | undefined {
+    const description = get(item, 'description.value');
+    if (!options.emitDescriptions || !description) {
+      return undefined;
+    }
+    return [{ description }];
   }
 }
