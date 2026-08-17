@@ -23,14 +23,14 @@ class IssueResolver {
   }
 }
 
-function buildModule(autoTransformHttpErrors?: boolean) {
+function buildModule(preserveHttpStatusForExecutionErrors?: boolean) {
   @Module({
     imports: [
       GraphQLModule.forRoot<ApolloDriverConfig>({
         driver: ApolloDriver,
         autoSchemaFile: true,
         includeStacktraceInErrorResponses: false,
-        autoTransformHttpErrors,
+        preserveHttpStatusForExecutionErrors,
       }),
     ],
     providers: [IssueResolver],
@@ -39,9 +39,9 @@ function buildModule(autoTransformHttpErrors?: boolean) {
   return Issue2940Module;
 }
 
-async function bootstrap(autoTransformHttpErrors?: boolean) {
+async function bootstrap(preserveHttpStatusForExecutionErrors?: boolean) {
   const moduleRef = await Test.createTestingModule({
-    imports: [buildModule(autoTransformHttpErrors)],
+    imports: [buildModule(preserveHttpStatusForExecutionErrors)],
   }).compile();
 
   const app = moduleRef.createNestApplication();
@@ -50,7 +50,7 @@ async function bootstrap(autoTransformHttpErrors?: boolean) {
 }
 
 describe('Issue #2940 - GraphQL error formatting with HTTP status', () => {
-  describe('default (autoTransformHttpErrors enabled)', () => {
+  describe('default (preserveHttpStatusForExecutionErrors enabled)', () => {
     let app: INestApplication;
 
     beforeEach(async () => {
@@ -104,7 +104,7 @@ describe('Issue #2940 - GraphQL error formatting with HTTP status', () => {
     });
   });
 
-  describe('with autoTransformHttpErrors disabled', () => {
+  describe('with preserveHttpStatusForExecutionErrors disabled', () => {
     let app: INestApplication;
 
     beforeEach(async () => {

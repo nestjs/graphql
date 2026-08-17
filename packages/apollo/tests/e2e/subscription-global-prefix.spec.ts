@@ -1,5 +1,5 @@
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { GraphQLFactory } from '@nestjs/graphql';
+import { GraphQLFactory, ResolverDecoratorHost } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { ApolloDriver } from '../../lib/drivers/index.js';
 import { ApolloDriverConfig } from '../../lib/interfaces/index.js';
@@ -12,6 +12,7 @@ describe('Subscription path with global prefix', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ApolloDriver,
+        ResolverDecoratorHost,
         { provide: ApplicationConfig, useValue: applicationConfig },
         { provide: HttpAdapterHost, useValue: {} },
         { provide: GraphQLFactory, useValue: {} },

@@ -4,6 +4,7 @@ import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { MercuriusGatewayDriverConfig } from '../interfaces/index.js';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
+import { registerMercuriusRequestHooks } from '../utils/register-mercurius-request-hooks.util.js';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
 
 /**
@@ -44,6 +45,7 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatew
     });
     await registerMercuriusPlugin(app, plugins);
     registerMercuriusHooks(app, hooks, 'graphqlGateway');
+    registerMercuriusRequestHooks(app, this.resolverDecoratorHost);
   }
 
   public async stop(): Promise<void> {}

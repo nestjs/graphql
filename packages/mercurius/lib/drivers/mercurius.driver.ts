@@ -6,6 +6,7 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface.js';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
+import { registerMercuriusRequestHooks } from '../utils/register-mercurius-request-hooks.util.js';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
 
 /**
@@ -43,6 +44,7 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
     });
     await registerMercuriusPlugin(app, plugins);
     registerMercuriusHooks(app, hooks);
+    registerMercuriusRequestHooks(app, this.resolverDecoratorHost);
   }
 
   public async stop(): Promise<void> {}

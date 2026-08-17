@@ -116,10 +116,7 @@ export function transformFederatedSchema(schema: GraphQLSchema) {
   const query = schema.getType('Query') as GraphQLObjectType;
   const queryFields = query.getFields();
 
-  queryFields._service = {
-    ...queryFields._service,
-    resolve: () => ({ sdl: schemaString }),
-  };
+  queryFields._service.resolve = () => ({ sdl: schemaString });
 
   const entityTypes = Object.values(schema.getTypeMap()).filter(
     (type) => isObjectType(type) && typeIncludesDirective(type, 'key'),
@@ -141,40 +138,42 @@ export function transformFederatedSchema(schema: GraphQLSchema) {
 
     const query = schema.getType('Query') as GraphQLObjectType;
     const queryFields = query.getFields();
-    queryFields._entities = {
-      ...queryFields._entities,
-      resolve: (_source, { representations }, context, info) => {
-        return representations.map((reference) => {
-          const { __typename } = reference;
+    queryFields._entities.resolve = (
+      _source,
+      { representations },
+      context,
+      info,
+    ) => {
+      return representations.map((reference) => {
+        const { __typename } = reference;
 
-          const type = info.schema.getType(__typename);
-          if (!type || !isObjectType(type)) {
-            throw new MER_ERR_GQL_GATEWAY_INVALID_SCHEMA(__typename);
-          }
+        const type = info.schema.getType(__typename);
+        if (!type || !isObjectType(type)) {
+          throw new MER_ERR_GQL_GATEWAY_INVALID_SCHEMA(__typename);
+        }
 
-          const resolveReference =
-            type.extensions?.apollo?.subgraph?.resolveReference ??
-            /**
-             * Backcompat for old versions of @apollo/subgraph which didn't use
-             * `extensions` This can be removed when support for
-             * @apollo/subgraph < 0.4.2 is dropped Reference:
-             * https://github.com/apollographql/federation/pull/1747
-             */
-            // @ts-expect-error (explanation above)
-            type.resolveReference ??
-            function defaultResolveReference() {
-              return reference;
-            };
+        const resolveReference =
+          type.extensions?.apollo?.subgraph?.resolveReference ??
+          /**
+           * Backcompat for old versions of @apollo/subgraph which didn't use
+           * `extensions` This can be removed when support for
+           * @apollo/subgraph < 0.4.2 is dropped Reference:
+           * https://github.com/apollographql/federation/pull/1747
+           */
+          // @ts-expect-error (explanation above)
+          type.resolveReference ??
+          function defaultResolveReference() {
+            return reference;
+          };
 
-          const result = resolveReference(reference, {}, context, info);
+        const result = resolveReference(reference, {}, context, info);
 
-          if (result && 'then' in result && typeof result.then === 'function') {
-            return result.then((x) => addTypeNameToResult(x, __typename));
-          }
+        if (result && 'then' in result && typeof result.then === 'function') {
+          return result.then((x) => addTypeNameToResult(x, __typename));
+        }
 
-          return addTypeNameToResult(result, __typename);
-        });
-      },
+        return addTypeNameToResult(result, __typename);
+      });
     };
   }
 

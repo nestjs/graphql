@@ -30,6 +30,7 @@ import {
 import { MetadataLoader } from './plugin/metadata-loader.js';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module.js';
 import {
+  ResolverDecoratorHost,
   ResolversExplorerService,
   ScalarsExplorerService,
 } from './services/index.js';
@@ -51,12 +52,14 @@ import { extend, generateString } from './utils/index.js';
     GraphQLSchemaHost,
     GraphQLFederationFactory,
     TypeDefsDecoratorFactory,
+    ResolverDecoratorHost,
   ],
   exports: [
     GraphQLTypesLoader,
     GraphQLAstExplorer,
     GraphQLSchemaHost,
     GraphQLFederationFactory,
+    ResolverDecoratorHost,
   ],
 })
 export class GraphQLModule<

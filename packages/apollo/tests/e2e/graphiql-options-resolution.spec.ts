@@ -1,5 +1,5 @@
 import { ApplicationConfig, HttpAdapterHost } from '@nestjs/core';
-import { GraphQLFactory } from '@nestjs/graphql';
+import { GraphQLFactory, ResolverDecoratorHost } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { ApolloDriver } from '../../lib/drivers/index.js';
 import { GraphiQLPlaygroundPlugin } from '../../lib/graphiql/graphiql-playground.plugin.js';
@@ -21,6 +21,7 @@ describe('GraphiQL landing page resolution', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ApolloDriver,
+        ResolverDecoratorHost,
         { provide: ApplicationConfig, useValue: new ApplicationConfig() },
         { provide: HttpAdapterHost, useValue: {} },
         { provide: GraphQLFactory, useValue: {} },

@@ -15,6 +15,7 @@ export * from './services/base-explorer.service.js';
 export * from './services/gql-arguments-host.js';
 export * from './services/gql-execution-context.js';
 export * from './services/gql-subscription.service.js';
+export * from './services/resolver-decorator-host.js';
 export * from './tokens.js';
 export * from './type-factories/index.js';
 export * from './type-helpers/index.js';

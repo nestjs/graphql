@@ -44,6 +44,7 @@ import { createArgsMapper } from '../utils/map-args-to-props.util.js';
 import { normalizeResolverArgs } from '../utils/normalize-resolver-args.js';
 import { BaseExplorerService } from './base-explorer.service.js';
 import { GqlContextType } from './gql-execution-context.js';
+import { ResolverDecoratorHost } from './resolver-decorator-host.js';
 
 const ROOT_RESOLVER_TYPES = new Set<string>([
   Resolver.MUTATION,
@@ -74,6 +75,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     private readonly gqlOptions: GqlModuleOptions,
     private readonly moduleRef: ModuleRef,
     private readonly serializedGraph: SerializedGraph,
+    private readonly resolverDecoratorHost: ResolverDecoratorHost,
   ) {
     super();
   }
@@ -233,7 +235,7 @@ export class ResolversExplorerService extends BaseExplorerService {
             instance,
             resolver.methodName,
           )
-        : wrappedCallback;
+        : this.resolverDecoratorHost.decorate(wrappedCallback);
     }
 
     if (
@@ -272,7 +274,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           instance,
           resolver.methodName,
         )
-      : wrappedCallback;
+      : this.resolverDecoratorHost.decorate(wrappedCallback);
   }
 
   /**

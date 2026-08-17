@@ -1,10 +1,10 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
 import { flatten } from 'es-toolkit';
-import glob from 'fast-glob';
 import * as fs from 'fs';
 import normalize from 'normalize-path';
 import * as util from 'util';
+import { globPaths } from './utils/glob.util.js';
 
 const readFile = util.promisify(fs.readFile);
 
@@ -31,7 +31,7 @@ export class GraphQLTypesLoader {
       ? paths.map((path) => normalize(path))
       : normalize(paths);
 
-    const filePaths = await glob(paths, {
+    const filePaths = await globPaths(paths, {
       ignore: includeNodeModules ? [] : ['node_modules'],
     });
     if (filePaths.length === 0) {
