@@ -1,5 +1,8 @@
-import { ObjectType, Field, ID } from '../../lib';
-import { createUnionType, registerEnumType } from '../../lib/type-factories';
+import { ObjectType, Field, ID } from '../../lib/index.js';
+import {
+  createUnionType,
+  registerEnumType,
+} from '../../lib/type-factories/index.js';
 
 @ObjectType()
 class MemberA {

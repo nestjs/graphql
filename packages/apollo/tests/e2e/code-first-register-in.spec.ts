@@ -3,10 +3,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
-import { ApolloDriver, ApolloDriverConfig } from '../../lib';
-import { ProductsModule } from '../code-first-register-in/products/products.module';
-import { UsersModule } from '../code-first-register-in/users/users.module';
-import { expectSingleResult } from '../utils/assertion-utils';
+import { ApolloDriver, ApolloDriverConfig } from '../../lib/index.js';
+import { ProductsModule } from '../code-first-register-in/products/products.module.js';
+import { UsersModule } from '../code-first-register-in/users/users.module.js';
+import { expectSingleResult } from '../utils/assertion-utils.js';
 
 const buildApp = async (include?: Function[]) => {
   const moduleRef = await Test.createTestingModule({

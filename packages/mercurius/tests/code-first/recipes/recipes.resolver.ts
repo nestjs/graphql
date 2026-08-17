@@ -9,15 +9,15 @@ import {
   Subscription,
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { AuthGuard } from '../common/guards/auth.guard';
-import { FilterRecipesCountArgs } from './dto/filter-recipes-count.args';
-import { NewRecipeInput } from './dto/new-recipe.input';
-import { RecipesArgs } from './dto/recipes.args';
-import { Category } from './models/category';
-import { Ingredient } from './models/ingredient';
-import { IRecipe, Recipe } from './models/recipe';
-import { RecipesService } from './recipes.service';
-import { SearchResultUnion } from './unions/search-result.union';
+import { AuthGuard } from '../common/guards/auth.guard.js';
+import { FilterRecipesCountArgs } from './dto/filter-recipes-count.args.js';
+import { NewRecipeInput } from './dto/new-recipe.input.js';
+import { RecipesArgs } from './dto/recipes.args.js';
+import { Category } from './models/category.js';
+import { Ingredient } from './models/ingredient.js';
+import { IRecipe, Recipe } from './models/recipe.js';
+import { RecipesService } from './recipes.service.js';
+import { SearchResultUnion } from './unions/search-result.union.js';
 
 const pubSub = new PubSub();
 

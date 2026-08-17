@@ -1,15 +1,15 @@
 import { SetMetadata, Type } from '@nestjs/common';
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 import 'reflect-metadata';
-import { Resolver } from '../enums/resolver.enum';
-import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants';
-import { BaseTypeOptions, ReturnTypeFunc } from '../interfaces';
-import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error';
-import { ResolverTypeMetadata } from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
-import { addResolverMetadata } from './resolvers.utils';
+import { Resolver } from '../enums/resolver.enum.js';
+import { SUBSCRIPTION_OPTIONS_METADATA } from '../graphql.constants.js';
+import { BaseTypeOptions, ReturnTypeFunc } from '../interfaces/index.js';
+import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error.js';
+import { ResolverTypeMetadata } from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts.js';
+import { addResolverMetadata } from './resolvers.utils.js';
 
 /**
  * Interface defining options that can be passed to `@Subscription()` decorator.

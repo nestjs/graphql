@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import request from 'supertest';
-import { AsyncApplicationModule } from '../graphql/async-options.module';
+import { AsyncApplicationModule } from '../graphql/async-options.module.js';
 
 describe('GraphQL (async configuration)', () => {
   let app: INestApplication;

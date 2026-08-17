@@ -8,9 +8,9 @@
 import {
   EnumMetadataValuesMap,
   RegisterInOption,
-} from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+} from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
 
 /**
  * Interface defining options that can be passed to `registerEnumType` function.

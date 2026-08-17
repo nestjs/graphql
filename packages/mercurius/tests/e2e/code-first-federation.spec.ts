@@ -1,11 +1,22 @@
 import { INestApplication, Type } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
+import { createRequire } from 'module';
 import request from 'supertest';
-import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module';
-import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module';
-import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module';
-import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module';
+import { AppModule as GatewayModule } from '../code-first-federation/gateway/gateway.module.js';
+import { AppModule as PostsModule } from '../code-first-federation/posts-service/federation-posts.module.js';
+import { AppModule as RecipesModule } from '../code-first-federation/recipes-service/federation-recipes.module.js';
+import { AppModule as UsersModule } from '../code-first-federation/users-service/federation-users.module.js';
+
+const require = createRequire(import.meta.url);
+const describeCodeFirstFederation = (() => {
+  try {
+    require('@mercuriusjs/gateway/lib/gateway/service-map');
+    return describe;
+  } catch {
+    return describe.skip;
+  }
+})();
 
 async function createService(Module: Type<any>, port: number) {
   const module = await Test.createTestingModule({
@@ -18,16 +29,19 @@ async function createService(Module: Type<any>, port: number) {
   return app;
 }
 
-describe('Code-first - Federation', () => {
+describeCodeFirstFederation('Code-first - Federation', () => {
+  const recipesPort = 3211;
+  const postsPort = 3212;
+  const usersPort = 3213;
   let recipesApp: INestApplication;
   let postsApp: INestApplication;
   let usersApp: INestApplication;
   let gatewayApp: INestApplication;
 
   beforeEach(async () => {
-    recipesApp = await createService(RecipesModule, 3011);
-    postsApp = await createService(PostsModule, 3012);
-    usersApp = await createService(UsersModule, 3013);
+    recipesApp = await createService(RecipesModule, recipesPort);
+    postsApp = await createService(PostsModule, postsPort);
+    usersApp = await createService(UsersModule, usersPort);
 
     const gatewayModule = await Test.createTestingModule({
       imports: [GatewayModule],
@@ -60,13 +74,25 @@ describe('Code-first - Federation', () => {
 
     expect(response.data).toEqual({
       _service: {
-        sdl: `directive @shareable on FIELD_DEFINITION | OBJECT
+        sdl: `\"\"\"
+Indicates that an object type's field is allowed to be resolved by multiple subgraphs (by default in Federation 2, object fields can be resolved by only one subgraph).
+\"\"\"
+directive @shareable on FIELD_DEFINITION | OBJECT
 
+\"\"\"
+This directive links definitions from an external specification to this schema.
+\"\"\"
 directive @link(url: String!, import: [link__Import]) on SCHEMA
 
+\"\"\"
+Indicates that a definition in the subgraph schema should be omitted from the router's API schema, even if that definition is also present in other subgraphs. This means that the field is not exposed to clients at all.
+\"\"\"
 directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-directive @override(from: String!) on FIELD_DEFINITION
+\"\"\"
+Indicates that an object field is now resolved by this subgraph instead of another subgraph where it's also defined. This enables you to migrate a field from one subgraph to another.
+\"\"\"
+directive @override(from: String!, label: String) on FIELD_DEFINITION
 
 type Post
   @key(fields: \"id\")
@@ -151,8 +177,7 @@ scalar link__Import`,
   });
 
   /**
-   * TODO: Temporarirly skipped due to the following issue:
-   * https://github.com/mercurius-js/mercurius-gateway/issues/59
+   * Still blocked upstream by https://github.com/mercurius-js/mercurius-gateway/issues/59.
    */
   it.skip('should return posts query result from gateway', async () => {
     return request(gatewayApp.getHttpServer())

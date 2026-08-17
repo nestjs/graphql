@@ -1,5 +1,5 @@
 import { PipeTransform, Type } from '@nestjs/common';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 
 export function isPipe(
   value: unknown,

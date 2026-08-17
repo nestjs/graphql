@@ -1,8 +1,8 @@
 import { Type } from '@nestjs/common';
-import { Complexity, GqlTypeReference } from '../../interfaces';
-import { TypeOptions } from '../../interfaces/type-options.interface';
-import { DirectiveMetadata } from './directive.metadata';
-import { MethodArgsMetadata } from './param.metadata';
+import { Complexity, GqlTypeReference } from '../../interfaces/index.js';
+import { TypeOptions } from '../../interfaces/type-options.interface.js';
+import { DirectiveMetadata } from './directive.metadata.js';
+import { MethodArgsMetadata } from './param.metadata.js';
 
 export interface ResolverClassMetadata {
   target: Function;

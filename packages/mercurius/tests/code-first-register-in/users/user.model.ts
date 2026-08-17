@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { AppInfo } from '../shared/app-info.model';
-import { UsersModule } from './users.module';
+import { AppInfo } from '../shared/app-info.model.js';
+import { UsersModule } from './users.module.js';
 
 @ObjectType({ registerIn: () => UsersModule })
 export class User {

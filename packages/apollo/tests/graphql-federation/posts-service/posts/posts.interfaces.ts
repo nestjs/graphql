@@ -1,4 +1,4 @@
-import { PostType } from './post-type.enum';
+import { PostType } from './post-type.enum.js';
 
 export interface Post {
   id: string;

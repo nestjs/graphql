@@ -1,6 +1,6 @@
 import { ApolloServerPlugin } from '@apollo/server';
-import { GraphiQLHTMLFactory } from './graphiql-html.factory';
-import { GraphiQLOptions } from './interfaces/graphiql-options.interface';
+import { GraphiQLHTMLFactory } from './graphiql-html.factory.js';
+import { GraphiQLOptions } from './interfaces/graphiql-options.interface.js';
 
 export class GraphiQLPlaygroundPlugin implements ApolloServerPlugin {
   private readonly graphiqlHTMLFactory = new GraphiQLHTMLFactory();

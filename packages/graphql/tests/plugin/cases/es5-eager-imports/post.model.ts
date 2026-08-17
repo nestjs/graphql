@@ -11,7 +11,7 @@
  * sure all types used in metadata is loaded into runtime
  */
 
-import { Author } from './author.model';
+import { Author } from './author.model.js';
 
 declare const ObjectType: any;
 

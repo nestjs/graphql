@@ -1,9 +1,9 @@
 import { LoggerService, Module } from '@nestjs/common';
-import { DynamicModule } from '@nestjs/common/interfaces';
+import { DynamicModule } from '@nestjs/common/interfaces/index.js';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusDriverConfig } from '../../../lib';
-import { MercuriusDriver } from '../../../lib/drivers';
-import { NotificationModule } from './notification.module';
+import { MercuriusDriverConfig } from '../../../lib/index.js';
+import { MercuriusDriver } from '../../../lib/drivers/index.js';
+import { NotificationModule } from './notification.module.js';
 
 export type AppModuleConfig = {
   context?: MercuriusDriverConfig['context'];

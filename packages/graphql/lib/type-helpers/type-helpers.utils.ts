@@ -1,5 +1,5 @@
-import { Directive, Extensions } from '../decorators';
-import { PropertyMetadata } from '../schema-builder/metadata';
+import { Directive, Extensions } from '../decorators/index.js';
+import { PropertyMetadata } from '../schema-builder/metadata/index.js';
 
 export function applyFieldDecorators(
   targetClass: Function,

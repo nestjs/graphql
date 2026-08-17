@@ -3,7 +3,7 @@ import { GraphQLModule, Query, Resolver } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { GraphQLError } from 'graphql';
 import request from 'supertest';
-import { ApolloDriver, ApolloDriverConfig } from '../../lib';
+import { ApolloDriver, ApolloDriverConfig } from '../../lib/index.js';
 
 @Resolver()
 class IssueResolver {

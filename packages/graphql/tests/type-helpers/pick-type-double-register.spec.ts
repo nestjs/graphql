@@ -10,9 +10,9 @@ import {
   Query,
   Resolver,
   TypeMetadataStorage,
-} from '../../lib';
-import { PickType } from '../../lib/type-helpers';
-import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage';
+} from '../../lib/index.js';
+import { PickType } from '../../lib/type-helpers/index.js';
+import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 @InputType()
 class PickSourceInput {

@@ -2,7 +2,7 @@ import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
-import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants';
+import { GRAPHQL_SDL_FILE_HEADER } from '@nestjs/graphql/graphql.constants.js';
 import { Test } from '@nestjs/testing';
 import {
   GraphQLSchema,
@@ -13,15 +13,15 @@ import {
   graphql,
   printSchema,
 } from 'graphql';
-import { DirectionsResolver } from '../code-first/directions/directions.resolver';
-import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum';
-import { AbstractResolver } from '../code-first/other/abstract.resolver';
-import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type';
-import { SampleScalar } from '../code-first/other/sample-scalar';
-import { IngredientsResolver } from '../code-first/recipes/ingredients.resolver';
-import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver';
-import { Recipe } from '../code-first/recipes/models/recipe';
-import { RecipesResolver } from '../code-first/recipes/recipes.resolver';
+import { DirectionsResolver } from '../code-first/directions/directions.resolver.js';
+import { SampleOrphanedEnum } from '../code-first/enums/sample-orphaned.enum.js';
+import { AbstractResolver } from '../code-first/other/abstract.resolver.js';
+import { SampleOrphanedType } from '../code-first/other/sample-orphaned.type.js';
+import { SampleScalar } from '../code-first/other/sample-scalar.js';
+import { IngredientsResolver } from '../code-first/recipes/ingredients.resolver.js';
+import { IRecipesResolver } from '../code-first/recipes/irecipes.resolver.js';
+import { Recipe } from '../code-first/recipes/models/recipe.js';
+import { RecipesResolver } from '../code-first/recipes/recipes.resolver.js';
 import {
   getMutation,
   getMutationByName,
@@ -29,8 +29,8 @@ import {
   getQueryByName,
   getSubscription,
   getSubscriptionByName,
-} from '../utils/introspection-schema.utils';
-import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot';
+} from '../utils/introspection-schema.utils.js';
+import { printedSchemaSnapshot } from '../utils/printed-schema.snapshot.js';
 
 describe('Code-first - schema factory', () => {
   let schemaFactory: GraphQLSchemaFactory;
@@ -60,9 +60,17 @@ describe('Code-first - schema factory', () => {
         { orphanedTypes: [SampleOrphanedType, SampleOrphanedEnum] },
       );
 
-      introspectionSchema = await (
-        await graphql({ schema, source: getIntrospectionQuery() })
-      ).data.__schema;
+      const introspectionResult = await graphql({
+        schema,
+        source: getIntrospectionQuery(),
+      });
+
+      if (!introspectionResult.data?.__schema) {
+        throw new Error('Missing introspection schema data');
+      }
+
+      introspectionSchema = introspectionResult.data
+        .__schema as IntrospectionSchema;
     });
     it('should be valid', async () => {
       expect(schema).toBeInstanceOf(GraphQLSchema);

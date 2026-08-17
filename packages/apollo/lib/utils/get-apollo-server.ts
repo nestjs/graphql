@@ -1,7 +1,7 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
 import { INestApplicationContext } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '..';
+import { ApolloDriver } from '../index.js';
 
 type GetApolloServer = (
   app: INestApplicationContext,

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import { GraphQLFieldConfigArgumentMap } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
-import { CannotDetermineArgTypeError } from '../errors/cannot-determine-arg-type.error';
-import { getDefaultValue } from '../helpers/get-default-value.helper';
-import { normalizeEnumDefaultValue } from '../helpers/normalize-enum-default-value.helper';
-import { ClassMetadata, MethodArgsMetadata } from '../metadata';
-import { TypeMetadataStorage } from '../storages/type-metadata.storage';
-import { InputTypeFactory } from './input-type.factory';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
+import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { CannotDetermineArgTypeError } from '../errors/cannot-determine-arg-type.error.js';
+import { getDefaultValue } from '../helpers/get-default-value.helper.js';
+import { normalizeEnumDefaultValue } from '../helpers/normalize-enum-default-value.helper.js';
+import { ClassMetadata, MethodArgsMetadata } from '../metadata/index.js';
+import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
+import { InputTypeFactory } from './input-type.factory.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
 
 @Injectable()
 export class ArgsFactory {

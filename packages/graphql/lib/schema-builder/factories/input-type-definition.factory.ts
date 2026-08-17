@@ -1,15 +1,15 @@
 import { Injectable, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
-import { getDefaultValue } from '../helpers/get-default-value.helper';
-import { normalizeEnumDefaultValue } from '../helpers/normalize-enum-default-value.helper';
-import { ClassMetadata } from '../metadata';
-import { TypeFieldsAccessor } from '../services/type-fields.accessor';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
-import { TypeMetadataStorage } from '../storages/type-metadata.storage';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
-import { InputTypeFactory } from './input-type.factory';
+import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { getDefaultValue } from '../helpers/get-default-value.helper.js';
+import { normalizeEnumDefaultValue } from '../helpers/normalize-enum-default-value.helper.js';
+import { ClassMetadata } from '../metadata/index.js';
+import { TypeFieldsAccessor } from '../services/type-fields.accessor.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
+import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
+import { InputTypeFactory } from './input-type.factory.js';
 
 export interface InputTypeDefinition {
   target: Function;

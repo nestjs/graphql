@@ -1,15 +1,15 @@
 import { SetMetadata, Type } from '@nestjs/common';
-import { ENTRY_PROVIDER_WATERMARK } from '@nestjs/common/constants';
-import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
+import { ENTRY_PROVIDER_WATERMARK } from '@nestjs/common/constants.js';
+import { isFunction, isString } from '@nestjs/common/utils/shared.utils.js';
 import 'reflect-metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
 import {
   addResolverMetadata,
   getClassName,
   getClassOrUndefined,
   getResolverTypeFn,
-} from './resolvers.utils';
+} from './resolvers.utils.js';
 
 export type ResolverTypeFn = (of?: void) => Function;
 

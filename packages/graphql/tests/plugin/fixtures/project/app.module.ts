@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '../../../../lib';
-import { RecipesModule } from './recipes/recipes.module';
+import { GraphQLModule } from '../../../../lib/index.js';
+import { RecipesModule } from './recipes/recipes.module.js';
 
 @Module({
   imports: [

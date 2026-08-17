@@ -1,24 +1,24 @@
 import * as fs from 'fs';
 import * as ts from 'typescript';
-import { InputType, InterfaceType, ObjectType } from '../../lib';
-import { before } from '../../lib/plugin/compiler-plugin';
-import { PluginOptions } from '../../lib/plugin/merge-options';
+import { InputType, InterfaceType, ObjectType } from '../../lib/index.js';
+import { before } from '../../lib/plugin/compiler-plugin.js';
+import { PluginOptions } from '../../lib/plugin/merge-options.js';
 import {
   createCatDtoAltText,
   createCatDtoTextAltTranspiled,
-} from './fixtures/create-cat-alt.dto';
+} from './fixtures/create-cat-alt.dto.js';
 import {
   createCatDtoText,
   createCatDtoTextTranspiled,
-} from './fixtures/create-cat.dto';
+} from './fixtures/create-cat.dto.js';
 import {
   deprecationDtoText,
   deprecationDtoTranspiled,
-} from './fixtures/deprecation.dto';
+} from './fixtures/deprecation.dto.js';
 import {
   nullableDtoText,
   nullableDtoTextTranspiled,
-} from './fixtures/nullable.dto';
+} from './fixtures/nullable.dto.js';
 
 const defaultCompilerOptions: ts.CompilerOptions = {
   module: ts.ModuleKind.ES2020,
@@ -54,7 +54,7 @@ function compileFiles(
   pluginOptions: PluginOptions = {},
   compilerOptions = defaultCompilerOptions,
 ) {
-  const caseDir = __dirname + rootDir;
+  const caseDir = import.meta.dirname + rootDir;
 
   const options: ts.CompilerOptions = {
     ...compilerOptions,

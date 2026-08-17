@@ -1,10 +1,10 @@
-import { ResolveField } from '../../../lib/decorators';
+import { ResolveField } from '../../../lib/decorators/index.js';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   RESOLVER_NAME_METADATA,
   RESOLVER_PROPERTY_METADATA,
-} from '../../../lib/graphql.constants';
-import { FieldMiddleware } from '../../../lib/interfaces';
+} from '../../../lib/graphql.constants.js';
+import { FieldMiddleware } from '../../../lib/interfaces/index.js';
 
 const trimMiddleware: FieldMiddleware = async (_ctx, next) => {
   const value = (await next()) as string;

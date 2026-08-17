@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common';
-import { ResolveTypeFn } from '../../interfaces';
-import { RegisterInOption } from './class.metadata';
+import { ResolveTypeFn } from '../../interfaces/index.js';
+import { RegisterInOption } from './class.metadata.js';
 
 export interface UnionMetadata<
   T extends readonly Type<unknown>[] = readonly Type<unknown>[],

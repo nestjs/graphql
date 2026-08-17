@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { MercuriusGatewayDriver } from '../../../../lib/drivers';
-import { mockPlugin } from '../../mocks/mock.plugin';
+import { MercuriusGatewayDriver } from '../../../../lib/drivers/index.js';
+import { mockPlugin } from '../../mocks/mock.plugin.js';
 
 @Module({
   imports: [
@@ -9,8 +9,8 @@ import { mockPlugin } from '../../mocks/mock.plugin';
       driver: MercuriusGatewayDriver,
       gateway: {
         services: [
-          { name: 'users', url: 'http://localhost:3011/graphql' },
-          { name: 'posts', url: 'http://localhost:3012/graphql' },
+          { name: 'users', url: 'http://localhost:3111/graphql' },
+          { name: 'posts', url: 'http://localhost:3112/graphql' },
         ],
       },
       plugins: [

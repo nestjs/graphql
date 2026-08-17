@@ -4,10 +4,10 @@ import { join } from 'path';
 import {
   MercuriusFederationDriver,
   MercuriusFederationDriverConfig,
-} from '../../../../lib';
-import { PostsModule } from '../../../graphql-federation/posts-service/posts/posts.module';
-import { upperDirectiveTransformer } from '../../../graphql-federation/posts-service/posts/upper.directive';
-import { mockPlugin } from '../../mocks/mock.plugin';
+} from '../../../../lib/index.js';
+import { PostsModule } from '../../../graphql-federation/posts-service/posts/posts.module.js';
+import { upperDirectiveTransformer } from '../../../graphql-federation/posts-service/posts/upper.directive.js';
+import { mockPlugin } from '../../mocks/mock.plugin.js';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { mockPlugin } from '../../mocks/mock.plugin';
       driver: MercuriusFederationDriver,
       typePaths: [
         join(
-          __dirname,
+          import.meta.dirname,
           '../../../graphql-federation/posts-service',
           '**/*.graphql',
         ),

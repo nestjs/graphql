@@ -1,5 +1,5 @@
 import { Args, ResolveField, Resolver } from '@nestjs/graphql';
-import { IRecipe } from './models/recipe';
+import { IRecipe } from './models/recipe.js';
 
 @Resolver((of) => IRecipe)
 export class IRecipesResolver {

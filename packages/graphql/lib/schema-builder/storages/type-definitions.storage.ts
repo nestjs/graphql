@@ -6,11 +6,11 @@ import {
   GraphQLObjectType,
   GraphQLUnionType,
 } from 'graphql';
-import { EnumDefinition } from '../factories/enum-definition.factory';
-import { InputTypeDefinition } from '../factories/input-type-definition.factory';
-import { InterfaceTypeDefinition } from '../factories/interface-definition.factory';
-import { ObjectTypeDefinition } from '../factories/object-type-definition.factory';
-import { UnionDefinition } from '../factories/union-definition.factory';
+import { EnumDefinition } from '../factories/enum-definition.factory.js';
+import { InputTypeDefinition } from '../factories/input-type-definition.factory.js';
+import { InterfaceTypeDefinition } from '../factories/interface-definition.factory.js';
+import { ObjectTypeDefinition } from '../factories/object-type-definition.factory.js';
+import { UnionDefinition } from '../factories/union-definition.factory.js';
 
 export type GqlInputTypeKey = Function | object;
 export type GqlInputType = InputTypeDefinition | EnumDefinition;

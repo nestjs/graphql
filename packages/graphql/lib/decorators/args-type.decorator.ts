@@ -1,8 +1,9 @@
-import { ClassType } from '../enums/class-type.enum';
-import { RegisterInOption } from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
+import { ClassType } from '../enums/class-type.enum.js';
+import { RegisterInOption } from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { addClassTypeMetadata } from '../utils/add-class-type-metadata.util.js';
 
 /**
  * Interface defining options that can be passed to `@ArgsType()` decorator.
@@ -34,14 +35,34 @@ export function ArgsType(options: ArgsTypeOptions): ClassDecorator;
 /**
  * Decorator that marks a class as a resolver arguments type.
  *
+ * Note: arguments classes are flattened into the individual arguments of every
+ * field they are used in, so the explicit name is only reflected in the type
+ * metadata and does not appear in the generated schema.
+ *
  * @publicApi
  */
-export function ArgsType(options?: ArgsTypeOptions): ClassDecorator {
+export function ArgsType(
+  name: string,
+  options?: ArgsTypeOptions,
+): ClassDecorator;
+/**
+ * Decorator that marks a class as a resolver arguments type.
+ *
+ * @publicApi
+ */
+export function ArgsType(
+  nameOrOptions?: string | ArgsTypeOptions,
+  argsTypeOptions?: ArgsTypeOptions,
+): ClassDecorator {
+  const [name, options = {}] = isString(nameOrOptions)
+    ? [nameOrOptions, argsTypeOptions]
+    : [undefined, nameOrOptions];
+
   return (target: Function) => {
     const metadata = {
-      name: target.name,
+      name: name || target.name,
       target,
-      registerIn: options?.registerIn,
+      registerIn: options.registerIn,
     };
     LazyMetadataStorage.store(() =>
       TypeMetadataStorage.addArgsMetadata(metadata),

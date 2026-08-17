@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
-import { EnumMetadata } from '../metadata';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
+import { EnumMetadata } from '../metadata/index.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
 
 export interface EnumDefinition {
   enumRef: object;

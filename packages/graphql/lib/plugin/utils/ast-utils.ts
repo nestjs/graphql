@@ -22,7 +22,7 @@ import {
   TypeNode,
   UnionTypeNode,
 } from 'typescript';
-import { isDynamicallyAdded } from './plugin-utils';
+import { isDynamicallyAdded } from './plugin-utils.js';
 
 export function getDecorators(node: ts.Node) {
   return (ts.canHaveDecorators(node) && ts.getDecorators(node)) ?? [];

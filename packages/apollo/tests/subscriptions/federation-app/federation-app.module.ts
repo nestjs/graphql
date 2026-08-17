@@ -1,8 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriverConfig } from '../../../lib';
-import { ApolloFederationDriver } from '../../../lib/drivers';
-import { NotificationModule } from './notification.module';
+import { ApolloDriverConfig } from '../../../lib/index.js';
+import { ApolloFederationDriver } from '../../../lib/drivers/index.js';
+import { NotificationModule } from './notification.module.js';
 
 export type FederationAppModuleConfig = {
   subscriptions?: ApolloDriverConfig['subscriptions'];

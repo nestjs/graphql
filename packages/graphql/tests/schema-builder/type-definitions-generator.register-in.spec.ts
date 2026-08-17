@@ -8,10 +8,10 @@ import {
   createUnionType,
   TypeMetadataStorage,
   GraphQLSchemaBuilderModule,
-} from '../../lib';
-import { TypeDefinitionsGenerator } from '../../lib/schema-builder/type-definitions.generator';
-import { TypeDefinitionsStorage } from '../../lib/schema-builder/storages/type-definitions.storage';
-import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage';
+} from '../../lib/index.js';
+import { TypeDefinitionsGenerator } from '../../lib/schema-builder/type-definitions.generator.js';
+import { TypeDefinitionsStorage } from '../../lib/schema-builder/storages/type-definitions.storage.js';
+import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 // Mock modules for testing
 class UsersModule {}

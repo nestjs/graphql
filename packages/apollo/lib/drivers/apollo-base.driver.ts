@@ -1,5 +1,4 @@
 import { ApolloServer, type BaseContext } from '@apollo/server';
-import { ApolloServerPluginLandingPageGraphQLPlayground } from '@apollo/server-plugin-landing-page-graphql-playground';
 import {
   ApolloServerErrorCode,
   unwrapResolverError,
@@ -7,15 +6,15 @@ import {
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { HttpStatus } from '@nestjs/common';
-import { loadPackage } from '@nestjs/common/utils/load-package.util';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
+import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
 import { AbstractGraphQLDriver } from '@nestjs/graphql';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import omit from 'lodash.omit';
-import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin';
-import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface';
-import { ApolloDriverConfig } from '../interfaces';
-import { createAsyncIterator } from '../utils/async-iterator.util';
+import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin.js';
+import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
+import { ApolloDriverConfig } from '../interfaces/index.js';
+import { createAsyncIterator } from '../utils/async-iterator.util.js';
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
@@ -57,35 +56,23 @@ export abstract class ApolloBaseDriver<
       stopOnTerminationSignals: false,
     };
 
-    if (options.graphiql) {
+    // `graphiql` wins over the deprecated `playground` alias; when neither is
+    // set, GraphiQL is enabled outside of production.
+    const useGraphiQL =
+      options.graphiql ??
+      options.playground ??
+      process.env.NODE_ENV !== 'production';
+
+    if (useGraphiQL) {
       const graphiQlPlaygroundOpts: GraphiQLOptions =
-        typeof options.graphiql === 'object' ? options.graphiql : {};
+        typeof useGraphiQL === 'object' ? { ...useGraphiQL } : {};
       graphiQlPlaygroundOpts.url ??= options.path;
 
       defaults = {
         ...defaults,
         plugins: [new GraphiQLPlaygroundPlugin(graphiQlPlaygroundOpts)],
       };
-    } else if (
-      (options.playground === undefined &&
-        process.env.NODE_ENV !== 'production') ||
-      options.playground
-    ) {
-      const playgroundOptions =
-        typeof options.playground === 'object' ? options.playground : undefined;
-      defaults = {
-        ...defaults,
-        plugins: [
-          ApolloServerPluginLandingPageGraphQLPlayground(
-            playgroundOptions,
-          ) as any,
-        ],
-      };
-    } else if (
-      (options.playground === undefined &&
-        process.env.NODE_ENV === 'production') ||
-      options.playground === false
-    ) {
+    } else {
       defaults = {
         ...defaults,
         plugins: [ApolloServerPluginLandingPageDisabled()],
@@ -101,6 +88,7 @@ export abstract class ApolloBaseDriver<
       defaults.plugins || [],
     );
 
+    this.normalizeSubscriptionsPath(options);
     this.wrapContextResolver(options);
     this.wrapFormatErrorFn(options);
 
@@ -116,6 +104,24 @@ export abstract class ApolloBaseDriver<
       this.createRequestLifecycleHooksPlugin(),
     ];
     return options;
+  }
+
+  private normalizeSubscriptionsPath(options: T) {
+    const subscriptions = (options as ApolloDriverConfig).subscriptions;
+    if (!subscriptions) {
+      return;
+    }
+    // Rewrite a copy: the caller's configuration object may be reused across
+    // applications, and prefixing it in place compounds on every merge.
+    const normalized = { ...subscriptions };
+    const config = normalized['graphql-ws'];
+    if (config && typeof config === 'object' && config.path) {
+      normalized['graphql-ws'] = {
+        ...config,
+        path: this.applyGlobalPrefix(config.path, options),
+      };
+    }
+    (options as ApolloDriverConfig).subscriptions = normalized;
   }
 
   public subscriptionWithFilter(
@@ -139,17 +145,17 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { expressMiddleware } = loadPackage(
+    const { expressMiddleware } = await loadPackage(
       '@as-integrations/express5',
       'GraphQLModule',
-      () => require('@as-integrations/express5'),
+      () => import('@as-integrations/express5'),
     );
 
     const { path, typeDefs, resolvers, schema } = options;
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
 
-    // Workaround: GraphQL playground requires body to be present
+    // Workaround: the landing page requires body to be present
     // otherwise, it shows the "req.body is not set; this probably means you forgot to set up the json middleware before the Apollo Server middleware." error.
     // The latest version of "body-parser" does not set the body if there is no payload.
     // @see https://github.com/nestjs/graphql/issues/3451
@@ -192,11 +198,12 @@ export abstract class ApolloBaseDriver<
     options: T,
     { preStartHook }: { preStartHook?: () => void } = {},
   ) {
-    const { fastifyApolloDrainPlugin, fastifyApolloHandler } = loadPackage(
-      '@as-integrations/fastify',
-      'GraphQLModule',
-      () => require('@as-integrations/fastify'),
-    );
+    const { fastifyApolloDrainPlugin, fastifyApolloHandler } =
+      await loadPackage(
+        '@as-integrations/fastify',
+        'GraphQLModule',
+        () => import('@as-integrations/fastify'),
+      );
 
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const app = httpAdapter.getInstance();

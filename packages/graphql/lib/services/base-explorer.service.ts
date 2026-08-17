@@ -1,7 +1,6 @@
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Module } from '@nestjs/core/injector/module';
-import { flattenDeep, groupBy, identity, isEmpty, mapValues } from 'lodash';
-import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
+import { Module } from '@nestjs/core/injector/module.js';
+import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
 
 export class BaseExplorerService {
   getModules(
@@ -11,7 +10,7 @@ export class BaseExplorerService {
     if (!modulesContainer) {
       return [];
     }
-    if (!include || isEmpty(include)) {
+    if (!include || include.length === 0) {
       return [...modulesContainer.values()];
     }
     const explicitlyWhitelisted = this.includeWhitelisted(
@@ -45,31 +44,27 @@ export class BaseExplorerService {
     modules: Module[],
     callback: (instance: InstanceWrapper, moduleRef: Module) => T | T[],
   ): T[] {
-    const invokeMap = () => {
-      return modules.map((moduleRef) => {
-        const providers = [...moduleRef.providers.values()];
-        return providers.map((wrapper) => callback(wrapper, moduleRef));
-      });
-    };
-    return flattenDeep(invokeMap()).filter(identity);
+    return modules.reduce<T[]>((collected, moduleRef) => {
+      const providers = [...moduleRef.providers.values()];
+      for (const wrapper of providers) {
+        const result = callback(wrapper, moduleRef);
+        if (Array.isArray(result)) {
+          collected.push(...result.filter(Boolean));
+        } else if (result) {
+          collected.push(result);
+        }
+      }
+      return collected;
+    }, []);
   }
 
   groupMetadata(resolvers: ResolverMetadata[]) {
-    const groupByType = groupBy(
-      resolvers,
-      (metadata: ResolverMetadata) => metadata.type,
-    );
-    const groupedMetadata = mapValues(
-      groupByType,
-      (resolversArr: ResolverMetadata[]) =>
-        resolversArr.reduce(
-          (prev, curr) => ({
-            ...prev,
-            [curr.name]: curr.callback,
-          }),
-          {},
-        ),
-    );
-    return groupedMetadata;
+    return resolvers.reduce<
+      Record<string, Record<string, ResolverMetadata['callback']>>
+    >((grouped, metadata) => {
+      grouped[metadata.type] ??= {};
+      grouped[metadata.type][metadata.name] = metadata.callback;
+      return grouped;
+    }, {});
   }
 }

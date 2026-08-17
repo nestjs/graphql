@@ -1,5 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { Direction } from '../enums/direction.enum';
+import { Direction } from '../enums/direction.enum.js';
 
 @Resolver()
 export class DirectionsResolver {

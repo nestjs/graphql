@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
-import { GqlTypeReference } from '../../interfaces';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
+import { GqlTypeReference } from '../../interfaces/index.js';
 
 const BANNED_TYPES: Function[] = [String, Date, Number, Boolean];
 

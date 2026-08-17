@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   PARAM_ARGS_METADATA,
-} from '../../lib/graphql.constants';
-import { ResolversExplorerService } from '../../lib/services/resolvers-explorer.service';
+} from '../../lib/graphql.constants.js';
+import { ResolversExplorerService } from '../../lib/services/resolvers-explorer.service.js';
 
 describe('ResolversExplorerService', () => {
   describe('canUseFastFieldResolver', () => {

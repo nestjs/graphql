@@ -10,7 +10,7 @@ import {
   Query,
   Resolver,
   TypeMetadataStorage,
-} from '../../../lib';
+} from '../../../lib/index.js';
 
 @ObjectType()
 @Directive('@tag(name: "public")')

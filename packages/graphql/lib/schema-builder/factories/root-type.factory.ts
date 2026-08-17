@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
-import { BuildSchemaOptions } from '../../interfaces';
-import { ResolverTypeMetadata } from '../metadata/resolver.metadata';
-import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry';
-import { ArgsFactory } from './args.factory';
-import { AstDefinitionNodeFactory } from './ast-definition-node.factory';
-import { OutputTypeFactory } from './output-type.factory';
-import { MultipleFieldsWithSameNameError } from '../errors/multiple-fields-with-same-name.error';
+import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { ResolverTypeMetadata } from '../metadata/resolver.metadata.js';
+import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
+import { ArgsFactory } from './args.factory.js';
+import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
+import { OutputTypeFactory } from './output-type.factory.js';
+import { MultipleFieldsWithSameNameError } from '../errors/multiple-fields-with-same-name.error.js';
 
 export type FieldsFactory<T = any, U = any> = (
   handlers: ResolverTypeMetadata[],

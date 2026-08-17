@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   ContextIdFactory,
   MetadataScanner,
@@ -7,26 +7,26 @@ import {
   ModulesContainer,
   REQUEST,
 } from '@nestjs/core';
-import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator';
-import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface';
-import { CONTROLLER_ID_KEY } from '@nestjs/core/injector/constants';
-import { Injector } from '@nestjs/core/injector/injector';
+import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator.js';
+import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface.js';
+import { CONTROLLER_ID_KEY } from '@nestjs/core/injector/constants.js';
+import { Injector } from '@nestjs/core/injector/injector.js';
 import {
   ContextId,
   InstanceWrapper,
-} from '@nestjs/core/injector/instance-wrapper';
-import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module';
-import { Module } from '@nestjs/core/injector/module';
-import { Entrypoint } from '@nestjs/core/inspector/interfaces/entrypoint.interface';
-import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph';
-import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants';
+} from '@nestjs/core/injector/instance-wrapper.js';
+import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module/index.js';
+import { Module } from '@nestjs/core/injector/module.js';
+import { Entrypoint } from '@nestjs/core/inspector/interfaces/entrypoint.interface.js';
+import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph.js';
+import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants.js';
+import { identity } from 'es-toolkit';
 import { GraphQLResolveInfo } from 'graphql';
-import { identity } from 'lodash';
-import { SubscriptionOptions } from '../decorators/subscription.decorator';
-import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver';
-import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { Resolver } from '../enums/resolver.enum';
-import { GqlParamsFactory } from '../factories/params.factory';
+import { SubscriptionOptions } from '../decorators/subscription.decorator.js';
+import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver.js';
+import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
+import { Resolver } from '../enums/resolver.enum.js';
+import { GqlParamsFactory } from '../factories/params.factory.js';
 import {
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   FIELD_TYPENAME,
@@ -34,15 +34,17 @@ import {
   PARAM_ARGS_METADATA,
   SUBSCRIPTION_OPTIONS_METADATA,
   SUBSCRIPTION_TYPE,
-} from '../graphql.constants';
-import { GqlModuleOptions } from '../interfaces';
-import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface';
-import { ResolverMetadata } from '../interfaces/resolver-metadata.interface';
-import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util';
-import { extractMetadata } from '../utils/extract-metadata.util';
-import { BaseExplorerService } from './base-explorer.service';
-import { GqlContextType } from './gql-execution-context';
-import { ResolverDecoratorHost } from './resolver-decorator-host';
+} from '../graphql.constants.js';
+import { GqlModuleOptions } from '../interfaces/index.js';
+import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface.js';
+import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
+import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util.js';
+import { extractMetadata } from '../utils/extract-metadata.util.js';
+import { createArgsMapper } from '../utils/map-args-to-props.util.js';
+import { normalizeResolverArgs } from '../utils/normalize-resolver-args.js';
+import { BaseExplorerService } from './base-explorer.service.js';
+import { GqlContextType } from './gql-execution-context.js';
+import { ResolverDecoratorHost } from './resolver-decorator-host.js';
 
 const ROOT_RESOLVER_TYPES = new Set<string>([
   Resolver.MUTATION,
@@ -181,6 +183,7 @@ export class ResolversExplorerService extends BaseExplorerService {
   ) {
     const paramsFactory = this.gqlParamsFactory;
     const isPropertyResolver = !ROOT_RESOLVER_TYPES.has(resolver.type);
+    const mapArgs = createArgsMapper(instance.constructor, resolver.methodName);
 
     if (this.fieldResolverEnhancersLookup === null) {
       const enhancers = this.gqlOptions.fieldResolverEnhancers || [];
@@ -225,13 +228,14 @@ export class ResolversExplorerService extends BaseExplorerService {
         );
         return callback(...args);
       };
+      const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
       return isPropertyResolver
         ? this.registerFieldMiddlewareIfExists(
-            resolverCallback,
+            wrappedCallback,
             instance,
             resolver.methodName,
           )
-        : this.resolverDecoratorHost.decorate(resolverCallback);
+        : this.resolverDecoratorHost.decorate(wrappedCallback);
     }
 
     if (
@@ -262,14 +266,43 @@ export class ResolversExplorerService extends BaseExplorerService {
       contextOptions,
       'graphql',
     );
+    const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
 
     return isPropertyResolver
       ? this.registerFieldMiddlewareIfExists(
-          resolverCallback,
+          wrappedCallback,
           instance,
           resolver.methodName,
         )
-      : this.resolverDecoratorHost.decorate(resolverCallback);
+      : this.resolverDecoratorHost.decorate(wrappedCallback);
+  }
+
+  /**
+   * Rewrites the incoming arguments object onto the property names declared by
+   * the `@ArgsType()`/`@InputType()` classes of the method before the resolver
+   * context (and therefore any pipe, global ones included) runs.
+   */
+  private withMappedArgs<T extends (...args: any[]) => any>(
+    resolverFn: T,
+    mapArgs: ((args: any) => any) | null,
+  ): T {
+    if (!mapArgs) {
+      return resolverFn;
+    }
+    return ((...args: any[]) => {
+      // Reference resolvers and "resolveType" callbacks receive no arguments
+      // object, which is exactly what normalizeResolverArgs() detects.
+      if (args.length < 2 || normalizeResolverArgs(args) !== args) {
+        return resolverFn(...args);
+      }
+      const mappedArgs = mapArgs(args[1]);
+      if (mappedArgs === args[1]) {
+        return resolverFn(...args);
+      }
+      const nextArgs = [...args];
+      nextArgs[1] = mappedArgs;
+      return resolverFn(...nextArgs);
+    }) as T;
   }
 
   createSubscriptionMetadata(

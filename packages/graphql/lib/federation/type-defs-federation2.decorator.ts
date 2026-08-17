@@ -1,6 +1,6 @@
-import { isString } from '@nestjs/common/utils/shared.utils';
-import { Federation2Config } from '../interfaces';
-import { stringifyWithoutQuotes } from '../utils';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
+import { Federation2Config } from '../interfaces/index.js';
+import { stringifyWithoutQuotes } from '../utils/index.js';
 
 /**
  * @publicApi
@@ -29,7 +29,7 @@ export class TypeDefsFederation2Decorator {
         '@shareable',
         '@tag',
       ],
-      importUrl = 'https://specs.apollo.dev/federation/v2.12',
+      importUrl = 'https://specs.apollo.dev/federation/v2.14',
     } = config;
     const mappedDirectives = directives
       .map((directive) => {

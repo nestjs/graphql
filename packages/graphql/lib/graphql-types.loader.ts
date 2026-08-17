@@ -1,11 +1,11 @@
 import { mergeTypeDefs } from '@graphql-tools/merge';
 import { Injectable } from '@nestjs/common';
+import { flatten } from 'es-toolkit';
 import * as fs from 'fs';
-import { flatten } from 'lodash';
+import normalize from 'normalize-path';
 import * as util from 'util';
-import { globPaths } from './utils/glob.util';
+import { globPaths } from './utils/glob.util.js';
 
-const normalize = require('normalize-path');
 const readFile = util.promisify(fs.readFile);
 
 @Injectable()

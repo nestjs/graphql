@@ -1,5 +1,5 @@
-import { PropertyDirectiveMetadata } from '../metadata';
-import { MetadataListByNameCollection } from './metadata-list-by-name.collection';
+import { PropertyDirectiveMetadata } from '../metadata/index.js';
+import { MetadataListByNameCollection } from './metadata-list-by-name.collection.js';
 
 export class FieldDirectiveCollection extends MetadataListByNameCollection<PropertyDirectiveMetadata> {
   sdls = new Set<string>();

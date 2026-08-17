@@ -1,4 +1,4 @@
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 
 export interface PluginOptions {
   typeFileNameSuffix?: string | string[];

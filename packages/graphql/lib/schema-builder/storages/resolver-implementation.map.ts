@@ -5,8 +5,8 @@ import {
   FieldResolverMetadata,
   ResolverClassMetadata,
   ResolverTypeMetadata,
-} from '../metadata';
-import { isThrowing } from '../utils/is-throwing.util';
+} from '../metadata/index.js';
+import { isThrowing } from '../utils/is-throwing.util.js';
 
 /**
  * Resolves which resolver class implements the handlers declared on a base class.

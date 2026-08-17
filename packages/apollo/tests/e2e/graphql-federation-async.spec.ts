@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { AppModule } from '../graphql-federation/users-service/federation-users.async.module';
+import { AppModule } from '../graphql-federation/users-service/federation-users.async.module.js';
 
 describe('GraphQL Federation Async', () => {
   let app: INestApplication;

@@ -1,4 +1,4 @@
-import { MetadataByNameCollection } from '../../../lib/schema-builder/collections/';
+import { MetadataByNameCollection } from '../../../lib/schema-builder/collections/index.js';
 
 describe('MetadataByNameCollection', () => {
   it('should not add multiple values under the same name', () => {

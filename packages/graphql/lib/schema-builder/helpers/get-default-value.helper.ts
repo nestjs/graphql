@@ -1,7 +1,7 @@
-import { isUndefined } from '@nestjs/common/utils/shared.utils';
-import { isEqual } from 'lodash';
-import { TypeOptions } from '../../interfaces/type-options.interface';
-import { DefaultValuesConflictError } from '../errors/default-values-conflict.error';
+import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
+import { isEqual } from 'es-toolkit';
+import { TypeOptions } from '../../interfaces/type-options.interface.js';
+import { DefaultValuesConflictError } from '../errors/default-values-conflict.error.js';
 
 export function getDefaultValue<T = any>(
   instance: object,

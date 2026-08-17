@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DogsResolver } from './dogs.resolver';
+import { DogsResolver } from './dogs.resolver.js';
 
 @Module({
   providers: [DogsResolver],

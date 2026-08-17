@@ -6,17 +6,17 @@
  */
 
 import { Type } from '@nestjs/common';
-import { isFunction } from '@nestjs/common/utils/shared.utils';
-import { Complexity, FieldMiddleware } from '../interfaces';
-import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
+import { isFunction } from '@nestjs/common/utils/shared.utils.js';
+import { Complexity, FieldMiddleware } from '../interfaces/index.js';
+import { BaseTypeOptions } from '../interfaces/base-type-options.interface.js';
 import {
   GqlTypeReference,
   ReturnTypeFunc,
   ReturnTypeFuncValue,
-} from '../interfaces/return-type-func.interface';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
+} from '../interfaces/return-type-func.interface.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts.js';
 
 /**
  * Interface defining options that can be passed to `@Field()` decorator.
@@ -49,8 +49,8 @@ export type FieldOptions<T = any> = BaseTypeOptions<T> & {
 type FieldOptionsExtractor<T> = T extends [GqlTypeReference<infer P>]
   ? FieldOptions<P[]>
   : T extends GqlTypeReference<infer P>
-    ? FieldOptions<P>
-    : never;
+  ? FieldOptions<P>
+  : never;
 
 /**
  * @Field() decorator is used to mark a specific class property as a GraphQL field.

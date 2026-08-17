@@ -3,15 +3,17 @@ import {
   isFunction,
   isObject,
   isString,
-} from '@nestjs/common/utils/shared.utils';
+} from '@nestjs/common/utils/shared.utils.js';
 import 'reflect-metadata';
-import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { BaseTypeOptions } from '../interfaces';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { isPipe } from '../utils/is-pipe.util';
-import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
-import { addPipesMetadata } from './param.utils';
+import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
+import { BaseTypeOptions } from '../interfaces/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { ARGS_TYPE_METADATA } from '../graphql.constants.js';
+import { isPipe } from '../utils/is-pipe.util.js';
+import { ArgsTypeMetadata } from '../utils/map-args-to-props.util.js';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts.js';
+import { addPipesMetadata } from './param.utils.js';
 
 /**
  * Interface defining options that can be passed to `@Args()` decorator.
@@ -112,6 +114,23 @@ export function Args(
 
   return (target: object, key: string, index: number) => {
     addPipesMetadata(GqlParamtype.ARGS, property, argPipes, target, key, index);
+
+    // Arguments arrive keyed by their schema names. Record what each parameter
+    // expects so that the resolvers explorer can map them back to the property
+    // names declared by the `@ArgsType()`/`@InputType()` class before any pipe
+    // (global ones included) gets to see the value.
+    const argsTypes: ArgsTypeMetadata[] =
+      Reflect.getOwnMetadata(ARGS_TYPE_METADATA, target.constructor, key) ?? [];
+    Reflect.defineMetadata(
+      ARGS_TYPE_METADATA,
+      argsTypes.concat({
+        index,
+        property: isString(property) ? property : undefined,
+        typeFn: argOptions.type,
+      }),
+      target.constructor,
+      key,
+    );
 
     LazyMetadataStorage.store(target.constructor as Type<unknown>, () => {
       const { typeFn: reflectedTypeFn, options } = reflectTypeFromMetadata({

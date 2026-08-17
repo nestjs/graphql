@@ -1,4 +1,4 @@
-import { Directive, Extensions, Field, ObjectType } from '../../../../lib/decorators';
+import { Directive, Extensions, Field, ObjectType } from '../../../../lib/decorators/index.js';
 
 @ObjectType({ isAbstract: true })
 export abstract class BaseType {

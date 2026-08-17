@@ -1,19 +1,20 @@
 import { NotFoundException } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import {
+  Args,
   Mutation,
   Query,
   Resolver,
   Subscription,
-} from '../../../../../lib/decorators';
-import { NewRecipeInput } from './dto/new-recipe.input';
-import { RecipesArgs } from './dto/recipes.args';
-import { Recipe } from './models/recipe.model';
-import { RecipesService } from './recipes.service';
+} from '../../../../../lib/decorators/index.js';
+import { NewRecipeInput } from './dto/new-recipe.input.js';
+import { RecipesArgs } from './dto/recipes.args.js';
+import { Recipe } from './models/recipe.model.js';
+import { RecipesService } from './recipes.service.js';
 
 const pubSub = new PubSub();
 
-@Resolver((of) => Recipe)
+@Resolver(() => Recipe)
 export class RecipesResolver {
   constructor(private readonly recipesService: RecipesService) {}
 

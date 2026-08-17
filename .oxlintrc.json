@@ -10,7 +10,14 @@
   "ignorePatterns": ["packages/**/tests/**", "packages/**/dist/**"],
   "rules": {
     "typescript/no-explicit-any": "off",
-    "typescript/no-require-imports": "off",
     "no-unused-vars": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["packages/*/lib/**/*.ts"],
+      "rules": {
+        "typescript/no-require-imports": "error"
+      }
+    }
+  ]
 }

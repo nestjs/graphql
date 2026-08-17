@@ -1,9 +1,9 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Query, Resolver } from '@nestjs/graphql';
-import { Guard } from './guards/request-scoped.guard';
-import { HelloService } from './hello.service';
-import { Interceptor } from './interceptors/logging.interceptor';
-import { UsersService } from './users/users.service';
+import { Guard } from './guards/request-scoped.guard.js';
+import { HelloService } from './hello.service.js';
+import { Interceptor } from './interceptors/logging.interceptor.js';
+import { UsersService } from './users/users.service.js';
 
 @Resolver()
 export class HelloResolver {

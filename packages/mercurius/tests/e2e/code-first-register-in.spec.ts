@@ -5,9 +5,9 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import { MercuriusDriver, MercuriusDriverConfig } from '../../lib';
-import { ProductsModule } from '../code-first-register-in/products/products.module';
-import { UsersModule } from '../code-first-register-in/users/users.module';
+import { MercuriusDriver, MercuriusDriverConfig } from '../../lib/index.js';
+import { ProductsModule } from '../code-first-register-in/products/products.module.js';
+import { UsersModule } from '../code-first-register-in/users/users.module.js';
 
 const buildApp = async (include?: Function[]) => {
   const moduleRef = await Test.createTestingModule({

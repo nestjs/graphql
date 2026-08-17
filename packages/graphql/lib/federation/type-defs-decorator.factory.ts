@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { FederationConfig, FederationVersion } from '../interfaces';
-import { TypeDefsFederation2Decorator } from './type-defs-federation2.decorator';
+import { FederationConfig, FederationVersion } from '../interfaces/index.js';
+import { TypeDefsFederation2Decorator } from './type-defs-federation2.decorator.js';
 
 export interface TypeDefsDecorator<T = FederationConfig> {
   decorate(typeDefs: string, options: T): string;

@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLOutputType } from 'graphql';
-import { BuildSchemaOptions, GqlTypeReference } from '../../interfaces';
-import { TypeOptions } from '../../interfaces/type-options.interface';
-import { CannotDetermineOutputTypeError } from '../errors/cannot-determine-output-type.error';
-import { TypeMapperService } from '../services/type-mapper.service';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import {
+  BuildSchemaOptions,
+  GqlTypeReference,
+} from '../../interfaces/index.js';
+import { TypeOptions } from '../../interfaces/type-options.interface.js';
+import { CannotDetermineOutputTypeError } from '../errors/cannot-determine-output-type.error.js';
+import { TypeMapperService } from '../services/type-mapper.service.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
 
 @Injectable()
 export class OutputTypeFactory {

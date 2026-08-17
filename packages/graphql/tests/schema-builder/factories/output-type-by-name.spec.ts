@@ -55,8 +55,8 @@ describe('Output type resolution by GraphQL name', () => {
 
     expect(authorField).toBeDefined();
     expect(authorField!.type).toBeInstanceOf(GraphQLNonNull);
-    expect((authorField!.type as GraphQLNonNull<GraphQLObjectType>).ofType).toBe(
-      schema.getType('Author'),
-    );
+    expect(
+      (authorField!.type as GraphQLNonNull<GraphQLObjectType>).ofType,
+    ).toBe(schema.getType('Author'));
   });
 });

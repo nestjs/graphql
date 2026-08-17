@@ -6,13 +6,13 @@ import {
   PropertyExtensionsMetadata,
   PropertyMetadata,
   ResolverClassMetadata,
-} from '../metadata';
-import { ObjectTypeMetadata } from '../metadata/object-type.metadata';
-import { ArrayWithGlobalCacheCollection } from './array-with-global-cache.collection';
-import { FieldDirectiveCollection } from './field-directive.collection';
-import { MetadataCollectionModel } from './metada-collection-model.interface';
-import { MetadataByNameCollection } from './metadata-by-name.collection';
-import { MetadataListByNameCollection } from './metadata-list-by-name.collection';
+} from '../metadata/index.js';
+import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
+import { ArrayWithGlobalCacheCollection } from './array-with-global-cache.collection.js';
+import { FieldDirectiveCollection } from './field-directive.collection.js';
+import { MetadataCollectionModel } from './metada-collection-model.interface.js';
+import { MetadataByNameCollection } from './metadata-by-name.collection.js';
+import { MetadataListByNameCollection } from './metadata-list-by-name.collection.js';
 
 export class TargetMetadataCollection {
   constructor(private readonly all: MetadataCollectionModel) {}

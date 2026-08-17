@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import { FastifyInstance } from 'fastify';
-import { ApplicationModule } from '../plugins/code-first-plugin/app.module';
-import { NEW_PLUGIN_URL } from '../plugins/mocks/utils/constants';
+import { ApplicationModule } from '../plugins/code-first-plugin/app.module.js';
+import { NEW_PLUGIN_URL } from '../plugins/mocks/utils/constants.js';
 
 describe('Code-first with plugins', () => {
   let app: INestApplication;

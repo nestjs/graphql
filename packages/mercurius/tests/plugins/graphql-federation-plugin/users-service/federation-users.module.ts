@@ -4,10 +4,10 @@ import { join } from 'path';
 import {
   MercuriusFederationDriver,
   MercuriusFederationDriverConfig,
-} from '../../../../lib';
-import { UsersModule } from '../../../graphql-federation/users-service/users/users.module';
-import { mockPlugin } from '../../mocks/mock.plugin';
-import { NEW_PLUGIN_URL } from '../../mocks/utils/constants';
+} from '../../../../lib/index.js';
+import { UsersModule } from '../../../graphql-federation/users-service/users/users.module.js';
+import { mockPlugin } from '../../mocks/mock.plugin.js';
+import { NEW_PLUGIN_URL } from '../../mocks/utils/constants.js';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { NEW_PLUGIN_URL } from '../../mocks/utils/constants';
       driver: MercuriusFederationDriver,
       typePaths: [
         join(
-          __dirname,
+          import.meta.dirname,
           '../../../graphql-federation/users-service',
           '**/*.graphql',
         ),

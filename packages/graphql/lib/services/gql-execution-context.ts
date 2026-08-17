@@ -1,7 +1,7 @@
 import { ContextType, ExecutionContext } from '@nestjs/common';
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
-import { GraphQLArgumentsHost } from './gql-arguments-host';
-import { normalizeResolverArgs } from '../utils/normalize-resolver-args';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host.js';
+import { GraphQLArgumentsHost } from './gql-arguments-host.js';
+import { normalizeResolverArgs } from '../utils/normalize-resolver-args.js';
 
 export type GqlContextType = 'graphql' | ContextType;
 export type GraphQLExecutionContext = GqlExecutionContext;

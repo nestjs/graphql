@@ -3,9 +3,9 @@ import { INestApplication } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { gql } from 'graphql-tag';
-import { ApolloFederationDriver } from '../../lib';
-import { ApplicationModule } from '../code-first-federation/app.module';
-import { expectSingleResult } from '../utils/assertion-utils';
+import { ApolloFederationDriver } from '../../lib/index.js';
+import { ApplicationModule } from '../code-first-federation/app.module.js';
+import { expectSingleResult } from '../utils/assertion-utils.js';
 
 describe('Code-first - Federation', () => {
   let app: INestApplication;

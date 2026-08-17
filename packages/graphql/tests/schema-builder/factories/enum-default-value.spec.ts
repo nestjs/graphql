@@ -10,7 +10,7 @@ import {
   Resolver,
   TypeMetadataStorage,
   registerEnumType,
-} from '../../../lib';
+} from '../../../lib/index.js';
 
 enum Category {
   BOOKS = 'books',

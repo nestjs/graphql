@@ -2,8 +2,8 @@ import { SetMetadata } from '@nestjs/common';
 import {
   SCALAR_NAME_METADATA,
   SCALAR_TYPE_METADATA,
-} from '../graphql.constants';
-import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
+} from '../graphql.constants.js';
+import { ReturnTypeFunc } from '../interfaces/return-type-func.interface.js';
 
 /**
  * Decorator that marks a class as a GraphQL scalar.

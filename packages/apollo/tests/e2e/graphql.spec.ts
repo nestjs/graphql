@@ -1,9 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { ApplicationModule } from '../graphql/app.module';
+import { ApplicationModule } from '../graphql/app.module.js';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloFederationDriver } from '../../lib';
+import { ApolloFederationDriver } from '../../lib/index.js';
 
 describe('GraphQL', () => {
   let app: INestApplication;

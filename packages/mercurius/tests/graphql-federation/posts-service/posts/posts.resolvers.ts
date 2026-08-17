@@ -6,9 +6,9 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { PostType } from './post-type.enum';
-import { Post } from './posts.interfaces';
-import { PostsService } from './posts.service';
+import { PostType } from './post-type.enum.js';
+import { Post } from './posts.interfaces.js';
+import { PostsService } from './posts.service.js';
 @Resolver('Post')
 export class PostsResolvers {
   constructor(private readonly postsService: PostsService) {}

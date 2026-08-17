@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 import { GraphQLTypeResolver } from 'graphql';
-import { ResolveTypeFn } from '../../interfaces';
-import { TypeDefinitionsStorage } from '../storages/type-definitions.storage';
+import { ResolveTypeFn } from '../../interfaces/index.js';
+import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
 
 @Injectable()
 export class ResolveTypeFactory {

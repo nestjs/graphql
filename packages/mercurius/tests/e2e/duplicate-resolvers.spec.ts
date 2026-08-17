@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import { AppModule as CodeFirstModule } from '../code-first-duplicate-resolvers/app.module';
-import { AppModule as SchemaFirstModule } from '../duplicate-resolvers/app.module';
+import { AppModule as CodeFirstModule } from '../code-first-duplicate-resolvers/app.module.js';
+import { AppModule as SchemaFirstModule } from '../duplicate-resolvers/app.module.js';
 
 describe('Duplicate resolvers', () => {
   let app: INestApplication;

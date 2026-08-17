@@ -1,5 +1,5 @@
-import { Field, ObjectType } from '../../../../../../lib/decorators';
-import { Ingredient } from './ingredient.model';
+import { Field, ObjectType } from '../../../../../../lib/decorators/index.js';
+import { Ingredient } from './ingredient.model.js';
 
 @ObjectType({ description: 'recipe ' })
 export class Recipe {

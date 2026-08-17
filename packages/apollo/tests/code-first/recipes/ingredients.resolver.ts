@@ -1,5 +1,5 @@
 import { ID, ResolveField, Resolver, Parent } from '@nestjs/graphql';
-import { Ingredient } from './models/ingredient';
+import { Ingredient } from './models/ingredient.js';
 
 @Resolver((of) => Ingredient)
 export class IngredientsResolver {

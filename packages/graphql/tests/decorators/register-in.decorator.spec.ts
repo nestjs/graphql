@@ -7,8 +7,8 @@ import {
   registerEnumType,
   createUnionType,
   TypeMetadataStorage,
-} from '../../lib';
-import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage';
+} from '../../lib/index.js';
+import { LazyMetadataStorage } from '../../lib/schema-builder/storages/lazy-metadata.storage.js';
 
 /**
  * Integration tests for the registerIn decorator option.
@@ -170,6 +170,23 @@ describe('registerIn decorator option', () => {
         TypeMetadataStorage.getArgumentsMetadataByTarget(TestArgs);
       expect(metadata).toBeDefined();
       expect((metadata!.registerIn as () => Function)()).toBe(AppModule);
+    });
+
+    it('should work with name and registerIn option', () => {
+      @ArgsType('CustomArgs', { registerIn: () => FeatureModule })
+      class TestArgs {
+        @Field(() => String)
+        query!: string;
+      }
+
+      LazyMetadataStorage.load([TestArgs]);
+      TypeMetadataStorage.compile();
+
+      const metadata =
+        TypeMetadataStorage.getArgumentsMetadataByTarget(TestArgs);
+      expect(metadata).toBeDefined();
+      expect(metadata!.name).toBe('CustomArgs');
+      expect((metadata!.registerIn as () => Function)()).toBe(FeatureModule);
     });
   });
 

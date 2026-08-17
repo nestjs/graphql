@@ -6,10 +6,10 @@
  */
 
 import { Type } from '@nestjs/common';
-import { ResolveTypeFn } from '../interfaces/resolve-type-fn.interface';
-import { RegisterInOption } from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
+import { ResolveTypeFn } from '../interfaces/resolve-type-fn.interface.js';
+import { RegisterInOption } from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
 
 /**
  * Interface defining options that can be passed to `createUnionType` function.

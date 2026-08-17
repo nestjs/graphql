@@ -1,7 +1,7 @@
 import { ParamData } from '@nestjs/common';
-import { ParamsFactory } from '@nestjs/core/helpers/external-context-creator';
-import { GqlParamtype } from '../enums/gql-paramtype.enum';
-import { normalizeResolverArgs } from '../utils/normalize-resolver-args';
+import { ParamsFactory } from '@nestjs/core/helpers/external-context-creator.js';
+import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
+import { normalizeResolverArgs } from '../utils/normalize-resolver-args.js';
 
 /**
  * @publicApi

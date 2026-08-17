@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Post } from './posts.interfaces';
-import { PostType } from './post-type.enum';
+import { Post } from './posts.interfaces.js';
+import { PostType } from './post-type.enum.js';
 
 @Injectable()
 export class PostsService {

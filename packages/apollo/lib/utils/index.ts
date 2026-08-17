@@ -1,1 +1,1 @@
-export * from './get-apollo-server';
+export * from './get-apollo-server.js';

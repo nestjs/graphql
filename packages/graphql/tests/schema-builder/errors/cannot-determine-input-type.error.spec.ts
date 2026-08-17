@@ -1,4 +1,4 @@
-import { CannotDetermineInputTypeError } from '../../../lib/schema-builder/errors/cannot-determine-input-type.error';
+import { CannotDetermineInputTypeError } from '../../../lib/schema-builder/errors/cannot-determine-input-type.error.js';
 
 describe('CannotDetermineInputTypeError', () => {
   class SomeNestedType {}

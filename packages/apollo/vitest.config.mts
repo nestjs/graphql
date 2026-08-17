@@ -6,16 +6,14 @@ import { defineConfig } from 'vitest/config';
 // tests exercise, so both ends share a single instance. graphql v16 resolves to
 // its CommonJS entry point, while v17 exposes its ESM one to `require` through
 // the `module-sync` condition.
-const graphqlEntryPoint = createRequire(
-  path.join(__dirname, 'vitest.config.mts'),
-).resolve('graphql');
+const graphqlEntryPoint = createRequire(import.meta.url).resolve('graphql');
 
 export default defineConfig({
   resolve: {
     alias: [
       {
         find: /^@nestjs\/graphql(\/.*)?$/,
-        replacement: path.resolve(__dirname, '../graphql/lib') + '$1',
+        replacement: path.resolve(import.meta.dirname, '../graphql/lib') + '$1',
       },
       {
         find: 'graphql',

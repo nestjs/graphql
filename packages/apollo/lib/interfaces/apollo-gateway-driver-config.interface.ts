@@ -6,7 +6,7 @@ import {
   GraphQLDriver,
 } from '@nestjs/graphql';
 import { GraphQLSchema } from 'graphql';
-import { ApolloDriverConfig } from './apollo-driver-config.interface';
+import { ApolloDriverConfig } from './apollo-driver-config.interface.js';
 
 /**
  *  @publicApi

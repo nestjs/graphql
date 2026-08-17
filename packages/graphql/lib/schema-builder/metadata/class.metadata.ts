@@ -1,5 +1,5 @@
-import { DirectiveMetadata } from './directive.metadata';
-import { PropertyMetadata } from './property.metadata';
+import { DirectiveMetadata } from './directive.metadata.js';
+import { PropertyMetadata } from './property.metadata.js';
 
 /**
  * Type for the registerIn option used in GraphQL type decorators.

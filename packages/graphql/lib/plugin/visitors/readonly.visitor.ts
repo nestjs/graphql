@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
-import { PluginOptions, mergePluginOptions } from '../merge-options';
-import { isFilenameMatched } from '../utils/is-filename-matched.util';
-import { ModelClassVisitor } from './model-class.visitor';
+import { PluginOptions, mergePluginOptions } from '../merge-options.js';
+import { isFilenameMatched } from '../utils/is-filename-matched.util.js';
+import { ModelClassVisitor } from './model-class.visitor.js';
 
 export class ReadonlyVisitor {
   public readonly key = '@nestjs/graphql';

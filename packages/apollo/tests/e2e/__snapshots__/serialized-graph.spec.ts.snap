@@ -605,7 +605,8 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "scope": 2,
         "transient": false,
         "exported": true,
-        "token": "REQUEST"
+        "token": "REQUEST",
+        "initTime": 0
       }
     },
     "1977125601": {
@@ -685,7 +686,8 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
         "scope": 1,
         "transient": true,
         "exported": true,
-        "token": "INQUIRER"
+        "token": "INQUIRER",
+        "initTime": 0
       }
     },
     "-26938366": {

@@ -1,16 +1,16 @@
 import { Type } from '@nestjs/common';
-import { isString } from '@nestjs/common/utils/shared.utils';
+import { isString } from '@nestjs/common/utils/shared.utils.js';
 import 'reflect-metadata';
-import { Resolver } from '../enums/resolver.enum';
-import { Complexity } from '../interfaces';
-import { BaseTypeOptions } from '../interfaces/base-type-options.interface';
-import { ReturnTypeFunc } from '../interfaces/return-type-func.interface';
-import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error';
-import { ResolverTypeMetadata } from '../schema-builder/metadata';
-import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage';
-import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage';
-import { reflectTypeFromMetadata } from '../utils/reflection.utilts';
-import { addResolverMetadata } from './resolvers.utils';
+import { Resolver } from '../enums/resolver.enum.js';
+import { Complexity } from '../interfaces/index.js';
+import { BaseTypeOptions } from '../interfaces/base-type-options.interface.js';
+import { ReturnTypeFunc } from '../interfaces/return-type-func.interface.js';
+import { UndefinedReturnTypeError } from '../schema-builder/errors/undefined-return-type.error.js';
+import { ResolverTypeMetadata } from '../schema-builder/metadata/index.js';
+import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
+import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { reflectTypeFromMetadata } from '../utils/reflection.utilts.js';
+import { addResolverMetadata } from './resolvers.utils.js';
 
 /**
  * Interface defining options that can be passed to `@Query()` decorator.

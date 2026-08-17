@@ -7,12 +7,12 @@ import { Test } from '@nestjs/testing';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
-import { ApplicationModule } from '../code-first/app.module';
+import { ApplicationModule } from '../code-first/app.module.js';
 
 const readFile = util.promisify(fs.readFile);
 
 const generatedDefinitions = (fileName) =>
-  path.join(__dirname, '..', 'generated-definitions', fileName);
+  path.join(import.meta.dirname, '..', 'generated-definitions', fileName);
 
 describe('Generated Definitions', () => {
   let app: INestApplication;

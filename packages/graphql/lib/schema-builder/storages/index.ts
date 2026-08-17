@@ -1,1 +1,1 @@
-export { TypeMetadataStorage } from './type-metadata.storage';
+export { TypeMetadataStorage } from './type-metadata.storage.js';

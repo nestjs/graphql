@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { PLUGIN_METADATA } from '../constants';
+import { PLUGIN_METADATA } from '../constants/index.js';
 
 /**
  * Decorator that marks a class as an Apollo plugin.

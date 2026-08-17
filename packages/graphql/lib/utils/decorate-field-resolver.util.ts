@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { FieldMiddleware } from '../interfaces';
+import { FieldMiddleware } from '../interfaces/index.js';
 
 export function decorateFieldResolverWithMiddleware<
   TSource extends object = any,

@@ -12,8 +12,8 @@ import {
 } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { gql } from 'graphql-tag';
-import { ApolloDriver, ApolloDriverConfig } from '../../lib';
-import { expectSingleResult } from '../utils/assertion-utils';
+import { ApolloDriver, ApolloDriverConfig } from '../../lib/index.js';
+import { expectSingleResult } from '../utils/assertion-utils.js';
 
 @InputType()
 class MyArgs {

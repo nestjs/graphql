@@ -1,12 +1,12 @@
 import { SetMetadata, Type } from '@nestjs/common';
-import { isFunction, isString } from '@nestjs/common/utils/shared.utils';
-import { Resolver } from '../enums/resolver.enum';
+import { isFunction, isString } from '@nestjs/common/utils/shared.utils.js';
+import { Resolver } from '../enums/resolver.enum.js';
 import {
   RESOLVER_NAME_METADATA,
   RESOLVER_TYPE_METADATA,
-} from '../graphql.constants';
-import { UndefinedResolverTypeError } from '../schema-builder/errors/undefined-resolver-type.error';
-import { ResolverTypeFn } from './resolver.decorator';
+} from '../graphql.constants.js';
+import { UndefinedResolverTypeError } from '../schema-builder/errors/undefined-resolver-type.error.js';
+import { ResolverTypeFn } from './resolver.decorator.js';
 
 export function addResolverMetadata(
   resolver: Resolver | string | undefined,
@@ -45,8 +45,8 @@ export function getClassOrUndefined(typeOrFunc: Function | Type<any>) {
   return isConstructor(typeOrFunc)
     ? typeOrFunc
     : isFunction(typeOrFunc)
-      ? (typeOrFunc as Function)()
-      : undefined;
+    ? (typeOrFunc as Function)()
+    : undefined;
 }
 
 function isConstructor(obj: any) {

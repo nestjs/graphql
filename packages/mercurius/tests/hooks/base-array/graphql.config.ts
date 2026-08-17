@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GqlOptionsFactory } from '@nestjs/graphql';
-import { MercuriusDriverConfig } from '../../../lib/interfaces/mercurius-driver-config.interface';
+import { MercuriusDriverConfig } from '../../../lib/interfaces/mercurius-driver-config.interface.js';
 
 export const HOOKS_INVOCATIONS = {
   preParsing: [0, 0],

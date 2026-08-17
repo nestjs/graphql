@@ -1,5 +1,5 @@
 import { ObjectType } from '@nestjs/graphql';
-import { Character } from './character.entity';
+import { Character } from './character.entity.js';
 
 @ObjectType({
   implements: () => [Character],

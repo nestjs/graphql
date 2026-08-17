@@ -1,7 +1,7 @@
-import { head } from 'lodash';
+import { head } from 'es-toolkit';
 import { isAbsolute, posix } from 'path';
 import * as ts from 'typescript';
-import { PluginOptions } from '../merge-options';
+import { PluginOptions } from '../merge-options.js';
 import {
   getText,
   getTypeArguments,
@@ -13,7 +13,7 @@ import {
   isNumber,
   isString,
   isStringLiteral,
-} from './ast-utils';
+} from './ast-utils.js';
 
 export function getTypeReferenceAsString(
   type: ts.Type,

@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { ApplicationModule } from '../code-first/app.module';
-import { CatsModule } from '../code-first/cats/cats.module';
+import { ApplicationModule } from '../code-first/app.module.js';
+import { CatsModule } from '../code-first/cats/cats.module.js';
 
 describe('GraphQL - Resolver registration methods', () => {
   let app: INestApplication;
