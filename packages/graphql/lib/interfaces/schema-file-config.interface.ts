@@ -15,7 +15,7 @@ export interface Federation2Config {
   directives?: (string | AliasDirectiveImport)[];
   /**
    * The import link
-   * @default 'https://specs.apollo.dev/federation/v2.12'
+   * @default 'https://specs.apollo.dev/federation/v2.14'
    */
   importUrl?: string;
 }

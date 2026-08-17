@@ -74,13 +74,25 @@ describeCodeFirstFederation('Code-first - Federation', () => {
 
     expect(response.data).toEqual({
       _service: {
-        sdl: `directive @shareable on FIELD_DEFINITION | OBJECT
+        sdl: `\"\"\"
+Indicates that an object type's field is allowed to be resolved by multiple subgraphs (by default in Federation 2, object fields can be resolved by only one subgraph).
+\"\"\"
+directive @shareable on FIELD_DEFINITION | OBJECT
 
+\"\"\"
+This directive links definitions from an external specification to this schema.
+\"\"\"
 directive @link(url: String!, import: [link__Import]) on SCHEMA
 
+\"\"\"
+Indicates that a definition in the subgraph schema should be omitted from the router's API schema, even if that definition is also present in other subgraphs. This means that the field is not exposed to clients at all.
+\"\"\"
 directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUMENT_DEFINITION | SCALAR | ENUM | ENUM_VALUE | INPUT_OBJECT | INPUT_FIELD_DEFINITION
 
-directive @override(from: String!) on FIELD_DEFINITION
+\"\"\"
+Indicates that an object field is now resolved by this subgraph instead of another subgraph where it's also defined. This enables you to migrate a field from one subgraph to another.
+\"\"\"
+directive @override(from: String!, label: String) on FIELD_DEFINITION
 
 type Post
   @key(fields: \"id\")

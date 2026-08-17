@@ -7,7 +7,9 @@ import {
 } from '@nestjs/common/utils/load-package.util.js';
 import { isString } from '@nestjs/common/utils/shared.utils.js';
 import {
+  DirectiveLocation,
   GraphQLAbstractType,
+  GraphQLDirective,
   GraphQLField,
   GraphQLInputField,
   GraphQLInputObjectType,
@@ -422,7 +424,27 @@ export class GraphQLFederationFactory {
       loadPackageSync('@apollo/subgraph/dist/directives', 'SchemaBuilder', () =>
         nodeRequire('@apollo/subgraph/dist/directives'),
       );
-    return federationDirectives ?? directivesWithNoDefinitionNeeded;
+    const directives: GraphQLDirective[] =
+      federationDirectives ?? directivesWithNoDefinitionNeeded;
+
+    // "@apollo/subgraph" >= 2.13 declares "@tag" on SCHEMA as well, but that location
+    // was only introduced by the Federation 2 tag spec. Since these definitions are
+    // inlined into Federation 1 schemas, drop it to keep such schemas valid.
+    return directives.map((directive) => {
+      if (
+        directive.name !== 'tag' ||
+        !directive.locations.includes(DirectiveLocation.SCHEMA)
+      ) {
+        return directive;
+      }
+      const config = directive.toConfig();
+      return new GraphQLDirective({
+        ...config,
+        locations: config.locations.filter(
+          (location) => location !== DirectiveLocation.SCHEMA,
+        ),
+      });
+    });
   }
 
   private isEmptyValue(value: unknown) {

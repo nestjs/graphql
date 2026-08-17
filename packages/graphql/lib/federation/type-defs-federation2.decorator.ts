@@ -29,7 +29,7 @@ export class TypeDefsFederation2Decorator {
         '@shareable',
         '@tag',
       ],
-      importUrl = 'https://specs.apollo.dev/federation/v2.12',
+      importUrl = 'https://specs.apollo.dev/federation/v2.14',
     } = config;
     const mappedDirectives = directives
       .map((directive) => {

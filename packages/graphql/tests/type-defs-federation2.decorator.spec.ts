@@ -8,14 +8,14 @@ describe('TypeDefsFederation2Decorator', () => {
   });
 
   describe('decorate', () => {
-    it('should default to federation v2.12 import url', () => {
+    it('should default to federation v2.14 import url', () => {
       const result = decorator.decorate('type Query { hello: String }');
       expect(result).toContain(
-        'url: "https://specs.apollo.dev/federation/v2.12"',
+        'url: "https://specs.apollo.dev/federation/v2.14"',
       );
     });
 
-    it('should include the v2.12 default directives', () => {
+    it('should include the v2.14 default directives', () => {
       const result = decorator.decorate('type Query { hello: String }');
       const expectedDirectives = [
         '@authenticated',

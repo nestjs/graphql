@@ -51,7 +51,7 @@
     "@nestjs/mapped-types": "2.1.1",
     "chokidar": "4.0.3",
     "es-toolkit": "1.39.3",
-    "graphql-tag": "2.12.6",
+    "graphql-tag": "2.12.7",
     "graphql-ws": "6.2.1",
     "normalize-path": "3.0.0",
     "tinyglobby": "0.2.17",
@@ -59,7 +59,7 @@
     "ws": "8.21.3"
   },
   "devDependencies": {
-    "@apollo/subgraph": "2.2.3",
+    "@apollo/subgraph": "2.14.3",
     "@nestjs/common": "next",
     "@nestjs/core": "next",
     "@nestjs/testing": "next",
