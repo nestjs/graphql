@@ -598,12 +598,12 @@
     ajv-formats "^3.0.1"
     fast-uri "^3.0.0"
 
-"@fastify/cors@11.2.0":
-  version "11.2.0"
-  resolved "https://registry.yarnpkg.com/@fastify/cors/-/cors-11.2.0.tgz#82c47aff9bd7dfd40ac0a66fcd87a034113dcdd8"
-  integrity sha512-LbLHBuSAdGdSFZYTLVA3+Ch2t+sA6nq3Ejc6XLAKiQ6ViS2qFnvicpj0htsx03FyYeLs04HfRNBsz/a8SvbcUw==
+"@fastify/cors@11.3.0":
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/@fastify/cors/-/cors-11.3.0.tgz#5e4fe2dc9bd3988b393a585605d631f3635c2968"
+  integrity sha512-ggQGua+xHv1MvePbPr0v//xLYEsCXbWspquXCJS9Ot5YoRXq8J8ZWzHnxDBVnbtXosvistXo6LtNzOJswf64Fw==
   dependencies:
-    fastify-plugin "^5.0.0"
+    fastify-plugin "^6.0.0"
     toad-cache "^3.7.0"
 
 "@fastify/error@^4.0.0":
@@ -1198,10 +1198,10 @@
   dependencies:
     "@tybys/wasm-util" "^0.10.3"
 
-"@nestjs/common@11.1.22":
-  version "11.1.22"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.1.22.tgz#f463ee3c6e3e05e0b85894d8f69269b7de5d7a8d"
-  integrity sha512-mPNshGpl41vTtXoaOYzSZLiZAL9C08T+o/7DdtgATNPTFm6h1+UTg+mJo5ne3sDhqNx65y7gVGWVph/fbB9Hkw==
+"@nestjs/common@11.2.1":
+  version "11.2.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.2.1.tgz#0b767bef0157600ebbdc80c736752cadeb3f39c0"
+  integrity sha512-SEgtP+M9DqNhQkgJIlJ3oTp3gemo/8owySovzMGmJj2kcfIH1G6QP45AAb8dE4a3IpVicpUvdDAy7Syk7ebjBw==
   dependencies:
     uid "2.0.2"
     file-type "21.3.4"
@@ -1209,13 +1209,12 @@
     load-esm "1.0.3"
     tslib "2.8.1"
 
-"@nestjs/core@11.1.22":
-  version "11.1.22"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.1.22.tgz#7b6f26250f0a77d273ea83438cc03ae8764b7b55"
-  integrity sha512-Wy0KSQTeWiq+GZZQ3rnhSamqRztRBLWPWNeOlyIup7oVX5gnf+9ZyM8TUjUjy6chITomuNHVpHC6SH5WSb5hgg==
+"@nestjs/core@11.2.1":
+  version "11.2.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-11.2.1.tgz#69a3e63ebf56360e0d7cdaa99318127f579709fb"
+  integrity sha512-M5PWFU8NdRTgX9Po49d7TQKg7f5t8GAVUa/Esy4tmaMWcKugTzg3ZzpJfD3LEPMuRHjfs6+8pQYgtuP2uz3rDw==
   dependencies:
     uid "2.0.2"
-    "@nuxt/opencollective" "0.4.1"
     fast-safe-stringify "2.1.1"
     iterare "1.2.1"
     path-to-regexp "8.4.2"
@@ -1226,37 +1225,37 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-2.1.1.tgz#9530ac3250ab433ba6ef831e9dd5d483f5fc8144"
   integrity sha512-SCCoMEJ6jdeI5h/N+KCVF1+pmg/hmEkNA5nHTS8Gvww7T/LCl4o1gFLinw2iQ60w7slFkszHcGLKGdazVI4F8A==
 
-"@nestjs/platform-express@11.1.22":
-  version "11.1.22"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.1.22.tgz#025c6b38c2dbc689db38bedab1e01443803fb890"
-  integrity sha512-M0hMvQpPjfuMmhIvcZ/XJJb1rAr8sNfDCS3b+QMOxquUWFZSNAONtTSm0L+5I4WqVaG3RWRewhp78Kvc0u1tmw==
+"@nestjs/platform-express@11.2.1":
+  version "11.2.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-11.2.1.tgz#f8b5fee77d87be8d2bc2c59474f8d47ed31773dd"
+  integrity sha512-lbaVW94s1u8AJfgmBtdMPi16MEuFBiLrnflUIA9tZ9e5eoUsGTN7XXXRjU5kTTLgjnTCM53qgBXXGmTqmyfoQA==
   dependencies:
     cors "2.8.6"
     express "5.2.1"
-    multer "2.1.1"
+    multer "2.2.0"
     path-to-regexp "8.4.2"
     tslib "2.8.1"
 
-"@nestjs/platform-fastify@11.1.24":
-  version "11.1.24"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.1.24.tgz#ffedcb93ccebb5db8fee0be419d236b9e36851e5"
-  integrity sha512-AJAVZZKCLQcDkQipD+NfrmV69DoQRNnrE+EB0VBS7FEZRjsnNmkmZFDFnhl/JWgzm6rjxsI3Qdaj/0+VlgbfSg==
+"@nestjs/platform-fastify@11.2.1":
+  version "11.2.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-11.2.1.tgz#cfd226223cb180b3b3a01aefbc493fed654ac8d5"
+  integrity sha512-dX00kr+yAA7Eh8u/LsYxaxdUizmhvaeUT4pbpNTixNDLFBP73XVuatSrgBdmq7HVAsk0mozI/zL/g7R0MSVUrA==
   dependencies:
-    "@fastify/cors" "11.2.0"
+    "@fastify/cors" "11.3.0"
     "@fastify/formbody" "8.0.2"
     fast-querystring "1.1.2"
-    fastify "5.8.5"
-    fastify-plugin "5.1.0"
-    find-my-way "9.6.0"
+    fastify "5.11.3"
+    fastify-plugin "6.0.0"
+    find-my-way "9.7.0"
     light-my-request "6.6.0"
     path-to-regexp "8.4.2"
     reusify "1.1.0"
     tslib "2.8.1"
 
-"@nestjs/testing@11.1.22":
-  version "11.1.22"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-11.1.22.tgz#e2084e5eecfdd7b87573dd69a47ce39b2d479e09"
-  integrity sha512-7PpjjmfhRpAlGwDp83f+bMXdSUDYlaQfcd5mLQUFUanzV6qBnMG+5By061xYJIpDc1L/TCgeZVz3YQWzvSATfg==
+"@nestjs/testing@11.2.1":
+  version "11.2.1"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-11.2.1.tgz#ccc7125209f79c4859b114de297880b3947569a4"
+  integrity sha512-3mdABjqFafW+ix6fGJMPHvnj/9Or6kAPiszN8zt9bHGPuHYdkkp+9zsBDDUVuP59BcbzBqNBa5fXHBaeMzVvog==
   dependencies:
     tslib "2.8.1"
 
@@ -1521,13 +1520,6 @@
     node-gyp "^11.0.0"
     proc-log "^5.0.0"
     which "^5.0.0"
-
-"@nuxt/opencollective@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/opencollective/-/opencollective-0.4.1.tgz#57bc41d2b03b2fba20b935c15950ac0f4bd2cea2"
-  integrity sha512-GXD3wy50qYbxCJ652bDrDzgMr3NFEkIS374+IgFQKkCvk9yiYcLvX2XDYr7UyQxf4wK0e+yqDYRubZ0DtOxnmQ==
-  dependencies:
-    consola "^3.2.3"
 
 "@nx/devkit@>=23.1.0 < 24.0.0":
   version "23.1.1"
@@ -3194,11 +3186,6 @@ confbox@^0.2.4:
   resolved "https://registry.yarnpkg.com/confbox/-/confbox-0.2.4.tgz#592e7be71f882a4a874e3c88f0ac1ef6f7da1ce5"
   integrity sha512-ysOGlgTFbN2/Y6Cg3Iye8YKulHw+R2fNXHrgSmXISQdMnomY6eNDprVdW9R5xBguEqI954+S6709UyiO7B+6OQ==
 
-consola@^3.2.3:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/consola/-/consola-3.4.0.tgz#4cfc9348fd85ed16a17940b3032765e31061ab88"
-  integrity sha512-EiPU8G6dQG0GFHNR8ljnZFki/8a+cQwEQ+7wpxdChl02Q8HXlwEZWD5lqAF8vC2sEC3Tehr8hy7vErz88LHyUA==
-
 content-disposition@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-0.5.4.tgz#8b82b4efac82512a02bb0b1dcec9d2c5e8eb5bfe"
@@ -4031,20 +4018,41 @@ fast-wrap-ansi@^0.2.0:
   dependencies:
     fast-string-width "^3.0.2"
 
-fastify-plugin@5.1.0, fastify-plugin@^5.0.1, fastify-plugin@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.1.0.tgz#7083e039d6418415f9a669f8c25e72fc5bf2d3e7"
-  integrity sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==
+fastify-plugin@6.0.0, fastify-plugin@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-6.0.0.tgz#7cd659c6aad5f3bf07b4c59205412351a47d39c8"
+  integrity sha512-fZOty7z3O7vOliF6d8bHE3wiEh1KcNnKEQensSgTk9C1DvN6nRLS++XVd86v33Hw/8u9Un8A1zDrQ8ujcQDHEg==
 
 fastify-plugin@^5.0.0:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.0.1.tgz#82d44e6fe34d1420bb5a4f7bee434d501e41939f"
   integrity sha512-HCxs+YnRaWzCl+cWRYFnHmeRFyR5GVnJTAaCJQiYzQSDwK9MgJdyAsuL3nh0EWRCYMgQ5MeziymvmAhUHYHDUQ==
 
-fastify-plugin@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-6.0.0.tgz#7cd659c6aad5f3bf07b4c59205412351a47d39c8"
-  integrity sha512-fZOty7z3O7vOliF6d8bHE3wiEh1KcNnKEQensSgTk9C1DvN6nRLS++XVd86v33Hw/8u9Un8A1zDrQ8ujcQDHEg==
+fastify-plugin@^5.0.1, fastify-plugin@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-5.1.0.tgz#7083e039d6418415f9a669f8c25e72fc5bf2d3e7"
+  integrity sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==
+
+fastify@5.11.3:
+  version "5.11.3"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.11.3.tgz#7e0b915eb48d1cff3ee5d3e2e7ebddd570df05f3"
+  integrity sha512-W6hzDP8s0iSeL7LGwY6Oc/ZxuXWOvFEMs6p2L0Si415YRo27W5pBKdOTXxhemBDeSTAcpYf5evRA9onF2OYhPA==
+  dependencies:
+    "@fastify/ajv-compiler" "^4.0.5"
+    "@fastify/error" "^4.0.0"
+    "@fastify/fast-json-stringify-compiler" "^5.0.0"
+    "@fastify/proxy-addr" "^5.0.0"
+    abstract-logging "^2.0.1"
+    avvio "^9.0.0"
+    fast-json-stringify "^7.0.0"
+    find-my-way "^9.6.0"
+    light-my-request "^6.0.0"
+    pino "^9.14.0 || ^10.1.0"
+    process-warning "^5.0.0"
+    rfdc "^1.3.1"
+    secure-json-parse "^4.0.0"
+    semver "^7.6.0"
+    toad-cache "^3.7.0"
 
 fastify@5.12.0:
   version "5.12.0"
@@ -4062,27 +4070,6 @@ fastify@5.12.0:
     light-my-request "^6.0.0"
     pino "^9.14.0 || ^10.1.0"
     process-warning "^5.1.0"
-    rfdc "^1.3.1"
-    secure-json-parse "^4.0.0"
-    semver "^7.6.0"
-    toad-cache "^3.7.0"
-
-fastify@5.8.5:
-  version "5.8.5"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-5.8.5.tgz#c452224295e0ca550bcd0efc3f7d3e90e9c11955"
-  integrity sha512-Yqptv59pQzPgQUSIm87hMqHJmdkb1+GPxdE6vW6FRyVE9G86mt7rOghitiU4JHRaTyDUk9pfeKmDeu70lAwM4Q==
-  dependencies:
-    "@fastify/ajv-compiler" "^4.0.5"
-    "@fastify/error" "^4.0.0"
-    "@fastify/fast-json-stringify-compiler" "^5.0.0"
-    "@fastify/proxy-addr" "^5.0.0"
-    abstract-logging "^2.0.1"
-    avvio "^9.0.0"
-    fast-json-stringify "^6.0.0"
-    find-my-way "^9.0.0"
-    light-my-request "^6.0.0"
-    pino "^9.14.0 || ^10.1.0"
-    process-warning "^5.0.0"
     rfdc "^1.3.1"
     secure-json-parse "^4.0.0"
     semver "^7.6.0"
@@ -4157,19 +4144,19 @@ finalhandler@^2.1.0:
     parseurl "^1.3.3"
     statuses "^2.0.1"
 
-find-my-way@9.6.0, find-my-way@^9.6.0:
-  version "9.6.0"
-  resolved "https://registry.yarnpkg.com/find-my-way/-/find-my-way-9.6.0.tgz#d8e78d98d02ba749c86526edaca780c094073313"
-  integrity sha512-Zf4Xve4RymLl7NgaavNebZ01joJ8MfVerOG43wy7SHLO+r+K0C6d/SE0BiR7AV5V1VOCFlOP7ecdo+I4qmiHrQ==
+find-my-way@9.7.0:
+  version "9.7.0"
+  resolved "https://registry.yarnpkg.com/find-my-way/-/find-my-way-9.7.0.tgz#e33ea02bcaf4199a24eea3faa9926985dee4de58"
+  integrity sha512-f2JHn75x2JlwUwLenZypgczR7YWMb/uO9BvUXtus+JMgkbIkLADd38cI4EiV+OQqrGo1Zlq6V8wnqMJ8e62wUQ==
   dependencies:
     fast-deep-equal "^3.1.3"
     fast-querystring "^1.0.0"
     safe-regex2 "^5.0.0"
 
-find-my-way@^9.0.0:
-  version "9.4.0"
-  resolved "https://registry.yarnpkg.com/find-my-way/-/find-my-way-9.4.0.tgz#ef9c1e27e6f0b518b0f0af5ae3e349a0c3b4ff59"
-  integrity sha512-5Ye4vHsypZRYtS01ob/iwHzGRUDELlsoCftI/OZFhcLs1M0tkGPcXldE80TAZC5yYuJMBPJQQ43UHlqbJWiX2w==
+find-my-way@^9.6.0:
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/find-my-way/-/find-my-way-9.6.0.tgz#d8e78d98d02ba749c86526edaca780c094073313"
+  integrity sha512-Zf4Xve4RymLl7NgaavNebZ01joJ8MfVerOG43wy7SHLO+r+K0C6d/SE0BiR7AV5V1VOCFlOP7ecdo+I4qmiHrQ==
   dependencies:
     fast-deep-equal "^3.1.3"
     fast-querystring "^1.0.0"
@@ -6088,10 +6075,10 @@ ms@2.1.3, ms@^2.0.0, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-multer@2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/multer/-/multer-2.1.1.tgz#122d819244fbdfee1efddd9147426691014385b7"
-  integrity sha512-mo+QTzKlx8R7E5ylSXxWzGoXoZbOsRMpyitcht8By2KHvMbf3tjwosZ/Mu/XYU6UuJ3VZnODIrak5ZrPiPyB6A==
+multer@2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/multer/-/multer-2.2.0.tgz#f005268ca816324ba7335e3b48166896a3fa5d79"
+  integrity sha512-6rdyFg2kLrMh9Jee7/BMPuV9lEAd7lLW2YUpF9/YxR7njyoUwwQ0ZPh3TaIY50Sw6vlyD2HW3wGOkTS4P79xrQ==
   dependencies:
     append-field "^1.0.0"
     busboy "^1.6.0"
@@ -7931,7 +7918,16 @@ string-argv@^0.3.2:
   resolved "https://registry.yarnpkg.com/string-argv/-/string-argv-0.3.2.tgz#2b6d0ef24b656274d957d54e0a4bbf6153dc02b6"
   integrity sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@4.2.3, string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@4.2.3, string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -7973,7 +7969,14 @@ string_decoder@1.3.0, string_decoder@^1.1.1, string_decoder@^1.3.0:
   dependencies:
     safe-buffer "~5.2.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@6.0.1, strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@6.0.1, strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -8635,7 +8638,16 @@ wordwrap@^1.0.0:
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
   integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@7.0.0, wrap-ansi@^7.0.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@7.0.0, wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
