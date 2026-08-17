@@ -112,7 +112,11 @@ export class GqlSubscriptionService {
         {
           schema: this.options.schema,
           execute,
-          subscribe,
+          // The legacy `subscriptions-transport-ws` package types `subscribe` as
+          // returning an `AsyncIterator`, while graphql v17 returns an
+          // `AsyncGenerator | ExecutionResult` union.
+          subscribe:
+            subscribe as SubscriptionTransportWsServerOptions['subscribe'],
           ...subscriptionsWsOptions,
         },
         this.subTransWs,

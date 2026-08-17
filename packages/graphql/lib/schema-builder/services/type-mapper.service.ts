@@ -6,6 +6,7 @@ import {
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLNullableType,
   GraphQLScalarType,
   GraphQLString,
   GraphQLType,
@@ -56,7 +57,7 @@ export class TypeMapperService {
     options: TypeOptions,
   ): T {
     this.validateTypeOptions(hostType, options);
-    let graphqlType: T | GraphQLList<T> | GraphQLNonNull<T> = typeRef;
+    let graphqlType: GraphQLType = typeRef;
 
     if (options.isArray) {
       graphqlType = this.mapToGqlList(
@@ -68,7 +69,7 @@ export class TypeMapperService {
 
     const isNotNullable = !options.nullable || options.nullable === 'items';
     return isNotNullable
-      ? (new GraphQLNonNull(graphqlType) as unknown as T)
+      ? (new GraphQLNonNull(graphqlType as GraphQLNullableType) as unknown as T)
       : (graphqlType as T);
   }
 
@@ -95,7 +96,7 @@ export class TypeMapperService {
   ): GraphQLList<T> {
     const targetTypeNonNull = nullable
       ? targetType
-      : new GraphQLNonNull(targetType);
+      : new GraphQLNonNull(targetType as GraphQLNullableType);
 
     if (depth === 0) {
       return targetType as GraphQLList<T>;
