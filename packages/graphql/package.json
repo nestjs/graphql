@@ -63,7 +63,7 @@
     "@nestjs/common": "next",
     "@nestjs/core": "next",
     "@nestjs/testing": "next",
-    "graphql": "16.14.2",
+    "graphql": "17.0.2",
     "reflect-metadata": "0.2.2",
     "ts-morph": "28.0.0"
   },
