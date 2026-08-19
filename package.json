@@ -41,7 +41,7 @@
     "graphql": "16.14.2",
     "graphql-subscriptions": "3.0.0",
     "husky": "9.1.7",
-    "lerna": "10.0.0",
+    "lerna": "10.0.1",
     "lerna-changelog": "2.2.0",
     "lint-staged": "17.3.0",
     "oxlint": "1.79.0",
