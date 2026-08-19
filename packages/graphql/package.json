@@ -59,7 +59,7 @@
     "ws": "8.21.3"
   },
   "devDependencies": {
-    "@apollo/subgraph": "2.14.3",
+    "@apollo/subgraph": "2.14.4",
     "@nestjs/common": "next",
     "@nestjs/core": "next",
     "@nestjs/testing": "next",
