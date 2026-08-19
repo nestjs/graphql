@@ -42,7 +42,7 @@
     "@nestjs/common": "next",
     "@nestjs/platform-fastify": "next",
     "@nestjs/testing": "next",
-    "fastify": "5.12.0",
+    "fastify": "5.12.1",
     "mercurius": "16.10.0",
     "mercurius-integration-testing": "9.0.1"
   },
