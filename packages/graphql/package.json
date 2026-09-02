@@ -50,7 +50,7 @@
     "@graphql-tools/utils": "12.0.0",
     "@nestjs/mapped-types": "12.0.0",
     "chokidar": "4.0.3",
-    "es-toolkit": "1.51.0",
+    "es-toolkit": "1.52.0",
     "graphql-tag": "2.12.7",
     "graphql-ws": "6.2.1",
     "normalize-path": "3.0.0",
