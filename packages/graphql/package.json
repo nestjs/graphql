@@ -63,6 +63,7 @@
     "@nestjs/common": "12.0.1",
     "@nestjs/core": "12.0.1",
     "@nestjs/testing": "12.0.1",
+    "dataloader": "2.2.3",
     "graphql": "16.14.2",
     "reflect-metadata": "0.2.2",
     "ts-morph": "28.0.0"
@@ -73,6 +74,7 @@
     "@nestjs/core": "^12.0.0",
     "class-transformer": "*",
     "class-validator": "*",
+    "dataloader": "^2.0.0",
     "graphql": "^16.11.0 || ^17.0.0",
     "reflect-metadata": "^0.1.13 || ^0.2.0",
     "ts-morph": "^20.0.0 || ^21.0.0 || ^24.0.0 || ^25.0.0 || ^26.0.0 || ^27.0.0 || ^28.0.0"
@@ -85,6 +87,9 @@
       "optional": true
     },
     "class-validator": {
+      "optional": true
+    },
+    "dataloader": {
       "optional": true
     },
     "ts-morph": {
