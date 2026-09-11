@@ -5549,10 +5549,10 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-lint-staged@17.5.0:
-  version "17.5.0"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-17.5.0.tgz#4a52ae41a703cd535dae321589c431c923c15f40"
-  integrity sha512-ah2qsNtvKP1+Ak4rAvEEIvcXDLjjbr/xmxCvlequxqEOFYk0qINcZcRxD3Ic8wRn7/oQ8+wC9s0DfDrdMVCRFg==
+lint-staged@17.5.1:
+  version "17.5.1"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-17.5.1.tgz#a9222014fc2680934837b5b2214e98c050d2ea3e"
+  integrity sha512-7EDuco1xnBMeVpvAbeMq1U5KXwJGLmY8q6l+Ye78r36C4mPc+Vg1Z2SK8gHyRTyvPro90A0q5/FAZ+Au23d6QQ==
   dependencies:
     picomatch "^4.0.7"
     string-argv "^0.3.2"
