@@ -7362,10 +7362,10 @@ regexp.prototype.flags@^1.5.1:
     gopd "^1.2.0"
     set-function-name "^2.0.2"
 
-release-it@21.0.2:
-  version "21.0.2"
-  resolved "https://registry.yarnpkg.com/release-it/-/release-it-21.0.2.tgz#48e1326e89bb54ca717489e35121574e1718a4be"
-  integrity sha512-QwyDnWiQNB4d8Hc2b5FLMHcsKz9S2O1dMNnPB7w+0knsL5r8+qbnznDA1X7Bw5D863+Ud7eRHc71Cfth5Tlrgg==
+release-it@21.0.3:
+  version "21.0.3"
+  resolved "https://registry.yarnpkg.com/release-it/-/release-it-21.0.3.tgz#d18cb840e5bc00ebc3c5ea941c8f38f5642252f4"
+  integrity sha512-Pd5Uqj5hJmVAZzb+QSkkDgfvHJwRBazWryb90x5FYHhPxg35cE+1wX9v1DXk4ENy8C0osHxH/yRk1mvnZi7ZHQ==
   dependencies:
     "@inquirer/prompts" "8.5.2"
     "@octokit/rest" "22.0.1"
