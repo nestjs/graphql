@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
 import { PluginOptions, mergePluginOptions } from '../merge-options.js';
 import { isFilenameMatched } from '../utils/is-filename-matched.util.js';
+import { resolvePluginOptionsForFile } from '../utils/module-format.util.js';
 import { ModelClassVisitor } from './model-class.visitor.js';
 
 export class ReadonlyVisitor {
@@ -28,7 +29,11 @@ export class ReadonlyVisitor {
         sf,
         factoryHost,
         program,
-        parsedOptions,
+        resolvePluginOptionsForFile(
+          parsedOptions,
+          sf,
+          program.getCompilerOptions(),
+        ),
       );
     }
   }
