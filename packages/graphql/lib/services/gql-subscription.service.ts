@@ -23,6 +23,15 @@ export type GraphQLWsSubscriptionsConfig = Partial<
   >
 > & {
   path?: string;
+  /**
+   * A custom WebSocket server instance to use instead of the default
+   * `ws` WebSocketServer. When provided, the default WebSocket server
+   * will not be created.
+   *
+   * Note: The custom server must be instantiated with `{ noServer: true }`
+   * so that NestJS can handle the HTTP upgrade routing.
+   */
+  server?: WebSocketServer;
 };
 
 export type SubscriptionConfig = {
@@ -45,12 +54,26 @@ export class GqlSubscriptionService {
     private readonly options: GqlSubscriptionServiceOptions,
     private readonly httpServer: any,
   ) {
-    this.wss = new WebSocketServer({
-      path:
-        (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig)?.path ??
-        this.options.path,
-      noServer: true,
-    });
+    const graphqlWsConfig = this.options[
+      'graphql-ws'
+    ] as GraphQLWsSubscriptionsConfig;
+
+    if (
+      typeof graphqlWsConfig === 'object' &&
+      graphqlWsConfig?.server &&
+      graphqlWsConfig.server.options?.noServer === false
+    ) {
+      throw new Error(
+        'Custom WebSocketServer passed to "graphql-ws" must be instantiated with "noServer: true".',
+      );
+    }
+
+    this.wss =
+      (typeof graphqlWsConfig === 'object' && graphqlWsConfig?.server) ||
+      new WebSocketServer({
+        path: graphqlWsConfig?.path ?? this.options.path,
+        noServer: true,
+      });
     this.initialize();
   }
 
@@ -59,8 +82,14 @@ export class GqlSubscriptionService {
       this.options;
 
     if ('graphql-ws' in this.options) {
-      const graphqlWsOptions =
-        this.options['graphql-ws'] === true ? {} : this.options['graphql-ws'];
+      const {
+        server: _wsServer,
+        path: _wsPath,
+        ...graphqlWsOptions
+      } =
+        this.options['graphql-ws'] === true
+          ? ({} as GraphQLWsSubscriptionsConfig)
+          : (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig);
       this.wsGqlDisposable = useServer(
         {
           schema: this.options.schema,
@@ -87,9 +116,21 @@ export class GqlSubscriptionService {
           supportedProtocol === GRAPHQL_TRANSPORT_WS_PROTOCOL,
       );
 
-      const wss = this.wss;
+      if (protocol && (!protocols || protocols.length === 0)) {
+        return;
+      }
 
-      if (req.url?.startsWith(wss.options.path)) {
+      const wss = this.wss;
+      const subConfig = this.options[
+        'graphql-ws'
+      ] as GraphQLWsSubscriptionsConfig;
+
+      const path =
+        wss?.options?.path ??
+        (typeof subConfig === 'object' && subConfig?.path) ??
+        this.options.path;
+
+      if (path && req.url?.startsWith(path)) {
         wss.handleUpgrade(req, socket, head, (ws) => {
           wss.emit('connection', ws, req);
         });
