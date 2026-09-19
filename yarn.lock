@@ -2324,10 +2324,10 @@
   dependencies:
     undici-types "~6.20.0"
 
-"@types/node@24.13.5":
-  version "24.13.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.13.5.tgz#b1c34df1c3c47709a2f1790f2eb2d7eba53788f9"
-  integrity sha512-TXyindR+lBr22aJIdMQzCFHPHR6cR4js838mRDCSz5hOKWZvZwsXSSiXDmjRj4iJmgl+sR9O+1mkoVBSMadNug==
+"@types/node@24.13.6":
+  version "24.13.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.13.6.tgz#30ba2d8aae3c321fd170fe52a915231a67a4875c"
+  integrity sha512-SGrw/h3KPFshy3OE6ZL53LMBG5vGQQ8/gIpiqz/kRZhPJ7HgwCEs8LBuNtWLa8dvGZVpSF7+Bf+c11HUrCb/yg==
   dependencies:
     undici-types "~7.18.0"
 
