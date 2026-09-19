@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@apollo/cache-control-types@^1.0.2", "@apollo/cache-control-types@^1.0.3":
+"@apollo/cache-control-types@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@apollo/cache-control-types/-/cache-control-types-1.0.3.tgz#5da62cf64c3b4419dabfef4536b57a40c8ff0b47"
   integrity sha512-F17/vCp7QVwom9eG7ToauIKdAxpSoadsJnqIfyryLFSkLSOEqu+eC5Z3N8OXcUVStuOMcNHlyraRsA6rRICu4g==
@@ -153,13 +153,13 @@
     negotiator "^1.0.0"
     whatwg-mimetype "^4.0.0"
 
-"@apollo/subgraph@2.14.4":
-  version "2.14.4"
-  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.14.4.tgz#8b1ca90a39fb5ecde445f4ef3ee33e4701ba3f54"
-  integrity sha512-voALjXu3aOp2vq3LXGom2yWgG/wDmH2CMuPrZVxG/TkqcNYFzmlESC4E/XI18qfGqnvWGjMckQ2EgwRwmLaJoQ==
+"@apollo/subgraph@2.15.1":
+  version "2.15.1"
+  resolved "https://registry.yarnpkg.com/@apollo/subgraph/-/subgraph-2.15.1.tgz#37c9c9d15224fee4c705673e3374b829ac7818ee"
+  integrity sha512-y9G5Mw5Pn/kW7u4IoyrmdFfDUe1A7s4vXYKvsqlXLO1xSYRANmVnHTRY90qGqR5Vohe79BZ/lMWDDXGsiiX+AQ==
   dependencies:
-    "@apollo/cache-control-types" "^1.0.2"
-    "@apollo/federation-internals" "2.14.4"
+    "@apollo/cache-control-types" "^1.0.3"
+    "@graphql-tools/utils" "^12.0.0"
 
 "@apollo/usage-reporting-protobuf@^4.1.0", "@apollo/usage-reporting-protobuf@^4.1.1":
   version "4.1.1"
@@ -721,7 +721,7 @@
     "@graphql-tools/utils" "^10.9.1"
     tslib "^2.4.0"
 
-"@graphql-tools/utils@12.0.1", "@graphql-tools/utils@^12.0.1":
+"@graphql-tools/utils@12.0.1", "@graphql-tools/utils@^12.0.0", "@graphql-tools/utils@^12.0.1":
   version "12.0.1"
   resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-12.0.1.tgz#deb4524f776c0fd8fb695657df2d0358cacc2a49"
   integrity sha512-8YC6jn4xYDS6YTY6xDAgQAs/nGgvzRaIGHS8GeSfVItQzNK7Ms24CQtE3EJY+amvR+tBnhRSX0N83aGj+V/RIg==
