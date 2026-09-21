@@ -56,6 +56,64 @@ describe('plugin-utils', () => {
       });
     });
 
+    describe('when "esmCompatible" is true', () => {
+      it('should strip import attributes and append the output extension', () => {
+        const actual = replaceImportPath(
+          'import("/root/project/src/author.model", { with: { "resolution-mode": "import" } }).Author',
+          '/root/project/src/post.model.ts',
+          { readonly: false, esmCompatible: true },
+        );
+
+        expect(actual).toStrictEqual({
+          typeReference: '(await import("./author.model.js")).Author',
+          importPath: './author.model.js',
+          typeName: 'Author',
+        });
+      });
+
+      it('should use the ".mjs" extension for ".mts" files', () => {
+        const actual = replaceImportPath(
+          'import("/root/project/src/author.model").Author',
+          '/root/project/src/post.model.mts',
+          { readonly: false, esmCompatible: true },
+        );
+
+        expect(actual.importPath).toEqual('./author.model.mjs');
+      });
+
+      it('should not append an extension to a bare specifier', () => {
+        const actual = replaceImportPath(
+          'import("/root/project/src/node_modules/dependency/author.model").Author',
+          '/root/project/src/post.model.ts',
+          { readonly: false, esmCompatible: true },
+        );
+
+        expect(actual).toStrictEqual({
+          typeReference: '(await import("dependency/author.model")).Author',
+          importPath: 'dependency/author.model',
+          typeName: 'Author',
+        });
+      });
+
+      it('should append the output extension in "readonly" mode', () => {
+        const actual = replaceImportPath(
+          'import("/root/project/src/author.model", { with: { "resolution-mode": "import" } }).Author',
+          '/root/project/src/post.model.ts',
+          {
+            readonly: true,
+            esmCompatible: true,
+            pathToSource: '/root/project/src',
+          },
+        );
+
+        expect(actual).toStrictEqual({
+          typeReference: 'await import("./author.model.js")',
+          importPath: './author.model.js',
+          typeName: 'Author',
+        });
+      });
+    });
+
     describe('when "readonly" is true', () => {
       it('should replace path to relative', () => {
         const actual = replaceImportPath(

@@ -277,6 +277,23 @@ export function createImportEquals(
   );
 }
 
+export function createNamespaceImport(
+  f: ts.NodeFactory,
+  identifier: string,
+  from: string,
+): ts.ImportDeclaration {
+  return f.createImportDeclaration(
+    undefined,
+    f.createImportClause(
+      false,
+      undefined,
+      f.createNamespaceImport(f.createIdentifier(identifier)),
+    ),
+    f.createStringLiteral(from),
+    undefined,
+  );
+}
+
 export function createNamedImport(
   f: ts.NodeFactory,
   what: string[],
