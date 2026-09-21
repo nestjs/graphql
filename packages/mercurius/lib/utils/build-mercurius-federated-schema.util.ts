@@ -14,10 +14,9 @@ export function buildMercuriusFederatedSchema({
     'MercuriusFederation',
     () => nodeRequire('@apollo/subgraph'),
   );
-  let executableSchema: GraphQLSchema = buildSubgraphSchema({
-    typeDefs,
-    resolvers,
-  });
+  let executableSchema: GraphQLSchema = buildSubgraphSchema([
+    { typeDefs, resolvers },
+  ]);
 
   const subscriptionResolvers = resolvers.Subscription;
   executableSchema = transformSchema(executableSchema, (type) => {
