@@ -1,5 +1,6 @@
 export * from './args-type.decorator.js';
 export * from './args.decorator.js';
+export * from './batch-resolve-field.decorator.js';
 export * from './context.decorator.js';
 export * from './directive.decorator.js';
 export * from './extensions.decorator.js';

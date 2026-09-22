@@ -22,12 +22,14 @@ import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph.js';
 import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants.js';
 import { identity } from 'es-toolkit';
 import { GraphQLResolveInfo } from 'graphql';
+import { BatchFieldMetadata } from '../decorators/batch-resolve-field.decorator.js';
 import { SubscriptionOptions } from '../decorators/subscription.decorator.js';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver.js';
 import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
 import { Resolver } from '../enums/resolver.enum.js';
 import { GqlParamsFactory } from '../factories/params.factory.js';
 import {
+  BATCH_RESOLVER_METADATA,
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   FIELD_TYPENAME,
   GRAPHQL_MODULE_OPTIONS,
@@ -38,6 +40,10 @@ import {
 import { GqlModuleOptions } from '../interfaces/index.js';
 import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface.js';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
+import {
+  createBatchFieldResolver,
+  preloadDataLoaderPackage,
+} from '../utils/batch-field-resolver.util.js';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util.js';
 import { extractMetadata } from '../utils/extract-metadata.util.js';
 import { createArgsMapper } from '../utils/map-args-to-props.util.js';
@@ -200,6 +206,24 @@ export class ResolversExplorerService extends BaseExplorerService {
         ? this.fieldResolverEnhancersLookup
         : undefined;
 
+    const batchMetadata = isPropertyResolver
+      ? this.getBatchFieldMetadata(instance, resolver.methodName)
+      : undefined;
+
+    /**
+     * Batching sits between the resolver context and the field middleware, so
+     * that the method is called once per batch while the middleware keeps
+     * running once per field.
+     */
+    const applyBatchingIfNeeded = (callback: (...args: any[]) => any) =>
+      batchMetadata
+        ? createBatchFieldResolver(callback, {
+            name: `${instance.constructor.name}#${resolver.methodName}`,
+            keyBy: batchMetadata.keyBy,
+            dataLoader: batchMetadata.dataLoader,
+          })
+        : callback;
+
     if (isRequestScoped) {
       const resolverCallback = async (...args: any[]) => {
         const gqlContext = paramsFactory.exchangeKeyForValue(
@@ -231,7 +255,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
       return isPropertyResolver
         ? this.registerFieldMiddlewareIfExists(
-            wrappedCallback,
+            applyBatchingIfNeeded(wrappedCallback),
             instance,
             resolver.methodName,
           )
@@ -248,7 +272,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     ) {
       const resolverFn = prototype[resolver.methodName];
       if (typeof resolverFn === 'function') {
-        return resolverFn.bind(instance);
+        return applyBatchingIfNeeded(resolverFn.bind(instance));
       }
     }
 
@@ -270,11 +294,30 @@ export class ResolversExplorerService extends BaseExplorerService {
 
     return isPropertyResolver
       ? this.registerFieldMiddlewareIfExists(
-          wrappedCallback,
+          applyBatchingIfNeeded(wrappedCallback),
           instance,
           resolver.methodName,
         )
       : this.resolverDecoratorHost.decorate(wrappedCallback);
+  }
+
+  /**
+   * Reads the metadata left behind by `@BatchResolveField()` and, when the
+   * method is indeed a batch one, starts resolving the optional `dataloader`
+   * peer dependency while the schema is still being built.
+   */
+  private getBatchFieldMetadata(
+    instance: object,
+    methodKey: string,
+  ): BatchFieldMetadata | undefined {
+    const metadata: BatchFieldMetadata | undefined = Reflect.getMetadata(
+      BATCH_RESOLVER_METADATA,
+      instance[methodKey as keyof typeof instance],
+    );
+    if (metadata) {
+      preloadDataLoaderPackage();
+    }
+    return metadata;
   }
 
   /**
