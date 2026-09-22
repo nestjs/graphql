@@ -24,13 +24,13 @@ export class Post {
     category: Category;
 }
 
-export abstract class IQuery {
-    abstract getPosts(): Nullable<Nullable<Post>[]> | Promise<Nullable<Nullable<Post>[]>>;
-}
-
 export class User {
     id: string;
     posts?: Nullable<Nullable<Post>[]>;
+}
+
+export abstract class IQuery {
+    abstract getPosts(): Nullable<Nullable<Post>[]> | Promise<Nullable<Nullable<Post>[]>>;
 }
 
 type Nullable<T> = T | null;

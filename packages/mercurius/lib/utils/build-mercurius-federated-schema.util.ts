@@ -1,7 +1,8 @@
 import { loadPackageSync } from '@nestjs/common/utils/load-package.util.js';
 import { BuildFederatedSchemaOptions, transformSchema } from '@nestjs/graphql';
-import { buildASTSchema, GraphQLSchema, isObjectType } from 'graphql';
+import { GraphQLSchema, isObjectType } from 'graphql';
 import { createRequire } from 'module';
+import { printSubgraphSdl } from './print-subgraph-sdl.util.js';
 
 const nodeRequire = createRequire(import.meta.url);
 
@@ -9,15 +10,14 @@ export function buildMercuriusFederatedSchema({
   typeDefs,
   resolvers,
 }: BuildFederatedSchemaOptions) {
-  const { buildSubgraphSchema, printSubgraphSchema } = loadPackageSync(
+  const { buildSubgraphSchema } = loadPackageSync(
     '@apollo/subgraph',
     'MercuriusFederation',
     () => nodeRequire('@apollo/subgraph'),
   );
-  let executableSchema: GraphQLSchema = buildSubgraphSchema({
-    typeDefs,
-    resolvers,
-  });
+  let executableSchema: GraphQLSchema = buildSubgraphSchema([
+    { typeDefs, resolvers },
+  ]);
 
   const subscriptionResolvers = resolvers.Subscription;
   executableSchema = transformSchema(executableSchema, (type) => {
@@ -33,11 +33,7 @@ export function buildMercuriusFederatedSchema({
           // Workaround for https://github.com/mercurius-js/mercurius/issues/273
           value.resolve = function resolve() {
             return {
-              sdl: printSubgraphSchema(
-                buildASTSchema(typeDefs, {
-                  assumeValid: true,
-                }),
-              )
+              sdl: printSubgraphSdl(typeDefs)
                 .replace('type Query {', 'type Query @extends {')
                 .replace('type Mutation {', 'type Mutation @extends {')
                 .replace('type Subscription {', 'type Subscription @extends {'),
