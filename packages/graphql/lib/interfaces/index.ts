@@ -1,5 +1,4 @@
 export * from './base-type-options.interface.js';
-export * from './batch-loader-options.interface.js';
 export * from './build-schema-options.interface.js';
 export * from './complexity.interface.js';
 export * from './custom-scalar.interface.js';
