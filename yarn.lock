@@ -4001,7 +4001,7 @@ fast-json-stringify@^6.0.0:
     json-schema-ref-resolver "^2.0.0"
     rfdc "^1.2.0"
 
-fast-json-stringify@^7.0.0:
+fast-json-stringify@^7.0.0, fast-json-stringify@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fast-json-stringify/-/fast-json-stringify-7.0.1.tgz#e528a11a6196fa54edd7e51369c30764e0839d13"
   integrity sha512-eRSayARSbbwlBjpP4vnTTIRD5QPcIrmihPxDeN1DtKnHPg66UuJLx+8hlK1kaFdjvzyQ/dzALoi4vwAQ+T+iZA==
@@ -4566,13 +4566,13 @@ graphql-jit@0.8.7:
     lodash.merge "4.6.2"
     lodash.mergewith "4.6.2"
 
-graphql-jit@0.8.8:
-  version "0.8.8"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.8.tgz#50ce953999b4aa59d9e3d5ddd278a8143b2eb79e"
-  integrity sha512-LaqrRR0S8zlihCxO786VK4YBLq3iFGniyhWli3qJ5+AHqiyR/yGGx5xxo/683xmKn+3CNefGNpERXKdISSS6kw==
+graphql-jit@0.8.9:
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.9.tgz#bfaa6f4f076b4cf351f80f4bdff5742f7bf9934b"
+  integrity sha512-h3CUhDa9c0OfFU2UkTNZLHBNtGTMVbsgLSesNgsEB+Dr5eglRuqDVxrMONj5q7RO8jOctoSFcgNU01W0BInEpw==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
-    fast-json-stringify "^5.16.1"
+    fast-json-stringify "^7.0.1"
     generate-function "^2.3.1"
     lodash.memoize "^4.1.2"
     lodash.merge "4.6.2"
@@ -5771,16 +5771,16 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.10.0:
-  version "16.10.0"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.10.0.tgz#3caa7e9924bdf92a1813927d58aa3e287e3909f7"
-  integrity sha512-VbqjZ/uC0GF9FDtkAAZCzK4p0aNqfcB09rs57h3LCAQcdqdIOw1kYglvSQLO5DotK3Ms2tcv8epNjeOVsJ8tzg==
+mercurius@16.10.1:
+  version "16.10.1"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.10.1.tgz#4e08314a69cc71bdfa9f3e38f8105af213ac52e6"
+  integrity sha512-8P7KwNjA+R8OeZ2+6f43fQsCLjvekdeYKIvgWZbRnOMq8J2VdR2fDb/PLL5QPQF3ndjCuPXZJ7GxHfkKOnNlXw==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^10.1.0"
     "@fastify/websocket" "^11.0.0"
     fastify-plugin "^6.0.0"
-    graphql-jit "0.8.8"
+    graphql-jit "0.8.9"
     mqemitter "^7.0.0"
     p-map "^4.0.0"
     quick-lru "^7.0.0"
