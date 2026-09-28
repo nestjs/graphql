@@ -392,8 +392,9 @@ export abstract class ApolloBaseDriver<
       };
     } else {
       targetOptions.context = async (contextOrRequest) => {
+        // The object is shared by all requests, so each one gets its own copy
         return this.assignReqProperty(
-          originalOptions.context as Record<string, any>,
+          this.cloneContext(originalOptions.context),
           contextOrRequest.req ?? contextOrRequest,
         );
       };
@@ -413,7 +414,21 @@ export abstract class ApolloBaseDriver<
     ) {
       return ctx;
     }
-    ctx.req = req;
-    return ctx;
+    // Never assign onto `ctx`: when the same object is returned for every
+    // request, all of them would see the `req` of the first one.
+    return this.cloneContext(ctx, { req });
+  }
+
+  private cloneContext(
+    ctx: Record<string, unknown>,
+    properties?: Record<string, unknown>,
+  ) {
+    // Keeps the prototype (and so the methods of class-based contexts), just
+    // like the copy Apollo Server makes of the context for every operation.
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(ctx)),
+      ctx,
+      properties,
+    );
   }
 }
