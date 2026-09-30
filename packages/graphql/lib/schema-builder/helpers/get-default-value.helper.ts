@@ -9,7 +9,13 @@ export function getDefaultValue<T = any>(
   key: string,
   typeName: string,
 ): T | undefined {
-  const initializerValue = instance[key];
+  // Ignore members inherited from "Object.prototype" (e.g., "toString",
+  // "constructor") so they are not mistaken for field initializers.
+  const initializerValue =
+    Object.prototype.hasOwnProperty.call(instance, key) ||
+    !(key in Object.prototype)
+      ? instance[key]
+      : undefined;
   if (isUndefined(options.defaultValue)) {
     return initializerValue;
   }
