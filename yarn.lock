@@ -5771,10 +5771,10 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.10.1:
-  version "16.10.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.10.1.tgz#4e08314a69cc71bdfa9f3e38f8105af213ac52e6"
-  integrity sha512-8P7KwNjA+R8OeZ2+6f43fQsCLjvekdeYKIvgWZbRnOMq8J2VdR2fDb/PLL5QPQF3ndjCuPXZJ7GxHfkKOnNlXw==
+mercurius@16.12.0:
+  version "16.12.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.12.0.tgz#8a29c0bcaddadcac4ef8df352f74c23d0b7ab8a2"
+  integrity sha512-00AZMStfln/Gml1SO5y1SdwUl3YV4zckkaUUStmdfs0/VxjlXHSAk9hNt9Cli9PJC+Uev6zAgxBL499WjWWYIg==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^10.1.0"
@@ -5788,7 +5788,7 @@ mercurius@16.10.1:
     safe-stable-stringify "^2.3.0"
     secure-json-parse "^4.1.0"
     single-user-cache "^2.0.0"
-    tiny-lru "^11.0.0"
+    tiny-lru "^13.1.0"
     ws "^8.2.2"
 
 mercurius@^16.0.0:
@@ -8134,6 +8134,11 @@ tiny-lru@^11.4.5:
   version "11.4.7"
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.4.7.tgz#7ddfabe22720c98f7e48b2806d9d9a71a93ee0d6"
   integrity sha512-w/Te7uMUVeH0CR8vZIjr+XiN41V+30lkDdK+NRIDCUYKKuL9VcmaUEmaPISuwGhLlrTGh5yu18lENtR9axSxYw==
+
+tiny-lru@^13.1.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-13.1.0.tgz#649c3ee0bf441b30f7923397776a5dd5e8f17996"
+  integrity sha512-sImTU4L5bvqNJxr95Jk6I/IZeHwTU6fWLfA6PuALDKnugw78YlGVkyDpPLzdzX02WU1zgrLIGSRJ8sLrtAJx5g==
 
 tinybench@^2.9.0:
   version "2.9.0"
