@@ -1,3 +1,6 @@
+/**
+ * @publicApi
+ */
 export class UnableToFindFieldsError extends Error {
   constructor(name: string) {
     super(
