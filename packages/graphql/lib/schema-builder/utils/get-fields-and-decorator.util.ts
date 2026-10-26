@@ -13,6 +13,25 @@ import { ClassMetadata, PropertyMetadata } from '../metadata/index.js';
 import { LazyMetadataStorage } from '../storages/lazy-metadata.storage.js';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
 
+/**
+ * Returns the compiled field metadata of a class decorated with `@ObjectType()`,
+ * `@InputType()`, `@InterfaceType()` or `@ArgsType()` (inherited fields
+ * included), together with the class decorator that matches its kind.
+ *
+ * This is the building block of the mapped type helpers (`PartialType()`,
+ * `PickType()`, etc.) and can be used to write custom ones. The returned
+ * metadata objects are shared with the schema builder, so treat them as
+ * read-only.
+ *
+ * @param objType the GraphQL type class
+ * @param options.overrideFields recompile the field metadata of the class
+ * instead of reusing the cached list (the built-in helpers pass it when the
+ * plugin metadata is refreshed). Usually omitted.
+ *
+ * @throws {UnableToFindFieldsError} if the class is not a GraphQL type.
+ *
+ * @publicApi
+ */
 export function getFieldsAndDecoratorForType<T>(
   objType: Type<T>,
   options?: { overrideFields?: boolean },
