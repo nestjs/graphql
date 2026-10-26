@@ -367,7 +367,7 @@ export class GraphQLFederationFactory {
         },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
-        await this.getFederationSchemaPrinter(),
+        await this.getFederationSchemaPrinter(autoSchemaFile),
       );
     } catch (err) {
       if (err && err.details) {
@@ -392,13 +392,32 @@ export class GraphQLFederationFactory {
     return { subgraph, majorVersion: Number(version.split('.')[0]) };
   }
 
-  private async getFederationSchemaPrinter(): Promise<
-    (schema: GraphQLSchema) => string
-  > {
+  private async getFederationSchemaPrinter(
+    autoSchemaFile: AutoSchemaFileValue,
+  ): Promise<(schema: GraphQLSchema) => string> {
     const { subgraph, majorVersion } = await this.loadApolloSubgraph();
-    return majorVersion >= 2
-      ? (schema) => printSchemaWithDirectives(schema)
-      : subgraph.printSubgraphSchema;
+    const print =
+      majorVersion >= 2
+        ? (schema: GraphQLSchema) => printSchemaWithDirectives(schema)
+        : subgraph.printSubgraphSchema;
+
+    const [federationVersion, federationOptions] =
+      this.getFederationVersionAndConfig(autoSchemaFile);
+    const typeDefsDecorator = this.typeDefsDecoratorFactory.create(
+      federationVersion,
+      majorVersion,
+    );
+    if (!typeDefsDecorator) {
+      return print;
+    }
+    // Link the federation spec in the emitted file too, so that the file can be
+    // composed (e.g., with "rover") as the federation 2 subgraph it is served as.
+    // The decorator indents the printed schema, hence the whitespace clean-up.
+    return (schema) =>
+      typeDefsDecorator
+        .decorate(print(schema), federationOptions)
+        .trim()
+        .replace(/\n\s*/, '\n\n');
   }
 
   private getFederationVersionAndConfig(
