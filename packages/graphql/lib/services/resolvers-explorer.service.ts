@@ -23,6 +23,7 @@ import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constant
 import { identity } from 'es-toolkit';
 import { GraphQLResolveInfo } from 'graphql';
 import { SubscriptionOptions } from '../decorators/subscription.decorator.js';
+import { getUseFieldMiddleware } from '../decorators/use-field-middleware.decorator.js';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver.js';
 import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
 import { Resolver } from '../enums/resolver.enum.js';
@@ -35,7 +36,7 @@ import {
   SUBSCRIPTION_OPTIONS_METADATA,
   SUBSCRIPTION_TYPE,
 } from '../graphql.constants.js';
-import { GqlModuleOptions } from '../interfaces/index.js';
+import { FieldMiddleware, GqlModuleOptions } from '../interfaces/index.js';
 import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface.js';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util.js';
@@ -388,14 +389,9 @@ export class ResolversExplorerService extends BaseExplorerService {
     TArgs = { [argName: string]: any },
     TOutput = any,
   >(resolverFn: Function, instance: object, methodKey: string) {
-    const fieldMiddleware = Reflect.getMetadata(
-      FIELD_RESOLVER_MIDDLEWARE_METADATA,
-      instance[methodKey],
-    );
-
     const middlewareFunctions = (
       this.gqlOptions?.buildSchemaOptions?.fieldMiddleware || []
-    ).concat(fieldMiddleware || []);
+    ).concat(this.getFieldResolverMiddleware(instance, methodKey));
 
     if (middlewareFunctions?.length === 0) {
       return resolverFn;
@@ -412,6 +408,23 @@ export class ResolversExplorerService extends BaseExplorerService {
       TArgs,
       TOutput
     >(originalResolveFnFactory, middlewareFunctions);
+  }
+
+  /**
+   * Middleware of a field resolver method: the `middleware` option of
+   * `@ResolveField()` followed by the middleware applied with `@UseFieldMiddleware()`.
+   */
+  private getFieldResolverMiddleware(
+    instance: object,
+    methodKey: string,
+  ): FieldMiddleware[] {
+    const optionMiddleware: FieldMiddleware[] | undefined = Reflect.getMetadata(
+      FIELD_RESOLVER_MIDDLEWARE_METADATA,
+      instance[methodKey as keyof typeof instance],
+    );
+    return (optionMiddleware ?? []).concat(
+      getUseFieldMiddleware(instance, methodKey),
+    );
   }
 
   private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
@@ -451,11 +464,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       return false;
     }
 
-    const fieldMiddleware = Reflect.getMetadata(
-      FIELD_RESOLVER_MIDDLEWARE_METADATA,
-      instance[methodKey as keyof typeof instance],
-    );
-    if (fieldMiddleware?.length > 0) {
+    if (this.getFieldResolverMiddleware(instance, methodKey).length > 0) {
       return false;
     }
 
