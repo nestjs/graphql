@@ -134,5 +134,34 @@ describe('GraphQLAstExplorer', () => {
       expect(text).toContain('/** The available colors. */');
       expect(text).toContain('/** The color red. */');
     });
+
+    it('should escape comment terminators in emitted descriptions', async () => {
+      const astExplorer = new GraphQLAstExplorer();
+
+      const document = gql`
+        type Query {
+          """
+          Runs on the cron schedule */5 * * * *.
+          """
+          jobs: [String!]!
+        }
+      `;
+
+      const sourceFile = await astExplorer.explore(
+        document,
+        '/dev/null',
+        'interface',
+        { emitDescriptions: true },
+      );
+      const syntacticDiagnostics = sourceFile
+        .getProject()
+        .getProgram()
+        .compilerObject.getSyntacticDiagnostics(sourceFile.compilerNode);
+
+      expect(syntacticDiagnostics).toHaveLength(0);
+      expect(sourceFile.getFullText()).toContain(
+        '/** Runs on the cron schedule *\\/5 * * * *. */',
+      );
+    });
   });
 });

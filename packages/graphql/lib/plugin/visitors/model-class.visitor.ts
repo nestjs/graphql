@@ -13,6 +13,7 @@ import { METADATA_FACTORY_NAME } from '../plugin-constants.js';
 import { pluginDebugLogger } from '../plugin-debug-logger.js';
 import {
   createImportEquals,
+  createNamespaceImport,
   findNullableTypeFromUnion,
   getDecoratorName,
   getDecorators,
@@ -29,6 +30,7 @@ import {
 } from '../utils/ast-utils.js';
 import {
   convertPath,
+  getOutputExtension,
   getTypeReferenceAsString,
 } from '../utils/plugin-utils.js';
 import { typeReferenceToIdentifier } from '../utils/type-reference-to-identifier.util.js';
@@ -44,8 +46,10 @@ type ClassMetadata = Record<string, ts.ObjectLiteralExpression>;
 
 export class ModelClassVisitor {
   private importsToAdd: Set<string>;
+  private hoistedTypeImports: Map<string, string>;
   private readonly _typeImports: Record<string, string> = {};
   private readonly _collectedMetadata: Record<string, ClassMetadata> = {};
+  private readonly _fileOutputExtensions: Record<string, string> = {};
 
   get typeImports() {
     return this._typeImports;
@@ -57,7 +61,10 @@ export class ModelClassVisitor {
     const metadataWithImports = [];
     Object.keys(this._collectedMetadata).forEach((filePath) => {
       const metadata = this._collectedMetadata[filePath];
-      const path = filePath.replace(/\.[jt]s$/, '');
+      const path = filePath.replace(
+        /\.[jt]s$/,
+        this._fileOutputExtensions[filePath] ?? '',
+      );
       const importExpr = ts.factory.createCallExpression(
         ts.factory.createToken(ts.SyntaxKind.ImportKeyword) as ts.Expression,
         undefined,
@@ -75,6 +82,7 @@ export class ModelClassVisitor {
     pluginOptions: PluginOptions,
   ) {
     this.importsToAdd = new Set<string>();
+    this.hoistedTypeImports = new Map<string, string>();
 
     const typeChecker = program.getTypeChecker();
     const factory = ctx.factory;
@@ -128,6 +136,9 @@ export class ModelClassVisitor {
           if (!this._collectedMetadata[filePath]) {
             this._collectedMetadata[filePath] = {};
           }
+          this._fileOutputExtensions[filePath] = pluginOptions.esmCompatible
+            ? getOutputExtension(sourceFile.fileName)
+            : '';
           const attributeKey = node.name.getText();
           this._collectedMetadata[filePath][attributeKey] = safelyMergeObjects(
             factory,
@@ -139,8 +150,10 @@ export class ModelClassVisitor {
       } else if (ts.isSourceFile(node) && !pluginOptions.readonly) {
         const visitedNode = ts.visitEachChild(node, visitNode, ctx);
 
-        const importStatements: ts.Statement[] =
-          this.createEagerImports(factory);
+        const importStatements: ts.Statement[] = this.createEagerImports(
+          factory,
+          pluginOptions,
+        );
 
         const existingStatements = Array.from(visitedNode.statements);
         return factory.updateSourceFile(visitedNode, [
@@ -467,10 +480,22 @@ export class ModelClassVisitor {
       type,
       this._typeImports,
       this.importsToAdd,
+      this.hoistedTypeImports,
     );
   }
 
-  private createEagerImports(f: ts.NodeFactory): ts.ImportEqualsDeclaration[] {
+  private createEagerImports(
+    f: ts.NodeFactory,
+    options: PluginOptions,
+  ): Array<ts.ImportEqualsDeclaration | ts.ImportDeclaration> {
+    if (options.esmCompatible) {
+      // Static namespace imports: they are hoisted by the ES module loader and
+      // their bindings stay live, so self-references and import cycles resolve
+      // instead of throwing ERR_REQUIRE_CYCLE_MODULE.
+      return Array.from(this.hoistedTypeImports).map(([path, identifier]) =>
+        createNamespaceImport(f, identifier, path),
+      );
+    }
     if (!this.importsToAdd.size) {
       return [];
     }

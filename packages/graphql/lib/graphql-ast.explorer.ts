@@ -600,6 +600,7 @@ export class GraphQLAstExplorer {
     if (!options.emitDescriptions || !description) {
       return undefined;
     }
-    return [{ description }];
+    // "*/" in a description would close the emitted comment early
+    return [{ description: description.replaceAll('*/', '*\\/') }];
   }
 }

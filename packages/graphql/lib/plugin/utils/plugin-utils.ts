@@ -111,6 +111,29 @@ export function isPromiseOrObservable(type: string) {
   return type.includes('Promise') || type.includes('Observable');
 }
 
+/**
+ * TypeScript prints type references in ESM files with import attributes, e.g.
+ * `import("./cat.input", { with: { "resolution-mode": "import" } }).OwnerInput`.
+ * The attributes are irrelevant for the emitted metadata and would otherwise
+ * end up inside the module specifier.
+ */
+const IMPORT_ATTRIBUTES_REGEX =
+  /,\s*\{\s*with:\s*\{\s*"resolution-mode":\s*"(?:import|require)"\s*\}\s*\}/g;
+
+export function stripImportAttributes(typeReference: string) {
+  return typeReference.replace(IMPORT_ATTRIBUTES_REGEX, '');
+}
+
+export function getOutputExtension(fileName: string) {
+  if (fileName.endsWith('.mts')) {
+    return '.mjs';
+  }
+  if (fileName.endsWith('.cts')) {
+    return '.cjs';
+  }
+  return '.js';
+}
+
 export function replaceImportPath(
   typeReference: string,
   fileName: string,
@@ -119,6 +142,8 @@ export function replaceImportPath(
   if (!typeReference.includes('import')) {
     return { typeReference, importPath: null };
   }
+  typeReference = stripImportAttributes(typeReference);
+
   let importPath = /\("([^)]).+(")/.exec(typeReference)[0];
   if (!importPath) {
     return { typeReference: undefined, importPath: null };
@@ -138,7 +163,8 @@ export function replaceImportPath(
 
   const nodeModulesText = 'node_modules';
   const nodeModulePos = relativePath.indexOf(nodeModulesText);
-  if (nodeModulePos >= 0) {
+  const isBareSpecifier = nodeModulePos >= 0;
+  if (isBareSpecifier) {
     relativePath = relativePath.slice(
       nodeModulePos + nodeModulesText.length + 1, // slash
     );
@@ -156,6 +182,9 @@ export function replaceImportPath(
     if (indexPos >= 0) {
       relativePath = relativePath.slice(0, indexPos);
     }
+  } else if (options.esmCompatible) {
+    // Relative specifiers must carry the output extension to resolve under ESM
+    relativePath += getOutputExtension(fileName);
   }
 
   typeReference = typeReference.replace(importPath, relativePath);
@@ -165,6 +194,18 @@ export function replaceImportPath(
       convertToAsyncImport(typeReference);
     return {
       typeReference: typeImportStatement,
+      typeName,
+      importPath: relativePath,
+    };
+  }
+  if (options.esmCompatible) {
+    // "require" does not exist in an ES module. The caller hoists a static
+    // namespace import for "importPath" and references "typeName" on it; the
+    // async import below is only a fallback for callers that cannot hoist.
+    const { typeName, typeImportStatement } =
+      convertToAsyncImport(typeReference);
+    return {
+      typeReference: `(${typeImportStatement}).${typeName}`,
       typeName,
       importPath: relativePath,
     };

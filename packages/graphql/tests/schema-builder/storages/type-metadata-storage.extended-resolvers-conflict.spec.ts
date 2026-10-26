@@ -24,10 +24,10 @@ class FirstDerivedResolver extends SharedBaseResolver {}
 class SecondDerivedResolver extends SharedBaseResolver {}
 
 describe('TypeMetadataStorage extended resolvers - shared base class', () => {
-  let warn: ReturnType<typeof vi.spyOn>;
+  let warnings: string[];
 
   beforeAll(() => {
-    warn = vi
+    const warn = vi
       .spyOn(Logger.prototype, 'warn')
       .mockImplementation(() => undefined);
 
@@ -37,10 +37,13 @@ describe('TypeMetadataStorage extended resolvers - shared base class', () => {
       SecondDerivedResolver,
     ]);
     TypeMetadataStorage.compile();
+
+    // Vitest clears mocks before each test, so capture the calls before they are reset.
+    warnings = warn.mock.calls.map(([message]) => String(message));
+    warn.mockRestore();
   });
 
   afterAll(() => {
-    warn.mockRestore();
     TypeMetadataStorage.clear();
   });
 
@@ -53,8 +56,7 @@ describe('TypeMetadataStorage extended resolvers - shared base class', () => {
   });
 
   it('should warn that the other resolver never serves the handlers', () => {
-    const messages = warn.mock.calls.map(([message]) => String(message));
-    const message = messages.find((text) =>
+    const message = warnings.find((text) =>
       text.includes('SharedBaseResolver'),
     );
 

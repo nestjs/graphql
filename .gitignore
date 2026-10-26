@@ -22,3 +22,6 @@ packages/**/dist
 **/*.tsbuildinfo
 
 .yarn/
+
+# Claude Code
+.claude/worktrees/

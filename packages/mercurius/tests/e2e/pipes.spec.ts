@@ -42,10 +42,6 @@ describe('GraphQL - Pipes', () => {
                   'description must be longer than or equal to 30 characters',
               },
               property: 'description',
-              target: {
-                ingredients: [],
-                title: 'test',
-              },
               value: undefined,
             },
           ],

@@ -7,6 +7,7 @@
 /* eslint @typescript-eslint/no-empty-function: 0 */
 import {
   ArgsTypeOptions,
+  FieldMiddleware,
   FieldOptions,
   InputTypeOptions,
   InterfaceTypeOptions,
@@ -83,6 +84,12 @@ export function Scalar(
   typeFunc?: ReturnTypeFunc,
 ): ClassDecorator {
   return (target, key?, descriptor?) => {};
+}
+
+export function UseFieldMiddleware(
+  ...middleware: FieldMiddleware[]
+): PropertyDecorator & MethodDecorator {
+  return (target: object, propertyKey: string | symbol) => {};
 }
 
 export function dummyFn() {

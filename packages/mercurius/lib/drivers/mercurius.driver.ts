@@ -87,8 +87,10 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
       };
     } else {
       targetOptions.context = (req: Record<string, unknown>) => {
+        // The object is shared by all requests, so each one gets its own copy
+        // (Mercurius then assigns per-request state, e.g. `reply`, onto it)
         return this.assignReqProperty(
-          originalOptions.context as Record<string, any>,
+          this.cloneContext(originalOptions.context),
           req,
         );
       };
@@ -108,7 +110,20 @@ export class MercuriusDriver extends AbstractGraphQLDriver<MercuriusDriverConfig
     ) {
       return ctx;
     }
-    ctx.req = req;
-    return ctx;
+    // Never assign onto `ctx`: when the same object is returned for every
+    // request, all of them would see the `req` of the first one.
+    return this.cloneContext(ctx, { req });
+  }
+
+  private cloneContext(
+    ctx: Record<string, unknown>,
+    properties?: Record<string, unknown>,
+  ) {
+    // Keeps the prototype, and so the methods of class-based contexts
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(ctx)),
+      ctx,
+      properties,
+    );
   }
 }

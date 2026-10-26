@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   ContextIdFactory,
@@ -7,9 +7,15 @@ import {
   ModulesContainer,
   REQUEST,
 } from '@nestjs/core';
+import type { ExternalExceptionFilterContext } from '@nestjs/core/exceptions/external-exception-filter-context.js';
+import type { ExternalExceptionsHandler } from '@nestjs/core/exceptions/external-exceptions-handler.js';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host.js';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator.js';
 import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface.js';
-import { CONTROLLER_ID_KEY } from '@nestjs/core/injector/constants.js';
+import {
+  CONTROLLER_ID_KEY,
+  STATIC_CONTEXT,
+} from '@nestjs/core/injector/constants.js';
 import { Injector } from '@nestjs/core/injector/injector.js';
 import {
   ContextId,
@@ -23,6 +29,7 @@ import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constant
 import { identity } from 'es-toolkit';
 import { GraphQLResolveInfo } from 'graphql';
 import { SubscriptionOptions } from '../decorators/subscription.decorator.js';
+import { getUseFieldMiddleware } from '../decorators/use-field-middleware.decorator.js';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver.js';
 import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
 import { Resolver } from '../enums/resolver.enum.js';
@@ -35,7 +42,7 @@ import {
   SUBSCRIPTION_OPTIONS_METADATA,
   SUBSCRIPTION_TYPE,
 } from '../graphql.constants.js';
-import { GqlModuleOptions } from '../interfaces/index.js';
+import { FieldMiddleware, GqlModuleOptions } from '../interfaces/index.js';
 import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface.js';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util.js';
@@ -201,32 +208,66 @@ export class ResolversExplorerService extends BaseExplorerService {
         : undefined;
 
     if (isRequestScoped) {
+      const filtersEnabled = !contextOptions || contextOptions.filters;
+      let creationErrorHandler: ExternalExceptionsHandler | null | undefined;
+
       const resolverCallback = async (...args: any[]) => {
-        const gqlContext = paramsFactory.exchangeKeyForValue(
-          GqlParamtype.CONTEXT,
-          undefined,
-          args,
-        );
-        const contextId = this.getContextId(gqlContext);
-        this.registerContextProvider(gqlContext, contextId);
-        const contextInstance = await this.injector.loadPerContext(
-          instance,
-          moduleRef,
-          moduleRef.providers,
-          contextId,
-        );
-        const callback = this.externalContextCreator.create(
-          contextInstance,
-          transform(contextInstance[resolver.methodName]),
-          resolver.methodName,
-          PARAM_ARGS_METADATA,
-          paramsFactory,
-          contextId,
-          wrapper.id,
-          contextOptions,
-          'graphql',
-        );
-        return callback(...args);
+        let contextInstance: T;
+        try {
+          const gqlContext = paramsFactory.exchangeKeyForValue(
+            GqlParamtype.CONTEXT,
+            undefined,
+            args,
+          );
+          const contextId = this.getContextId(gqlContext);
+          this.registerContextProvider(gqlContext, contextId);
+          contextInstance = await this.injector.loadPerContext(
+            instance,
+            moduleRef,
+            moduleRef.providers,
+            contextId,
+          );
+          const callback = this.externalContextCreator.create(
+            contextInstance,
+            transform(contextInstance[resolver.methodName]),
+            resolver.methodName,
+            PARAM_ARGS_METADATA,
+            paramsFactory,
+            contextId,
+            wrapper.id,
+            contextOptions,
+            'graphql',
+          );
+          return await callback(...args);
+        } catch (err) {
+          // Errors thrown by the handler pipeline were already routed
+          // through the exception filters by the callback created above.
+          if (contextInstance || !filtersEnabled) {
+            throw err;
+          }
+          // Otherwise, the resolver (or one of its request-scoped
+          // dependencies) could not be instantiated: route the error through
+          // the filters bound to the resolver, like the HTTP router does.
+          const handler = prototype[resolver.methodName];
+          if (creationErrorHandler === undefined) {
+            creationErrorHandler = this.createCreationErrorHandler(
+              instance,
+              handler,
+              moduleRef,
+              wrapper,
+            );
+          }
+          if (!creationErrorHandler) {
+            throw err;
+          }
+          const host = new ExecutionContextHost(
+            args,
+            instance.constructor as Type,
+            handler,
+          );
+          host.setType('graphql');
+          return creationErrorHandler.next(err, host);
+        }
       };
       const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
       return isPropertyResolver
@@ -359,6 +400,39 @@ export class ResolversExplorerService extends BaseExplorerService {
     return instance.constructor;
   }
 
+  /**
+   * Builds the exceptions handler for errors thrown while a request-scoped
+   * resolver (or one of its dependencies) is being instantiated, which happens
+   * before the filter-wrapped callback exists. Mirrors the HTTP router
+   * (`RouterExplorer#createRequestScopedHandler` in `@nestjs/core`).
+   *
+   * `ExternalContextCreator` does not expose its exception filter context, so
+   * it is reached through a private field. Returns `null` (the error is then
+   * rethrown as is) if that field is missing or has an unexpected shape.
+   */
+  private createCreationErrorHandler(
+    instance: object,
+    handler: (...args: any[]) => any,
+    moduleRef: Module,
+    wrapper: InstanceWrapper,
+  ): ExternalExceptionsHandler | null {
+    const filtersContext: ExternalExceptionFilterContext | undefined =
+      this.externalContextCreator['filtersContextCreator'];
+    if (typeof filtersContext?.create !== 'function') {
+      return null;
+    }
+    const exceptionsHandler = filtersContext.create(
+      instance,
+      handler,
+      moduleRef.token,
+      STATIC_CONTEXT,
+      wrapper.id,
+    );
+    return typeof exceptionsHandler?.next === 'function'
+      ? exceptionsHandler
+      : null;
+  }
+
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
     if (this.coreModuleRef === undefined) {
       let foundModule: Module | null = null;
@@ -388,14 +462,9 @@ export class ResolversExplorerService extends BaseExplorerService {
     TArgs = { [argName: string]: any },
     TOutput = any,
   >(resolverFn: Function, instance: object, methodKey: string) {
-    const fieldMiddleware = Reflect.getMetadata(
-      FIELD_RESOLVER_MIDDLEWARE_METADATA,
-      instance[methodKey],
-    );
-
     const middlewareFunctions = (
       this.gqlOptions?.buildSchemaOptions?.fieldMiddleware || []
-    ).concat(fieldMiddleware || []);
+    ).concat(this.getFieldResolverMiddleware(instance, methodKey));
 
     if (middlewareFunctions?.length === 0) {
       return resolverFn;
@@ -412,6 +481,23 @@ export class ResolversExplorerService extends BaseExplorerService {
       TArgs,
       TOutput
     >(originalResolveFnFactory, middlewareFunctions);
+  }
+
+  /**
+   * Middleware of a field resolver method: the `middleware` option of
+   * `@ResolveField()` followed by the middleware applied with `@UseFieldMiddleware()`.
+   */
+  private getFieldResolverMiddleware(
+    instance: object,
+    methodKey: string,
+  ): FieldMiddleware[] {
+    const optionMiddleware: FieldMiddleware[] | undefined = Reflect.getMetadata(
+      FIELD_RESOLVER_MIDDLEWARE_METADATA,
+      instance[methodKey as keyof typeof instance],
+    );
+    return (optionMiddleware ?? []).concat(
+      getUseFieldMiddleware(instance, methodKey),
+    );
   }
 
   private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
@@ -451,11 +537,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       return false;
     }
 
-    const fieldMiddleware = Reflect.getMetadata(
-      FIELD_RESOLVER_MIDDLEWARE_METADATA,
-      instance[methodKey as keyof typeof instance],
-    );
-    if (fieldMiddleware?.length > 0) {
+    if (this.getFieldResolverMiddleware(instance, methodKey).length > 0) {
       return false;
     }
 

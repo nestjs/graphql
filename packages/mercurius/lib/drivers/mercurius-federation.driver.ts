@@ -4,11 +4,12 @@ import {
   GraphQLFederationFactory,
 } from '@nestjs/graphql';
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
-import { GraphQLSchema, printSchema } from 'graphql';
+import { GraphQLSchema, parse, printSchema } from 'graphql';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import mercurius from 'mercurius';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface.js';
 import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util.js';
+import { printSubgraphSdl } from '../utils/print-subgraph-sdl.util.js';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
 import { registerMercuriusRequestHooks } from '../utils/register-mercurius-request-hooks.util.js';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
@@ -62,12 +63,22 @@ export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDr
 
   public async stop(): Promise<void> {}
 
-  public generateSchema(
+  public async generateSchema(
     options: MercuriusDriverConfig,
   ): Promise<GraphQLSchema> {
-    return this.graphqlFederationFactory.generateSchema(
+    const schema = await this.graphqlFederationFactory.generateSchema(
       options,
       buildMercuriusFederatedSchema,
     );
+    if (!options.autoSchemaFile && options.typeDefs?.length) {
+      // Schemas built from type definitions resolve `_service` through "@apollo/subgraph"
+      const typeDefs = [options.typeDefs].flat().join('\n');
+      const sdl = printSubgraphSdl(parse(typeDefs));
+      const serviceField = schema.getQueryType()?.getFields()._service;
+      if (serviceField) {
+        serviceField.resolve = () => ({ sdl });
+      }
+    }
+    return schema;
   }
 }

@@ -121,7 +121,7 @@ let CreateCatArgs = class CreateCatArgs {
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { type: () => Date }, input: { type: () => require(\"./create-cat.input\").CreateCatInput } };
+        return { name: { type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { type: () => Date }, input: { type: () => CreateCatInput } };
     }
 };
 __decorate([

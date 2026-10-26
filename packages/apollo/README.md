@@ -26,16 +26,16 @@
 
 ## Installation
 
-If you are using `express` HTTP engine, install the following packages:
+If you are using the `express` HTTP engine, install the following packages:
 
 ```bash
-$ npm i --save @nestjs/graphql @nestjs/apollo apollo-server-express graphql
+$ npm i --save @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/express5 graphql
 ```
 
-In case of `fastify`, you should install `apollo-server-fastify` instead.
+In case of `fastify`, install `@as-integrations/fastify` instead of `@as-integrations/express5`:
 
 ```bash
-$ npm i --save @nestjs/graphql @nestjs/apollo apollo-server-fastify graphql
+$ npm i --save @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/fastify graphql
 ```
 
 ## Quick Start

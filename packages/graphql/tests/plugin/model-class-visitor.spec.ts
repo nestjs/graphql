@@ -144,6 +144,24 @@ describe('API model properties', () => {
     expect(actual).toEqual(expected);
   });
 
+  it('should create eager namespace imports for ESM output', () => {
+    const compilerOptions: ts.CompilerOptions = {
+      ...defaultCompilerOptions,
+      module: ts.ModuleKind.NodeNext,
+      moduleResolution: ts.ModuleResolutionKind.NodeNext,
+      target: ts.ScriptTarget.ES2022,
+    };
+
+    const { actual, expected } = compileFiles(
+      '/cases/esm-eager-imports',
+      'post.model.ts',
+      {},
+      compilerOptions,
+    );
+
+    expect(actual).toEqual(expected);
+  });
+
   it('should support & understand nullable type unions', () => {
     const options: ts.CompilerOptions = {
       module: ts.ModuleKind.ES2020,
