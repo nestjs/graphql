@@ -6,6 +6,7 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces/index.js';
+import { getUseFieldMiddleware } from '../../decorators/use-field-middleware.decorator.js';
 import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util.js';
 import { InterfaceNotRegisteredError } from '../errors/interface-not-registered.error.js';
 import { PropertyMetadata } from '../metadata/index.js';
@@ -200,6 +201,7 @@ export class ObjectTypeDefinitionFactory {
     };
     const middlewareFunctions = (options.fieldMiddleware || []).concat(
       field.middleware || [],
+      getUseFieldMiddleware(field.target?.prototype, field.name),
     );
     if (middlewareFunctions?.length === 0) {
       return rootFieldResolver;

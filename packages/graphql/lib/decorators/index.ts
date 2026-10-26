@@ -19,3 +19,4 @@ export * from './resolver.decorator.js';
 export * from './root.decorator.js';
 export * from './scalar.decorator.js';
 export * from './subscription.decorator.js';
+export { UseFieldMiddleware } from './use-field-middleware.decorator.js';
