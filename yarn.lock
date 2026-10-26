@@ -4554,6 +4554,18 @@ graceful-fs@^4.1.15, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.6:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
+graphql-jit@0.8.10:
+  version "0.8.10"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.10.tgz#58d0084f9a79c9ac1c6cc385161dac351f6ad5bc"
+  integrity sha512-vvjth/yqAW+zhPYXhNVntJGTR2j9O0Z+/f+j6Jyr5AxlzOMh7jglW5SLfUGxkstewrUSniwUDvod8jcm3zz8gA==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    fast-json-stringify "^7.0.1"
+    generate-function "^2.3.1"
+    lodash.memoize "^4.1.2"
+    lodash.merge "4.6.2"
+    lodash.mergewith "4.6.2"
+
 graphql-jit@0.8.7:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.7.tgz#831b1a4c16b1e29cc8ed9d171f33a7da4bce2821"
@@ -4561,18 +4573,6 @@ graphql-jit@0.8.7:
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     fast-json-stringify "^5.16.1"
-    generate-function "^2.3.1"
-    lodash.memoize "^4.1.2"
-    lodash.merge "4.6.2"
-    lodash.mergewith "4.6.2"
-
-graphql-jit@0.8.9:
-  version "0.8.9"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.9.tgz#bfaa6f4f076b4cf351f80f4bdff5742f7bf9934b"
-  integrity sha512-h3CUhDa9c0OfFU2UkTNZLHBNtGTMVbsgLSesNgsEB+Dr5eglRuqDVxrMONj5q7RO8jOctoSFcgNU01W0BInEpw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
-    fast-json-stringify "^7.0.1"
     generate-function "^2.3.1"
     lodash.memoize "^4.1.2"
     lodash.merge "4.6.2"
@@ -5771,24 +5771,23 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.10.1:
-  version "16.10.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.10.1.tgz#4e08314a69cc71bdfa9f3e38f8105af213ac52e6"
-  integrity sha512-8P7KwNjA+R8OeZ2+6f43fQsCLjvekdeYKIvgWZbRnOMq8J2VdR2fDb/PLL5QPQF3ndjCuPXZJ7GxHfkKOnNlXw==
+mercurius@16.12.1:
+  version "16.12.1"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.12.1.tgz#b827f1a45e0eb0440a8cbed4134150ffb1256f92"
+  integrity sha512-hYiL89ShIhUAhgZyza2C2g6ObawjB4zIsK9Fbw031nTPh9Hw0yETY3TiplWpjX8Qx4rsYIkkVosSb8pvtF5rMQ==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^10.1.0"
     "@fastify/websocket" "^11.0.0"
     fastify-plugin "^6.0.0"
-    graphql-jit "0.8.9"
+    graphql-jit "0.8.10"
     mqemitter "^7.0.0"
-    p-map "^4.0.0"
     quick-lru "^7.0.0"
     readable-stream "^4.0.0"
-    safe-stable-stringify "^2.3.0"
+    safe-stable-stringify "^3.0.0"
     secure-json-parse "^4.1.0"
     single-user-cache "^2.0.0"
-    tiny-lru "^11.0.0"
+    tiny-lru "^13.1.0"
     ws "^8.2.2"
 
 mercurius@^16.0.0:
@@ -7525,6 +7524,11 @@ safe-stable-stringify@^2.3.0, safe-stable-stringify@^2.3.1, safe-stable-stringif
   resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-2.5.0.tgz#4ca2f8e385f2831c432a719b108a3bf7af42a1dd"
   integrity sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==
 
+safe-stable-stringify@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/safe-stable-stringify/-/safe-stable-stringify-3.0.0.tgz#a546f19bbace4af9a9d020271f747cdb93e775fe"
+  integrity sha512-1z5+QfsSGAtBGJrCw2DP9cwfdvSEMRN4BKKaZxFIKwcwRbshkrtKzzueVFAJ2d1QJm+J3AmpYvI88jFnlEZmyg==
+
 "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
@@ -8134,6 +8138,11 @@ tiny-lru@^11.4.5:
   version "11.4.7"
   resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.4.7.tgz#7ddfabe22720c98f7e48b2806d9d9a71a93ee0d6"
   integrity sha512-w/Te7uMUVeH0CR8vZIjr+XiN41V+30lkDdK+NRIDCUYKKuL9VcmaUEmaPISuwGhLlrTGh5yu18lENtR9axSxYw==
+
+tiny-lru@^13.1.0:
+  version "13.1.1"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-13.1.1.tgz#454d0ee8b5db1fa9b31553c0629a73a7021bc951"
+  integrity sha512-5yPLGQspKXPoVMbUj+o/JWV3FJA1WdQAtU7CWvHb+B+RSInhzGs+W2H6FOt3Z0uNnf2DC8BJExJa7AWPW1bzFw==
 
 tinybench@^2.9.0:
   version "2.9.0"
