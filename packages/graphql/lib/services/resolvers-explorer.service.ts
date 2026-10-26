@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   ContextIdFactory,
@@ -7,9 +7,15 @@ import {
   ModulesContainer,
   REQUEST,
 } from '@nestjs/core';
+import type { ExternalExceptionFilterContext } from '@nestjs/core/exceptions/external-exception-filter-context.js';
+import type { ExternalExceptionsHandler } from '@nestjs/core/exceptions/external-exceptions-handler.js';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host.js';
 import { ExternalContextCreator } from '@nestjs/core/helpers/external-context-creator.js';
 import { ParamMetadata } from '@nestjs/core/helpers/interfaces/params-metadata.interface.js';
-import { CONTROLLER_ID_KEY } from '@nestjs/core/injector/constants.js';
+import {
+  CONTROLLER_ID_KEY,
+  STATIC_CONTEXT,
+} from '@nestjs/core/injector/constants.js';
 import { Injector } from '@nestjs/core/injector/injector.js';
 import {
   ContextId,
@@ -201,32 +207,66 @@ export class ResolversExplorerService extends BaseExplorerService {
         : undefined;
 
     if (isRequestScoped) {
+      const filtersEnabled = !contextOptions || contextOptions.filters;
+      let creationErrorHandler: ExternalExceptionsHandler | null | undefined;
+
       const resolverCallback = async (...args: any[]) => {
-        const gqlContext = paramsFactory.exchangeKeyForValue(
-          GqlParamtype.CONTEXT,
-          undefined,
-          args,
-        );
-        const contextId = this.getContextId(gqlContext);
-        this.registerContextProvider(gqlContext, contextId);
-        const contextInstance = await this.injector.loadPerContext(
-          instance,
-          moduleRef,
-          moduleRef.providers,
-          contextId,
-        );
-        const callback = this.externalContextCreator.create(
-          contextInstance,
-          transform(contextInstance[resolver.methodName]),
-          resolver.methodName,
-          PARAM_ARGS_METADATA,
-          paramsFactory,
-          contextId,
-          wrapper.id,
-          contextOptions,
-          'graphql',
-        );
-        return callback(...args);
+        let contextInstance: T;
+        try {
+          const gqlContext = paramsFactory.exchangeKeyForValue(
+            GqlParamtype.CONTEXT,
+            undefined,
+            args,
+          );
+          const contextId = this.getContextId(gqlContext);
+          this.registerContextProvider(gqlContext, contextId);
+          contextInstance = await this.injector.loadPerContext(
+            instance,
+            moduleRef,
+            moduleRef.providers,
+            contextId,
+          );
+          const callback = this.externalContextCreator.create(
+            contextInstance,
+            transform(contextInstance[resolver.methodName]),
+            resolver.methodName,
+            PARAM_ARGS_METADATA,
+            paramsFactory,
+            contextId,
+            wrapper.id,
+            contextOptions,
+            'graphql',
+          );
+          return await callback(...args);
+        } catch (err) {
+          // Errors thrown by the handler pipeline were already routed
+          // through the exception filters by the callback created above.
+          if (contextInstance || !filtersEnabled) {
+            throw err;
+          }
+          // Otherwise, the resolver (or one of its request-scoped
+          // dependencies) could not be instantiated: route the error through
+          // the filters bound to the resolver, like the HTTP router does.
+          const handler = prototype[resolver.methodName];
+          if (creationErrorHandler === undefined) {
+            creationErrorHandler = this.createCreationErrorHandler(
+              instance,
+              handler,
+              moduleRef,
+              wrapper,
+            );
+          }
+          if (!creationErrorHandler) {
+            throw err;
+          }
+          const host = new ExecutionContextHost(
+            args,
+            instance.constructor as Type,
+            handler,
+          );
+          host.setType('graphql');
+          return creationErrorHandler.next(err, host);
+        }
       };
       const wrappedCallback = this.withMappedArgs(resolverCallback, mapArgs);
       return isPropertyResolver
@@ -357,6 +397,39 @@ export class ResolversExplorerService extends BaseExplorerService {
       return undefined;
     }
     return instance.constructor;
+  }
+
+  /**
+   * Builds the exceptions handler for errors thrown while a request-scoped
+   * resolver (or one of its dependencies) is being instantiated, which happens
+   * before the filter-wrapped callback exists. Mirrors the HTTP router
+   * (`RouterExplorer#createRequestScopedHandler` in `@nestjs/core`).
+   *
+   * `ExternalContextCreator` does not expose its exception filter context, so
+   * it is reached through a private field. Returns `null` (the error is then
+   * rethrown as is) if that field is missing or has an unexpected shape.
+   */
+  private createCreationErrorHandler(
+    instance: object,
+    handler: (...args: any[]) => any,
+    moduleRef: Module,
+    wrapper: InstanceWrapper,
+  ): ExternalExceptionsHandler | null {
+    const filtersContext: ExternalExceptionFilterContext | undefined =
+      this.externalContextCreator['filtersContextCreator'];
+    if (typeof filtersContext?.create !== 'function') {
+      return null;
+    }
+    const exceptionsHandler = filtersContext.create(
+      instance,
+      handler,
+      moduleRef.token,
+      STATIC_CONTEXT,
+      wrapper.id,
+    );
+    return typeof exceptionsHandler?.next === 'function'
+      ? exceptionsHandler
+      : null;
   }
 
   private registerContextProvider<T = any>(request: T, contextId: ContextId) {
