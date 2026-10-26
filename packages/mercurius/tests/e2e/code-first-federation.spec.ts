@@ -92,7 +92,7 @@ directive @inaccessible on FIELD_DEFINITION | OBJECT | INTERFACE | UNION | ARGUM
 \"\"\"
 Indicates that an object field is now resolved by this subgraph instead of another subgraph where it's also defined. This enables you to migrate a field from one subgraph to another.
 \"\"\"
-directive @override(from: String!, label: String) on FIELD_DEFINITION
+directive @override(from: String!) on FIELD_DEFINITION
 
 type Post @key(fields: \"id\") {
   id: ID!
