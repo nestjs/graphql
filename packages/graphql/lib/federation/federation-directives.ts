@@ -139,6 +139,9 @@ const InaccessibleDirective = new GraphQLDirective({
   ],
 });
 
+// The "label" argument (progressive override) only exists since Federation
+// v2.7. Composition upgrades Federation 1 subgraphs to Federation v2.4 and
+// rejects the subgraph if "@override" declares it, so it's left out here.
 const OverrideDirective = new GraphQLDirective({
   name: 'override',
   description:
@@ -147,9 +150,6 @@ const OverrideDirective = new GraphQLDirective({
   args: {
     from: {
       type: new GraphQLNonNull(GraphQLString),
-    },
-    label: {
-      type: GraphQLString,
     },
   },
 });
