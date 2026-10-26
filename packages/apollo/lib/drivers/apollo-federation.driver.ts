@@ -66,4 +66,9 @@ export class ApolloFederationDriver extends ApolloBaseDriver {
   public generateSchema(options: ApolloDriverConfig): Promise<GraphQLSchema> {
     return this.graphqlFederationFactory.generateSchema(options);
   }
+
+  public async stop() {
+    await this._subscriptionService?.stop();
+    await super.stop();
+  }
 }
