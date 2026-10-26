@@ -4,7 +4,7 @@ import { WebSocketServer } from 'ws';
 import {
   GqlSubscriptionService,
   GqlSubscriptionServiceOptions,
-} from '../../lib/services/gql-subscription.service';
+} from '../../lib/services/gql-subscription.service.js';
 
 const createMockSocket = () => {
   const socket = new EventEmitter() as any;
@@ -273,7 +273,7 @@ describe('GqlSubscriptionService', () => {
       expect(handleUpgradeSpy).not.toHaveBeenCalled();
     });
 
-    it('should not handle upgrade if protocol does not match graphql-transport-ws', () => {
+    it('should hand upgrades with another subprotocol to the server to reject', () => {
       const options: GqlSubscriptionServiceOptions = {
         schema: {} as any,
         path: '/graphql',
@@ -281,10 +281,7 @@ describe('GqlSubscriptionService', () => {
       };
 
       const service = new GqlSubscriptionService(options, mockHttpServer);
-      const handleUpgradeSpy = vi.spyOn(
-        (service as any).wss,
-        'handleUpgrade',
-      );
+      const handleUpgradeSpy = vi.spyOn((service as any).wss, 'handleUpgrade');
 
       const upgradeHandler = mockHttpServer.on.mock.calls.find(
         (call: any[]) => call[0] === 'upgrade',
@@ -296,7 +293,7 @@ describe('GqlSubscriptionService', () => {
       };
 
       upgradeHandler(mockReq, createMockSocket(), Buffer.alloc(0));
-      expect(handleUpgradeSpy).not.toHaveBeenCalled();
+      expect(handleUpgradeSpy).toHaveBeenCalled();
     });
   });
 
