@@ -39,6 +39,7 @@ export class TypeDefinitionsStorage {
     InputTypeDefinition
   >();
   private readonly outputTypesByName = new Map<string, GqlOutputType>();
+  private readonly rootTypesByName = new Map<string, GraphQLObjectType>();
   private inputTypeDefinitionsLinks?: Map<GqlInputTypeKey, GqlInputType>;
   private outputTypeDefinitionsLinks?: Map<GqlOutputTypeKey, GqlOutputType>;
 
@@ -116,6 +117,14 @@ export class TypeDefinitionsStorage {
     return Array.from(this.objectTypeDefinitions.values());
   }
 
+  /**
+   * Registers a generated root type (e.g. "Query") so that fields can
+   * reference it by name, for example `@Field(() => 'Query')`.
+   */
+  addRootType(type: GraphQLObjectType) {
+    this.rootTypesByName.set(type.name, type);
+  }
+
   getInputTypeAndExtract(
     key: GqlInputTypeKey,
   ): GraphQLInputObjectType | GraphQLEnumType | undefined {
@@ -156,7 +165,7 @@ export class TypeDefinitionsStorage {
     if (definition) {
       return definition.type;
     }
-    return;
+    return this.rootTypesByName.get(key as string);
   }
 
   /**
@@ -169,6 +178,8 @@ export class TypeDefinitionsStorage {
     this.unionTypeDefinitions.clear();
     this.objectTypeDefinitions.clear();
     this.inputTypeDefinitions.clear();
+    this.outputTypesByName.clear();
+    this.rootTypesByName.clear();
     this.inputTypeDefinitionsLinks = undefined;
     this.outputTypeDefinitionsLinks = undefined;
   }

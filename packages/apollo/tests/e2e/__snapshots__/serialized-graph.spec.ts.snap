@@ -2400,6 +2400,22 @@ exports[`Serialized graph > should generate a post-initialization graph and matc
       },
       "id": "-232386172"
     },
+    "-355726573": {
+      "source": "-848002075",
+      "target": "-973488942",
+      "metadata": {
+        "type": "class-to-class",
+        "sourceModuleName": "GraphQLSchemaBuilderModule",
+        "sourceClassName": "QueryTypeFactory",
+        "targetClassName": "TypeDefinitionsStorage",
+        "sourceClassToken": "QueryTypeFactory",
+        "targetClassToken": "TypeDefinitionsStorage",
+        "targetModuleName": "GraphQLSchemaBuilderModule",
+        "keyOrIndex": 1,
+        "injectionType": "constructor"
+      },
+      "id": "-355726573"
+    },
     "-2090116237": {
       "source": "653699184",
       "target": "1645496267",
