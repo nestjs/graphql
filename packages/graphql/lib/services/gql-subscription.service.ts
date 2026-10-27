@@ -11,6 +11,22 @@ import {
 import { useServer } from 'graphql-ws/use/ws';
 import { WebSocketServer } from 'ws';
 
+/**
+ * The members of a `ws` `WebSocketServer` that Nest relies on. Typed
+ * structurally, so that the public types of `@nestjs/graphql` don't depend on
+ * `@types/ws`: pass a `new WebSocketServer({ noServer: true, ... })` instance.
+ */
+export interface GraphQLWsServer {
+  options: { noServer?: boolean; path?: string };
+  handleUpgrade(
+    request: any,
+    socket: any,
+    upgradeHead: any,
+    callback: (client: any, request: any) => void,
+  ): void;
+  emit(event: 'connection', ...args: any[]): boolean;
+}
+
 export type GraphQLWsSubscriptionsConfig = Partial<
   Pick<
     ServerOptions,
@@ -23,6 +39,19 @@ export type GraphQLWsSubscriptionsConfig = Partial<
   >
 > & {
   path?: string;
+  /**
+   * A `ws` WebSocketServer to use instead of the default one, e.g. to set
+   * `perMessageDeflate`, `maxPayload` or `verifyClient`.
+   *
+   * It must be created with `{ noServer: true }`: Nest routes the HTTP
+   * upgrade requests to it. Its `path`, when set, takes precedence over
+   * `path` above and the GraphQL module path.
+   *
+   * The server is handed over to graphql-ws, which replaces its
+   * `handleProtocols` option and, on application shutdown, closes it and
+   * removes all of its listeners. Use a separate server per GraphQL module.
+   */
+  server?: GraphQLWsServer;
 };
 
 export type SubscriptionConfig = {
@@ -39,18 +68,33 @@ export interface GqlSubscriptionServiceOptions extends SubscriptionConfig {
 
 export class GqlSubscriptionService {
   private readonly wss: WebSocketServer;
+  private readonly path?: string;
   private wsGqlDisposable: Disposable;
 
   constructor(
     private readonly options: GqlSubscriptionServiceOptions,
     private readonly httpServer: any,
   ) {
-    this.wss = new WebSocketServer({
-      path:
-        (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig)?.path ??
-        this.options.path,
-      noServer: true,
-    });
+    const graphqlWsConfig =
+      typeof this.options['graphql-ws'] === 'object'
+        ? this.options['graphql-ws']
+        : undefined;
+    const customServer = graphqlWsConfig?.server;
+
+    if (customServer && !customServer.options?.noServer) {
+      throw new Error(
+        'Custom WebSocketServer passed to "graphql-ws" must be instantiated with "noServer: true".',
+      );
+    }
+
+    this.path =
+      customServer?.options.path ?? graphqlWsConfig?.path ?? this.options.path;
+    this.wss =
+      (customServer as WebSocketServer | undefined) ??
+      new WebSocketServer({
+        path: this.path,
+        noServer: true,
+      });
     this.initialize();
   }
 
@@ -59,8 +103,13 @@ export class GqlSubscriptionService {
       this.options;
 
     if ('graphql-ws' in this.options) {
-      const graphqlWsOptions =
-        this.options['graphql-ws'] === true ? {} : this.options['graphql-ws'];
+      const {
+        server: _wsServer,
+        path: _wsPath,
+        ...graphqlWsOptions
+      } = this.options['graphql-ws'] === true
+        ? ({} as GraphQLWsSubscriptionsConfig)
+        : (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig);
       this.wsGqlDisposable = useServer(
         {
           schema: this.options.schema,
@@ -89,7 +138,7 @@ export class GqlSubscriptionService {
 
       const wss = this.wss;
 
-      if (req.url?.startsWith(wss.options.path)) {
+      if (this.path && req.url?.startsWith(this.path)) {
         wss.handleUpgrade(req, socket, head, (ws) => {
           wss.emit('connection', ws, req);
         });
