@@ -36,7 +36,9 @@ export abstract class ApolloBaseDriver<
     const httpAdapter = this.httpAdapterHost.httpAdapter;
     const platformName = httpAdapter.getType();
 
-    if (platformName === 'express') {
+    // The requests and responses of the Node adapter (@nestjs/platform-node)
+    // carry the Express API that the Express integration of Apollo uses
+    if (platformName === 'express' || platformName === 'node') {
       await this.registerExpress(apolloOptions);
     } else if (platformName === 'fastify') {
       await this.registerFastify(apolloOptions);
