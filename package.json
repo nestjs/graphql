@@ -45,7 +45,7 @@
     "lerna-changelog": "2.2.0",
     "lint-staged": "17.6.0",
     "oxlint": "1.89.0",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "prettierv2": "npm:prettier@2.8.8",
     "reflect-metadata": "0.2.2",
     "release-it": "21.1.1",
