@@ -8365,10 +8365,10 @@ write-file-atomic@8.0.0, write-file-atomic@^8.0.0:
   dependencies:
     signal-exit "^4.0.1"
 
-ws@8.22.0:
-  version "8.22.0"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.22.0.tgz#40f16e1d7588ac0575041be5c49b8eb261c28e73"
-  integrity sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==
+ws@8.22.1:
+  version "8.22.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.22.1.tgz#60d427870e8272ddb10c7fc5cdf00a70eaec369e"
+  integrity sha512-oyL6OPYme/CmiFvNuGzeoxCJ4nOrZE2O1FwM9MWM1AsGri6nLXB2pg+lNA8aLeXMSav0J6eIVS1j6vUPzUtK9g==
 
 ws@^8.12.1, ws@^8.16.0, ws@^8.2.2:
   version "8.18.0"
