@@ -19,8 +19,13 @@ export function PickType<T, K extends keyof T>(
 ): Type<Pick<T, (typeof keys)[number]>> {
   const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
 
+  // Property keys are passed as strings, whereas "keyof T" is a number for a
+  // numeric property (e.g. a numeric enum member)
+  const pickedKeys = keys.map((key) =>
+    typeof key === 'number' ? String(key) : key,
+  );
   const isInheritedPredicate = (propertyKey: string) =>
-    keys.includes(propertyKey as K);
+    pickedKeys.includes(propertyKey);
   abstract class PickObjectType {
     constructor() {
       inheritPropertyInitializers(this, classRef, isInheritedPredicate);
@@ -38,7 +43,7 @@ export function PickType<T, K extends keyof T>(
 
   function applyFields(fields: PropertyMetadata[]) {
     fields
-      .filter((item) => keys.includes(item.name as K))
+      .filter((item) => isInheritedPredicate(item.name))
       .forEach((item) => {
         if (isFunction(item.typeFn)) {
           // Execute type function eagerly to update the type options object (before "clone" operation)

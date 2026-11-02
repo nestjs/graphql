@@ -1,4 +1,4 @@
-import { validate } from 'class-validator';
+import { IsNumber, validate } from 'class-validator';
 import { ArgsType, Field, ObjectType } from '../../../lib/decorators/index.js';
 import { MetadataLoader } from '../../../lib/plugin/metadata-loader.js';
 import { getFieldsAndDecoratorForType } from '../../../lib/schema-builder/utils/get-fields-and-decorator.util.js';
@@ -116,5 +116,28 @@ describe('PickType', () => {
     expect(fields[1].name).toEqual('c');
     expect(fields[2].name).toEqual('f');
     expect(fields[3].name).toEqual('h');
+  });
+  it('should handle a field whose key is a number', () => {
+    @ObjectType()
+    class PricesDto {
+      @IsNumber()
+      @Field({ name: 'basePrice' })
+      0: number;
+
+      @IsNumber()
+      @Field({ name: 'costPrice' })
+      1: number;
+    }
+    class PublicPricesDto extends PickType(PricesDto, [0]) {}
+
+    const { fields } = getFieldsAndDecoratorForType(
+      Object.getPrototypeOf(PublicPricesDto),
+    );
+    expect(fields.map((field) => field.name)).toEqual(['0']);
+    expect(
+      getValidationMetadataByTarget(PublicPricesDto).map(
+        (item) => item.propertyName,
+      ),
+    ).toEqual(['0']);
   });
 });
