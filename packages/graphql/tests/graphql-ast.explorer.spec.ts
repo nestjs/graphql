@@ -163,5 +163,38 @@ describe('GraphQLAstExplorer', () => {
         '/** Runs on the cron schedule *\\/5 * * * *. */',
       );
     });
+
+    it('should emit the GraphQL type name as the "__typename" value', async () => {
+      const astExplorer = new GraphQLAstExplorer();
+
+      const document = gql`
+        type Cat {
+          id: Int!
+        }
+
+        type Query {
+          cat: Cat
+        }
+      `;
+
+      const sourceFile = await astExplorer.explore(
+        document,
+        '/dev/null',
+        'interface',
+        {
+          emitTypenameField: true,
+          typeName: (name: string) => `${name}Schema`,
+        },
+      );
+
+      const statements = sourceFile.getStructure().statements as any[];
+      const getTypenameField = (name: string) =>
+        statements
+          .find((statement) => statement.name === name)
+          .properties.find((prop: any) => prop.name === '__typename');
+
+      expect(getTypenameField('CatSchema').type).toBe("'Cat'");
+      expect(getTypenameField('IQuery').type).toBe("'Query'");
+    });
   });
 });
