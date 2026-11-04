@@ -17,6 +17,7 @@ import { createScalarType } from '../utils/scalar-types.utils.js';
 import { SchemaGenerationError } from './errors/schema-generation.error.js';
 import { MutationTypeFactory } from './factories/mutation-type.factory.js';
 import { OrphanedTypesFactory } from './factories/orphaned-types.factory.js';
+import { completeDefaultValues } from './helpers/complete-default-values.helper.js';
 import { QueryTypeFactory } from './factories/query-type.factory.js';
 import { SubscriptionTypeFactory } from './factories/subscription-type.factory.js';
 import { LazyMetadataStorage } from './storages/lazy-metadata.storage.js';
@@ -89,6 +90,7 @@ export class GraphQLSchemaFactory {
       ],
       directives: [...specifiedDirectives, ...(options.directives ?? [])],
     });
+    completeDefaultValues(schema);
 
     if (!options.skipCheck) {
       const introspectionQuery = getIntrospectionQuery();

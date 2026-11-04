@@ -43,6 +43,11 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
 
   /**
    * Directive resolvers
+   *
+   * @deprecated This option is ignored (it has had no effect since v9.2.0):
+   * the directive resolvers passed through it are never called, and a warning
+   * is logged at startup when it is set. Apply the directives with
+   * `transformSchema` instead (for example, with `mapSchema()` from `@graphql-tools/utils`).
    */
   directiveResolvers?: any;
 

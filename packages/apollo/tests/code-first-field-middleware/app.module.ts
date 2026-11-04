@@ -73,6 +73,11 @@ export class Item {
   @ComposedField()
   composed: string;
 
+  // Also resolved by "ItemResolver.overridden()".
+  @Field({ middleware: [wrap('option')] })
+  @UseFieldMiddleware(wrap('decorator'))
+  overridden: string;
+
   @Field()
   plain: string;
 }
@@ -102,8 +107,45 @@ const item = (): Item => ({
   combined: 'value',
   stacked: 'value',
   composed: 'value',
+  overridden: 'value',
   plain: 'value',
 });
+
+@InterfaceType()
+export abstract class Document {
+  @Field({ middleware: [wrap('document')] })
+  owner: string;
+}
+
+@ObjectType({ implements: () => [Document] })
+export class Payslip implements Document {
+  @Field({ middleware: [wrap('payslip')] })
+  owner: string;
+}
+
+@ObjectType({ implements: () => [Document] })
+export class Memo implements Document {
+  owner: string;
+}
+
+@Resolver(() => Document)
+export class DocumentResolver {
+  @Query(() => Payslip)
+  payslip(): Payslip {
+    return { owner: 'value' };
+  }
+
+  @Query(() => Memo)
+  memo(): Memo {
+    return { owner: 'value' };
+  }
+
+  @ResolveField(() => String)
+  @UseFieldMiddleware(wrap('resolver'))
+  owner(@Parent() parent: Document): string {
+    return parent.owner;
+  }
+}
 
 @Resolver(() => Item)
 export class ItemResolver {
@@ -148,6 +190,13 @@ export class ItemResolver {
     return 'value';
   }
 
+  // Overrides a model field that declares its own middleware.
+  @ResolveField()
+  @UseFieldMiddleware(wrap('resolver'))
+  overridden(@Parent() parent: Item): string {
+    return parent.overridden;
+  }
+
   @ResolveField(() => String)
   @UseGuards(LoggingGuard)
   @UseFieldMiddleware(logged('middleware'))
@@ -177,7 +226,7 @@ export class FieldMiddlewareAppModule {
             : undefined,
         }),
       ],
-      providers: [ItemResolver, LoggingGuard],
+      providers: [ItemResolver, DocumentResolver, LoggingGuard],
     };
   }
 }

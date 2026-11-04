@@ -16,6 +16,7 @@ import { FieldMiddleware } from '../../interfaces/field-middleware.interface.js'
 import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util.js';
 import { PropertyMetadata } from '../metadata/index.js';
 import { InterfaceMetadata } from '../metadata/interface.metadata.js';
+import { cloneDefaultValue } from '../helpers/clone-default-value.helper.js';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
 import { getInterfacesArray } from '../utils/get-interfaces-array.util.js';
@@ -143,7 +144,9 @@ export class TypeFieldsAccessor {
   >(field: PropertyMetadata, options: BuildSchemaOptions, host: Function) {
     const rootFieldResolver = (root: object) => {
       const value = root[field.name];
-      return typeof value === 'undefined' ? field.options.defaultValue : value;
+      return typeof value === 'undefined'
+        ? cloneDefaultValue(field.options.defaultValue)
+        : value;
     };
     const middlewareFunctions = (options.fieldMiddleware || []).concat(
       field.middleware || [],

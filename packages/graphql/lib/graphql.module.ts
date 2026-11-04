@@ -28,6 +28,7 @@ import {
   GqlOptionsFactory,
 } from './interfaces/gql-module-options.interface.js';
 import { MetadataLoader } from './plugin/metadata-loader.js';
+import { isolateDefaultValues } from './schema-builder/helpers/clone-default-value.helper.js';
 import { GraphQLSchemaBuilderModule } from './schema-builder/schema-builder.module.js';
 import {
   ResolverDecoratorHost,
@@ -198,6 +199,10 @@ export class GraphQLModule<
       ...options,
       typeDefs: mergedTypeDefs,
     });
+    // Gateways don't generate a schema of their own
+    if (gqlSchema) {
+      isolateDefaultValues(gqlSchema);
+    }
     this.gqlSchemaHost.schema = gqlSchema;
 
     this.completeOptions = {

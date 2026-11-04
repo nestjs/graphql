@@ -76,6 +76,19 @@ describe('@UseFieldMiddleware()', () => {
       });
     });
 
+    it('should keep the middleware of a model field overridden by a field resolver', async () => {
+      const data = await query(app, '{ item { overridden } }');
+      expect(data.item.overridden).toBe('option(decorator(resolver(value)))');
+    });
+
+    it('should keep the middleware of a model field overridden by an interface field resolver', async () => {
+      const data = await query(app, '{ payslip { owner } memo { owner } }');
+      expect(data).toEqual({
+        payslip: { owner: 'payslip(resolver(value))' },
+        memo: { owner: 'document(resolver(value))' },
+      });
+    });
+
     it('should keep the middleware on fields copied by mapped types', async () => {
       const data = await query(app, '{ partialItem { above combined plain } }');
       expect(data.partialItem).toEqual({
@@ -128,6 +141,19 @@ describe('@UseFieldMiddleware()', () => {
         owner: 'global(base(value))',
         name: 'global(value)',
       });
+    });
+
+    it('should run the middleware of a model field overridden by a field resolver once', async () => {
+      const data = await query(
+        app,
+        '{ item { overridden } payslip { owner } }',
+      );
+      for (const value of [data.item.overridden, data.payslip.owner]) {
+        expect(value.match(/global\(/g)).toHaveLength(1);
+        expect(value).toMatch(/resolver\(value\)\)+$/);
+      }
+      expect(data.item.overridden).toContain('option(decorator(');
+      expect(data.payslip.owner).toContain('payslip(');
     });
 
     it('should run field middleware before field resolver enhancers', async () => {
