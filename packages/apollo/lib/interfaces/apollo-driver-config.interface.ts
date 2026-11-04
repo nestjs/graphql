@@ -29,11 +29,20 @@ export interface ApolloDriverConfig
     GqlModuleOptions {
   /**
    * If enabled, graphql-ws will be automatically registered.
+   * @see subscriptions for what applies to the operations it serves.
    */
   installSubscriptionHandlers?: boolean;
 
   /**
    * Subscriptions configuration.
+   *
+   * The graphql-ws server executes every operation it receives (queries and
+   * mutations too, not only subscriptions) outside of Apollo Server. Guards,
+   * interceptors, pipes and filters run as they do over HTTP, and so do the
+   * `validationRules` and `formatError` options, but Apollo Server plugins
+   * (the `plugins` option and `@Plugin()` providers) and Apollo Server's
+   * other request settings (e.g. `introspection`) do not. Don't rely on a
+   * plugin for checks that WebSocket clients must not get around.
    */
   subscriptions?: SubscriptionConfig;
 

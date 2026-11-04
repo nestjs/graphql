@@ -48,6 +48,12 @@ export abstract class AbstractGraphQLDriver<
     return this.graphQlFactory.generateSchema(options);
   }
 
+  /**
+   * Wraps the `subscribe` function of a `@Subscription()` handler with its
+   * `filter`. This is the only place the filter is applied, and the default
+   * implementation does not apply it: a driver that serves subscriptions must
+   * override this method.
+   */
   public subscriptionWithFilter(
     instanceRef: unknown,
     filterFn: (

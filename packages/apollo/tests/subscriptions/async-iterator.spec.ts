@@ -57,3 +57,39 @@ it('does not leak memory with promise chain #memory', async function () {
   // Heap memory goes up for less than 1%
   expect(Math.max(0, heapUsed2 - heapUsed) / heapUsed).toBeLessThan(0.01);
 });
+
+it('skips values for which the filter throws synchronously', async () => {
+  const values = [1, 2];
+  const asyncIterator: AsyncIterator<any> = {
+    async next() {
+      return values.length
+        ? { done: false, value: values.shift() }
+        : { done: true, value: undefined };
+    },
+    return() {
+      return Promise.resolve({ value: undefined, done: true });
+    },
+    throw(error) {
+      return Promise.reject(error);
+    },
+    [$$asyncIterator]() {
+      return this;
+    },
+  };
+
+  const filteredAsyncIterator = await createAsyncIterator(
+    Promise.resolve(asyncIterator),
+    (value: number) => {
+      if (value === 1) {
+        throw new Error('filter failed');
+      }
+      return true;
+    },
+  );
+
+  // Like a rejected async filter, a throwing one skips the event
+  await expect(filteredAsyncIterator.next()).resolves.toEqual({
+    done: false,
+    value: 2,
+  });
+});

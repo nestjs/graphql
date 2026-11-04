@@ -2,7 +2,9 @@ import { INestApplication } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
+import { createClient } from 'graphql-ws';
 import request from 'supertest';
+import ws from 'ws';
 import { SharedContextModule } from '../graphql/shared-context/shared-context.module.js';
 import { SharedContextResolver } from '../graphql/shared-context/shared-context.resolver.js';
 
@@ -90,10 +92,13 @@ describe('GraphQL (context object shared by all requests)', () => {
       });
     });
 
-    describe('when "context" is an object with its own "req"', () => {
+    describe.each([
+      ['an object', () => sharedContext],
+      ['a function returning the same object', () => () => sharedContext],
+    ])('when "context" is %s with its own "req"', (_, createContextOption) => {
       it('should keep that "req" while still giving each request its own context', async () => {
         sharedContext.req = { headers: { 'x-request-id': 'static' } };
-        await bootstrap(sharedContext);
+        await bootstrap(createContextOption());
 
         for (const id of ['first', 'second']) {
           await queryRequestId(id).expect(200, {
@@ -108,6 +113,66 @@ describe('GraphQL (context object shared by all requests)', () => {
 
     afterEach(async () => {
       await app.close();
+    });
+  });
+
+  describe('over graphql-ws', () => {
+    // Unlike Apollo Server, graphql-ws uses the context as it is returned
+    const queryRequestIdOverWebSocket = async () => {
+      const client = createClient({
+        url: `ws://localhost:${app.getHttpServer().address().port}/graphql`,
+        webSocketImpl: ws,
+        retryAttempts: 0,
+      });
+      try {
+        for await (const result of client.iterate({ query: '{ requestId }' })) {
+          return result;
+        }
+      } finally {
+        await client.dispose();
+      }
+    };
+
+    beforeEach(() => {
+      sharedContext = {
+        tenant: 'static',
+        req: { headers: { 'x-request-id': 'static' } },
+      };
+      SharedContextResolver.CONTEXTS = [];
+      SharedContextResolver.BARRIER = undefined;
+    });
+
+    describe.each([
+      ['an object', () => sharedContext],
+      ['a function returning the same object', () => () => sharedContext],
+    ])('when "context" is %s with its own "req"', (_, createContextOption) => {
+      beforeEach(async () => {
+        const module = await Test.createTestingModule({
+          imports: [
+            SharedContextModule.forRoot(createContextOption(), {
+              subscriptions: { 'graphql-ws': true },
+            }),
+          ],
+        }).compile();
+
+        app = module.createNestApplication();
+        await app.listen(0);
+      });
+
+      it('should give each operation its own context', async () => {
+        for (let i = 0; i < 2; i++) {
+          expect(await queryRequestIdOverWebSocket()).toEqual({
+            data: { requestId: 'static' },
+          });
+        }
+
+        expectDistinctContexts(2);
+        expect(Reflect.ownKeys(sharedContext)).toEqual(['tenant', 'req']);
+      });
+
+      afterEach(async () => {
+        await app.close();
+      });
     });
   });
 });

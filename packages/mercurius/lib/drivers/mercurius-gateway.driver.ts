@@ -1,23 +1,27 @@
 import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
-import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import { FastifyBaseLogger, FastifyInstance } from 'fastify';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { FastifyInstance } from 'fastify';
 import { MercuriusGatewayDriverConfig } from '../interfaces/index.js';
 import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
 import { registerMercuriusRequestHooks } from '../utils/register-mercurius-request-hooks.util.js';
 import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
+import { MercuriusBaseDriver } from './mercurius-base.driver.js';
 
 /**
  * @publicApi
  */
-export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatewayDriverConfig> {
-  get instance(): FastifyInstance<
-    Server,
-    IncomingMessage,
-    ServerResponse,
-    FastifyBaseLogger
-  > {
-    return this.httpAdapterHost?.httpAdapter?.getInstance?.();
+export class MercuriusGatewayDriver extends MercuriusBaseDriver<MercuriusGatewayDriverConfig> {
+  public async mergeDefaultOptions(
+    options: MercuriusGatewayDriverConfig,
+  ): Promise<MercuriusGatewayDriverConfig> {
+    if (options.transformSchema) {
+      // The gateway composes its schema from the services at runtime (and
+      // again on every refresh), so there is no generated schema to apply the
+      // transform to. Refuse it rather than serve the untransformed schema.
+      throw new Error(
+        'The "transformSchema" option is not supported by the MercuriusGatewayDriver. Apply the transformation in the subgraphs instead.',
+      );
+    }
+    return super.mergeDefaultOptions(options);
   }
 
   public async start(options: MercuriusGatewayDriverConfig) {
@@ -47,8 +51,6 @@ export class MercuriusGatewayDriver extends AbstractGraphQLDriver<MercuriusGatew
     registerMercuriusHooks(app, hooks, 'graphqlGateway');
     registerMercuriusRequestHooks(app, this.resolverDecoratorHost);
   }
-
-  public async stop(): Promise<void> {}
 
   public generateSchema(options: MercuriusGatewayDriverConfig) {
     return null;

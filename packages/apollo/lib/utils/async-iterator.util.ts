@@ -29,7 +29,10 @@ export const createAsyncIterator = async <T = any>(
               resolve(payload);
               return;
             }
-            Promise.resolve(filterFn(payload.value))
+            // Called inside the chain, so that a filter that throws skips the
+            // event just like one that rejects
+            Promise.resolve()
+              .then(() => filterFn(payload.value))
               .catch(() => false)
               .then((result) => {
                 if (result === true) {

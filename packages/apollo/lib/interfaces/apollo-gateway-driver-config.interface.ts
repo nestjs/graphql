@@ -48,10 +48,18 @@ export interface ApolloGatewayDriverConfig<
    * custom directive transformers (e.g. `@public`, Apollo Connectors)
    * on the composed schema.
    *
-   * Invoked once during the initial composition. Schema updates
-   * emitted by the gateway after startup (e.g. supergraph polling)
-   * are forwarded untransformed because the underlying Apollo Server
-   * listener is synchronous.
+   * Invoked for the initial composition and for every schema update
+   * emitted by the gateway after startup (e.g. supergraph polling).
+   * While an update is being transformed, or if its transform fails,
+   * the previously transformed schema remains in use.
+   *
+   * The transformed schema is not an access-control boundary: operations
+   * are validated (and their root type and variable values checked)
+   * against it, but the gateway still plans and executes them against the
+   * composed supergraph. Introspection is answered from the untransformed
+   * supergraph, and resolvers attached by the transform (e.g. by a
+   * directive transformer) are never invoked. Enforce authorization in the
+   * subgraphs.
    */
   transformSchema?: (
     schema: GraphQLSchema,

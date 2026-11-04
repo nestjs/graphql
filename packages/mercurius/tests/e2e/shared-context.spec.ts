@@ -2,16 +2,23 @@ import { INestApplication } from '@nestjs/common';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
+import {
+  MercuriusDriver,
+  MercuriusFederationDriver,
+} from '../../lib/drivers/index.js';
 import { SharedContextModule } from '../graphql/shared-context/shared-context.module.js';
 import { SharedContextResolver } from '../graphql/shared-context/shared-context.resolver.js';
 
-describe('GraphQL (context object shared by all requests)', () => {
+describe.each([
+  ['MercuriusDriver', MercuriusDriver],
+  ['MercuriusFederationDriver', MercuriusFederationDriver],
+])('GraphQL (context object shared by all requests, %s)', (_, driver) => {
   let app: INestApplication;
   let sharedContext: Record<string, any>;
 
   const bootstrap = async (context: unknown) => {
     const module = await Test.createTestingModule({
-      imports: [SharedContextModule.forRoot(context)],
+      imports: [SharedContextModule.forRoot(context, driver)],
     }).compile();
 
     app = module.createNestApplication(new FastifyAdapter());
@@ -81,10 +88,13 @@ describe('GraphQL (context object shared by all requests)', () => {
     });
   });
 
-  describe('when "context" is an object with its own "req"', () => {
+  describe.each([
+    ['an object', () => sharedContext],
+    ['a function returning the same object', () => () => sharedContext],
+  ])('when "context" is %s with its own "req"', (_, createContextOption) => {
     it('should keep that "req" while still giving each request its own context', async () => {
       sharedContext.req = { headers: { 'x-request-id': 'static' } };
-      await bootstrap(sharedContext);
+      await bootstrap(createContextOption());
 
       for (const id of ['first', 'second']) {
         await queryRequestId(id).expect(200, {

@@ -1,20 +1,56 @@
-import { ApolloServer, type BaseContext } from '@apollo/server';
+import {
+  ApolloServer,
+  type ApolloServerPlugin,
+  type BaseContext,
+  HeaderMap,
+} from '@apollo/server';
 import {
   ApolloServerErrorCode,
   unwrapResolverError,
 } from '@apollo/server/errors';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
 import { isFunction } from '@nestjs/common/utils/shared.utils.js';
-import { AbstractGraphQLDriver } from '@nestjs/graphql';
-import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import {
+  AbstractGraphQLDriver,
+  GraphQLWsSubscriptionsConfig,
+  SubscriptionConfig,
+} from '@nestjs/graphql';
+import {
+  DocumentNode,
+  GraphQLError,
+  GraphQLFormattedError,
+  GraphQLSchema,
+  specifiedRules,
+  validate,
+} from 'graphql';
 import omit from 'lodash.omit';
 import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin.js';
 import { GraphiQLOptions } from '../graphiql/interfaces/graphiql-options.interface.js';
 import { ApolloDriverConfig } from '../interfaces/index.js';
 import { createAsyncIterator } from '../utils/async-iterator.util.js';
+
+/**
+ * The "graphql-ws" configuration, plus the graphql-ws server options it does
+ * not declare but that are forwarded to graphql-ws all the same.
+ */
+type GraphQLWsServerConfig = GraphQLWsSubscriptionsConfig & {
+  validate?: (
+    schema: GraphQLSchema,
+    document: DocumentNode,
+  ) => ReadonlyArray<GraphQLError>;
+  onError?: (
+    ctx: any,
+    id: string,
+    payload: any,
+    errors: readonly GraphQLError[],
+  ) =>
+    | Promise<readonly GraphQLFormattedError[] | void>
+    | readonly GraphQLFormattedError[]
+    | void;
+};
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
@@ -126,6 +162,135 @@ export abstract class ApolloBaseDriver<
     (options as ApolloDriverConfig).subscriptions = normalized;
   }
 
+  /**
+   * The subscriptions configuration of the graphql-ws server started next to
+   * Apollo Server. graphql-ws executes queries and mutations too, outside of
+   * Apollo Server's request pipeline, so the "validationRules" and
+   * "formatError" options are applied to its operations here (composed with
+   * the hooks of the "graphql-ws" configuration). Apollo Server plugins do
+   * not run for operations received over WebSocket.
+   */
+  protected getSubscriptionConfig(
+    options: ApolloDriverConfig,
+  ): SubscriptionConfig {
+    const subscriptions = options.subscriptions || { 'graphql-ws': {} };
+    const config = subscriptions['graphql-ws'];
+    if (!config) {
+      return subscriptions;
+    }
+    const graphqlWsConfig: GraphQLWsServerConfig =
+      config === true ? {} : config;
+    return {
+      ...subscriptions,
+      'graphql-ws': {
+        ...graphqlWsConfig,
+        ...this.createGraphQLWsValidation(
+          options.validationRules,
+          graphqlWsConfig,
+        ),
+        ...this.createGraphQLWsErrorFormatting(
+          options.formatError,
+          graphqlWsConfig,
+        ),
+      } as GraphQLWsSubscriptionsConfig,
+    };
+  }
+
+  private createGraphQLWsValidation(
+    validationRules: ApolloDriverConfig['validationRules'],
+    config: GraphQLWsServerConfig,
+  ): GraphQLWsServerConfig {
+    if (!validationRules?.length || config.validate) {
+      return {};
+    }
+    const { onSubscribe } = config;
+    return {
+      // Used by graphql-ws for the operations it builds itself
+      validate: (schema, document) =>
+        validate(schema, document, [...specifiedRules, ...validationRules]),
+      // A hook that builds the execution arguments itself skips "validate"
+      ...(onSubscribe && {
+        onSubscribe: async (...args) => {
+          const result = await onSubscribe(...args);
+          if (!result || !('document' in result)) {
+            return result;
+          }
+          const errors = validate(
+            result.schema,
+            result.document,
+            validationRules,
+          );
+          return errors.length > 0 ? errors : result;
+        },
+      }),
+    };
+  }
+
+  private createGraphQLWsErrorFormatting(
+    formatError: ApolloDriverConfig['formatError'],
+    config: GraphQLWsServerConfig,
+  ): GraphQLWsServerConfig {
+    if (!formatError) {
+      return {};
+    }
+    // Mirrors Apollo Server, which defaults the "code" of every error before
+    // handing it to "formatError" (and masks errors thrown by it)
+    const formatErrors = (
+      errors: readonly GraphQLError[],
+      getDefaultCode: (error: GraphQLError) => string,
+    ) =>
+      errors.map((error) => {
+        const formattedError = error.toJSON();
+        try {
+          return formatError(
+            {
+              ...formattedError,
+              extensions: {
+                ...formattedError.extensions,
+                code: formattedError.extensions?.code ?? getDefaultCode(error),
+              },
+            },
+            error,
+          );
+        } catch {
+          return {
+            message: 'Internal server error',
+            extensions: { code: ApolloServerErrorCode.INTERNAL_SERVER_ERROR },
+          };
+        }
+      });
+
+    const { onNext, onError } = config;
+    return {
+      onNext: async (ctx, id, payload, args, result) => {
+        const maybeResult = await onNext?.(ctx, id, payload, args, result);
+        if (maybeResult || !result.errors) {
+          return maybeResult;
+        }
+        return {
+          ...result,
+          errors: formatErrors(
+            result.errors,
+            () => ApolloServerErrorCode.INTERNAL_SERVER_ERROR,
+          ),
+        };
+      },
+      onError: async (ctx, id, payload, errors) => {
+        const maybeErrors = await onError?.(ctx, id, payload, errors);
+        if (maybeErrors) {
+          return maybeErrors;
+        }
+        // Errors raised before execution (e.g. by validation) have no
+        // original error, unlike those thrown by a subscription's iterator
+        return formatErrors(errors, (error) =>
+          error.originalError
+            ? ApolloServerErrorCode.INTERNAL_SERVER_ERROR
+            : ApolloServerErrorCode.GRAPHQL_VALIDATION_FAILED,
+        );
+      },
+    };
+  }
+
   public subscriptionWithFilter(
     instanceRef: unknown,
     filterFn: (
@@ -179,14 +344,20 @@ export abstract class ApolloBaseDriver<
       resolvers,
       schema,
       ...options,
-      plugins: options.plugins
-        ? options.plugins.concat([drainHttpServerPlugin])
-        : [drainHttpServerPlugin],
+      plugins: [
+        ...(options.plugins ?? []),
+        drainHttpServerPlugin,
+        this.createRejectSubscriptionsPlugin(),
+      ],
     });
 
     await server.start();
 
-    app.use(
+    // Register an exact route, as Nest does for its own routes (and as
+    // "registerFastify" does): "app.use(path, ...)" would also serve
+    // "/graphql/<anything>", out of reach of the middleware the application
+    // binds to "path" with "MiddlewareConsumer#forRoutes({ path, method })".
+    app.all(
       path,
       expressMiddleware(server, {
         context: options.context,
@@ -220,9 +391,11 @@ export abstract class ApolloBaseDriver<
       resolvers,
       schema,
       ...options,
-      plugins: options.plugins
-        ? options.plugins.concat([apolloDrainPlugin])
-        : [apolloDrainPlugin],
+      plugins: [
+        ...(options.plugins ?? []),
+        apolloDrainPlugin,
+        this.createRejectSubscriptionsPlugin(),
+      ],
     });
 
     await server.start();
@@ -273,6 +446,45 @@ export abstract class ApolloBaseDriver<
               errors,
               state,
             });
+          },
+        };
+      },
+    };
+  }
+
+  private createRejectSubscriptionsPlugin(): ApolloServerPlugin {
+    // graphql-js executes a subscription operation it is handed like a query:
+    // it calls the "resolve" function of the root field, never "subscribe",
+    // which is where Nest runs the guards, interceptors and filters of the
+    // handler. Subscriptions are served over WebSocket, so refuse them here.
+    // This plugin is registered last and answers through
+    // "responseForOperation", so that a plugin serving subscriptions over
+    // HTTP itself (e.g. the subscription callback plugin) still answers first.
+    return {
+      async requestDidStart() {
+        return {
+          async responseForOperation({ operation }) {
+            if (operation?.operation !== 'subscription') {
+              return null;
+            }
+            return {
+              http: {
+                status: HttpStatus.BAD_REQUEST,
+                headers: new HeaderMap(),
+              },
+              body: {
+                kind: 'single',
+                singleResult: {
+                  errors: [
+                    {
+                      message:
+                        'Subscription operations are not supported over HTTP. Use a WebSocket connection instead.',
+                      extensions: { code: ApolloServerErrorCode.BAD_REQUEST },
+                    },
+                  ],
+                },
+              },
+            };
           },
         };
       },
@@ -335,19 +547,20 @@ export abstract class ApolloBaseDriver<
       formattedError: GraphQLFormattedError,
       originalError: any,
     ): GraphQLFormattedError => {
-      const exceptionRef = unwrapResolverError(originalError) as any;
-      const isHttpException =
-        exceptionRef?.response?.statusCode && exceptionRef?.status;
-
-      if (!isHttpException) {
+      const exceptionRef = unwrapResolverError(originalError);
+      // Check the class, not the shape: errors thrown by HTTP clients (e.g.
+      // superagent) also have "status" and "response.statusCode", but their
+      // "response" holds the outbound request (headers included) and must
+      // never be sent to the client.
+      if (!(exceptionRef instanceof HttpException)) {
         return formattedError;
       }
 
       let error: GraphQLError;
 
-      const httpStatus = exceptionRef?.status;
+      const httpStatus = exceptionRef.getStatus();
       if (httpStatus in apolloPredefinedExceptions) {
-        error = new GraphQLError(exceptionRef?.message, {
+        error = new GraphQLError(exceptionRef.message, {
           path: formattedError.path,
           extensions: {
             ...formattedError.extensions,
@@ -364,8 +577,9 @@ export abstract class ApolloBaseDriver<
           },
         });
       }
-      if (exceptionRef?.response) {
-        error.extensions['originalError'] = exceptionRef.response;
+      const response = exceptionRef.getResponse();
+      if (response) {
+        error.extensions['originalError'] = response;
       }
       (error as any).locations = formattedError.locations;
       return error;
@@ -395,8 +609,9 @@ export abstract class ApolloBaseDriver<
     } else {
       targetOptions.context = async (contextOrRequest) => {
         // The object is shared by all requests, so each one gets its own copy
+        // (made by "assignReqProperty")
         return this.assignReqProperty(
-          this.cloneContext(originalOptions.context),
+          originalOptions.context,
           contextOrRequest.req ?? contextOrRequest,
         );
       };
@@ -410,15 +625,16 @@ export abstract class ApolloBaseDriver<
     if (!ctx) {
       return { req };
     }
-    if (
-      typeof ctx !== 'object' ||
-      (ctx && ctx.req && typeof ctx.req === 'object')
-    ) {
+    if (typeof ctx !== 'object') {
       return ctx;
     }
-    // Never assign onto `ctx`: when the same object is returned for every
-    // request, all of them would see the `req` of the first one.
-    return this.cloneContext(ctx, { req });
+    // Never hand out `ctx` itself: when the same object is returned for every
+    // request, all of them would see the `req` of the first one, and (over
+    // graphql-ws, which unlike Apollo Server does not copy the context) the
+    // per-request state Nest assigns onto it, e.g. the context id.
+    return ctx.req && typeof ctx.req === 'object'
+      ? this.cloneContext(ctx)
+      : this.cloneContext(ctx, { req });
   }
 
   private cloneContext(

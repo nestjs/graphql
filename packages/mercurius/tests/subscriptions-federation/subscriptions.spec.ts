@@ -174,6 +174,66 @@ describe('Subscriptions', () => {
     });
   });
 
+  it('should not receive events rejected by the filter', async () => {
+    await new Promise<void>((resolve, reject) => {
+      const testClient = createMercuriusTestClient(
+        app.getHttpAdapter().getInstance(),
+      );
+      // A distinct id keeps events published by the other tests out of this one
+      const rejectedPayload = {
+        newNotification: {
+          id: '2',
+          recipient: 'other',
+          message: 'Hello other',
+        },
+      };
+      const examplePayload = {
+        newNotification: {
+          id: '2',
+          recipient: 'test',
+          message: 'Hello ws',
+        },
+      };
+      testClient
+        .subscribe({
+          query: subscriptionQuery,
+          variables: {
+            id: '2',
+          },
+          headers: {
+            authorization: 'Bearer test',
+          },
+          onData(response) {
+            try {
+              expect(response.data).toEqual({
+                newNotification: {
+                  id: examplePayload.newNotification.id,
+                  message: examplePayload.newNotification.message,
+                },
+              });
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+        })
+        .then(() => {
+          // timeout needed to allow the subscription to be established
+          setTimeout(() => {
+            pubsub.publish({
+              topic: 'newNotification',
+              payload: rejectedPayload,
+            });
+            pubsub.publish({
+              topic: 'newNotification',
+              payload: examplePayload,
+            });
+          }, 1000);
+        })
+        .catch(reject);
+    });
+  });
+
   afterEach(async () => {
     await app.close();
   });

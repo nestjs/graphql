@@ -6,7 +6,10 @@ import { SharedContextResolver } from './shared-context.resolver.js';
 
 @Module({})
 export class SharedContextModule {
-  static forRoot(context: ApolloDriverConfig['context']): DynamicModule {
+  static forRoot(
+    context: ApolloDriverConfig['context'],
+    options: Omit<ApolloDriverConfig, 'context'> = {},
+  ): DynamicModule {
     return {
       module: SharedContextModule,
       imports: [
@@ -14,6 +17,7 @@ export class SharedContextModule {
           driver: ApolloDriver,
           autoSchemaFile: true,
           context,
+          ...options,
         }),
       ],
       providers: [SharedContextResolver],

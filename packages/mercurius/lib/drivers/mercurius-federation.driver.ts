@@ -1,73 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import {
-  AbstractGraphQLDriver,
-  GraphQLFederationFactory,
-} from '@nestjs/graphql';
-import { FastifyBaseLogger, FastifyInstance } from 'fastify';
-import { GraphQLSchema, parse, printSchema } from 'graphql';
-import { IncomingMessage, Server, ServerResponse } from 'http';
-import mercurius from 'mercurius';
+import { GraphQLFederationFactory } from '@nestjs/graphql';
+import { GraphQLSchema, parse } from 'graphql';
 import { MercuriusDriverConfig } from '../interfaces/mercurius-driver-config.interface.js';
 import { buildMercuriusFederatedSchema } from '../utils/build-mercurius-federated-schema.util.js';
 import { printSubgraphSdl } from '../utils/print-subgraph-sdl.util.js';
-import { registerMercuriusHooks } from '../utils/register-mercurius-hooks.util.js';
-import { registerMercuriusRequestHooks } from '../utils/register-mercurius-request-hooks.util.js';
-import { registerMercuriusPlugin } from '../utils/register-mercurius-plugin.util.js';
+import { MercuriusDriver } from './mercurius.driver.js';
 
 /**
+ * Registers Mercurius exactly like the `MercuriusDriver` does (the federation
+ * plugin only accepts SDL/DocumentNode input, while this driver passes the
+ * fully-built GraphQLSchema produced by Nest's federation factory), so it
+ * shares its per-request context and subscription filters.
+ *
  * @publicApi
  */
 @Injectable()
-export class MercuriusFederationDriver extends AbstractGraphQLDriver<MercuriusDriverConfig> {
+export class MercuriusFederationDriver extends MercuriusDriver {
   constructor(
     private readonly graphqlFederationFactory: GraphQLFederationFactory,
   ) {
     super();
   }
 
-  get instance(): FastifyInstance<
-    Server,
-    IncomingMessage,
-    ServerResponse,
-    FastifyBaseLogger
-  > {
-    return this.httpAdapterHost?.httpAdapter?.getInstance?.();
-  }
-
-  public async start(options: MercuriusDriverConfig) {
-    const { plugins, hooks, ...adapterOptions } = options;
-
-    if (adapterOptions.definitions && adapterOptions.definitions.path) {
-      await this.graphQlFactory.generateDefinitions(
-        printSchema(adapterOptions.schema!),
-        adapterOptions,
-      );
-    }
-
-    const httpAdapter = this.httpAdapterHost.httpAdapter;
-    const platformName = httpAdapter.getType();
-
-    if (platformName !== 'fastify') {
-      throw new Error(`No support for current HttpAdapter: ${platformName}`);
-    }
-    const app = httpAdapter.getInstance<FastifyInstance>();
-    // The federation plugin only accepts SDL/DocumentNode input, while this
-    // driver passes a fully-built GraphQLSchema produced by Nest's federation factory.
-    await app.register(mercurius, {
-      ...adapterOptions,
-    });
-    await registerMercuriusPlugin(app, plugins);
-    registerMercuriusHooks(app, hooks);
-    registerMercuriusRequestHooks(app, this.resolverDecoratorHost);
-  }
-
-  public async stop(): Promise<void> {}
-
   public async generateSchema(
     options: MercuriusDriverConfig,
   ): Promise<GraphQLSchema> {
     const schema = await this.graphqlFederationFactory.generateSchema(
-      options,
+      this.prepareSchemaOptions(options),
       buildMercuriusFederatedSchema,
     );
     if (!options.autoSchemaFile && options.typeDefs?.length) {

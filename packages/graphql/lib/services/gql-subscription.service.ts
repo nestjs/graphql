@@ -32,6 +32,8 @@ export type GraphQLWsSubscriptionsConfig = Partial<
     | 'onClose'
     | 'onSubscribe'
     | 'onNext'
+    | 'onError'
+    | 'validate'
   >
 > & {
   path?: string;
