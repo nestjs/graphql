@@ -70,7 +70,7 @@ export class GraphQLSchemaFactory {
     }
 
     LazyMetadataStorage.load(resolvers);
-    TypeMetadataStorage.compile(options.orphanedTypes);
+    TypeMetadataStorage.compile(options.orphanedTypes, resolvers);
 
     // includeModules is passed internally from GraphQLSchemaBuilder
     const internalOptions = options as InternalBuildSchemaOptions;

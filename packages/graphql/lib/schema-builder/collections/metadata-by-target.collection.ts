@@ -31,8 +31,8 @@ export class MetadataByTargetCollection {
   }
 
   compile() {
-    this.reversePredicate((t) => t.classDirectives.getAll());
-    this.reversePredicate((t) => t.classExtensions.getAll());
+    // Class directives and extensions are registered in source order instead:
+    // reversing them here flipped their order on every other compile() call.
     this.reversePredicate((t) => t.fieldDirectives.getAll());
     this.reversePredicate((t) => t.fieldExtensions.getAll());
   }

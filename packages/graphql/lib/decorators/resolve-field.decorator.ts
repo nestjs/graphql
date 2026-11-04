@@ -97,24 +97,15 @@ export function ResolveField(
     key?: string,
     descriptor?: any,
   ) => {
-    // eslint-disable-next-line prefer-const
-    let [propertyName, typeFunc, options] = isFunction(propertyNameOrFunc)
-      ? typeFuncOrOptions && (typeFuncOrOptions as ResolveFieldOptions).name
-        ? [
-            (typeFuncOrOptions as ResolveFieldOptions).name,
-            propertyNameOrFunc,
-            typeFuncOrOptions,
-          ]
-        : [undefined, propertyNameOrFunc, typeFuncOrOptions]
-      : isString(propertyNameOrFunc)
-      ? isFunction(typeFuncOrOptions)
-        ? [propertyNameOrFunc, typeFuncOrOptions, resolveFieldOptions]
-        : [propertyNameOrFunc, undefined, typeFuncOrOptions]
-      : [
-          (propertyNameOrFunc as ResolveFieldOptions)?.name,
-          undefined,
-          propertyNameOrFunc,
-        ];
+    // Every parameter is optional and may be passed as "undefined" (e.g.
+    // `@ResolveField('name', undefined, options)`), so the arguments are told
+    // apart by their type rather than by their position.
+    const args = [propertyNameOrFunc, typeFuncOrOptions, resolveFieldOptions];
+    const typeFunc = args.find((arg) => isFunction(arg)) as ReturnTypeFunc;
+    let options = args.find((arg) => isObject(arg)) as ResolveFieldOptions;
+    const propertyName = isString(propertyNameOrFunc)
+      ? propertyNameOrFunc
+      : options?.name;
 
     SetMetadata(RESOLVER_NAME_METADATA, propertyName)(target, key, descriptor);
     SetMetadata(RESOLVER_PROPERTY_METADATA, true)(target, key, descriptor);
@@ -145,7 +136,9 @@ export function ResolveField(
         typeOptions = implicitTypeMetadata.options;
         typeFn = implicitTypeMetadata.typeFn;
       } catch {
-        /* empty */
+        // No type to reflect: the field must be declared on the model, which
+        // the options (e.g. "nullable") still apply to.
+        typeOptions = { ...options };
       }
 
       TypeMetadataStorage.addResolverPropertyMetadata({

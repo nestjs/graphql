@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { GraphQLSchemaHost } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
-import { GraphQLObjectType } from 'graphql';
+import { GraphQLNonNull, GraphQLObjectType } from 'graphql';
 import { AppModule } from '../code-first-extensions/app.module.js';
 
 describe('Code-first extensions', () => {
@@ -30,5 +30,15 @@ describe('Code-first extensions', () => {
     const extensions = statusField.extensions;
 
     expect(extensions.isPublic).toBe(true);
+  });
+
+  it('applies the @ResolveField() options passed after an undefined type function', async () => {
+    const { schema } = app.get(GraphQLSchemaHost);
+    const userObject = schema.getType('User') as GraphQLObjectType;
+    const statusField = userObject.getFields().status;
+
+    // user.resolver.ts: @ResolveField('status', undefined, { nullable: true, description: ... })
+    expect(statusField.description).toBe('Resolve Field Description');
+    expect(statusField.type).not.toBeInstanceOf(GraphQLNonNull);
   });
 });

@@ -18,20 +18,24 @@ export function Directive(
 
   return (target: Function | object, key?: string | symbol) => {
     LazyMetadataStorage.store(() => {
-      sdls.forEach((singleSdl) => {
-        if (key) {
+      if (key) {
+        sdls.forEach((singleSdl) =>
           TypeMetadataStorage.addDirectivePropertyMetadata({
             target: target.constructor,
             fieldName: key as string,
             sdl: singleSdl,
-          });
-        } else {
+          }),
+        );
+      } else {
+        // Class directives are prepended (see addDirectiveMetadata()), so
+        // register the last one first to keep the array in source order.
+        [...sdls].reverse().forEach((singleSdl) =>
           TypeMetadataStorage.addDirectiveMetadata({
             target: target as Function,
             sdl: singleSdl,
-          });
-        }
-      });
+          }),
+        );
+      }
     });
   };
 }

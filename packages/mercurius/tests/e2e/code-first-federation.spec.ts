@@ -109,7 +109,7 @@ type Query @extends {
 \"\"\"Search result description\"\"\"
 union FederationSearchResultUnion = Post | User
 
-type User @key(fields: \"id\") @extends {
+type User @extends @key(fields: \"id\") {
   id: ID! @external
   posts: [Post!]!
 }

@@ -114,7 +114,8 @@ export function addFieldMetadata<T extends ReturnTypeFuncValue>(
 ) {
   const [typeFunc, options = {}] = isFunction(typeOrOptions)
     ? [typeOrOptions, fieldOptions]
-    : [undefined, typeOrOptions as any];
+    : // `@Field(undefined, options)`: the type function was passed as "undefined"
+      [undefined, (typeOrOptions ?? fieldOptions) as any];
 
   const applyMetadataFn = () => {
     const isResolver = !!descriptor;
