@@ -1,4 +1,13 @@
-import { Kind, ValueNode } from 'graphql';
+import {
+  graphqlSync,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
+  GraphQLSchema,
+  GraphQLString,
+  Kind,
+  ValueNode,
+} from 'graphql';
 import { CustomScalar } from '../../lib/interfaces/index.js';
 import { createScalarType } from '../../lib/utils/scalar-types.utils.js';
 
@@ -49,6 +58,44 @@ describe('createScalarType', () => {
     }
     const scalar = createScalarType('Tagged', new TaggedScalar());
     expect(scalar.extensions).toEqual({ tag: 'public' });
+  });
+
+  it('should report a null result of parseValue and parseLiteral as invalid input', () => {
+    const scalar = createScalarType('Date', new BaseScalar());
+    expect(scalar.parseValue('yesterday')).toBeUndefined();
+    expect(
+      scalar.parseLiteral({ kind: Kind.STRING, value: 'yesterday' }, {}),
+    ).toBeUndefined();
+  });
+
+  it('should not let a null parse result through a non-null argument', () => {
+    const scalar = createScalarType('Date', new BaseScalar());
+    const schema = new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'Query',
+        fields: {
+          since: {
+            type: GraphQLString,
+            args: {
+              when: { type: new GraphQLList(new GraphQLNonNull(scalar)) },
+            },
+            resolve: (_, args) => JSON.stringify(args.when),
+          },
+        },
+      }),
+    });
+
+    for (const [source, variableValues] of [
+      ['{ since(when: ["yesterday"]) }', undefined],
+      ['query($w: [Date!]) { since(when: $w) }', { w: ['yesterday'] }],
+    ] as const) {
+      const result = graphqlSync({ schema, source, variableValues });
+      expect(result.errors?.length).toBeGreaterThan(0);
+      expect(result.data).toBeUndefined();
+    }
+    expect(
+      graphqlSync({ schema, source: '{ since(when: [0]) }' }).data,
+    ).toEqual({ since: JSON.stringify([new Date(0)]) });
   });
 
   it('should leave specifiedByURL and extensions at GraphQL defaults when not set', () => {

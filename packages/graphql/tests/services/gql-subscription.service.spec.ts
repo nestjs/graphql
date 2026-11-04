@@ -40,6 +40,7 @@ describe('GqlSubscriptionService', () => {
     vi.clearAllMocks();
     mockHttpServer = {
       on: vi.fn(),
+      listenerCount: vi.fn().mockReturnValue(1),
     };
   });
 
@@ -268,9 +269,125 @@ describe('GqlSubscriptionService', () => {
         headers: { 'sec-websocket-protocol': 'graphql-transport-ws' },
       };
 
-      upgradeHandler(mockReq, {}, {});
+      const mockSocket = createMockSocket();
+      upgradeHandler(mockReq, mockSocket, Buffer.alloc(0));
       // Should fail closed: not handle random requests
       expect(handleUpgradeSpy).not.toHaveBeenCalled();
+      expect(mockSocket.destroy).toHaveBeenCalled();
+    });
+
+    it('should destroy upgrades to other paths when no other upgrade listener exists', () => {
+      const options: GqlSubscriptionServiceOptions = {
+        schema: {} as any,
+        path: '/graphql',
+        'graphql-ws': true,
+      };
+
+      const service = new GqlSubscriptionService(options, mockHttpServer);
+      const handleUpgradeSpy = vi.spyOn((service as any).wss, 'handleUpgrade');
+      const upgradeHandler = mockHttpServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'upgrade',
+      )[1];
+
+      for (const url of [
+        '/another',
+        '/',
+        '/graphq',
+        'http://127.0.0.1/graphql',
+      ]) {
+        const mockSocket = createMockSocket();
+        upgradeHandler({ url, headers: {} }, mockSocket, Buffer.alloc(0));
+        expect(mockSocket.listenerCount('error')).toBe(1);
+        expect(mockSocket.destroy).toHaveBeenCalled();
+      }
+      expect(handleUpgradeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should leave upgrades to other paths to other upgrade listeners, without crashing on a reset', () => {
+      mockHttpServer.listenerCount.mockReturnValue(2);
+      const options: GqlSubscriptionServiceOptions = {
+        schema: {} as any,
+        path: '/graphql',
+        'graphql-ws': true,
+      };
+
+      const service = new GqlSubscriptionService(options, mockHttpServer);
+      const handleUpgradeSpy = vi.spyOn((service as any).wss, 'handleUpgrade');
+      const upgradeHandler = mockHttpServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'upgrade',
+      )[1];
+
+      const mockSocket = createMockSocket();
+      upgradeHandler(
+        { url: '/another', headers: {} },
+        mockSocket,
+        Buffer.alloc(0),
+      );
+
+      expect(handleUpgradeSpy).not.toHaveBeenCalled();
+      expect(mockSocket.destroy).not.toHaveBeenCalled();
+      // A connection reset must not surface as an unhandled "error" event
+      expect(() =>
+        mockSocket.emit('error', new Error('read ECONNRESET')),
+      ).not.toThrow();
+      expect(mockSocket.destroy).toHaveBeenCalled();
+    });
+
+    it('should only handle upgrades to the whole path when custom server has no internal path', () => {
+      const customWss = new WebSocketServer({ noServer: true });
+      const handleUpgradeSpy = vi
+        .spyOn(customWss, 'handleUpgrade')
+        .mockImplementation(() => {});
+
+      const options: GqlSubscriptionServiceOptions = {
+        schema: {} as any,
+        path: '/graphql',
+        'graphql-ws': { server: customWss },
+      };
+
+      new GqlSubscriptionService(options, mockHttpServer);
+      const upgradeHandler = mockHttpServer.on.mock.calls.find(
+        (call: any[]) => call[0] === 'upgrade',
+      )[1];
+
+      for (const url of [
+        '/graphql-admin',
+        '/graphql/admin',
+        '/graphql/../live',
+      ]) {
+        upgradeHandler(
+          { url, headers: {} },
+          createMockSocket(),
+          Buffer.alloc(0),
+        );
+      }
+      // Another listener on the HTTP server may own these; claiming them too
+      // makes "handleUpgrade()" throw for the same socket
+      expect(handleUpgradeSpy).not.toHaveBeenCalled();
+
+      upgradeHandler(
+        { url: '/graphql?token=1', headers: {} },
+        createMockSocket(),
+        Buffer.alloc(0),
+      );
+      expect(handleUpgradeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not take over upgrades when graphql-ws is not enabled', () => {
+      const configs: GqlSubscriptionServiceOptions[] = [
+        { schema: {} as any, path: '/graphql' },
+        { schema: {} as any, path: '/graphql', 'graphql-ws': false },
+      ];
+
+      for (const options of configs) {
+        new GqlSubscriptionService(options, mockHttpServer);
+      }
+
+      expect(mockUseServer).not.toHaveBeenCalled();
+      expect(mockHttpServer.on).not.toHaveBeenCalledWith(
+        'upgrade',
+        expect.any(Function),
+      );
     });
 
     it('should hand upgrades with another subprotocol to the server to reject', () => {

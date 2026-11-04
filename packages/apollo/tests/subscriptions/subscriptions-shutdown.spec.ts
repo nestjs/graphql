@@ -14,6 +14,22 @@ const cases: Array<[string, () => DynamicModule]> = [
     'ApolloFederationDriver',
     () => FederationAppModule.forRoot({ subscriptions: { 'graphql-ws': {} } }),
   ],
+  [
+    'ApolloDriver, stopOnApplicationShutdown',
+    () =>
+      AppModule.forRoot({
+        subscriptions: { 'graphql-ws': {} },
+        stopOnApplicationShutdown: true,
+      }),
+  ],
+  [
+    'ApolloFederationDriver, stopOnApplicationShutdown',
+    () =>
+      FederationAppModule.forRoot({
+        subscriptions: { 'graphql-ws': {} },
+        stopOnApplicationShutdown: true,
+      }),
+  ],
 ];
 
 describe.each(cases)('graphql-ws shutdown (%s)', (_name, moduleFactory) => {

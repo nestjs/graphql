@@ -6,6 +6,7 @@ import { NotificationModule } from './notification.module.js';
 
 export type FederationAppModuleConfig = {
   subscriptions?: ApolloDriverConfig['subscriptions'];
+  stopOnApplicationShutdown?: boolean;
 };
 
 @Module({})
@@ -20,6 +21,7 @@ export class FederationAppModule {
           autoSchemaFile: true,
           includeStacktraceInErrorResponses: false,
           subscriptions: options?.subscriptions,
+          stopOnApplicationShutdown: options?.stopOnApplicationShutdown,
         }),
       ],
     };

@@ -9,6 +9,7 @@ import { NotificationModule } from './notification.module.js';
 export type AppModuleConfig = {
   context?: GqlModuleOptions['context'];
   subscriptions?: ApolloDriverConfig['subscriptions'];
+  stopOnApplicationShutdown?: boolean;
 };
 
 @Module({})
@@ -24,6 +25,7 @@ export class AppModule {
           context: options?.context,
           autoSchemaFile: true,
           subscriptions: options?.subscriptions,
+          stopOnApplicationShutdown: options?.stopOnApplicationShutdown,
         }),
       ],
     };

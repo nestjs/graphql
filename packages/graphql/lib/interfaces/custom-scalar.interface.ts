@@ -12,8 +12,18 @@ export interface CustomScalar<T, K> {
    * generated `GraphQLScalarType`'s `extensions` field.
    */
   extensions?: Record<string, unknown>;
+  /**
+   * Parses a variable value. Throw a `GraphQLError` for input the scalar
+   * cannot represent; a `null` or `undefined` result is treated as invalid
+   * input as well (it never becomes the value of the argument).
+   */
   parseValue: (value: unknown) => K | null | undefined;
   serialize: (value: unknown) => T | null | undefined;
+  /**
+   * Parses an inline literal. Throw a `GraphQLError` for a literal the scalar
+   * cannot represent; a `null` or `undefined` result is treated as invalid
+   * input as well (it never becomes the value of the argument).
+   */
   parseLiteral: (
     valueNode: ValueNode,
     variables?: { [key: string]: any } | null,

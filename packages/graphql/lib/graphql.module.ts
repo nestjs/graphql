@@ -71,6 +71,7 @@ export class GraphQLModule<
     timestamp: true,
   });
   private readonly metadataLoader = new MetadataLoader();
+  private stopPromise: Promise<void> | undefined;
 
   get graphQlAdapter(): TAdapter {
     return this._graphQlAdapter as TAdapter;
@@ -86,14 +87,22 @@ export class GraphQLModule<
 
   async onModuleDestroy() {
     if (!this.options.stopOnApplicationShutdown) {
-      await this._graphQlAdapter.stop();
+      await this.stop();
     }
   }
 
   async onApplicationShutdown() {
     if (this.options.stopOnApplicationShutdown) {
-      await this._graphQlAdapter.stop();
+      await this.stop();
     }
+  }
+
+  /**
+   * Stops the driver once, no matter how many shutdown paths reach it.
+   */
+  private stop(): Promise<void> {
+    this.stopPromise ??= this._graphQlAdapter.stop();
+    return this.stopPromise;
   }
 
   static forRoot<TOptions extends Record<string, any> = GqlModuleOptions>(
@@ -203,6 +212,19 @@ export class GraphQLModule<
     }
 
     await this._graphQlAdapter.start(this.completeOptions);
+
+    if (this.options.stopOnApplicationShutdown) {
+      // "onApplicationShutdown" runs only once the HTTP server has closed, and
+      // the server waits for the connections the driver closes on "stop()"
+      // (e.g., graphql-ws clients). Stop the driver right before the HTTP
+      // server closes instead, which is still after every
+      // "beforeApplicationShutdown" hook has run.
+      const closeHttpAdapter = httpAdapter.close.bind(httpAdapter);
+      httpAdapter.close = async () => {
+        await this.stop();
+        return closeHttpAdapter();
+      };
+    }
 
     if (options.path) {
       GraphQLModule.logger.log(

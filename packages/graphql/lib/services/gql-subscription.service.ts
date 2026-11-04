@@ -3,11 +3,7 @@ import {
   GraphQLSchema,
   subscribe as graphqlSubscribe,
 } from 'graphql';
-import {
-  Disposable,
-  GRAPHQL_TRANSPORT_WS_PROTOCOL,
-  ServerOptions,
-} from 'graphql-ws';
+import { Disposable, ServerOptions } from 'graphql-ws';
 import { useServer } from 'graphql-ws/use/ws';
 import { WebSocketServer } from 'ws';
 
@@ -102,46 +98,53 @@ export class GqlSubscriptionService {
     const { execute = graphqlExecute, subscribe = graphqlSubscribe } =
       this.options;
 
-    if ('graphql-ws' in this.options) {
-      const {
-        server: _wsServer,
-        path: _wsPath,
-        ...graphqlWsOptions
-      } = this.options['graphql-ws'] === true
-        ? ({} as GraphQLWsSubscriptionsConfig)
-        : (this.options['graphql-ws'] as GraphQLWsSubscriptionsConfig);
-      this.wsGqlDisposable = useServer(
-        {
-          schema: this.options.schema,
-          execute,
-          subscribe,
-          context: this.options.context,
-          ...graphqlWsOptions,
-        },
-        this.wss,
-      );
+    const graphqlWsConfig = this.options['graphql-ws'];
+    if (!graphqlWsConfig) {
+      // No protocol handler would listen on the WebSocket server: leave upgrade
+      // requests to the HTTP server rather than completing handshakes on
+      // sockets that nothing reads from.
+      return;
     }
 
+    const {
+      server: _wsServer,
+      path: _wsPath,
+      ...graphqlWsOptions
+    } = graphqlWsConfig === true
+      ? ({} as GraphQLWsSubscriptionsConfig)
+      : graphqlWsConfig;
+    this.wsGqlDisposable = useServer(
+      {
+        schema: this.options.schema,
+        execute,
+        subscribe,
+        context: this.options.context,
+        ...graphqlWsOptions,
+      },
+      this.wss,
+    );
+
     this.httpServer.on('upgrade', (req, socket, head) => {
-      const protocol = req.headers['sec-websocket-protocol'] as
-        | string
-        | string[]
-        | undefined;
-      let protocols = Array.isArray(protocol)
-        ? protocol
-        : protocol?.split(',').map((p) => p.trim());
+      // Match the whole path, as "WebSocketServer#shouldHandle()" does: a
+      // prefix match would also claim requests that another upgrade listener
+      // owns, and a socket handed to two servers crashes the process.
+      const pathname = req.url?.split('?', 1)[0];
 
-      protocols = protocols?.filter(
-        (supportedProtocol) =>
-          supportedProtocol === GRAPHQL_TRANSPORT_WS_PROTOCOL,
-      );
-
-      const wss = this.wss;
-
-      if (this.path && req.url?.startsWith(this.path)) {
+      if (this.path && pathname === this.path) {
+        const wss = this.wss;
         wss.handleUpgrade(req, socket, head, (ws) => {
           wss.emit('connection', ws, req);
         });
+        return;
+      }
+
+      // Node.js detaches its own listeners from the socket before emitting
+      // "upgrade", so a socket that nobody claims has no "error" listener and
+      // a connection reset would crash the process. When no other listener
+      // can claim it, close it right away.
+      socket.on('error', () => socket.destroy());
+      if (this.httpServer.listenerCount('upgrade') <= 1) {
+        socket.destroy();
       }
     });
   }
