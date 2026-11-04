@@ -5,6 +5,7 @@ import { UnionMemberNotObjectTypeError } from '../errors/union-member-not-object
 import { UnionMetadata } from '../metadata/index.js';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
+import { getMostDerivedType } from './interface-definition.factory.js';
 import { ResolveTypeFactory } from './resolve-type.factory.js';
 
 export interface UnionDefinition {
@@ -54,9 +55,7 @@ export class UnionDefinitionFactory {
     return metadata.resolveType
       ? this.resolveTypeFactory.getResolveTypeFunction(metadata.resolveType)
       : (instance: any) => {
-          const target = metadata
-            .typesFn()
-            .find((Type) => instance instanceof Type);
+          const target = getMostDerivedType(instance, metadata.typesFn());
 
           if (!target) {
             if (Reflect.has(instance, '__typename')) {

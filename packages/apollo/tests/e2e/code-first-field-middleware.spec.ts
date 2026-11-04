@@ -84,6 +84,11 @@ describe('@UseFieldMiddleware()', () => {
         plain: 'value',
       });
     });
+
+    it('should apply middleware to fields inherited from interface classes', async () => {
+      const data = await query(app, '{ namedItem { owner name } }');
+      expect(data.namedItem).toEqual({ owner: 'base(value)', name: 'value' });
+    });
   });
 
   describe('with global middleware and field resolver guards', () => {
@@ -114,6 +119,14 @@ describe('@UseFieldMiddleware()', () => {
         plain: 'global(value)',
         resolvedCombined: 'global(option(first(second(value))))',
         resolvedFast: 'global(fast(value))',
+      });
+    });
+
+    it('should run global middleware on fields inherited from interface classes', async () => {
+      const data = await query(app, '{ namedItem { owner name } }');
+      expect(data.namedItem).toEqual({
+        owner: 'global(base(value))',
+        name: 'global(value)',
       });
     });
 

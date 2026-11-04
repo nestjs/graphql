@@ -1,4 +1,4 @@
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLFieldConfigMap,
@@ -6,14 +6,11 @@ import {
   GraphQLObjectType,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces/index.js';
-import { getUseFieldMiddleware } from '../../decorators/use-field-middleware.decorator.js';
-import { decorateFieldResolverWithMiddleware } from '../../utils/decorate-field-resolver.util.js';
 import { InterfaceNotRegisteredError } from '../errors/interface-not-registered.error.js';
 import { PropertyMetadata } from '../metadata/index.js';
 import { ObjectTypeMetadata } from '../metadata/object-type.metadata.js';
 import { OrphanedReferenceRegistry } from '../services/orphaned-reference.registry.js';
 import { TypeFieldsAccessor } from '../services/type-fields.accessor.js';
-import { TypeMetadataStorage } from '../storages/index.js';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
 import { getInterfacesArray } from '../utils/get-interfaces-array.util.js';
 import { ArgsFactory } from './args.factory.js';
@@ -115,12 +112,9 @@ export class ObjectTypeDefinitionFactory {
 
       let properties = [];
       if (metadata.interfaces) {
-        const implementedInterfaces = this.getRecursiveInterfaces([
+        properties = this.typeFieldsAccessor.getInterfaceProperties(
           metadata,
-        ]).map((it) => it.properties);
-
-        implementedInterfaces.forEach((fields) =>
-          properties.push(...(fields || [])),
+          getParentType(),
         );
       }
       properties = properties.concat(metadata.properties);
@@ -132,7 +126,11 @@ export class ObjectTypeDefinitionFactory {
           options,
           field.options,
         );
-        const resolve = this.createFieldResolver(field, options);
+        const resolve = this.typeFieldsAccessor.createFieldResolver(
+          field,
+          options,
+          metadata.target,
+        );
 
         fields[field.schemaName] = {
           type,
@@ -158,8 +156,11 @@ export class ObjectTypeDefinitionFactory {
       if (!isUndefined(prototype)) {
         const parent = getParentType();
         if (parent) {
-          const parentFields =
-            this.typeFieldsAccessor.extractFromInterfaceOrObjectType(parent);
+          const parentFields = this.typeFieldsAccessor.extractInheritedFields(
+            parent,
+            metadata.target,
+            options,
+          );
           fields = {
             ...parentFields,
             ...fields,
@@ -169,51 +170,5 @@ export class ObjectTypeDefinitionFactory {
 
       return fields;
     };
-  }
-
-  private getRecursiveInterfaces(
-    metadatas: ObjectTypeMetadata[],
-  ): ObjectTypeMetadata[] {
-    if (!metadatas || !metadatas.length) {
-      return [];
-    }
-    const interfaces = metadatas.reduce<ObjectTypeMetadata[]>((prev, curr) => {
-      return [
-        ...prev,
-        ...getInterfacesArray(curr.interfaces).map((it) =>
-          TypeMetadataStorage.getInterfaceMetadataByTarget(it as Type<unknown>),
-        ),
-      ];
-    }, []);
-
-    return [...interfaces, ...this.getRecursiveInterfaces(interfaces)];
-  }
-
-  private createFieldResolver<
-    TSource extends object = any,
-    TContext = {},
-    TArgs = { [argName: string]: any },
-    TOutput = any,
-  >(field: PropertyMetadata, options: BuildSchemaOptions) {
-    const rootFieldResolver = (root: object) => {
-      const value = root[field.name];
-      return typeof value === 'undefined' ? field.options.defaultValue : value;
-    };
-    const middlewareFunctions = (options.fieldMiddleware || []).concat(
-      field.middleware || [],
-      getUseFieldMiddleware(field.target?.prototype, field.name),
-    );
-    if (middlewareFunctions?.length === 0) {
-      return rootFieldResolver;
-    }
-    const rootResolveFnFactory = (root: TSource) => () =>
-      rootFieldResolver(root);
-
-    return decorateFieldResolverWithMiddleware<
-      TSource,
-      TContext,
-      TArgs,
-      TOutput
-    >(rootResolveFnFactory, middlewareFunctions);
   }
 }

@@ -51,3 +51,17 @@ export function getUseFieldMiddleware(
     Reflect.getMetadata(FIELD_MIDDLEWARE_METADATA, target, propertyKey) ?? []
   );
 }
+
+/**
+ * Returns `true` if `@UseFieldMiddleware()` was applied to the given member
+ * on this very prototype, rather than inherited from a parent class.
+ */
+export function hasOwnUseFieldMiddleware(
+  target: object | undefined,
+  propertyKey: string | symbol,
+): boolean {
+  return (
+    !!target &&
+    Reflect.hasOwnMetadata(FIELD_MIDDLEWARE_METADATA, target, propertyKey)
+  );
+}

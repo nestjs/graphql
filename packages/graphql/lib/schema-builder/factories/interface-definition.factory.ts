@@ -4,6 +4,8 @@ import {
   GraphQLFieldConfigMap,
   GraphQLInterfaceType,
   GraphQLObjectType,
+  GraphQLResolveInfo,
+  GraphQLSchema,
 } from 'graphql';
 import { BuildSchemaOptions } from '../../interfaces/index.js';
 import { InterfaceNotRegisteredError } from '../errors/interface-not-registered.error.js';
@@ -24,6 +26,25 @@ export interface InterfaceTypeDefinition {
   type: GraphQLInterfaceType;
   isAbstract: boolean;
   interfaces: Function[];
+}
+
+/**
+ * Returns the most derived of the given classes that the value is an instance
+ * of, so that an instance of a subclass is not resolved as its parent class.
+ */
+export function getMostDerivedType<T extends Function>(
+  instance: unknown,
+  types: readonly T[],
+): T | undefined {
+  return types
+    .filter((type) => instance instanceof type)
+    .reduce<T | undefined>(
+      (mostDerived, type) =>
+        !mostDerived || type.prototype instanceof mostDerived
+          ? type
+          : mostDerived,
+      undefined,
+    );
 }
 
 @Injectable()
@@ -68,6 +89,7 @@ export class InterfaceDefinitionFactory {
           metadata.name,
           metadata.directives,
         ),
+        extensions: metadata.extensions,
       }),
     };
   }
@@ -81,12 +103,36 @@ export class InterfaceDefinitionFactory {
       })
       .map((objectType) => objectType.target);
 
+    /**
+     * The object types that implement the interface in the schema being
+     * executed, which includes the subclasses that implement it through
+     * their parent class only.
+     */
+    const possibleTypesBySchema = new WeakMap<GraphQLSchema, Function[]>();
+    const getPossibleTypes = (info?: GraphQLResolveInfo) => {
+      const interfaceType = info?.schema?.getType(metadata.name);
+      if (!interfaceType) {
+        return implementedTypes;
+      }
+      let possibleTypes = possibleTypesBySchema.get(info.schema);
+      if (!possibleTypes) {
+        const names = new Set(
+          info.schema
+            .getPossibleTypes(interfaceType as GraphQLInterfaceType)
+            .map(({ name }) => name),
+        );
+        possibleTypes = objectTypesMetadata
+          .filter(({ name }) => names.has(name))
+          .map(({ target }) => target);
+        possibleTypesBySchema.set(info.schema, possibleTypes);
+      }
+      return possibleTypes;
+    };
+
     return metadata.resolveType
       ? this.resolveTypeFactory.getResolveTypeFunction(metadata.resolveType)
-      : (instance: any) => {
-          const target = implementedTypes.find(
-            (Type) => instance instanceof Type,
-          );
+      : (instance: any, _context: unknown, info?: GraphQLResolveInfo) => {
+          const target = getMostDerivedType(instance, getPossibleTypes(info));
           if (!target) {
             if (Reflect.has(instance, '__typename')) {
               return instance.__typename;
@@ -117,14 +163,9 @@ export class InterfaceDefinitionFactory {
 
       let properties = [];
       if (metadata.interfaces) {
-        const implementedInterfaces =
-          TypeMetadataStorage.getInterfacesMetadata()
-            .filter((it) =>
-              getInterfacesArray(metadata.interfaces).includes(it.target),
-            )
-            .map((it) => it.properties);
-        implementedInterfaces.forEach((fields) =>
-          properties.push(...(fields || [])),
+        properties = this.typeFieldsAccessor.getInterfaceProperties(
+          metadata,
+          getParentType(),
         );
       }
       properties = properties.concat(metadata.properties);
@@ -140,12 +181,11 @@ export class InterfaceDefinitionFactory {
           description: field.description,
           type,
           args: this.argsFactory.create(field.methodArgs, options),
-          resolve: (root: object) => {
-            const value = root[field.name];
-            return typeof value === 'undefined'
-              ? field.options.defaultValue
-              : value;
-          },
+          resolve: this.typeFieldsAccessor.createFieldResolver(
+            field,
+            options,
+            metadata.target,
+          ),
           deprecationReason: field.deprecationReason,
           /**
            * AST node has to be manually created in order to define directives
@@ -166,10 +206,11 @@ export class InterfaceDefinitionFactory {
       if (!isUndefined(prototype.prototype)) {
         const parentClassRef = getParentType();
         if (parentClassRef) {
-          const parentFields =
-            this.typeFieldsAccessor.extractFromInterfaceOrObjectType(
-              parentClassRef,
-            );
+          const parentFields = this.typeFieldsAccessor.extractInheritedFields(
+            parentClassRef,
+            metadata.target,
+            options,
+          );
           fields = {
             ...parentFields,
             ...fields,

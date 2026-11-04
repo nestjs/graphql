@@ -10,6 +10,7 @@ import {
   Field,
   FieldMiddleware,
   GraphQLModule,
+  InterfaceType,
   ObjectType,
   Parent,
   PartialType,
@@ -79,6 +80,22 @@ export class Item {
 @ObjectType()
 export class PartialItem extends PartialType(Item, ObjectType) {}
 
+@InterfaceType()
+export abstract class BaseItem {
+  @Field({ middleware: [wrap('base')] })
+  owner: string;
+}
+
+// An interface that reaches `BaseItem` through `extends` (like `IRecipe`).
+@InterfaceType()
+export abstract class INamedItem extends BaseItem {
+  @Field()
+  name: string;
+}
+
+@ObjectType({ implements: () => INamedItem })
+export class NamedItem extends INamedItem {}
+
 const item = (): Item => ({
   above: 'value',
   below: 'value',
@@ -98,6 +115,11 @@ export class ItemResolver {
   @Query(() => PartialItem)
   partialItem(): PartialItem {
     return item();
+  }
+
+  @Query(() => NamedItem)
+  namedItem(): NamedItem {
+    return { owner: 'value', name: 'value' };
   }
 
   @UseFieldMiddleware(wrap('above'))
