@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { FieldMiddleware } from '../interfaces/index.js';
+import { normalizeResolverArgs } from './normalize-resolver-args.js';
 
 export function decorateFieldResolverWithMiddleware<
   TSource extends object = any,
@@ -13,11 +14,16 @@ export function decorateFieldResolverWithMiddleware<
   middlewareFunctions: FieldMiddleware[] = [],
 ) {
   return (
-    root: TSource,
-    args: TArgs,
-    context: TContext,
-    info: GraphQLResolveInfo,
+    ...resolverArgs: [TSource, TArgs, TContext, GraphQLResolveInfo]
   ): TOutput | Promise<TOutput> => {
+    // Reference resolvers are called with "(reference, context, info)" and
+    // "resolveType" callbacks with "(value, context, info, abstractType)":
+    // only the middleware get the arguments laid out like those of a field
+    // resolver (with no arguments object, an empty one), the resolver itself
+    // gets them as they were passed
+    const [root, args = {} as TArgs, context, info] = normalizeResolverArgs(
+      resolverArgs,
+    ) as [TSource, TArgs, TContext, GraphQLResolveInfo];
     let index = -1;
 
     const run = async (currentIndex: number): Promise<TOutput> => {
@@ -30,10 +36,7 @@ export function decorateFieldResolverWithMiddleware<
 
       if (currentIndex === middlewareFunctions.length) {
         middlewareFn = originalResolveFnFactory(
-          root,
-          args,
-          context,
-          info,
+          ...resolverArgs,
         ) as FieldMiddleware;
       } else {
         middlewareFn = middlewareFunctions[currentIndex];

@@ -6,6 +6,7 @@ import {
   Field,
   Float,
   GraphQLModule,
+  GraphQLSchemaHost,
   ID,
   InputType,
   Int,
@@ -13,10 +14,13 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
   registerEnumType,
 } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { MinLength } from 'class-validator';
+import { ExecutionResult, parse, subscribe } from 'graphql';
+import { PubSub } from 'graphql-subscriptions';
 import { gql } from 'graphql-tag';
 import { ApolloDriver, ApolloDriverConfig } from '../../lib/index.js';
 import { expectSingleResult } from '../utils/assertion-utils.js';
@@ -459,5 +463,74 @@ describe('Renamed args behind a globally registered pipe', () => {
     expectSingleResult(response).toEqual({
       keepInstance: { json: JSON.stringify({ isInstance: true, and: 'd' }) },
     });
+  });
+});
+
+const pubSub = new PubSub();
+
+@Resolver(() => Probe)
+class SubscriptionArgsResolver {
+  @Query(() => Probe)
+  probe(): Probe {
+    return { json: '' };
+  }
+
+  @Subscription(() => Probe, {
+    // both callbacks read the args the way the method below does; an absent
+    // argument means "no restriction"
+    filter: (payload, variables: SomeArgsClass) =>
+      !variables.someArg || payload.probed === variables.someArg,
+    resolve: (payload, args: SomeArgsClass): Probe => ({
+      json: JSON.stringify({ payload: payload.probed, args }),
+    }),
+  })
+  probed(@Args() _args: SomeArgsClass) {
+    return pubSub.asyncIterableIterator('probed');
+  }
+}
+
+describe('Renamed args of a subscription', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [
+        GraphQLModule.forRoot<ApolloDriverConfig>({
+          driver: ApolloDriver,
+          autoSchemaFile: true,
+        }),
+      ],
+      providers: [SubscriptionArgsResolver],
+    }).compile();
+
+    app = module.createNestApplication();
+    await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should hand the "filter" and "resolve" callbacks the property names too', async () => {
+    const { schema } = app.get(GraphQLSchemaHost);
+    const stream = (await subscribe({
+      schema,
+      document: parse('subscription { probed(some_arg: "a") { json } }'),
+      contextValue: {},
+    })) as AsyncIterableIterator<ExecutionResult>;
+
+    // the pubsub subscription is registered on the first pull
+    const delivered = stream.next();
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    await pubSub.publish('probed', { probed: 'b' });
+    await pubSub.publish('probed', { probed: 'a' });
+
+    // the filter has to let "a" through and withhold "b"
+    expect((await delivered).value.data).toEqual({
+      probed: {
+        json: JSON.stringify({ payload: 'a', args: { someArg: 'a' } }),
+      },
+    });
+    await stream.return();
   });
 });

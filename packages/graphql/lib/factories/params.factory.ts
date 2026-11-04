@@ -18,7 +18,16 @@ export class GqlParamsFactory implements ParamsFactory {
       case GqlParamtype.ROOT:
         return args[0];
       case GqlParamtype.ARGS:
-        return data && args[1] ? args[1][data as string] : args[1];
+        if (!data || !args[1]) {
+          return args[1];
+        }
+        // An argument the client left out is missing from the arguments
+        // object, so it must not resolve to a member of "Object.prototype"
+        // (e.g., "constructor" or "toString")
+        return !Object.prototype.hasOwnProperty.call(args[1], data as string) &&
+          (data as string) in Object.prototype
+          ? undefined
+          : args[1][data as string];
       case GqlParamtype.CONTEXT:
         return data && args[2] ? args[2][data as string] : args[2];
       case GqlParamtype.INFO:

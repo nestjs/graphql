@@ -30,11 +30,38 @@ function assignMetadata(
   };
 }
 
+/**
+ * Reads the args a param decorator at `index` adds to. An overriding method
+ * starts from the args of the method it overrides, so the entry inherited at
+ * `index` is left out and replaced by the one of the override (as
+ * `getParamArgsMetadata()` of `@nestjs/common` does).
+ */
+function getParamArgsMetadata(
+  target: object,
+  key: string | symbol,
+  index: number,
+): ParamsMetadata {
+  const args: ParamsMetadata =
+    Reflect.getMetadata(PARAM_ARGS_METADATA, target.constructor, key) || {};
+  const inherited: ParamsMetadata =
+    Reflect.getMetadata(
+      PARAM_ARGS_METADATA,
+      Object.getPrototypeOf(target.constructor),
+      key,
+    ) || {};
+  // "assignMetadata()" spreads shallowly, so an entry the override inherited
+  // keeps the reference of the entry of the parent class
+  return Object.fromEntries(
+    Object.entries(args).filter(
+      ([argKey, arg]) => arg.index !== index || arg !== inherited[argKey],
+    ),
+  );
+}
+
 export const createGqlParamDecorator = (paramtype: GqlParamtype) => {
   return (data?: ParamData): ParameterDecorator =>
     (target, key, index) => {
-      const args =
-        Reflect.getMetadata(PARAM_ARGS_METADATA, target.constructor, key) || {};
+      const args = getParamArgsMetadata(target, key, index);
       Reflect.defineMetadata(
         PARAM_ARGS_METADATA,
         assignMetadata(args, paramtype, index, data),
@@ -52,8 +79,7 @@ export const addPipesMetadata = (
   key: string | symbol,
   index: number,
 ) => {
-  const args =
-    Reflect.getMetadata(PARAM_ARGS_METADATA, target.constructor, key) || {};
+  const args = getParamArgsMetadata(target, key, index);
   const hasParamData = isNil(data) || isString(data);
   const paramData = hasParamData ? data : undefined;
   const paramPipes = hasParamData ? pipes : [data, ...pipes];

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 
 /**
@@ -50,13 +50,16 @@ export type GqlRequestStartHook = (
 /**
  * @publicApi
  */
-export type GqlRequestEndHook = (context: GqlRequestEndHookContext) => void;
+export type GqlRequestEndHook = (
+  context: GqlRequestEndHookContext,
+) => void | Promise<void>;
 
 /**
  * @publicApi
  */
 @Injectable()
 export class ResolverDecoratorHost {
+  private readonly logger = new Logger(ResolverDecoratorHost.name);
   private decorator: (
     fn: (...args: unknown[]) => void,
   ) => (...args: unknown[]) => void;
@@ -115,11 +118,36 @@ export class ResolverDecoratorHost {
     return !!(this.onRequestStartHook || this.onRequestEndHook);
   }
 
+  /**
+   * Calls the "request start" hook and returns what it returns: the promise
+   * of an async hook is returned as is, for the caller to await.
+   */
   onRequestStart(context: GqlRequestStartHookContext): unknown {
-    return this.onRequestStartHook?.(context);
+    return this.handleRejection(this.onRequestStartHook?.(context), 'start');
   }
 
-  onRequestEnd(context: GqlRequestEndHookContext): void {
-    this.onRequestEndHook?.(context);
+  /**
+   * Calls the "request end" hook. The promise of an async hook is returned,
+   * for the caller to await.
+   */
+  onRequestEnd(context: GqlRequestEndHookContext): void | Promise<void> {
+    return this.handleRejection(this.onRequestEndHook?.(context), 'end');
+  }
+
+  /**
+   * A rejected promise that nothing handles terminates the Node.js process,
+   * so the rejection of an async hook is logged even if the caller does not
+   * await the promise (the caller awaiting it still sees the rejection).
+   */
+  private handleRejection<T>(result: T, hook: 'start' | 'end'): T {
+    if (result instanceof Promise) {
+      result.catch((err) =>
+        this.logger.error(
+          `The "request ${hook}" hook failed.`,
+          err instanceof Error ? err.stack : String(err),
+        ),
+      );
+    }
+    return result;
   }
 }

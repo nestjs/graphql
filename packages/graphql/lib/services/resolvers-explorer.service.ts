@@ -1,7 +1,13 @@
 import { Inject, Injectable, Logger, Type } from '@nestjs/common';
-import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import {
-  ContextIdFactory,
+  EXCEPTION_FILTERS_METADATA,
+  GUARDS_METADATA,
+  INTERCEPTORS_METADATA,
+  PIPES_METADATA,
+} from '@nestjs/common/constants.js';
+import { isFunction, isUndefined } from '@nestjs/common/utils/shared.utils.js';
+import {
+  ApplicationConfig,
   MetadataScanner,
   ModuleRef,
   ModulesContainer,
@@ -25,9 +31,8 @@ import { InternalCoreModule } from '@nestjs/core/injector/internal-core-module/i
 import { Module } from '@nestjs/core/injector/module.js';
 import { Entrypoint } from '@nestjs/core/inspector/interfaces/entrypoint.interface.js';
 import { SerializedGraph } from '@nestjs/core/inspector/serialized-graph.js';
-import { REQUEST_CONTEXT_ID } from '@nestjs/core/router/request/request-constants.js';
 import { identity } from 'es-toolkit';
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLError, GraphQLResolveInfo } from 'graphql';
 import { SubscriptionOptions } from '../decorators/subscription.decorator.js';
 import { getUseFieldMiddleware } from '../decorators/use-field-middleware.decorator.js';
 import { AbstractGraphQLDriver } from '../drivers/abstract-graphql.driver.js';
@@ -46,7 +51,10 @@ import { FieldMiddleware, GqlModuleOptions } from '../interfaces/index.js';
 import { GqlEntrypointMetadata } from '../interfaces/gql-entrypoint-metadata.interface.js';
 import { ResolverMetadata } from '../interfaces/resolver-metadata.interface.js';
 import { decorateFieldResolverWithMiddleware } from '../utils/decorate-field-resolver.util.js';
-import { extractMetadata } from '../utils/extract-metadata.util.js';
+import {
+  ExtractedResolverMetadata,
+  extractMetadata,
+} from '../utils/extract-metadata.util.js';
 import { createArgsMapper } from '../utils/map-args-to-props.util.js';
 import { normalizeResolverArgs } from '../utils/normalize-resolver-args.js';
 import { BaseExplorerService } from './base-explorer.service.js';
@@ -58,6 +66,9 @@ const ROOT_RESOLVER_TYPES = new Set<string>([
   Resolver.QUERY,
   Resolver.SUBSCRIPTION,
 ]);
+
+const isObjectLike = (value: unknown): value is object =>
+  typeof value === 'object' && value !== null;
 
 @Injectable()
 export class ResolversExplorerService extends BaseExplorerService {
@@ -91,6 +102,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     const modules = this.getModules(
       this.modulesContainer,
       this.gqlOptions.include || [],
+      true,
     );
     const gqlAdapter = this.moduleRef.get(AbstractGraphQLDriver);
     const resolvers = this.flatMap(modules, (instance, moduleRef) =>
@@ -113,16 +125,29 @@ export class ResolversExplorerService extends BaseExplorerService {
       resolverType: string,
       isReferenceResolver: boolean,
       isPropertyResolver: boolean,
+      isTypeReference: boolean,
     ) =>
       isUndefined(resolverType) ||
       (!isReferenceResolver &&
         !isPropertyResolver &&
-        !ROOT_RESOLVER_TYPES.has(resolverType));
+        (isTypeReference || !ROOT_RESOLVER_TYPES.has(resolverType)));
 
     const resolvers = this.metadataScanner
       .getAllMethodNames(prototype)
       .map((name) => extractMetadata(instance, prototype, name, predicate))
       .filter((resolver) => !!resolver);
+
+    // An alias ("useExisting") exposes the instance of the provider it points
+    // to, which is checked on its own
+    if (resolvers.length > 0 && !wrapper.isAlias) {
+      this.assertEnhancersCanRun(
+        instance,
+        prototype,
+        wrapper,
+        moduleRef,
+        resolvers,
+      );
+    }
 
     const isRequestScoped = !wrapper.isDependencyTreeStatic();
     return resolvers.map((resolver) => {
@@ -152,7 +177,7 @@ export class ResolversExplorerService extends BaseExplorerService {
           isRequestScoped,
           transform,
         );
-      if (resolver.type === SUBSCRIPTION_TYPE) {
+      if (this.isSubscriptionHandler(resolver)) {
         if (!wrapper.isDependencyTreeStatic()) {
           // Note: We don't throw an exception here for backward
           // compatibility reasons.
@@ -162,7 +187,7 @@ export class ResolversExplorerService extends BaseExplorerService {
         }
         const subscriptionOptions = Reflect.getMetadata(
           SUBSCRIPTION_OPTIONS_METADATA,
-          instance[resolver.methodName],
+          prototype[resolver.methodName],
         );
         return this.createSubscriptionMetadata(
           gqlAdapter,
@@ -189,23 +214,9 @@ export class ResolversExplorerService extends BaseExplorerService {
     transform: Function = identity,
   ) {
     const paramsFactory = this.gqlParamsFactory;
-    const isPropertyResolver = !ROOT_RESOLVER_TYPES.has(resolver.type);
+    const isPropertyResolver = !this.isRootTypeHandler(resolver);
     const mapArgs = createArgsMapper(instance.constructor, resolver.methodName);
-
-    if (this.fieldResolverEnhancersLookup === null) {
-      const enhancers = this.gqlOptions.fieldResolverEnhancers || [];
-      this.fieldResolverEnhancersLookup = {
-        guards: enhancers.includes('guards'),
-        filters: enhancers.includes('filters'),
-        interceptors: enhancers.includes('interceptors'),
-      };
-    }
-    const contextOptions =
-      resolver.methodName === FIELD_TYPENAME
-        ? { guards: false, filters: false, interceptors: false }
-        : isPropertyResolver
-        ? this.fieldResolverEnhancersLookup
-        : undefined;
+    const contextOptions = this.getContextOptions(resolver);
 
     if (isRequestScoped) {
       const filtersEnabled = !contextOptions || contextOptions.filters;
@@ -227,9 +238,12 @@ export class ResolversExplorerService extends BaseExplorerService {
             moduleRef.providers,
             contextId,
           );
+          // The decorated method, not the instance property: the resolver
+          // may have rebound it (e.g., in its constructor), which loses its
+          // metadata (guards, pipes, ...)
           const callback = this.externalContextCreator.create(
             contextInstance,
-            transform(contextInstance[resolver.methodName]),
+            transform(prototype[resolver.methodName]),
             resolver.methodName,
             PARAM_ARGS_METADATA,
             paramsFactory,
@@ -353,22 +367,69 @@ export class ResolversExplorerService extends BaseExplorerService {
     resolverMetadata: ResolverMetadata,
     instanceRef: Record<string, any>,
   ) {
+    // "filter" and "resolve" receive the arguments keyed the way the handler
+    // receives them (see "createContextCallback()")
+    const mapArgs = createArgsMapper(
+      instanceRef.constructor,
+      resolverMetadata.methodName,
+    );
+    // "resolve" becomes the resolver of the subscription field. graphql-js
+    // "execute()" calls it for a subscription operation sent as a plain
+    // request (e.g., an HTTP POST) without ever calling "subscribe", so
+    // without the guards (and other enhancers) of the handler. The events of
+    // a subscription are resolved with the context passed to "subscribe":
+    // only resolve those of an operation whose "subscribe" completed.
+    const subscribedContexts = new WeakSet<object>();
+    const createTrackedSubscribeContext = () => {
+      const subscribe = createSubscribeContext();
+      return async (...args: unknown[]) => {
+        const eventStream = await subscribe(...args);
+        if (isObjectLike(args[2])) {
+          subscribedContexts.add(args[2]);
+        }
+        return eventStream;
+      };
+    };
+    const resolve = subscriptionOptions?.resolve;
     const resolveFunc =
-      subscriptionOptions &&
-      subscriptionOptions.resolve &&
-      subscriptionOptions.resolve.bind(instanceRef);
+      resolve &&
+      ((payload: unknown, args: unknown, context: unknown, info: unknown) => {
+        if (!isObjectLike(context) || !subscribedContexts.has(context)) {
+          throw new GraphQLError(
+            `"${resolverMetadata.name}" can only be resolved for the events of an active subscription.`,
+            { extensions: { code: 'BAD_REQUEST' } },
+          );
+        }
+        return resolve.call(
+          instanceRef,
+          payload,
+          mapArgs ? mapArgs(args) : args,
+          context,
+          info,
+        );
+      });
     const baseCallbackMetadata = {
       resolve: resolveFunc,
     };
     if (subscriptionOptions && subscriptionOptions.filter) {
+      const filter = subscriptionOptions.filter;
       return {
         ...resolverMetadata,
         callback: {
           ...baseCallbackMetadata,
           subscribe: gqlAdapter.subscriptionWithFilter(
             instanceRef,
-            subscriptionOptions.filter,
-            createSubscribeContext,
+            mapArgs
+              ? function (this: unknown, payload, variables, context) {
+                  return filter.call(
+                    this,
+                    payload,
+                    mapArgs(variables),
+                    context,
+                  );
+                }
+              : filter,
+            createTrackedSubscribeContext,
           ),
         },
       };
@@ -377,7 +438,7 @@ export class ResolversExplorerService extends BaseExplorerService {
       ...resolverMetadata,
       callback: {
         ...baseCallbackMetadata,
-        subscribe: createSubscribeContext(),
+        subscribe: createTrackedSubscribeContext(),
       },
     };
   }
@@ -386,6 +447,7 @@ export class ResolversExplorerService extends BaseExplorerService {
     const modules = this.getModules(
       this.modulesContainer,
       this.gqlOptions.include || [],
+      true,
     );
 
     const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
@@ -491,26 +553,17 @@ export class ResolversExplorerService extends BaseExplorerService {
     instance: object,
     methodKey: string,
   ): FieldMiddleware[] {
+    // The decorated method (see "createContextCallback()")
+    const handler =
+      Object.getPrototypeOf(instance)?.[methodKey] ??
+      instance[methodKey as keyof typeof instance];
     const optionMiddleware: FieldMiddleware[] | undefined = Reflect.getMetadata(
       FIELD_RESOLVER_MIDDLEWARE_METADATA,
-      instance[methodKey as keyof typeof instance],
+      handler,
     );
     return (optionMiddleware ?? []).concat(
       getUseFieldMiddleware(instance, methodKey),
     );
-  }
-
-  private getContextId(gqlContext: Record<string | symbol, any>): ContextId {
-    const contextId = ContextIdFactory.getByRequest(gqlContext, ['req']);
-    if (!gqlContext[REQUEST_CONTEXT_ID as any]) {
-      Object.defineProperty(gqlContext, REQUEST_CONTEXT_ID, {
-        value: contextId,
-        enumerable: false,
-        configurable: false,
-        writable: false,
-      });
-    }
-    return contextId;
   }
 
   /**
@@ -560,6 +613,181 @@ export class ResolversExplorerService extends BaseExplorerService {
     }
 
     return true;
+  }
+
+  /**
+   * Whether the handler resolves a field of a root operation type rather than
+   * one of an object or interface type. The name of the type is not enough to
+   * tell: a code first object type can be named like a root type (e.g., a
+   * billing "Subscription"), and its resolver then declares it with a class.
+   */
+  private isRootTypeHandler(
+    resolver: ResolverMetadata | ExtractedResolverMetadata,
+  ): boolean {
+    return (
+      ROOT_RESOLVER_TYPES.has(resolver.type) &&
+      !(resolver as ExtractedResolverMetadata).isTypeReference
+    );
+  }
+
+  /**
+   * A "@Subscription()" handler or, in a schema first resolver of the
+   * "Subscription" type, any handler.
+   */
+  private isSubscriptionHandler(resolver: ResolverMetadata): boolean {
+    return (
+      resolver.type === SUBSCRIPTION_TYPE && this.isRootTypeHandler(resolver)
+    );
+  }
+
+  private getContextOptions(resolver: ResolverMetadata) {
+    if (this.fieldResolverEnhancersLookup === null) {
+      const enhancers = this.gqlOptions.fieldResolverEnhancers || [];
+      this.fieldResolverEnhancersLookup = {
+        guards: enhancers.includes('guards'),
+        filters: enhancers.includes('filters'),
+        interceptors: enhancers.includes('interceptors'),
+      };
+    }
+    if (resolver.methodName === FIELD_TYPENAME) {
+      return { guards: false, filters: false, interceptors: false };
+    }
+    if (this.isRootTypeHandler(resolver)) {
+      return undefined;
+    }
+    // The field resolvers of an object type named like a root type used to
+    // be bound as root handlers: keep all the enhancers on for them, so that
+    // a guard declared there keeps running, whatever "fieldResolverEnhancers"
+    return ROOT_RESOLVER_TYPES.has(resolver.type)
+      ? { guards: true, filters: true, interceptors: true }
+      : this.fieldResolverEnhancersLookup;
+  }
+
+  /**
+   * `ExternalContextCreator` silently leaves out an enhancer it cannot
+   * resolve, so a handler would run without guards, interceptors, pipes or
+   * filters it declares. Fail at startup instead when:
+   * - an enhancer is referenced by class, but Nest did not register it for
+   *   the provider: it does so when scanning a module, only for providers
+   *   declared as a class (directly or through `useClass`), and not for those
+   *   created with `useFactory` or `useValue`;
+   * - a request or transient-scoped global enhancer applies, but the provider
+   *   is not an entry provider, the only ones Nest binds those enhancers to.
+   *   A provider is one when the class, the token or the `useClass` class of
+   *   the provider is decorated with `@Resolver()`.
+   */
+  private assertEnhancersCanRun(
+    instance: object,
+    prototype: any,
+    wrapper: InstanceWrapper,
+    moduleRef: Module,
+    resolvers: ResolverMetadata[],
+  ) {
+    const providerName = String(wrapper.name);
+    const className = instance.constructor.name;
+    const enabledKeys = new Set<string>();
+
+    for (const resolver of resolvers) {
+      const { methodName } = resolver;
+      const contextOptions = this.getContextOptions(resolver);
+      const params: { pipes?: unknown[] }[] = Object.values(
+        Reflect.getMetadata(
+          PARAM_ARGS_METADATA,
+          instance.constructor,
+          methodName,
+        ) ?? {},
+      );
+      // The kinds of enhancers that run for the handler
+      const keys = [
+        (!contextOptions || contextOptions.guards) && GUARDS_METADATA,
+        (!contextOptions || contextOptions.interceptors) &&
+          INTERCEPTORS_METADATA,
+        (!contextOptions || contextOptions.filters) &&
+          EXCEPTION_FILTERS_METADATA,
+        params.length > 0 && PIPES_METADATA,
+      ].filter(Boolean) as string[];
+
+      const enhancers: unknown[] = keys
+        .flatMap((key) => {
+          enabledKeys.add(key);
+          return [
+            ...(Reflect.getMetadata(key, instance.constructor) ?? []),
+            ...(Reflect.getMetadata(key, prototype[methodName]) ?? []),
+          ];
+        })
+        .concat(params.flatMap((param) => param.pipes ?? []));
+
+      const unresolved = enhancers.filter(
+        (enhancer) =>
+          isFunction(enhancer) &&
+          !this.isEnhancerBound(enhancer as Type, wrapper, moduleRef),
+      ) as Type[];
+      if (unresolved.length > 0) {
+        const names = [...new Set(unresolved.map(({ name }) => `"${name}"`))];
+        throw new Error(
+          `The "${className}.${methodName}" GraphQL handler of the "${providerName}" provider references ${names.join(
+            ', ',
+          )} by class, but Nest did not register ${
+            names.length > 1 ? 'these enhancers' : 'this enhancer'
+          } for the provider, so ${
+            names.length > 1 ? 'they' : 'it'
+          } would never run. ` +
+            `Nest registers the enhancers referenced by class only for providers declared as a class: register the resolver as "${className}" or with "useClass: ${className}" instead of "useFactory" or "useValue", or pass enhancer instances instead of classes.`,
+        );
+      }
+    }
+
+    const isEntryProvider = moduleRef.entryProviders.includes(wrapper);
+    if (isEntryProvider) {
+      return;
+    }
+    const config = this.moduleRef.get(ApplicationConfig, { strict: false });
+    const [scopedEnhancer] = [
+      ...(enabledKeys.has(GUARDS_METADATA)
+        ? config.getGlobalRequestGuards()
+        : []),
+      ...(enabledKeys.has(INTERCEPTORS_METADATA)
+        ? config.getGlobalRequestInterceptors()
+        : []),
+      ...(enabledKeys.has(PIPES_METADATA)
+        ? config.getGlobalRequestPipes()
+        : []),
+      ...(enabledKeys.has(EXCEPTION_FILTERS_METADATA)
+        ? config.getGlobalRequestFilters()
+        : []),
+    ];
+    if (scopedEnhancer) {
+      throw new Error(
+        `The "${providerName}" provider of the "${
+          moduleRef.name
+        }" module hosts GraphQL handlers but is not an entry provider, so the request or transient-scoped global enhancer "${
+          scopedEnhancer.metatype?.name ?? scopedEnhancer.name
+        }" would not run for them. ` +
+          `Decorate the "${className}" class with "@Resolver()" and register it in the "providers" of the module as "${className}", with "useClass: ${className}", or with "${className}" as the token.`,
+      );
+    }
+  }
+
+  /**
+   * Whether `ExternalContextCreator` finds an instance of the enhancer for a
+   * handler of the provider: it looks it up in the module of the provider,
+   * where Nest registered it either for this provider (and so created the
+   * instances it needs, whatever its scope) or, if it is static, for another
+   * provider of the module.
+   */
+  private isEnhancerBound(
+    enhancer: Type,
+    wrapper: InstanceWrapper,
+    moduleRef: Module,
+  ): boolean {
+    const enhancerWrapper = moduleRef.injectables.get(enhancer);
+    if (!enhancerWrapper) {
+      return false;
+    }
+    return (
+      !!wrapper.getEnhancersMetadata()?.includes(enhancerWrapper) ||
+      (enhancerWrapper.isDependencyTreeStatic() && !enhancerWrapper.isTransient)
+    );
   }
 
   private assignResolverConstructorUniqueId(

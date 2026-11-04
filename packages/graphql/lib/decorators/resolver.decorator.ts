@@ -4,6 +4,7 @@ import { isFunction, isString } from '@nestjs/common/utils/shared.utils.js';
 import 'reflect-metadata';
 import { LazyMetadataStorage } from '../schema-builder/storages/lazy-metadata.storage.js';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
+import { RESOLVER_TYPE_REFERENCE_METADATA } from '../utils/extract-metadata.util.js';
 import {
   addResolverMetadata,
   getClassName,
@@ -105,9 +106,12 @@ export function Resolver(
     key?: string | symbol,
     descriptor?: any,
   ) => {
-    if (typeof target === 'function') {
-      SetMetadata(ENTRY_PROVIDER_WATERMARK, true)(target);
-    }
+    // On a method, mark the class that declares it: Nest binds the request
+    // or transient-scoped global enhancers to entry providers only
+    SetMetadata(
+      ENTRY_PROVIDER_WATERMARK,
+      true,
+    )(typeof target === 'function' ? target : target.constructor);
 
     const [nameOrType, resolverOptions] =
       typeof nameOrTypeOrOptions === 'object' && nameOrTypeOrOptions !== null
@@ -123,7 +127,16 @@ export function Resolver(
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       objectName && (name = objectName);
     }
-    addResolverMetadata(undefined, name, target, key, descriptor);
+    if (name) {
+      // Without a type, the one inherited from a parent resolver class (if
+      // any) must remain in effect rather than be shadowed by "undefined"
+      addResolverMetadata(undefined, name, target, key, descriptor);
+      SetMetadata(RESOLVER_TYPE_REFERENCE_METADATA, isFunction(nameOrType))(
+        target,
+        key,
+        descriptor,
+      );
+    }
 
     if (!isString(nameOrType)) {
       LazyMetadataStorage.store(target as Type<unknown>, () => {

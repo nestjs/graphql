@@ -22,6 +22,16 @@ export class PluginsExplorerService extends BaseExplorerService {
       return undefined;
     }
     const metadata = Reflect.getMetadata(PLUGIN_METADATA, instance.constructor);
-    return metadata ? instance : undefined;
+    if (!metadata) {
+      return undefined;
+    }
+    // Plugins are handed to Apollo Server once: the instance of a plugin that
+    // is not static is a placeholder whose constructor never ran
+    if (!wrapper.isDependencyTreeStatic() || wrapper.isTransient) {
+      throw new Error(
+        `"${instance.constructor.name}" plugin is request or transient-scoped, or depends on a request-scoped provider. Classes annotated with the "@Plugin()" decorator must be static (singleton).`,
+      );
+    }
+    return instance;
   }
 }
