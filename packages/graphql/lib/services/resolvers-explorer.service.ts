@@ -40,6 +40,7 @@ import { GqlParamtype } from '../enums/gql-paramtype.enum.js';
 import { Resolver } from '../enums/resolver.enum.js';
 import { GqlParamsFactory } from '../factories/params.factory.js';
 import {
+  FIELD_RESOLVER_COMPOSITION_METADATA,
   FIELD_RESOLVER_MIDDLEWARE_METADATA,
   FIELD_TYPENAME,
   GRAPHQL_MODULE_OPTIONS,
@@ -526,9 +527,13 @@ export class ResolversExplorerService extends BaseExplorerService {
     TArgs = { [argName: string]: any },
     TOutput = any,
   >(resolverFn: Function, instance: object, methodKey: string) {
+    const fieldMiddleware = this.getFieldResolverMiddleware(
+      instance,
+      methodKey,
+    );
     const middlewareFunctions = (
       this.gqlOptions?.buildSchemaOptions?.fieldMiddleware || []
-    ).concat(this.getFieldResolverMiddleware(instance, methodKey));
+    ).concat(fieldMiddleware);
 
     if (middlewareFunctions?.length === 0) {
       return resolverFn;
@@ -539,12 +544,20 @@ export class ResolversExplorerService extends BaseExplorerService {
       () =>
         resolverFn(...args);
 
-    return decorateFieldResolverWithMiddleware<
+    const decorated = decorateFieldResolverWithMiddleware<
       TSource,
       TContext,
       TArgs,
       TOutput
     >(originalResolveFnFactory, middlewareFunctions);
+    // Lets the middleware of the model field run between the global
+    // middleware and the handler's own (see "withModelFieldMiddleware()")
+    Reflect.defineMetadata(
+      FIELD_RESOLVER_COMPOSITION_METADATA,
+      { resolve: resolverFn, middleware: fieldMiddleware },
+      decorated,
+    );
+    return decorated;
   }
 
   /**

@@ -75,6 +75,10 @@ export class TypeMetadataStorageHost {
     this.fieldResolvers.push(metadata);
   }
 
+  getFieldResolversMetadata(): FieldResolverMetadata[] {
+    return this.fieldResolvers;
+  }
+
   addArgsMetadata(metadata: ClassMetadata) {
     this.metadataByTargetCollection.get(metadata.target).argumentType =
       metadata;

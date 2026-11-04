@@ -143,17 +143,16 @@ describe('@UseFieldMiddleware()', () => {
       });
     });
 
-    it('should run the middleware of a model field overridden by a field resolver once', async () => {
+    it('should run the global middleware, then the model field middleware, then the field resolver middleware, once each', async () => {
       const data = await query(
         app,
-        '{ item { overridden } payslip { owner } }',
+        '{ item { overridden } payslip { owner } memo { owner } }',
       );
-      for (const value of [data.item.overridden, data.payslip.owner]) {
-        expect(value.match(/global\(/g)).toHaveLength(1);
-        expect(value).toMatch(/resolver\(value\)\)+$/);
-      }
-      expect(data.item.overridden).toContain('option(decorator(');
-      expect(data.payslip.owner).toContain('payslip(');
+      expect(data).toEqual({
+        item: { overridden: 'global(option(decorator(resolver(value))))' },
+        payslip: { owner: 'global(payslip(resolver(value)))' },
+        memo: { owner: 'global(document(resolver(value)))' },
+      });
     });
 
     it('should run field middleware before field resolver enhancers', async () => {

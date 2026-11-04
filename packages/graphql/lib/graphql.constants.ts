@@ -39,3 +39,5 @@ export const GRAPHQL_SDL_FILE_HEADER = `\
 `;
 
 export const GRAPHQL_SDL_FILE_END = '\n';
+export const FIELD_RESOLVER_COMPOSITION_METADATA =
+  'graphql:field_resolver_composition';

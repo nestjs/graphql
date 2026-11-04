@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { type Mock, vi } from 'vitest';
 
@@ -177,6 +178,76 @@ describe('GraphQLFederationFactory', () => {
       const queryType = schema.getQueryType() as GraphQLObjectType;
       const [maxDiscount] = queryType.getFields().report.args;
       expect(maxDiscount.defaultValue).toBe(0.2);
+    });
+
+    describe('with "inheritResolversFromInterfaces"', () => {
+      it.each(['Node & PrivateNode', 'PrivateNode & Node'])(
+        'should inherit the resolver of the most specific interface (implements %s)',
+        async (interfaces) => {
+          resolverExplorer.explore.mockReturnValueOnce({
+            Node: { owner: () => 'Node' },
+            PrivateNode: { owner: () => 'PrivateNode' },
+          });
+          scalarExplorer.explore.mockReturnValueOnce([]);
+
+          const schema = await graphqlFederationFactory.generateSchema({
+            inheritResolversFromInterfaces: true,
+            typeDefs: `
+              interface Node { owner: String }
+              interface PrivateNode implements Node { owner: String }
+              type Invoice implements ${interfaces} { owner: String }
+              type Query { invoice: Invoice }
+            `,
+          });
+          const invoice = schema.getType('Invoice') as GraphQLObjectType;
+
+          expect(invoice.getFields().owner.resolve(null, {}, null, null)).toBe(
+            'PrivateNode',
+          );
+        },
+      );
+
+      it('should keep the own resolver of a type', async () => {
+        resolverExplorer.explore.mockReturnValueOnce({
+          PrivateNode: { owner: () => 'PrivateNode' },
+          Invoice: { owner: () => 'Invoice' },
+        });
+        scalarExplorer.explore.mockReturnValueOnce([]);
+
+        const schema = await graphqlFederationFactory.generateSchema({
+          inheritResolversFromInterfaces: true,
+          typeDefs: `
+            interface PrivateNode { owner: String }
+            type Invoice implements PrivateNode { owner: String }
+            type Query { invoice: Invoice }
+          `,
+        });
+        const invoice = schema.getType('Invoice') as GraphQLObjectType;
+
+        expect(invoice.getFields().owner.resolve(null, {}, null, null)).toBe(
+          'Invoice',
+        );
+      });
+    });
+
+    it('should warn that the "directiveResolvers" option is ignored', async () => {
+      const warn = vi
+        .spyOn(Logger.prototype, 'warn')
+        .mockImplementation(() => undefined);
+      resolverExplorer.explore.mockReturnValueOnce({});
+      scalarExplorer.explore.mockReturnValueOnce([]);
+
+      try {
+        await graphqlFederationFactory.generateSchema({
+          directiveResolvers: { auth: (next: () => unknown) => next() },
+          typeDefs: 'type Query { payroll: String }',
+        });
+        expect(warn).toHaveBeenCalledWith(
+          expect.stringContaining('"directiveResolvers" option is ignored'),
+        );
+      } finally {
+        warn.mockRestore();
+      }
     });
   });
 });

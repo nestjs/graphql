@@ -3,6 +3,7 @@ import { graphql, GraphQLSchema } from 'graphql';
 import { vi } from 'vitest';
 import {
   Field,
+  FIELD_RESOLVER_COMPOSITION_METADATA,
   FieldMiddleware,
   GraphQLAstExplorer,
   GraphQLFactory,
@@ -62,7 +63,7 @@ function createFieldResolver(
   );
   if (composition) {
     Reflect.defineMetadata(
-      'graphql:field_resolver_composition',
+      FIELD_RESOLVER_COMPOSITION_METADATA,
       { resolve, middleware },
       callback,
     );
