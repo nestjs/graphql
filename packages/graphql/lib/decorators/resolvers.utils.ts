@@ -1,4 +1,5 @@
 import { SetMetadata, Type } from '@nestjs/common';
+import { ENTRY_PROVIDER_WATERMARK } from '@nestjs/common/constants.js';
 import { isFunction, isString } from '@nestjs/common/utils/shared.utils.js';
 import { Resolver } from '../enums/resolver.enum.js';
 import {
@@ -21,6 +22,12 @@ export function addResolverMetadata(
     descriptor,
   );
   SetMetadata(RESOLVER_NAME_METADATA, name)(target, key, descriptor);
+  if (key && typeof target === 'object') {
+    // A class that declares handlers (e.g., "@Injectable()" with "@Query()"
+    // methods, without "@Resolver()") is an entry provider too: Nest binds
+    // request or transient-scoped global enhancers to entry providers only
+    SetMetadata(ENTRY_PROVIDER_WATERMARK, true)(target.constructor);
+  }
 }
 
 export function getClassName(nameOrType: string | Function | Type<any>) {

@@ -430,7 +430,8 @@ export abstract class ApolloBaseDriver<
           variables: requestContext.request?.variables,
           context: requestContext.contextValue,
         };
-        const state = host.onRequestStart(hookContext);
+        // A failing start hook fails the operation instead of being ignored
+        const state = await host.onRequestStart(hookContext);
 
         return {
           async willSendResponse(endRequestContext: any) {

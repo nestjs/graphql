@@ -90,7 +90,7 @@ export function PartialType<T>(
         defaultValue: omitDefaultValues ? undefined : item.options.defaultValue,
       })(PartialObjectType.prototype, item.name);
       applyPartialDecoratorFn(PartialObjectType, item.name);
-      applyFieldDecorators(PartialObjectType, item);
+      applyFieldDecorators(PartialObjectType, item, classRef);
     });
   }
   applyFields(fields);

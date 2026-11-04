@@ -65,6 +65,32 @@ describe('Request lifecycle hooks', () => {
     expect(endCalls[0].errors?.length).toBeGreaterThan(0);
   });
 
+  it('should await an async start hook and hand its result to the end hook', async () => {
+    const resolverDecoratorHost = app.get(ResolverDecoratorHost);
+    resolverDecoratorHost.setOnRequestStartHook(async () => ({ startedAt: 2 }));
+
+    await request(app.getHttpServer())
+      .post('/graphql')
+      .send({ query: '{ getCats { id } }' })
+      .expect(200);
+
+    expect(endCalls[0].state).toEqual({ startedAt: 2 });
+  });
+
+  it('should fail the operation when an async start hook rejects', async () => {
+    const resolverDecoratorHost = app.get(ResolverDecoratorHost);
+    resolverDecoratorHost.setOnRequestStartHook(async () => {
+      throw new Error('hook failed');
+    });
+
+    const response = await request(app.getHttpServer())
+      .post('/graphql')
+      .send({ query: '{ getCats { id } }' });
+
+    expect(response.body.data).toBeUndefined();
+    expect(response.body.errors?.length).toBeGreaterThan(0);
+  });
+
   afterEach(async () => {
     await app.close();
   });

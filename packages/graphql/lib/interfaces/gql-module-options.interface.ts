@@ -155,9 +155,10 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
   introspection?: boolean;
 
   /**
-   * If `true`, the GraphQL server will stop during `onApplicationShutdown`
-   * instead of `onModuleDestroy`. This allows the server to keep accepting
-   * requests during `beforeApplicationShutdown`, enabling graceful shutdown.
+   * If `true`, the GraphQL server will stop after `beforeApplicationShutdown`
+   * (right before the HTTP server closes) instead of during `onModuleDestroy`.
+   * This allows the server to keep accepting requests during
+   * `beforeApplicationShutdown`, enabling graceful shutdown.
    * @default false
    */
   stopOnApplicationShutdown?: boolean;

@@ -57,7 +57,7 @@ export function PickType<T, K extends keyof T>(
           PickObjectType.prototype,
           item.name,
         );
-        applyFieldDecorators(PickObjectType, item);
+        applyFieldDecorators(PickObjectType, item, classRef);
       });
   }
   applyFields(fields);

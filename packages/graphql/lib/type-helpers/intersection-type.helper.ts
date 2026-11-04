@@ -6,13 +6,15 @@ import {
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
 import { Field, FieldOptions } from '../decorators/index.js';
-import { getUseFieldMiddleware } from '../decorators/use-field-middleware.decorator.js';
 import { FIELD_MIDDLEWARE_METADATA } from '../graphql.constants.js';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface.js';
 import { MetadataLoader } from '../plugin/metadata-loader.js';
 import { PropertyMetadata } from '../schema-builder/metadata/index.js';
 import { getFieldsAndDecoratorForType } from '../schema-builder/utils/get-fields-and-decorator.util.js';
-import { applyFieldDecorators } from './type-helpers.utils.js';
+import {
+  applyFieldDecorators,
+  getSourceFieldMiddleware,
+} from './type-helpers.utils.js';
 
 /**
  * Options of a property declared by both classes. The result is typed
@@ -66,10 +68,12 @@ function intersectFieldMiddleware(
   targetClass: Function,
   itemA: PropertyMetadata,
   itemB: PropertyMetadata,
+  classARef: Function,
+  classBRef: Function,
 ) {
   const middleware = new Set([
-    ...getUseFieldMiddleware(itemA.target?.prototype, itemA.name),
-    ...getUseFieldMiddleware(itemB.target?.prototype, itemB.name),
+    ...getSourceFieldMiddleware(itemA, classARef),
+    ...getSourceFieldMiddleware(itemB, classBRef),
   ]);
   if (middleware.size > 0) {
     Reflect.defineMetadata(
@@ -135,11 +139,17 @@ export function IntersectionType<A, B>(
           ? intersectFieldOptions(item.options, sharedItem.options)
           : { ...item.options },
       )(IntersectionObjectType.prototype, item.name);
-      applyFieldDecorators(IntersectionObjectType, item);
+      applyFieldDecorators(IntersectionObjectType, item, classARef);
 
       if (sharedItem) {
-        applyFieldDecorators(IntersectionObjectType, sharedItem);
-        intersectFieldMiddleware(IntersectionObjectType, item, sharedItem);
+        applyFieldDecorators(IntersectionObjectType, sharedItem, classBRef);
+        intersectFieldMiddleware(
+          IntersectionObjectType,
+          item,
+          sharedItem,
+          classARef,
+          classBRef,
+        );
       }
     });
     fieldsB
@@ -149,7 +159,7 @@ export function IntersectionType<A, B>(
           IntersectionObjectType.prototype,
           item.name,
         );
-        applyFieldDecorators(IntersectionObjectType, item);
+        applyFieldDecorators(IntersectionObjectType, item, classBRef);
       });
   }
   applyFields(fieldsA, fieldsB);

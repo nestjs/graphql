@@ -368,10 +368,12 @@ export class ResolversExplorerService extends BaseExplorerService {
     instanceRef: Record<string, any>,
   ) {
     // "filter" and "resolve" receive the arguments keyed the way the handler
-    // receives them (see "createContextCallback()")
+    // receives them (see "createContextCallback()"). The schema-named keys
+    // are kept as well, so that callbacks written against them keep working.
     const mapArgs = createArgsMapper(
       instanceRef.constructor,
       resolverMetadata.methodName,
+      { keepSchemaNames: true },
     );
     // "resolve" becomes the resolver of the subscription field. graphql-js
     // "execute()" calls it for a subscription operation sent as a plain

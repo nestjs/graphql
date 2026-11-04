@@ -56,7 +56,7 @@ export function OmitType<T, K extends keyof T>(
           OmitObjectType.prototype,
           item.name,
         );
-        applyFieldDecorators(OmitObjectType, item);
+        applyFieldDecorators(OmitObjectType, item, classRef);
       });
   }
   applyFields(fields);

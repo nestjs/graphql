@@ -96,4 +96,17 @@ describe('@Resolver decorator', () => {
       true,
     );
   });
+
+  it('should mark a class that declares root handlers without "@Resolver()" as an entry provider', () => {
+    class HealthService {
+      @Query(() => String)
+      health() {
+        return 'ok';
+      }
+    }
+
+    expect(Reflect.getMetadata(ENTRY_PROVIDER_WATERMARK, HealthService)).toBe(
+      true,
+    );
+  });
 });

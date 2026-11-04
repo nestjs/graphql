@@ -37,10 +37,9 @@ export function registerMercuriusRequestHooks(
         ...extractRequestPayload(context),
         context,
       };
-      context[REQUEST_HOOK_STATE] = {
-        hookContext,
-        state: resolverDecoratorHost.onRequestStart(hookContext),
-      };
+      // A failing start hook fails the operation instead of being ignored
+      const state = await resolverDecoratorHost.onRequestStart(hookContext);
+      context[REQUEST_HOOK_STATE] = { hookContext, state };
     },
   );
 

@@ -1,7 +1,10 @@
 import { Logger, Type } from '@nestjs/common';
 import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import { addFieldMetadata } from '../../decorators/index.js';
-import { RESOLVER_TYPE_METADATA } from '../../graphql.constants.js';
+import {
+  HIDE_FIELD_METADATA,
+  RESOLVER_TYPE_METADATA,
+} from '../../graphql.constants.js';
 import { METADATA_FACTORY_NAME } from '../../plugin/plugin-constants.js';
 import { MetadataByTargetCollection } from '../collections/index.js';
 import { CannotDetermineHostTypeError } from '../errors/cannot-determine-host-type.error.js';
@@ -351,7 +354,9 @@ export class TypeMetadataStorageHost {
       if (!metadata) {
         continue;
       }
-      const properties = Object.keys(metadata);
+      const properties = Object.keys(metadata).filter(
+        (key) => !Reflect.getOwnMetadata(HIDE_FIELD_METADATA, prototype, key),
+      );
       properties.forEach((key) => {
         if (metadata[key].type) {
           const { type, ...options } = metadata[key];

@@ -122,13 +122,17 @@ function getMappedProps(classRef: Function): MappedProp[] {
  * original `value` keeps chained renames (a property whose schema name is
  * another property's class name) from overwriting each other.
  */
-export function mapArgsToProps(value: any, classRef: Function): any {
+export function mapArgsToProps(
+  value: any,
+  classRef: Function,
+  keepSchemaNames = false,
+): any {
   const mappedProps = getMappedProps(classRef);
   if (!mappedProps.length || !value || typeof value !== 'object') {
     return value;
   }
   if (Array.isArray(value)) {
-    return value.map((item) => mapArgsToProps(item, classRef));
+    return value.map((item) => mapArgsToProps(item, classRef, keepSchemaNames));
   }
   const renamed = new Set(
     mappedProps
@@ -138,16 +142,18 @@ export function mapArgsToProps(value: any, classRef: Function): any {
   const mapped: Record<string, any> = {};
 
   for (const key of Object.keys(value)) {
-    if (!renamed.has(key)) {
+    if (keepSchemaNames || !renamed.has(key)) {
       mapped[key] = value[key];
     }
   }
   for (const { schemaName, name, typeRef } of mappedProps) {
-    if (!(schemaName in value)) {
+    // Own keys only: an omitted argument must not be read from
+    // "Object.prototype" (e.g., a field named "constructor")
+    if (!Object.prototype.hasOwnProperty.call(value, schemaName)) {
       continue;
     }
     mapped[name] = typeRef
-      ? mapArgsToProps(value[schemaName], typeRef)
+      ? mapArgsToProps(value[schemaName], typeRef, keepSchemaNames)
       : value[schemaName];
   }
   return mapped;
@@ -184,7 +190,16 @@ function resolveArgClass(
 export function createArgsMapper(
   target: Function,
   methodName: string,
+  options: {
+    /**
+     * Keep the schema-named keys next to the property names (e.g., for
+     * subscription "filter" and "resolve" callbacks written against the
+     * schema names before they received mapped arguments).
+     */
+    keepSchemaNames?: boolean;
+  } = {},
 ): ((args: any) => any) | null {
+  const { keepSchemaNames = false } = options;
   const argsTypes: ArgsTypeMetadata[] = Reflect.getMetadata(
     ARGS_TYPE_METADATA,
     target,
@@ -217,13 +232,17 @@ export function createArgsMapper(
 
     for (const { property, classRef } of entries) {
       if (!property) {
-        result = mapArgsToProps(result, classRef);
+        result = mapArgsToProps(result, classRef, keepSchemaNames);
         continue;
       }
-      if (!(property in result)) {
+      if (!Object.prototype.hasOwnProperty.call(result, property)) {
         continue;
       }
-      const mappedValue = mapArgsToProps(result[property], classRef);
+      const mappedValue = mapArgsToProps(
+        result[property],
+        classRef,
+        keepSchemaNames,
+      );
       if (mappedValue !== result[property]) {
         result = result === args ? { ...result } : result;
         result[property] = mappedValue;

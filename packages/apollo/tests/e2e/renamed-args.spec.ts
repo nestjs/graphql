@@ -487,6 +487,17 @@ class SubscriptionArgsResolver {
   probed(@Args() _args: SomeArgsClass) {
     return pubSub.asyncIterableIterator('probed');
   }
+
+  @Subscription(() => Probe, {
+    // written against the schema name, before the callbacks received mapped
+    // arguments: it must keep restricting the events
+    filter: (payload, variables: { some_arg?: string }) =>
+      !!variables.some_arg && payload.probedLegacy === variables.some_arg,
+    resolve: (payload): Probe => ({ json: payload.probedLegacy }),
+  })
+  probedLegacy(@Args() _args: SomeArgsClass) {
+    return pubSub.asyncIterableIterator('probedLegacy');
+  }
 }
 
 describe('Renamed args of a subscription', () => {
@@ -528,8 +539,30 @@ describe('Renamed args of a subscription', () => {
     // the filter has to let "a" through and withhold "b"
     expect((await delivered).value.data).toEqual({
       probed: {
-        json: JSON.stringify({ payload: 'a', args: { someArg: 'a' } }),
+        json: JSON.stringify({
+          payload: 'a',
+          args: { some_arg: 'a', someArg: 'a' },
+        }),
       },
+    });
+    await stream.return();
+  });
+
+  it('should keep the schema names for callbacks that read them', async () => {
+    const { schema } = app.get(GraphQLSchemaHost);
+    const stream = (await subscribe({
+      schema,
+      document: parse('subscription { probedLegacy(some_arg: "a") { json } }'),
+      contextValue: {},
+    })) as AsyncIterableIterator<ExecutionResult>;
+
+    const delivered = stream.next();
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    await pubSub.publish('probedLegacy', { probedLegacy: 'b' });
+    await pubSub.publish('probedLegacy', { probedLegacy: 'a' });
+
+    expect((await delivered).value.data).toEqual({
+      probedLegacy: { json: 'a' },
     });
     await stream.return();
   });

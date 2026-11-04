@@ -19,6 +19,7 @@ export const FIELD_TYPENAME = '__resolveType';
 export const GRAPHQL_MODULE_OPTIONS = 'GqlModuleOptions';
 export const GRAPHQL_MODULE_ID = 'GqlModuleId';
 export const SUBSCRIPTION_TYPE = 'Subscription';
+export const HIDE_FIELD_METADATA = 'graphql:hide_field';
 
 export const DEFINITIONS_FILE_HEADER = `
 /*
