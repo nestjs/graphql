@@ -31,9 +31,14 @@ export function printSubgraphSdl(typeDefs: DocumentNode): string {
       return !FEDERATION_DIRECTIVE_NAMES.includes(definition.name.value);
     }
     if (definition.kind === Kind.SCHEMA_DEFINITION) {
-      return definition.operationTypes.some(
-        ({ operation, type }) =>
-          type.name.value !== DEFAULT_ROOT_TYPE_NAMES[operation],
+      // Gateways assume the default root type names, but not the directives
+      // applied to the schema (e.g., the Federation 2 "@link")
+      return (
+        !!definition.directives?.length ||
+        definition.operationTypes.some(
+          ({ operation, type }) =>
+            type.name.value !== DEFAULT_ROOT_TYPE_NAMES[operation],
+        )
       );
     }
     return !(

@@ -1,10 +1,12 @@
+import { mergeResolvers } from '@graphql-tools/merge';
 import { mergeSchemas, addResolversToSchema } from '@graphql-tools/schema';
-import { printSchemaWithDirectives } from '@graphql-tools/utils';
+import { IResolvers, printSchemaWithDirectives } from '@graphql-tools/utils';
 import { Injectable } from '@nestjs/common';
 import { loadPackage } from '@nestjs/common/utils/load-package.util.js';
 import { isString } from '@nestjs/common/utils/shared.utils.js';
 import {
   GraphQLAbstractType,
+  GraphQLArgument,
   GraphQLField,
   GraphQLInputField,
   GraphQLInputObjectType,
@@ -19,15 +21,18 @@ import {
   isInterfaceType,
   isObjectType,
   isScalarType,
+  isSpecifiedScalarType,
   isUnionType,
   specifiedDirectives,
 } from 'graphql';
 import { gql } from 'graphql-tag';
 import { createRequire } from 'module';
+import { RESOLVER_REFERENCE_KEY } from '../graphql.constants.js';
 import { GraphQLSchemaBuilder } from '../graphql-schema.builder.js';
 import {
   AutoSchemaFileValue,
   BuildFederatedSchemaOptions,
+  BuildSchemaOptions,
   FederationConfig,
   FederationVersion,
   GqlModuleOptions,
@@ -36,7 +41,6 @@ import {
   ResolversExplorerService,
   ScalarsExplorerService,
 } from '../services/index.js';
-import { extend } from '../utils/index.js';
 import { backfillDefaultValues } from '../utils/backfill-default-values.util.js';
 import { transformSchema } from '../utils/transform-schema.util.js';
 import { federationV1Directives } from './federation-directives.js';
@@ -91,7 +95,7 @@ export class GraphQLFederationFactory {
         () => import('@apollo/subgraph'),
       );
 
-    const resolvers = this.getResolvers(options.resolvers);
+    const resolvers = await this.getResolvers(options);
     return addResolversToSchema({
       resolverValidationOptions: options.resolverValidationOptions,
       inheritResolversFromInterfaces: options.inheritResolversFromInterfaces,
@@ -101,7 +105,7 @@ export class GraphQLFederationFactory {
           typeDefs: gql`
             ${options.typeDefs}
           `,
-          resolvers,
+          resolvers: this.getReferenceResolvers(resolvers),
         },
       ]),
     });
@@ -145,11 +149,11 @@ export class GraphQLFederationFactory {
       typeDefs = typeDefsDecorator.decorate(typeDefs, federationOptions);
     }
 
-    const resolvers = this.getResolvers(options.resolvers);
+    const resolvers = await this.getResolvers(options);
     let executableSchema: GraphQLSchema = addResolversToSchema({
       schema: buildFederatedSchema({
         typeDefs: gql(typeDefs),
-        resolvers,
+        resolvers: this.getReferenceResolvers(resolvers),
       }),
       resolvers,
       resolverValidationOptions: options.resolverValidationOptions,
@@ -170,19 +174,45 @@ export class GraphQLFederationFactory {
     return schema;
   }
 
-  private getResolvers(optionResolvers: any) {
-    optionResolvers = Array.isArray(optionResolvers)
-      ? optionResolvers
-      : [optionResolvers];
-    return this.extendResolvers([
+  /**
+   * Collects the resolvers the same way "GraphQLFactory" does: the discovered
+   * resolvers are passed through "transformResolvers" and then merged with the
+   * "resolvers" option field by field, so that a type named in that option
+   * keeps the (enhancer-wrapped) field resolvers discovered for it.
+   */
+  private async getResolvers<T extends GqlModuleOptions>(
+    options: T,
+  ): Promise<IResolvers> {
+    const rawResolvers: IResolvers[] = [
+      ...(this.scalarsExplorerService.explore() as IResolvers[]),
       this.resolversExplorerService.explore(),
-      ...this.scalarsExplorerService.explore(),
-      ...optionResolvers,
-    ]);
+    ];
+    const typesResolvers = options.transformResolvers
+      ? await options.transformResolvers(rawResolvers)
+      : rawResolvers;
+
+    return mergeResolvers(
+      [typesResolvers, options.resolvers].flat().filter(Boolean),
+    );
   }
 
-  private extendResolvers(resolvers: any[]) {
-    return resolvers.reduce((prev, curr) => extend(prev, curr), {});
+  /**
+   * "@apollo/subgraph" attaches resolvers to the schema in place, so custom
+   * scalars attached there would already be in effect when
+   * "addResolversToSchema" converts the (still raw) default values of the
+   * type definitions, running them through "serialize" before "parseValue".
+   * Hence only "__resolveReference", which "addResolversToSchema" cannot
+   * attach, is handed over to it.
+   */
+  private getReferenceResolvers(resolvers: IResolvers): Record<string, any> {
+    return Object.fromEntries(
+      Object.entries(resolvers)
+        .filter(([, typeResolvers]) => typeResolvers?.[RESOLVER_REFERENCE_KEY])
+        .map(([typeName, typeResolvers]) => [
+          typeName,
+          { [RESOLVER_REFERENCE_KEY]: typeResolvers[RESOLVER_REFERENCE_KEY] },
+        ]),
+    );
   }
 
   private overrideOrExtendResolvers(
@@ -190,7 +220,7 @@ export class GraphQLFederationFactory {
     autoGeneratedSchema: GraphQLSchema,
     printSchema: (schema: GraphQLSchema) => string,
   ): GraphQLSchema {
-    return transformSchema(executableSchema, (type) => {
+    const schema = transformSchema(executableSchema, (type) => {
       if (isUnionType(type) && type.name !== '_Entity') {
         return this.overrideFederatedResolveType(type, autoGeneratedSchema);
       } else if (isInterfaceType(type)) {
@@ -237,7 +267,16 @@ export class GraphQLFederationFactory {
             value.astNode = field.astNode;
 
             if (!value.resolve) {
-              value.resolve = field.resolve;
+              /**
+               * Inherit "resolve()" functions from implemented interfaces
+               * (as "GraphQLFactory" does, the last interface wins)
+               */
+              const interfaceResolve = type
+                .getInterfaces()
+                .map((interfaceRef) => interfaceRef.getFields()[key]?.resolve)
+                .filter(Boolean)
+                .pop();
+              value.resolve = interfaceResolve ?? field.resolve;
             }
           },
         );
@@ -252,10 +291,9 @@ export class GraphQLFederationFactory {
           ...autoGeneratedObjectType.extensions,
         };
         return type;
-      } else if (
-        isScalarType(type) &&
-        (type.name === 'DateTime' || type.name === 'Timestamp')
-      ) {
+      } else if (isScalarType(type) && !isSpecifiedScalarType(type)) {
+        // Scalars rebuilt from the printed SDL lose their implementation
+        // (e.g., "DateTime", "Timestamp" or any scalar from "scalarsMap")
         const autoGeneratedScalar = autoGeneratedSchema.getType(
           type.name,
         ) as GraphQLScalarType;
@@ -273,6 +311,12 @@ export class GraphQLFederationFactory {
       }
       return type;
     });
+    // The federated schema was built from the printed SDL, so its default
+    // values were coerced with the enums and scalars of that schema (an enum
+    // value is its name, a "DateTime" stays a string). Now that the
+    // auto-generated types are back in place, put the declared defaults back.
+    restoreDefaultValues(autoGeneratedSchema, schema);
+    return schema;
   }
 
   /**
@@ -356,15 +400,27 @@ export class GraphQLFederationFactory {
         directives.push(...buildSchemaOptions.directives);
       }
 
+      // Same options as "GraphQLSchemaBuilder.build()" plus the federation directives
       return await this.gqlSchemaBuilder.generateSchema(
         resolvers,
         autoSchemaFile,
         {
           ...buildSchemaOptions,
           directives,
-          scalarsMap,
+          scalarsMap: [
+            ...(buildSchemaOptions.scalarsMap ?? []),
+            ...scalarsMap.filter(
+              ({ type }) =>
+                buildSchemaOptions.scalarsMap?.every(
+                  (item) => item.type !== type,
+                ) ?? true,
+            ),
+          ],
           skipCheck: true,
-        },
+          // Pass include modules for type filtering in Code First approach
+          // This property is handled internally by GraphQLSchemaFactory
+          includeModules: options.include,
+        } as BuildSchemaOptions & { includeModules?: Function[] },
         options.sortSchema,
         options.transformAutoSchemaFile && options.transformSchema,
         await this.getFederationSchemaPrinter(autoSchemaFile),
@@ -445,6 +501,83 @@ export class GraphQLFederationFactory {
     return false;
   }
 }
+
+function restoreDefaultValues(
+  autoGeneratedSchema: GraphQLSchema,
+  schema: GraphQLSchema,
+) {
+  for (const directive of schema.getDirectives()) {
+    const autoGeneratedDirective = autoGeneratedSchema.getDirective(
+      directive.name,
+    );
+    if (autoGeneratedDirective) {
+      restoreArgDefaultValues(autoGeneratedDirective.args, directive.args);
+    }
+  }
+
+  for (const type of Object.values(schema.getTypeMap())) {
+    const autoGeneratedType = autoGeneratedSchema.getType(type.name);
+    if (
+      (isObjectType(type) || isInterfaceType(type)) &&
+      (isObjectType(autoGeneratedType) || isInterfaceType(autoGeneratedType))
+    ) {
+      const autoGeneratedFields = autoGeneratedType.getFields();
+      for (const [key, field] of Object.entries(type.getFields())) {
+        const autoGeneratedField = autoGeneratedFields[key];
+        if (autoGeneratedField) {
+          restoreArgDefaultValues(autoGeneratedField.args, field.args);
+        }
+      }
+    } else if (
+      isInputObjectType(type) &&
+      isInputObjectType(autoGeneratedType)
+    ) {
+      const autoGeneratedFields = autoGeneratedType.getFields();
+      for (const [key, field] of Object.entries(type.getFields())) {
+        const autoGeneratedField = autoGeneratedFields[key];
+        if (autoGeneratedField) {
+          restoreDefaultValue(autoGeneratedField, field);
+        }
+      }
+    }
+  }
+}
+
+function restoreArgDefaultValues(
+  source: ReadonlyArray<GraphQLArgument>,
+  target: ReadonlyArray<GraphQLArgument>,
+) {
+  for (const arg of target) {
+    const sourceArg = source.find(({ name }) => name === arg.name);
+    if (sourceArg) {
+      restoreDefaultValue(sourceArg, arg);
+    }
+  }
+}
+
+function restoreDefaultValue(
+  source: GraphQLArgument | GraphQLInputField,
+  target: GraphQLArgument | GraphQLInputField,
+) {
+  if (source.defaultValue === undefined) {
+    return;
+  }
+  target.defaultValue = source.defaultValue;
+
+  // graphql v17 reads argument and input field defaults from the `default`
+  // property (see "backfillDefaultValues")
+  const sourceHolder = source as DefaultValueHolder;
+  const targetHolder = target as DefaultValueHolder;
+  if ('default' in targetHolder) {
+    targetHolder.default = sourceHolder.default ?? {
+      value: source.defaultValue,
+    };
+  }
+}
+
+type DefaultValueHolder = (GraphQLArgument | GraphQLInputField) & {
+  default?: { value: unknown };
+};
 
 function copyCoercionMethods(
   source: GraphQLScalarType,

@@ -21,4 +21,12 @@ export class OrphanedReferenceRegistry {
   getAll(): Function[] {
     return [...this.registry.values()];
   }
+
+  /**
+   * Clear all registered references.
+   * Used when generating multiple schemas with different module configurations.
+   */
+  clear() {
+    this.registry.clear();
+  }
 }

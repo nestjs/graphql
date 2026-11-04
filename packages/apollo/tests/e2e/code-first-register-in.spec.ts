@@ -3,12 +3,20 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { Test } from '@nestjs/testing';
 import { ApolloServer } from '@apollo/server';
 import { gql } from 'graphql-tag';
-import { ApolloDriver, ApolloDriverConfig } from '../../lib/index.js';
+import {
+  ApolloDriver,
+  ApolloDriverConfig,
+  ApolloFederationDriver,
+} from '../../lib/index.js';
+import { Product } from '../code-first-register-in/products/product.model.js';
 import { ProductsModule } from '../code-first-register-in/products/products.module.js';
 import { UsersModule } from '../code-first-register-in/users/users.module.js';
 import { expectSingleResult } from '../utils/assertion-utils.js';
 
-const buildApp = async (include?: Function[]) => {
+const buildApp = async (
+  include?: Function[],
+  options: ApolloDriverConfig = {},
+) => {
   const moduleRef = await Test.createTestingModule({
     imports: [
       UsersModule,
@@ -18,6 +26,7 @@ const buildApp = async (include?: Function[]) => {
         autoSchemaFile: true,
         includeStacktraceInErrorResponses: false,
         ...(include ? { include } : {}),
+        ...options,
       }),
     ],
   }).compile();
@@ -136,6 +145,32 @@ describe('Code-first - registerIn', () => {
       expectSingleResult(response).toEqual({
         createUser: { id: '2', name: 'Grace' },
       });
+    });
+  });
+
+  describe('include: [UsersModule] (federation)', () => {
+    let app: INestApplication;
+    let apolloClient: ApolloServer;
+
+    beforeAll(async () => {
+      ({ app, apolloClient } = await buildApp([UsersModule], {
+        driver: ApolloFederationDriver,
+        buildSchemaOptions: { orphanedTypes: [Product] },
+      }));
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('should expose User type', async () => {
+      (await queryTypeName(apolloClient, 'User')).toEqual({
+        __type: { name: 'User' },
+      });
+    });
+
+    it('should NOT expose Product type', async () => {
+      (await queryTypeName(apolloClient, 'Product')).toEqual({ __type: null });
     });
   });
 

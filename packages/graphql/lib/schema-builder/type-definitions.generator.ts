@@ -12,6 +12,7 @@ import { InputTypeDefinitionFactory } from './factories/input-type-definition.fa
 import { InterfaceDefinitionFactory } from './factories/interface-definition.factory.js';
 import { ObjectTypeDefinitionFactory } from './factories/object-type-definition.factory.js';
 import { UnionDefinitionFactory } from './factories/union-definition.factory.js';
+import { OrphanedReferenceRegistry } from './services/orphaned-reference.registry.js';
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage.js';
 import { TypeMetadataStorage } from './storages/type-metadata.storage.js';
 
@@ -24,11 +25,14 @@ export class TypeDefinitionsGenerator {
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
     private readonly interfaceDefinitionFactory: InterfaceDefinitionFactory,
     private readonly unionDefinitionFactory: UnionDefinitionFactory,
+    private readonly orphanedReferenceRegistry: OrphanedReferenceRegistry,
   ) {}
 
   generate(options: BuildSchemaOptions, includeModules?: Function[]) {
-    // Clear previous type definitions to support multiple schema generation
+    // Clear previous type definitions and orphaned references
+    // to support multiple schema generation
     this.typeDefinitionsStorage.clear();
+    this.orphanedReferenceRegistry.clear();
 
     if (includeModules?.length) {
       // Filter metadata by modules

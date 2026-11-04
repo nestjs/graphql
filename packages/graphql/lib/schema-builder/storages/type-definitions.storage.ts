@@ -22,6 +22,14 @@ export type GqlOutputType =
   | EnumDefinition
   | UnionDefinition;
 
+export class AmbiguousOutputTypeNameError extends Error {
+  constructor(typeName: string) {
+    super(
+      `Cannot resolve the output type "${typeName}" by name because multiple types are registered with this name. Reference the class directly or scope the types to their modules with the "registerIn" option.`,
+    );
+  }
+}
+
 @Injectable()
 export class TypeDefinitionsStorage {
   private readonly interfaceTypeDefinitions = new Map<
@@ -39,15 +47,15 @@ export class TypeDefinitionsStorage {
     InputTypeDefinition
   >();
   private readonly outputTypesByName = new Map<string, GqlOutputType>();
+  private readonly ambiguousOutputTypeNames = new Set<string>();
   private readonly rootTypesByName = new Map<string, GraphQLObjectType>();
   private inputTypeDefinitionsLinks?: Map<GqlInputTypeKey, GqlInputType>;
   private outputTypeDefinitionsLinks?: Map<GqlOutputTypeKey, GqlOutputType>;
 
   addEnums(enumDefs: EnumDefinition[]) {
-    enumDefs.forEach((item) => {
-      this.enumTypeDefinitions.set(item.enumRef, item);
-      this.outputTypesByName.set(item.type.name, item);
-    });
+    enumDefs.forEach((item) =>
+      this.enumTypeDefinitions.set(item.enumRef, item),
+    );
   }
 
   getEnumByObject(obj: object): EnumDefinition {
@@ -59,10 +67,7 @@ export class TypeDefinitionsStorage {
   }
 
   addUnions(unionDefs: UnionDefinition[]) {
-    unionDefs.forEach((item) => {
-      this.unionTypeDefinitions.set(item.id, item);
-      this.outputTypesByName.set(item.type.name, item);
-    });
+    unionDefs.forEach((item) => this.unionTypeDefinitions.set(item.id, item));
   }
 
   getUnionBySymbol(key: symbol): UnionDefinition {
@@ -74,10 +79,9 @@ export class TypeDefinitionsStorage {
   }
 
   addInterfaces(interfaceDefs: InterfaceTypeDefinition[]) {
-    interfaceDefs.forEach((item) => {
-      this.interfaceTypeDefinitions.set(item.target, item);
-      this.outputTypesByName.set(item.type.name, item);
-    });
+    interfaceDefs.forEach((item) =>
+      this.interfaceTypeDefinitions.set(item.target, item),
+    );
   }
 
   getInterfaceByTarget(type: Function): InterfaceTypeDefinition {
@@ -103,10 +107,9 @@ export class TypeDefinitionsStorage {
   }
 
   addObjectTypes(objectDefs: ObjectTypeDefinition[]) {
-    objectDefs.forEach((item) => {
-      this.objectTypeDefinitions.set(item.target, item);
-      this.outputTypesByName.set(item.type.name, item);
-    });
+    objectDefs.forEach((item) =>
+      this.objectTypeDefinitions.set(item.target, item),
+    );
   }
 
   getObjectTypeByTarget(type: Function): ObjectTypeDefinition {
@@ -150,6 +153,7 @@ export class TypeDefinitionsStorage {
     | GraphQLObjectType
     | undefined {
     if (!this.outputTypeDefinitionsLinks) {
+      this.indexOutputTypesByName();
       this.outputTypeDefinitionsLinks = new Map<
         GqlOutputTypeKey,
         GqlOutputType
@@ -161,11 +165,40 @@ export class TypeDefinitionsStorage {
         ...this.outputTypesByName.entries(),
       ]);
     }
+    if (this.ambiguousOutputTypeNames.has(key as string)) {
+      throw new AmbiguousOutputTypeNameError(key as string);
+    }
     const definition = this.outputTypeDefinitionsLinks.get(key);
     if (definition) {
       return definition.type;
     }
     return this.rootTypesByName.get(key as string);
+  }
+
+  /**
+   * Indexes the registered output types by their GraphQL name so that fields
+   * can reference them by name, for example `@Field(() => 'User')`.
+   * Abstract types are not part of the schema and are therefore not indexed.
+   * A name shared by multiple types is recorded as ambiguous so that a lookup
+   * fails instead of silently resolving to the last registered type.
+   */
+  private indexOutputTypesByName() {
+    const outputTypeDefs: GqlOutputType[] = [
+      ...this.objectTypeDefinitions.values(),
+      ...this.interfaceTypeDefinitions.values(),
+      ...this.enumTypeDefinitions.values(),
+      ...this.unionTypeDefinitions.values(),
+    ];
+    outputTypeDefs.forEach((item) => {
+      if ('isAbstract' in item && item.isAbstract) {
+        return;
+      }
+      const typeName = item.type.name;
+      if (this.outputTypesByName.has(typeName)) {
+        this.ambiguousOutputTypeNames.add(typeName);
+      }
+      this.outputTypesByName.set(typeName, item);
+    });
   }
 
   /**
@@ -179,6 +212,7 @@ export class TypeDefinitionsStorage {
     this.objectTypeDefinitions.clear();
     this.inputTypeDefinitions.clear();
     this.outputTypesByName.clear();
+    this.ambiguousOutputTypeNames.clear();
     this.rootTypesByName.clear();
     this.inputTypeDefinitionsLinks = undefined;
     this.outputTypeDefinitionsLinks = undefined;

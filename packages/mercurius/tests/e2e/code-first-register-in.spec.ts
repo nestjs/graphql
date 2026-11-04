@@ -5,11 +5,19 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import { MercuriusDriver, MercuriusDriverConfig } from '../../lib/index.js';
+import {
+  MercuriusDriver,
+  MercuriusDriverConfig,
+  MercuriusFederationDriver,
+} from '../../lib/index.js';
+import { Product } from '../code-first-register-in/products/product.model.js';
 import { ProductsModule } from '../code-first-register-in/products/products.module.js';
 import { UsersModule } from '../code-first-register-in/users/users.module.js';
 
-const buildApp = async (include?: Function[]) => {
+const buildApp = async (
+  include?: Function[],
+  options: MercuriusDriverConfig = {},
+) => {
   const moduleRef = await Test.createTestingModule({
     imports: [
       UsersModule,
@@ -18,6 +26,7 @@ const buildApp = async (include?: Function[]) => {
         driver: MercuriusDriver,
         autoSchemaFile: true,
         ...(include ? { include } : {}),
+        ...options,
       }),
     ],
   }).compile();
@@ -122,6 +131,36 @@ describe('Code-first - registerIn', () => {
       expect(response.data).toEqual({
         createUser: { id: '2', name: 'Grace' },
       });
+    });
+  });
+
+  describe('include: [UsersModule] (federation)', () => {
+    let app: INestApplication;
+    let fastifyInstance: any;
+
+    beforeAll(async () => {
+      ({ app, fastifyInstance } = await buildApp([UsersModule], {
+        driver: MercuriusFederationDriver,
+        buildSchemaOptions: { orphanedTypes: [Product] },
+      }));
+    });
+
+    afterAll(async () => {
+      await app.close();
+    });
+
+    it('should expose User type', async () => {
+      const response = await fastifyInstance.graphql(
+        `query { __type(name: "User") { name } }`,
+      );
+      expect(response.data).toEqual({ __type: { name: 'User' } });
+    });
+
+    it('should NOT expose Product type', async () => {
+      const response = await fastifyInstance.graphql(
+        `query { __type(name: "Product") { name } }`,
+      );
+      expect(response.data).toEqual({ __type: null });
     });
   });
 
