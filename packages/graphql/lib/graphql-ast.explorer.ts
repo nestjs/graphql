@@ -299,7 +299,7 @@ export class GraphQLAstExplorer {
     if (isObjectType && options.emitTypenameField) {
       parentStructure.properties.push({
         name: '__typename',
-        type: `'${parentStructure.name}'`,
+        type: `'${parentName}'`,
         hasQuestionToken: true,
       });
     }
