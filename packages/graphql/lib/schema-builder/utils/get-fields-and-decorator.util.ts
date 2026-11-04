@@ -8,8 +8,10 @@ import {
 } from '../../decorators/index.js';
 import { ClassType } from '../../enums/class-type.enum.js';
 import { CLASS_TYPE_METADATA } from '../../graphql.constants.js';
+import { ClassDecoratorFactory } from '../../interfaces/class-decorator-factory.interface.js';
 import { UnableToFindFieldsError } from '../errors/unable-to-find-fields.error.js';
-import { ClassMetadata, PropertyMetadata } from '../metadata/index.js';
+import { mergeInheritedFields } from '../helpers/merge-inherited-fields.helper.js';
+import { ClassMetadata } from '../metadata/index.js';
 import { LazyMetadataStorage } from '../storages/lazy-metadata.storage.js';
 import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
 
@@ -27,6 +29,9 @@ import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
  * @param options.overrideFields recompile the field metadata of the class
  * instead of reusing the cached list (the built-in helpers pass it when the
  * plugin metadata is refreshed). Usually omitted.
+ * @param options.decorator the class decorator of the type the fields are
+ * collected for. A class registered as that kind of type too (e.g., decorated
+ * with both `@ObjectType()` and `@InputType()`) is read as that kind.
  *
  * @throws {UnableToFindFieldsError} if the class is not a GraphQL type.
  *
@@ -34,7 +39,7 @@ import { TypeMetadataStorage } from '../storages/type-metadata.storage.js';
  */
 export function getFieldsAndDecoratorForType<T>(
   objType: Type<T>,
-  options?: { overrideFields?: boolean },
+  options?: { overrideFields?: boolean; decorator?: ClassDecoratorFactory },
 ) {
   const classType = Reflect.getMetadata(CLASS_TYPE_METADATA, objType);
   if (!classType) {
@@ -45,17 +50,43 @@ export function getFieldsAndDecoratorForType<T>(
     skipFieldLazyMetadata: true,
   });
 
-  const [classMetadata, decoratorFactory] =
-    getClassMetadataAndFactoryByTargetAndType(classType, objType);
+  const [, decoratorFactory] = getClassMetadataAndFactoryByTargetAndType(
+    classType,
+    objType,
+  );
+  // "CLASS_TYPE_METADATA" only holds the kind of the class decorator applied
+  // last, while a class registered as several kinds of type inherits from
+  // different parent classes as each of them.
+  const requestedClassType = getClassTypeByDecorator(options?.decorator);
+  const fieldsClassType =
+    requestedClassType &&
+    getClassMetadataAndFactoryByTargetAndType(requestedClassType, objType)[0]
+      ? requestedClassType
+      : classType;
 
-  TypeMetadataStorage.loadClassPluginMetadata([classMetadata]);
-  TypeMetadataStorage.compileClassMetadata([classMetadata], options);
-
-  let fields = classMetadata?.properties;
-  if (!fields) {
+  const [classMetadata] = getClassMetadataAndFactoryByTargetAndType(
+    fieldsClassType,
+    objType,
+  );
+  if (!classMetadata) {
     throw new UnableToFindFieldsError(objType.name);
   }
-  fields = inheritClassFields(objType, fields, options);
+  const inheritanceChain = [
+    ...getParentClassesMetadata(objType, fieldsClassType),
+    classMetadata,
+  ];
+  TypeMetadataStorage.loadClassPluginMetadata(inheritanceChain);
+  TypeMetadataStorage.compileClassMetadata(inheritanceChain, options);
+
+  if (!classMetadata.properties) {
+    throw new UnableToFindFieldsError(objType.name);
+  }
+  // The nearest declaration of a field wins (the mapped type helpers register
+  // every entry as a "@Field()" of the generated class, and the storage keeps
+  // the first registration of a name), as it does in the schema factories.
+  const fields = mergeInheritedFields(
+    inheritanceChain.map((item) => item.properties),
+  );
 
   return {
     fields,
@@ -98,26 +129,64 @@ function getClassMetadataAndFactoryByTargetAndType(
   }
 }
 
-function inheritClassFields(
-  objType: Type<unknown>,
-  fields: PropertyMetadata[],
-  options?: { overrideFields?: boolean },
-) {
-  try {
-    const parentClass = Object.getPrototypeOf(objType);
-    if (parentClass === Function) {
-      return fields;
-    }
-    const { fields: parentFields } = getFieldsAndDecoratorForType(
-      parentClass as Type<unknown>,
-      options,
-    );
-    return inheritClassFields(
-      parentClass,
-      [...parentFields, ...fields],
-      options,
-    );
-  } catch {
-    return fields;
+/**
+ * The kinds of parent class each kind of type inherits the fields of in the
+ * type definition factories (e.g., an input type only inherits the fields of
+ * a parent class that is registered as an input type).
+ */
+const INHERITABLE_CLASS_TYPES: Record<ClassType, ClassType[]> = {
+  [ClassType.ARGS]: [ClassType.ARGS],
+  [ClassType.OBJECT]: [ClassType.OBJECT, ClassType.INTERFACE],
+  [ClassType.INPUT]: [ClassType.INPUT],
+  [ClassType.INTERFACE]: [ClassType.INTERFACE],
+};
+
+function getClassTypeByDecorator(
+  decorator: ClassDecoratorFactory | undefined,
+): ClassType | undefined {
+  switch (decorator) {
+    case ArgsType:
+      return ClassType.ARGS;
+    case ObjectType:
+      return ClassType.OBJECT;
+    case InputType:
+      return ClassType.INPUT;
+    case InterfaceType:
+      return ClassType.INTERFACE;
   }
+}
+
+/**
+ * Returns the metadata of the ancestors a class inherits the fields of as the
+ * given kind of type, farthest first. As in the schema factories, an
+ * `@ArgsType()` class skips the ancestors that are not arguments types, while
+ * the other kinds stop at the first ancestor of an unrelated kind.
+ */
+function getParentClassesMetadata(
+  objType: Type<unknown>,
+  classType: ClassType,
+): ClassMetadata[] {
+  const parents: ClassMetadata[] = [];
+
+  let parentClass = Object.getPrototypeOf(objType);
+  while (parentClass && parentClass !== Function.prototype) {
+    const parentMetadata = INHERITABLE_CLASS_TYPES[classType]
+      .map((type) => ({
+        type,
+        metadata: getClassMetadataAndFactoryByTargetAndType(
+          type,
+          parentClass,
+        )[0],
+      }))
+      .find(({ metadata }) => metadata);
+
+    if (parentMetadata) {
+      parents.unshift(parentMetadata.metadata);
+      classType = parentMetadata.type;
+    } else if (classType !== ClassType.ARGS) {
+      break;
+    }
+    parentClass = Object.getPrototypeOf(parentClass);
+  }
+  return parents;
 }

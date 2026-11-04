@@ -17,7 +17,12 @@ export function getDefaultValue<T = any>(
       ? instance[key]
       : undefined;
   if (isUndefined(options.defaultValue)) {
-    return initializerValue;
+    // A "null" initializer (e.g., inherited from a base class in which the
+    // field is nullable) is not a default of a non-nullable field: graphql-js
+    // would no longer require the value and pass "null" to the resolver.
+    return initializerValue === null && !options.nullable
+      ? undefined
+      : initializerValue;
   }
   if (
     !isEqual(options.defaultValue, initializerValue) &&

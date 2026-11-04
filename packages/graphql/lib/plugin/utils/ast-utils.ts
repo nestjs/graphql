@@ -246,6 +246,64 @@ export function hasDecorators(
   });
 }
 
+/**
+ * Returns the names the given decorators go by in a source file: their own
+ * names, plus the local names they are imported under (e.g., "Hide" for
+ * `import { HideField as Hide } from '@nestjs/graphql'`).
+ */
+export function getDecoratorNamesInFile(
+  sf: ts.SourceFile,
+  decoratorNames: string[],
+): string[] {
+  const names = new Set(decoratorNames);
+  for (const statement of sf.statements) {
+    if (!ts.isImportDeclaration(statement)) {
+      continue;
+    }
+    const namedBindings = statement.importClause?.namedBindings;
+    if (!namedBindings || !ts.isNamedImports(namedBindings)) {
+      continue;
+    }
+    namedBindings.elements.forEach((element) => {
+      if (
+        element.propertyName &&
+        decoratorNames.includes(element.propertyName.text)
+      ) {
+        names.add(element.name.text);
+      }
+    });
+  }
+  return [...names];
+}
+
+/**
+ * Returns the name the decorator is declared under when the type checker can
+ * follow its import (e.g., through a re-export with another name).
+ */
+export function getAliasedDecoratorName(
+  decorator: Decorator,
+  typeChecker: TypeChecker | undefined,
+): string | undefined {
+  if (!typeChecker) {
+    return undefined;
+  }
+  try {
+    const expression = ts.isCallExpression(decorator.expression)
+      ? decorator.expression.expression
+      : decorator.expression;
+    const identifier = ts.isPropertyAccessExpression(expression)
+      ? expression.name
+      : expression;
+    const symbol = typeChecker.getSymbolAtLocation(identifier);
+    if (!symbol || !(symbol.flags & ts.SymbolFlags.Alias)) {
+      return undefined;
+    }
+    return typeChecker.getAliasedSymbol(symbol).getName();
+  } catch {
+    return undefined;
+  }
+}
+
 export function hasImport(sf: ts.SourceFile, what: string): boolean {
   for (const statement of sf.statements) {
     if (

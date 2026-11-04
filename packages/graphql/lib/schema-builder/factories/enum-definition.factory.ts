@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GraphQLEnumType } from 'graphql';
+import { getEnumMemberKeys } from '../helpers/get-enum-member-keys.helper.js';
 import { EnumMetadata } from '../metadata/index.js';
 import { AstDefinitionNodeFactory } from './ast-definition-node.factory.js';
 
@@ -52,10 +53,7 @@ export class EnumDefinitionFactory {
   }
 
   private getEnumValues(enumObject: Record<string, any>) {
-    const enumKeys = Object.keys(enumObject).filter((key) =>
-      isNaN(parseInt(key, 10)),
-    );
-    return enumKeys.reduce((prev, nextKey) => {
+    return getEnumMemberKeys(enumObject).reduce((prev, nextKey) => {
       prev[nextKey] = enumObject[nextKey];
       return prev;
     }, {});

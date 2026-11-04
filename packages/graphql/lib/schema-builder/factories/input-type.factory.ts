@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { GraphQLInputType } from 'graphql';
+import { GraphQLInputType, isNonNullType } from 'graphql';
 import {
   BuildSchemaOptions,
   GqlTypeReference,
 } from '../../interfaces/index.js';
 import { TypeOptions } from '../../interfaces/type-options.interface.js';
 import { CannotDetermineInputTypeError } from '../errors/cannot-determine-input-type.error.js';
+import { DefaultNullableConflictError } from '../errors/default-nullable-conflict.error.js';
 import { TypeMapperService } from '../services/type-mapper.service.js';
 import { TypeDefinitionsStorage } from '../storages/type-definitions.storage.js';
 
@@ -46,10 +47,21 @@ export class InputTypeFactory {
         );
       }
     }
-    return this.typeMapperService.mapToGqlType(
+    const type = this.typeMapperService.mapToGqlType(
       hostType,
       inputType,
       typeOptions,
     );
+    // graphql-js treats any default other than "undefined" as a default, so
+    // "null" would make a non-nullable argument / input field optional (and
+    // pass "null" to the resolver) while the schema still shows it as required.
+    if (typeOptions.defaultValue === null && isNonNullType(type)) {
+      throw new DefaultNullableConflictError(
+        hostType,
+        typeOptions.defaultValue,
+        typeOptions.nullable ?? false,
+      );
+    }
+    return type;
   }
 }

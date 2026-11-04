@@ -17,7 +17,9 @@ export function PickType<T, K extends keyof T>(
   keys: readonly K[],
   decorator?: ClassDecoratorFactory,
 ): Type<Pick<T, (typeof keys)[number]>> {
-  const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
+  const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef, {
+    decorator,
+  });
 
   // Property keys are passed as strings, whereas "keyof T" is a number for a
   // numeric property (e.g. a numeric enum member)
@@ -65,6 +67,7 @@ export function PickType<T, K extends keyof T>(
   MetadataLoader.addRefreshHook(() => {
     const { fields } = getFieldsAndDecoratorForType(classRef, {
       overrideFields: true,
+      decorator,
     });
     applyFields(fields);
   });

@@ -15,7 +15,9 @@ import {
   createImportEquals,
   createNamespaceImport,
   findNullableTypeFromUnion,
+  getAliasedDecoratorName,
   getDecoratorName,
+  getDecoratorNamesInFile,
   getDecorators,
   getJSDocDescription,
   getJsDocDeprecation,
@@ -116,7 +118,7 @@ export class ModelClassVisitor {
           factory,
           members,
           pluginOptions,
-          sourceFile.fileName,
+          sourceFile,
           typeChecker,
         );
 
@@ -295,28 +297,41 @@ export class ModelClassVisitor {
     f: ts.NodeFactory,
     members: ts.ClassElement[],
     pluginOptions: PluginOptions,
-    hostFilename: string, // sourceFile.fileName,
+    sourceFile: ts.SourceFile,
     typeChecker: ts.TypeChecker | undefined,
   ): ts.ObjectLiteralExpression {
     const properties: ts.PropertyAssignment[] = [];
+    // "HideField" may be imported under another name
+    const hideFieldNames = getDecoratorNamesInFile(sourceFile, [
+      HideField.name,
+    ]);
+    const isHidden = (decorators: readonly ts.Decorator[]) =>
+      hasDecorators(decorators, hideFieldNames) ||
+      decorators.some(
+        (decorator) =>
+          getAliasedDecoratorName(decorator, typeChecker) === HideField.name,
+      );
 
     members.forEach((member) => {
       const decorators = getDecorators(member);
       const modifiers = getModifiers(member);
       if (
         (ts.isPropertyDeclaration(member) || ts.isGetAccessor(member)) &&
+        !ts.isPrivateIdentifier(member.name) &&
         !hasModifiers(modifiers, [
           ts.SyntaxKind.StaticKeyword,
           ts.SyntaxKind.PrivateKeyword,
+          ts.SyntaxKind.ProtectedKeyword,
         ]) &&
-        !hasDecorators(decorators, [HideField.name, Field.name])
+        !hasDecorators(decorators, [Field.name]) &&
+        !isHidden(decorators)
       ) {
         try {
           const metadata = this.createFieldMetadata(
             f,
             member,
             typeChecker,
-            hostFilename,
+            sourceFile.fileName,
             pluginOptions,
           );
 

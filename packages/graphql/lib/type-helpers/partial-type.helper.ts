@@ -36,13 +36,6 @@ export function PartialType<T>(
   classRef: Type<T>,
   optionsOrDecorator?: ClassDecoratorFactory | PartialTypeOptions,
 ): Type<Partial<T>> {
-  const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef);
-  abstract class PartialObjectType {
-    constructor() {
-      inheritPropertyInitializers(this, classRef);
-    }
-  }
-
   let decorator: ClassDecoratorFactory | undefined;
   let omitDefaultValues = false;
   let skipNullProperties = true;
@@ -52,6 +45,21 @@ export function PartialType<T>(
     skipNullProperties = optionsOrDecorator.skipNullProperties ?? true;
   } else {
     decorator = optionsOrDecorator;
+  }
+  const { fields, decoratorFactory } = getFieldsAndDecoratorForType(classRef, {
+    decorator,
+  });
+
+  // Property initializers are default values too (the schema builder reads
+  // them off an instance), so the ones of the fields are not inherited when
+  // the default values are omitted.
+  const fieldNames = new Set<string>();
+  const isInheritedPredicate = (propertyKey: string) =>
+    !omitDefaultValues || !fieldNames.has(propertyKey);
+  abstract class PartialObjectType {
+    constructor() {
+      inheritPropertyInitializers(this, classRef, isInheritedPredicate);
+    }
   }
 
   const applyPartialDecoratorFn =
@@ -70,6 +78,7 @@ export function PartialType<T>(
 
   function applyFields(fields: PropertyMetadata[]) {
     fields.forEach((item) => {
+      fieldNames.add(item.name);
       if (isFunction(item.typeFn)) {
         // Execute type function eagerly to update the type options object (before "clone" operation)
         // when the passed function (e.g., @Field(() => Type)) lazily returns an array.
@@ -91,6 +100,7 @@ export function PartialType<T>(
   MetadataLoader.addRefreshHook(() => {
     const { fields } = getFieldsAndDecoratorForType(classRef, {
       overrideFields: true,
+      decorator,
     });
     applyFields(fields);
   });
@@ -99,9 +109,10 @@ export function PartialType<T>(
     const pluginFields = Object.keys(
       PartialObjectType[METADATA_FACTORY_NAME](),
     );
-    pluginFields.forEach((key) =>
-      applyPartialDecoratorFn(PartialObjectType, key),
-    );
+    pluginFields.forEach((key) => {
+      fieldNames.add(key);
+      applyPartialDecoratorFn(PartialObjectType, key);
+    });
   }
 
   Object.defineProperty(PartialObjectType, 'name', {

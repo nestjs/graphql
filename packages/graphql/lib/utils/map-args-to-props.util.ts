@@ -1,5 +1,6 @@
 import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import { ARGS_TYPE_METADATA } from '../graphql.constants.js';
+import { mergeInheritedFields } from '../schema-builder/helpers/merge-inherited-fields.helper.js';
 import { PropertyMetadata } from '../schema-builder/metadata/index.js';
 import { TypeMetadataStorage } from '../schema-builder/storages/type-metadata.storage.js';
 
@@ -42,7 +43,7 @@ function getProps(classRef: Function): PropertyMetadata[] {
     ...TypeMetadataStorage.getArgumentsMetadata(),
     ...TypeMetadataStorage.getInputTypesMetadata(),
   ];
-  const properties: PropertyMetadata[] = [];
+  const propertiesByClass: PropertyMetadata[][] = [];
 
   let target = classRef;
   while (!isUndefined(target?.prototype)) {
@@ -50,10 +51,14 @@ function getProps(classRef: Function): PropertyMetadata[] {
       (item) => item.target === target,
     );
     if (classMetadata?.properties) {
-      properties.push(...classMetadata.properties);
+      propertiesByClass.unshift(classMetadata.properties);
     }
     target = Object.getPrototypeOf(target);
   }
+  // The nearest declaration of a property (or of a schema name) wins, as it
+  // does in the schema: an inherited rename must not be mapped over the value
+  // of the property a subclass re-declares.
+  const properties = mergeInheritedFields(propertiesByClass);
   propsCache.set(classRef, properties);
   return properties;
 }

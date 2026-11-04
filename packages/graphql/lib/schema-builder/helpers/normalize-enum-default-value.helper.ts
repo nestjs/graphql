@@ -1,6 +1,7 @@
 import { isUndefined } from '@nestjs/common/utils/shared.utils.js';
 import { GqlTypeReference } from '../../interfaces/index.js';
 import { EnumMetadata } from '../metadata/index.js';
+import { getEnumMemberKeys } from './get-enum-member-keys.helper.js';
 
 /**
  * Normalizes a `defaultValue` declared on an argument / input field whose
@@ -65,6 +66,5 @@ function translateEnumValue(value: unknown, enumRef: Record<string, unknown>) {
 }
 
 function getEnumMemberValues(enumRef: Record<string, unknown>): unknown[] {
-  const keys = Object.keys(enumRef).filter((key) => isNaN(parseInt(key, 10)));
-  return keys.map((key) => enumRef[key]);
+  return getEnumMemberKeys(enumRef).map((key) => enumRef[key]);
 }
