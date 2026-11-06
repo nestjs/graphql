@@ -1,7 +1,15 @@
 {
   "name": "@nestjs/mercurius",
   "version": "14.2.0",
-  "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
+  "description": "Mercurius driver for @nestjs/graphql: GraphQL APIs on Fastify, with subscriptions and federation.",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "graphql",
+    "mercurius",
+    "fastify",
+    "federation"
+  ],
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "type": "module",

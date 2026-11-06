@@ -1,7 +1,15 @@
 {
   "name": "@nestjs/apollo",
   "version": "14.2.0",
-  "description": "Nest - modern, fast, powerful node.js web framework (@apollo)",
+  "description": "Apollo Server driver for @nestjs/graphql: GraphQL APIs on Express or Fastify, with subscriptions and Apollo Federation.",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "graphql",
+    "apollo",
+    "apollo-server",
+    "federation"
+  ],
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "type": "module",
