@@ -1,7 +1,19 @@
 {
   "name": "@nestjs/graphql",
   "version": "14.2.0",
-  "description": "Nest - modern, fast, powerful node.js web framework (@graphql)",
+  "description": "GraphQL for NestJS: code-first and schema-first APIs, resolvers as providers, subscriptions, federation and generated SDL, on Apollo or Mercurius.",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "graphql",
+    "apollo",
+    "mercurius",
+    "resolvers",
+    "code-first",
+    "schema-first",
+    "federation",
+    "subscriptions"
+  ],
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "type": "module",
