@@ -61,7 +61,7 @@
     "@graphql-tools/schema": "10.1.5",
     "@graphql-tools/utils": "12.1.0",
     "@nestjs/mapped-types": "12.0.1",
-    "chokidar": "4.0.3",
+    "chokidar": "6.0.0",
     "es-toolkit": "1.53.1",
     "graphql-tag": "2.12.7",
     "graphql-ws": "6.4.1",
