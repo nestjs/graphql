@@ -14,7 +14,6 @@ import { pluginDebugLogger } from '../plugin-debug-logger.js';
 import {
   createImportEquals,
   createNamespaceImport,
-  findNullableTypeFromUnion,
   getAliasedDecoratorName,
   getDecoratorName,
   getDecoratorNamesInFile,
@@ -463,8 +462,10 @@ export class ModelClassVisitor {
     options: PluginOptions,
   ) {
     if (node && ts.isUnionTypeNode(node)) {
-      const nullableType = findNullableTypeFromUnion(node, typeChecker);
-      const remainingTypes = node.types.filter((item) => item !== nullableType);
+      const remainingTypes = node.types.filter((item) => {
+        const type = typeChecker.getTypeAtLocation(item);
+        return !isNull(type) && !isUndefined(type);
+      });
 
       if (remainingTypes.length === 1) {
         return this.getTypeUsingTypeChecker(

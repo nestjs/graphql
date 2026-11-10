@@ -15,6 +15,10 @@ export class NullableDto {
   readonly breed?: string;
   nodes: Node[];
   date: Date | undefined;
+  both: string | null | undefined;
+  bothOptional?: Date | null | undefined;
+  status3: Status | undefined;
+  statusArr2: Status[] | null | undefined;
 }
 `;
 
@@ -29,7 +33,7 @@ let NullableDto = class NullableDto {
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { nullable: true, type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { nullable: true, type: () => Date } };
+        return { name: { nullable: true, type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { nullable: true, type: () => Date }, both: { nullable: true, type: () => String }, bothOptional: { nullable: true, type: () => Date }, status3: { nullable: true, type: () => Status }, statusArr2: { nullable: true, type: () => [Status] } };
     }
 };
 NullableDto = __decorate([
