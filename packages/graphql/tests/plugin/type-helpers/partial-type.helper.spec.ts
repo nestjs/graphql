@@ -175,4 +175,35 @@ describe('PartialType', () => {
       });
     });
   });
+
+  describe('list nullability', () => {
+    @ObjectType()
+    class CreateListDto {
+      @Field(() => [String])
+      plain: string[];
+
+      @Field(() => [String], { nullable: true })
+      list: string[];
+
+      @Field(() => [String], { nullable: 'items' })
+      items: string[];
+
+      @Field(() => [String], { nullable: 'itemsAndList' })
+      itemsAndList: string[];
+    }
+
+    class UpdateListDto extends PartialType(CreateListDto) {}
+
+    it('should keep nullable items and make the list itself nullable', () => {
+      const prototype = Object.getPrototypeOf(UpdateListDto);
+      const { fields } = getFieldsAndDecoratorForType(prototype);
+      const nullableOf = (name: string) =>
+        fields.find((field) => field.name === name)?.options.nullable;
+
+      expect(nullableOf('plain')).toEqual(true);
+      expect(nullableOf('list')).toEqual(true);
+      expect(nullableOf('items')).toEqual('itemsAndList');
+      expect(nullableOf('itemsAndList')).toEqual('itemsAndList');
+    });
+  });
 });

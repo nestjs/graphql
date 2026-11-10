@@ -86,7 +86,11 @@ export function PartialType<T>(
       }
       Field(item.typeFn, {
         ...item.options,
-        nullable: true,
+        nullable:
+          item.options.nullable === 'items' ||
+          item.options.nullable === 'itemsAndList'
+            ? 'itemsAndList'
+            : true,
         defaultValue: omitDefaultValues ? undefined : item.options.defaultValue,
       })(PartialObjectType.prototype, item.name);
       applyPartialDecoratorFn(PartialObjectType, item.name);
