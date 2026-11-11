@@ -4,6 +4,8 @@ enum Status {
     DISABLED
 }
 
+type Maybe<T> = T | undefined;
+
 @ObjectType()
 export class NullableDto {
   name: string | null;
@@ -19,6 +21,7 @@ export class NullableDto {
   bothOptional?: Date | null | undefined;
   status3: Status | undefined;
   statusArr2: Status[] | null | undefined;
+  aliased: Maybe<string> | null;
 }
 `;
 
@@ -33,7 +36,7 @@ let NullableDto = class NullableDto {
         this.status = Status.ENABLED;
     }
     static _GRAPHQL_METADATA_FACTORY() {
-        return { name: { nullable: true, type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { nullable: true, type: () => Date }, both: { nullable: true, type: () => String }, bothOptional: { nullable: true, type: () => Date }, status3: { nullable: true, type: () => Status }, statusArr2: { nullable: true, type: () => [Status] } };
+        return { name: { nullable: true, type: () => String }, age: { type: () => Number }, tags: { type: () => [String] }, status: { type: () => Status }, status2: { nullable: true, type: () => Status }, statusArr: { nullable: true, type: () => [Status] }, breed: { nullable: true, type: () => String }, nodes: { type: () => [Object] }, date: { nullable: true, type: () => Date }, both: { nullable: true, type: () => String }, bothOptional: { nullable: true, type: () => Date }, status3: { nullable: true, type: () => Status }, statusArr2: { nullable: true, type: () => [Status] }, aliased: { nullable: true, type: () => String } };
     }
 };
 NullableDto = __decorate([

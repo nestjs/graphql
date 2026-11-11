@@ -22,6 +22,7 @@ import {
   getJsDocDeprecation,
   getModifiers,
   hasDecorators,
+  hasFlag,
   hasModifiers,
   isNull,
   isUndefined,
@@ -462,9 +463,13 @@ export class ModelClassVisitor {
     options: PluginOptions,
   ) {
     if (node && ts.isUnionTypeNode(node)) {
+      // Only the null and undefined members themselves: an alias such as `Maybe<T> = T | undefined` is a type
       const remainingTypes = node.types.filter((item) => {
         const type = typeChecker.getTypeAtLocation(item);
-        return !isNull(type) && !isUndefined(type);
+        return (
+          !hasFlag(type, ts.TypeFlags.Null) &&
+          !hasFlag(type, ts.TypeFlags.Undefined)
+        );
       });
 
       if (remainingTypes.length === 1) {
