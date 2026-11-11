@@ -19,8 +19,6 @@ import {
   TypeChecker,
   TypeFlags,
   TypeFormatFlags,
-  TypeNode,
-  UnionTypeNode,
 } from 'typescript';
 import { isDynamicallyAdded } from './plugin-utils.js';
 
@@ -212,15 +210,6 @@ export function getJsDocDeprecation(node: Node): string {
     return undefined;
   }
   return getTextOfJSDocComment(deprecatedTag.comment) || 'deprecated';
-}
-
-export function findNullableTypeFromUnion(
-  typeNode: UnionTypeNode,
-  typeChecker: TypeChecker,
-) {
-  return typeNode.types.find((tNode: TypeNode) =>
-    hasFlag(typeChecker.getTypeAtLocation(tNode), TypeFlags.Null),
-  );
 }
 
 export function hasModifiers(

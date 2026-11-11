@@ -14,7 +14,6 @@ import { pluginDebugLogger } from '../plugin-debug-logger.js';
 import {
   createImportEquals,
   createNamespaceImport,
-  findNullableTypeFromUnion,
   getAliasedDecoratorName,
   getDecoratorName,
   getDecoratorNamesInFile,
@@ -23,6 +22,7 @@ import {
   getJsDocDeprecation,
   getModifiers,
   hasDecorators,
+  hasFlag,
   hasModifiers,
   isNull,
   isUndefined,
@@ -463,8 +463,14 @@ export class ModelClassVisitor {
     options: PluginOptions,
   ) {
     if (node && ts.isUnionTypeNode(node)) {
-      const nullableType = findNullableTypeFromUnion(node, typeChecker);
-      const remainingTypes = node.types.filter((item) => item !== nullableType);
+      // Only the null and undefined members themselves: an alias such as `Maybe<T> = T | undefined` is a type
+      const remainingTypes = node.types.filter((item) => {
+        const type = typeChecker.getTypeAtLocation(item);
+        return (
+          !hasFlag(type, ts.TypeFlags.Null) &&
+          !hasFlag(type, ts.TypeFlags.Undefined)
+        );
+      });
 
       if (remainingTypes.length === 1) {
         return this.getTypeUsingTypeChecker(
