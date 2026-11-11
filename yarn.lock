@@ -4400,10 +4400,10 @@ graphql-ws@^6.0.6:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-6.0.8.tgz#6712bb9da8462937e92343e3146726f89424df68"
   integrity sha512-m3EOaNsUBXwAnkBWbzPfe0Nq8pXUfxsWnolC54sru3FzHvhTZL0Ouf/BoQsaGAXqM+YPerXOJ47BUnmgmoupCw==
 
-graphql@16.14.2, graphql@^16.12.0, graphql@^16.6.0:
-  version "16.14.2"
-  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.14.2.tgz#83faf25869e3df727cc855161db5da85b0e5b2c0"
-  integrity sha512-Chq1s4CY7jmh8gO2qvLIJyfCDIN+EHLFW/9iShnp1z8FjBQMoodWP1kDC36VAMXXIvAjj4ARa7ntfAV2BrjsbA==
+graphql@16.15.0, graphql@^16.12.0, graphql@^16.6.0:
+  version "16.15.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.15.0.tgz#9e87af2e3adb6808cf3bde1c4f0bbfa675b4bac1"
+  integrity sha512-32kz9FecohDiC/tgcViwnRXM7HFBVTPiW7pHO+DikKOI5KjhU/jNULOReXsrFqt2WAYbE9xFXsTffJw6iTO8qw==
 
 handlebars@4.7.10:
   version "4.7.10"
