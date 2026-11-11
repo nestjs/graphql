@@ -49,6 +49,16 @@ describe('PluginsExplorerService', () => {
     expect(plugins[0]).toBeInstanceOf(SingletonPlugin);
   });
 
+  it('should return a plugin exposed through an alias once', async () => {
+    const plugins = await explore([
+      SingletonPlugin,
+      { provide: 'PLUGIN_ALIAS', useExisting: SingletonPlugin },
+    ]);
+
+    expect(plugins).toHaveLength(1);
+    expect(plugins[0]).toBeInstanceOf(SingletonPlugin);
+  });
+
   it.each([
     ['depends on a request-scoped provider', [ApiKeyPlugin, AuditLog]],
     ['is transient', [TransientPlugin]],

@@ -18,7 +18,7 @@ export class PluginsExplorerService extends BaseExplorerService {
 
   filterPlugins<T = any>(wrapper: InstanceWrapper<T>) {
     const { instance } = wrapper;
-    if (!instance) {
+    if (!instance || wrapper.isAlias) {
       return undefined;
     }
     const metadata = Reflect.getMetadata(PLUGIN_METADATA, instance.constructor);
