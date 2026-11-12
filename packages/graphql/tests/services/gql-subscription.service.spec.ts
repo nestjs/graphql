@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WebSocketServer } from 'ws';
 import {
   GqlSubscriptionService,
@@ -16,6 +16,7 @@ const createMockSocket = () => {
   socket.setKeepAlive = vi.fn();
   socket.readable = true;
   socket.writable = true;
+  socket.bytesWritten = 0;
   socket.remoteAddress = '127.0.0.1';
   return socket;
 };
@@ -118,13 +119,14 @@ describe('GqlSubscriptionService', () => {
   });
 
   describe('initialize & upgrade handling', () => {
-    it('should not pass server or path to useServer options', () => {
+    it('should not pass server, path or unclaimedUpgradeTimeout to useServer options', () => {
       const options: GqlSubscriptionServiceOptions = {
         schema: {} as any,
         path: '/graphql',
         'graphql-ws': {
           path: '/ws',
           connectionInitWaitTimeout: 5000,
+          unclaimedUpgradeTimeout: 5000,
         },
       };
 
@@ -133,6 +135,7 @@ describe('GqlSubscriptionService', () => {
       const callArgs = mockUseServer.mock.calls[0][0];
       expect(callArgs).not.toHaveProperty('path');
       expect(callArgs).not.toHaveProperty('server');
+      expect(callArgs).not.toHaveProperty('unclaimedUpgradeTimeout');
       expect(callArgs).toHaveProperty('connectionInitWaitTimeout', 5000);
     });
 
@@ -303,34 +306,113 @@ describe('GqlSubscriptionService', () => {
       expect(handleUpgradeSpy).not.toHaveBeenCalled();
     });
 
-    it('should leave upgrades to other paths to other upgrade listeners, without crashing on a reset', () => {
-      mockHttpServer.listenerCount.mockReturnValue(2);
-      const options: GqlSubscriptionServiceOptions = {
-        schema: {} as any,
-        path: '/graphql',
-        'graphql-ws': true,
+    describe('when another upgrade listener is present', () => {
+      // "bytesWritten" is what the connection has already been sent, for
+      // example the responses to earlier requests on a keep-alive connection
+      const upgradeToAnotherPath = (
+        bytesWritten: number,
+        graphqlWsConfig: GqlSubscriptionServiceOptions['graphql-ws'] = true,
+      ) => {
+        mockHttpServer.listenerCount.mockReturnValue(2);
+        const service = new GqlSubscriptionService(
+          {
+            schema: {} as any,
+            path: '/graphql',
+            'graphql-ws': graphqlWsConfig,
+          },
+          mockHttpServer,
+        );
+        const handleUpgradeSpy = vi.spyOn(
+          (service as any).wss,
+          'handleUpgrade',
+        );
+        const upgradeHandler = mockHttpServer.on.mock.calls.find(
+          (call: any[]) => call[0] === 'upgrade',
+        )[1];
+
+        const mockSocket = createMockSocket();
+        mockSocket.bytesWritten = bytesWritten;
+        upgradeHandler(
+          { url: '/another', headers: {} },
+          mockSocket,
+          Buffer.alloc(0),
+        );
+        return { mockSocket, handleUpgradeSpy };
       };
 
-      const service = new GqlSubscriptionService(options, mockHttpServer);
-      const handleUpgradeSpy = vi.spyOn((service as any).wss, 'handleUpgrade');
-      const upgradeHandler = mockHttpServer.on.mock.calls.find(
-        (call: any[]) => call[0] === 'upgrade',
-      )[1];
+      beforeEach(() => {
+        vi.useFakeTimers();
+      });
 
-      const mockSocket = createMockSocket();
-      upgradeHandler(
-        { url: '/another', headers: {} },
-        mockSocket,
-        Buffer.alloc(0),
-      );
+      afterEach(() => {
+        vi.useRealTimers();
+      });
 
-      expect(handleUpgradeSpy).not.toHaveBeenCalled();
-      expect(mockSocket.destroy).not.toHaveBeenCalled();
-      // A connection reset must not surface as an unhandled "error" event
-      expect(() =>
-        mockSocket.emit('error', new Error('read ECONNRESET')),
-      ).not.toThrow();
-      expect(mockSocket.destroy).toHaveBeenCalled();
+      it('should leave upgrades to other paths to other upgrade listeners, without crashing on a reset', () => {
+        const { mockSocket, handleUpgradeSpy } = upgradeToAnotherPath(0);
+
+        expect(handleUpgradeSpy).not.toHaveBeenCalled();
+        expect(mockSocket.destroy).not.toHaveBeenCalled();
+        // A connection reset must not surface as an unhandled "error" event
+        expect(() =>
+          mockSocket.emit('error', new Error('read ECONNRESET')),
+        ).not.toThrow();
+        expect(mockSocket.destroy).toHaveBeenCalled();
+      });
+
+      it('should close an upgrade to another path that no listener claims after a delay', () => {
+        const { mockSocket } = upgradeToAnotherPath(0);
+
+        vi.advanceTimersByTime(999);
+        expect(mockSocket.destroy).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(1);
+        expect(mockSocket.destroy).toHaveBeenCalledOnce();
+      });
+
+      it('should keep an upgrade to another path that another listener answered', () => {
+        const { mockSocket } = upgradeToAnotherPath(0);
+        // the other listener's handshake response
+        mockSocket.bytesWritten += 129;
+
+        vi.advanceTimersByTime(1000);
+        expect(mockSocket.destroy).not.toHaveBeenCalled();
+      });
+
+      it('should close an unclaimed upgrade that arrives with bytes already written', () => {
+        // a keep-alive connection that answered a plain request first
+        const { mockSocket } = upgradeToAnotherPath(124);
+
+        vi.advanceTimersByTime(1000);
+        expect(mockSocket.destroy).toHaveBeenCalledOnce();
+      });
+
+      it('should keep an answered upgrade that arrives with bytes already written', () => {
+        const { mockSocket } = upgradeToAnotherPath(124);
+        mockSocket.bytesWritten += 129;
+
+        vi.advanceTimersByTime(1000);
+        expect(mockSocket.destroy).not.toHaveBeenCalled();
+      });
+
+      it('should wait for "unclaimedUpgradeTimeout" before closing an unclaimed upgrade', () => {
+        const { mockSocket } = upgradeToAnotherPath(0, {
+          unclaimedUpgradeTimeout: 5000,
+        });
+
+        vi.advanceTimersByTime(4999);
+        expect(mockSocket.destroy).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(1);
+        expect(mockSocket.destroy).toHaveBeenCalledOnce();
+      });
+
+      it('should leave an unclaimed upgrade open when "unclaimedUpgradeTimeout" is 0', () => {
+        const { mockSocket } = upgradeToAnotherPath(0, {
+          unclaimedUpgradeTimeout: 0,
+        });
+
+        vi.runAllTimers();
+        expect(mockSocket.destroy).not.toHaveBeenCalled();
+      });
     });
 
     it('should only handle upgrades to the whole path when custom server has no internal path', () => {
