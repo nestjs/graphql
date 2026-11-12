@@ -50,7 +50,20 @@ export type GraphQLWsSubscriptionsConfig = Partial<
    * removes all of its listeners. Use a separate server per GraphQL module.
    */
   server?: GraphQLWsServer;
+  /**
+   * How many milliseconds an upgrade request for another path is left open
+   * when another `upgrade` listener on the same server may claim it. A socket
+   * that nothing has been written to by then is closed. Raise it when another
+   * listener answers the handshake late, for example after a slow
+   * authentication, or set it to `0` to leave such sockets to the other
+   * listeners entirely.
+   *
+   * @default 1000
+   */
+  unclaimedUpgradeTimeout?: number;
 };
+
+const DEFAULT_UNCLAIMED_UPGRADE_TIMEOUT = 1000;
 
 export type SubscriptionConfig = {
   'graphql-ws'?: GraphQLWsSubscriptionsConfig | boolean;
@@ -111,6 +124,7 @@ export class GqlSubscriptionService {
     const {
       server: _wsServer,
       path: _wsPath,
+      unclaimedUpgradeTimeout = DEFAULT_UNCLAIMED_UPGRADE_TIMEOUT,
       ...graphqlWsOptions
     } = graphqlWsConfig === true
       ? ({} as GraphQLWsSubscriptionsConfig)
@@ -147,6 +161,19 @@ export class GqlSubscriptionService {
       socket.on('error', () => socket.destroy());
       if (this.httpServer.listenerCount('upgrade') <= 1) {
         socket.destroy();
+      } else if (unclaimedUpgradeTimeout > 0) {
+        // A listener that claims the socket answers the handshake, so a socket
+        // nothing has been written to by then is one that nobody claimed. The
+        // HTTP server's timeouts no longer apply after "upgrade", so it would
+        // otherwise stay open until the client hangs up. The count covers the
+        // whole connection, so on a keep-alive connection it already includes
+        // the responses to earlier requests.
+        const writtenBeforeUpgrade = socket.bytesWritten;
+        setTimeout(() => {
+          if (socket.writable && socket.bytesWritten <= writtenBeforeUpgrade) {
+            socket.destroy();
+          }
+        }, unclaimedUpgradeTimeout).unref();
       }
     });
   }
