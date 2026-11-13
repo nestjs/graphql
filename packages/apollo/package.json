@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/apollo",
-  "version": "14.2.0",
+  "version": "14.2.1",
   "description": "Apollo Server driver for @nestjs/graphql: GraphQL APIs on Express or Fastify, with subscriptions and Apollo Federation.",
   "keywords": [
     "nestjs",

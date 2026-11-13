@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/graphql",
-  "version": "14.2.0",
+  "version": "14.2.1",
   "description": "GraphQL for NestJS: code-first and schema-first APIs, resolvers as providers, subscriptions, federation and generated SDL, on Apollo or Mercurius.",
   "keywords": [
     "nestjs",
