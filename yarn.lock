@@ -5522,10 +5522,10 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.12.1:
-  version "16.12.1"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.12.1.tgz#b827f1a45e0eb0440a8cbed4134150ffb1256f92"
-  integrity sha512-hYiL89ShIhUAhgZyza2C2g6ObawjB4zIsK9Fbw031nTPh9Hw0yETY3TiplWpjX8Qx4rsYIkkVosSb8pvtF5rMQ==
+mercurius@16.12.2:
+  version "16.12.2"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.12.2.tgz#8cbbcd8fd9adf4fd6db67bfe01755868854ede33"
+  integrity sha512-cmVtfJoOQyH8A1MJFMW8XaObyf910Qm58oyTnppAwB57TJxRRUjn3uMvBouTUByr8PH1kgtPnDn5hnxhBoDyXQ==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^10.1.0"
@@ -5533,7 +5533,6 @@ mercurius@16.12.1:
     fastify-plugin "^6.0.0"
     graphql-jit "0.8.10"
     mqemitter "^7.0.0"
-    quick-lru "^7.0.0"
     readable-stream "^4.0.0"
     safe-stable-stringify "^3.0.0"
     secure-json-parse "^4.1.0"
