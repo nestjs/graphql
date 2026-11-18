@@ -39,7 +39,7 @@
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
     "graphql": "16.14.2",
-    "graphql-subscriptions": "3.0.0",
+    "graphql-subscriptions": "3.1.0",
     "husky": "9.1.7",
     "lerna": "10.1.1",
     "lerna-changelog": "2.2.0",
