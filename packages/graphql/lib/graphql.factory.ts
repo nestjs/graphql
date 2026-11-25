@@ -241,6 +241,7 @@ export class GraphQLFactory {
       additionalHeader: options.definitions.additionalHeader,
       defaultTypeMapping: options.definitions.defaultTypeMapping,
       enumsAsTypes: options.definitions.enumsAsTypes,
+      emitDescriptions: options.definitions.emitDescriptions,
       typeName: options.definitions.typeName,
     };
     const tsFile = await this.graphqlAstExplorer.explore(
