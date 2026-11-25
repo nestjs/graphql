@@ -2162,10 +2162,10 @@
   dependencies:
     undici-types "~6.20.0"
 
-"@types/node@26.6.6":
-  version "26.6.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-26.6.6.tgz#9ed7b5817e728ed9216ef7c5b7d373fe3b777104"
-  integrity sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==
+"@types/node@26.6.7":
+  version "26.6.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-26.6.7.tgz#882494202d3e60d3b83829bc4f9be7039458874a"
+  integrity sha512-tovuRfrUILu6v46bMG+BgXxMvsqPBx2WO2as8Rpln+JTff1dbexMtAM4KFTejmL0axsnSWViCW7MecUQpLuBRA==
   dependencies:
     undici-types "~8.9.0"
 
