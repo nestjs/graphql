@@ -2,6 +2,9 @@ import { mergeResolvers } from '@graphql-tools/merge';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { mkdtempSync, readFileSync, rmSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import { type Mock, vi } from 'vitest';
 
 import { GraphQLAstExplorer, GraphQLFactory } from '../lib/index.js';
@@ -310,6 +313,35 @@ describe('GraphQLFactory', () => {
       } finally {
         warn.mockRestore();
       }
+    });
+  });
+
+  describe('generateDefinitions', () => {
+    let outputDir: string;
+
+    beforeEach(() => {
+      outputDir = mkdtempSync(join(tmpdir(), 'nest-graphql-definitions-'));
+    });
+
+    afterEach(() => {
+      rmSync(outputDir, { recursive: true, force: true });
+    });
+
+    it('should pass the "emitDescriptions" option to the generator', async () => {
+      const factory = new GraphQLFactory(
+        resolverExplorer as any,
+        scalarExplorer as any,
+        new GraphQLAstExplorer(),
+        undefined as any,
+      );
+      const path = join(outputDir, 'graphql.ts');
+
+      await factory.generateDefinitions(
+        '"""A recipe""" type Recipe { id: ID! }',
+        { definitions: { path, emitDescriptions: true } },
+      );
+
+      expect(readFileSync(path, 'utf8')).toContain('A recipe');
     });
   });
 });
