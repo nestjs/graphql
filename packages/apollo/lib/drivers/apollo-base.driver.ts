@@ -6,6 +6,7 @@ import {
 } from '@apollo/server';
 import {
   ApolloServerErrorCode,
+  ApolloServerValidationErrorCode,
   unwrapResolverError,
 } from '@apollo/server/errors';
 import { ApolloServerPluginLandingPageDisabled } from '@apollo/server/plugin/disabled';
@@ -25,6 +26,8 @@ import {
   GraphQLSchema,
   specifiedRules,
   validate,
+  ValidationContext,
+  ValidationRule,
 } from 'graphql';
 import omit from 'lodash.omit';
 import { GraphiQLPlaygroundPlugin } from '../graphiql/graphiql-playground.plugin.js';
@@ -51,6 +54,30 @@ type GraphQLWsServerConfig = GraphQLWsSubscriptionsConfig & {
     | readonly GraphQLFormattedError[]
     | void;
 };
+
+/**
+ * The validation rule Apollo Server adds when introspection is disabled (it
+ * does not export its own): refuses the "__schema" and "__type" fields with
+ * the same error, so that clients read the same refusal over both transports.
+ */
+const NoIntrospection: ValidationRule = (context: ValidationContext) => ({
+  Field(node) {
+    if (node.name.value === '__schema' || node.name.value === '__type') {
+      context.reportError(
+        new GraphQLError(
+          'GraphQL introspection is not allowed by Apollo Server, but the query contained __schema or __type. To enable introspection, pass introspection: true to ApolloServer in production',
+          {
+            nodes: [node],
+            extensions: {
+              validationErrorCode:
+                ApolloServerValidationErrorCode.INTROSPECTION_DISABLED,
+            },
+          },
+        ),
+      );
+    }
+  },
+});
 
 const apolloPredefinedExceptions: Partial<Record<HttpStatus, string>> = {
   [HttpStatus.BAD_REQUEST]: ApolloServerErrorCode.BAD_REQUEST,
@@ -165,10 +192,10 @@ export abstract class ApolloBaseDriver<
   /**
    * The subscriptions configuration of the graphql-ws server started next to
    * Apollo Server. graphql-ws executes queries and mutations too, outside of
-   * Apollo Server's request pipeline, so the "validationRules" and
-   * "formatError" options are applied to its operations here (composed with
-   * the hooks of the "graphql-ws" configuration). Apollo Server plugins do
-   * not run for operations received over WebSocket.
+   * Apollo Server's request pipeline, so the "introspection",
+   * "validationRules" and "formatError" options are applied to its operations
+   * here (composed with the hooks of the "graphql-ws" configuration). Apollo
+   * Server plugins do not run for operations received over WebSocket.
    */
   protected getSubscriptionConfig(
     options: ApolloDriverConfig,
@@ -185,6 +212,7 @@ export abstract class ApolloBaseDriver<
       'graphql-ws': {
         ...graphqlWsConfig,
         ...this.createGraphQLWsValidation(
+          this.isIntrospectionEnabled(options),
           options.validationRules,
           graphqlWsConfig,
         ),
@@ -196,18 +224,42 @@ export abstract class ApolloBaseDriver<
     };
   }
 
+  /**
+   * Resolves the "introspection" option the way Apollo Server does: enabled
+   * unless the environment ("nodeEnv", else "NODE_ENV") is production.
+   */
+  private isIntrospectionEnabled(options: ApolloDriverConfig): boolean {
+    const nodeEnv = options.nodeEnv ?? process.env.NODE_ENV ?? '';
+    return options.introspection ?? nodeEnv !== 'production';
+  }
+
   private createGraphQLWsValidation(
+    introspectionEnabled: boolean,
     validationRules: ApolloDriverConfig['validationRules'],
     config: GraphQLWsServerConfig,
   ): GraphQLWsServerConfig {
-    if (!validationRules?.length || config.validate) {
+    const introspectionRules = introspectionEnabled ? [] : [NoIntrospection];
+    // A custom "validate" replaces the "validationRules", but never lets
+    // introspection through when it is disabled
+    const rules = [
+      ...introspectionRules,
+      ...(config.validate ? [] : validationRules ?? []),
+    ];
+    if (!rules.length) {
       return {};
     }
-    const { onSubscribe } = config;
+    const { onSubscribe, validate: customValidate } = config;
     return {
       // Used by graphql-ws for the operations it builds itself
-      validate: (schema, document) =>
-        validate(schema, document, [...specifiedRules, ...validationRules]),
+      validate: customValidate
+        ? (schema, document) => {
+            const errors = customValidate(schema, document);
+            return errors.length > 0
+              ? errors
+              : validate(schema, document, introspectionRules);
+          }
+        : (schema, document) =>
+            validate(schema, document, [...specifiedRules, ...rules]),
       // A hook that builds the execution arguments itself skips "validate"
       ...(onSubscribe && {
         onSubscribe: async (...args) => {
@@ -215,11 +267,7 @@ export abstract class ApolloBaseDriver<
           if (!result || !('document' in result)) {
             return result;
           }
-          const errors = validate(
-            result.schema,
-            result.document,
-            validationRules,
-          );
+          const errors = validate(result.schema, result.document, rules);
           return errors.length > 0 ? errors : result;
         },
       }),

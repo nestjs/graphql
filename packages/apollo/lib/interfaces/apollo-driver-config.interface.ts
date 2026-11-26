@@ -39,10 +39,11 @@ export interface ApolloDriverConfig
    * The graphql-ws server executes every operation it receives (queries and
    * mutations too, not only subscriptions) outside of Apollo Server. Guards,
    * interceptors, pipes and filters run as they do over HTTP, and so do the
-   * `validationRules` and `formatError` options, but Apollo Server plugins
-   * (the `plugins` option and `@Plugin()` providers) and Apollo Server's
-   * other request settings (e.g. `introspection`) do not. Don't rely on a
-   * plugin for checks that WebSocket clients must not get around.
+   * `introspection` (with its production default), `validationRules` and
+   * `formatError` options, but Apollo Server plugins (the `plugins` option
+   * and `@Plugin()` providers) and Apollo Server's other request settings
+   * (e.g. `maxRecursiveSelections`) do not. Don't rely on a plugin for checks
+   * that WebSocket clients must not get around.
    */
   subscriptions?: SubscriptionConfig;
 
