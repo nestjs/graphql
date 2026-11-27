@@ -5,7 +5,7 @@ import {
   inheritTransformationMetadata,
   inheritValidationMetadata,
 } from '@nestjs/mapped-types';
-import { Field, FieldOptions } from '../decorators/index.js';
+import { Field, FieldOptions, InputType } from '../decorators/index.js';
 import { FIELD_MIDDLEWARE_METADATA } from '../graphql.constants.js';
 import { ClassDecoratorFactory } from '../interfaces/class-decorator-factory.interface.js';
 import { MetadataLoader } from '../plugin/metadata-loader.js';
@@ -25,6 +25,7 @@ import {
 function intersectFieldOptions(
   optionsA: FieldOptions,
   optionsB: FieldOptions,
+  isInputType: boolean,
 ): FieldOptions {
   const isListNullable = [optionsA.nullable, optionsB.nullable].every(
     (nullable) => nullable === true || nullable === 'itemsAndList',
@@ -57,7 +58,11 @@ function intersectFieldOptions(
   return {
     ...optionsA,
     description: optionsA.description ?? optionsB.description,
-    deprecationReason: optionsA.deprecationReason ?? optionsB.deprecationReason,
+    // A required input field cannot be deprecated
+    deprecationReason:
+      isInputType && isNotNullable && defaultValue === undefined
+        ? undefined
+        : optionsA.deprecationReason ?? optionsB.deprecationReason,
     nullable,
     defaultValue,
     ...(middleware.length > 0 && { middleware }),
@@ -136,7 +141,11 @@ export function IntersectionType<A, B>(
       Field(
         item.typeFn,
         sharedItem
-          ? intersectFieldOptions(item.options, sharedItem.options)
+          ? intersectFieldOptions(
+              item.options,
+              sharedItem.options,
+              decoratorB === InputType,
+            )
           : { ...item.options },
       )(IntersectionObjectType.prototype, item.name);
       applyFieldDecorators(IntersectionObjectType, item, classARef);
