@@ -624,10 +624,10 @@
   dependencies:
     dequal "^2.0.3"
 
-"@fastify/middie@9.3.7":
-  version "9.3.7"
-  resolved "https://registry.yarnpkg.com/@fastify/middie/-/middie-9.3.7.tgz#1bacf961606aa4e966d1f13cc03abc0904d225cd"
-  integrity sha512-Th/Htlg81STi0RYdK5zA9LggfpOCsqd5t4RiLKSE25IS7Zv6zNd9nouPdlsYHE3wdt3EkBAbp58Ltsn0HOroCA==
+"@fastify/middie@9.3.9":
+  version "9.3.9"
+  resolved "https://registry.yarnpkg.com/@fastify/middie/-/middie-9.3.9.tgz#ca9f263baea7862aa8e985361a6b5aa98b09f3ff"
+  integrity sha512-rQurVm1gDVF+k5H0I+hpk7UEtldJ2SeHPyNnhuVcDjsAxla1vbQKCQjgqnmHUk9shqswZC7vZdx0gNMjF5YKeA==
   dependencies:
     "@fastify/error" "^4.0.0"
     fastify-plugin "^6.0.0"
@@ -1105,10 +1105,10 @@
     "@emnapi/runtime" "^1.1.0"
     "@tybys/wasm-util" "^0.9.0"
 
-"@nestjs/common@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-12.6.0.tgz#d4e499be62d575f59b9a2b71d6766e2a7621664e"
-  integrity sha512-qlCebomQxvtNSdOQfgBryWwi2gjUYGTmXnwRP0vLp5xdKfR3DfAl4KRsvuXEbAUCBPUtHsgWSxh76IP1pc262A==
+"@nestjs/common@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-12.6.3.tgz#67c321d1ef6d82341770b7d5c942e9ff7a554967"
+  integrity sha512-JRVLUHcammshqrMzWBNRsGNkHUM6H7HG3dTlye60F67HogVJE3zKYs/6rtTljL68prerKqB0sinh6M9Ch8MyIQ==
   dependencies:
     uid "2.0.2"
     "@standard-schema/spec" "1.1.0"
@@ -1117,10 +1117,10 @@
     load-esm "1.0.3"
     tslib "2.9.1"
 
-"@nestjs/core@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-12.6.0.tgz#732b8041ce1dbe91dcdc6e91da9ef0b98764afe7"
-  integrity sha512-LmIF9DtTw4HgGWxlNZYFr3L+D8hw8vzwBV7Fkgr+lcVfeYYFBshQpwuwt6ewT6YvDnvIgI8+GdRDV7RbcVAiRA==
+"@nestjs/core@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/core/-/core-12.6.3.tgz#c44ce1fc99cc1a5b8ab62338ea3795c0b8a21047"
+  integrity sha512-q5wtXasSuBAlBbnNk542nvTZylTV5ew30hxNpzjbB4eA3kKjbHq+LBiNgSOjlin5gWE1f1C56Q8SI9qyU4XOKQ==
   dependencies:
     uid "2.0.2"
     fast-safe-stringify "2.1.1"
@@ -1133,10 +1133,10 @@
   resolved "https://registry.yarnpkg.com/@nestjs/mapped-types/-/mapped-types-12.0.1.tgz#847f32994bed00790c1700289e79b48552bb8b08"
   integrity sha512-AHkgYt6UgJ5XBE3v4zGUUdfPD7kCGBzOa/uHfOYkkRTfojYWLRCCdAJiyWNpIFHCySJH/MR2F/z4MrMo5YheHg==
 
-"@nestjs/platform-express@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-12.6.0.tgz#960df417e3b292763269e678379e0562ccf197b5"
-  integrity sha512-/qAWhyqiy9eKAJt+7tvSfsavKfF893PpCEOQ1HqmDD4stIvQCXfGfb+/6MMU9hiwXq8MMbC6pnyFaIhICc13rw==
+"@nestjs/platform-express@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-express/-/platform-express-12.6.3.tgz#7757e50aa77bf7bfc88daab6880a79c89332da52"
+  integrity sha512-lvyUZbtp8VC7sksQHcUkLWJRlxyGvlYFptwZvQXcBw9r85MeX3XAJO/4ETQzFP4atxTIJ9qcT8prMESjmYv3xQ==
   dependencies:
     cors "2.8.6"
     express "5.3.0"
@@ -1144,14 +1144,14 @@
     path-to-regexp "8.4.2"
     tslib "2.9.1"
 
-"@nestjs/platform-fastify@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-12.6.0.tgz#750ab3eaeb1e6f34ce42a547cc1bf571e75ff4ef"
-  integrity sha512-d/fxT9zmcBoXpDp9Csv13g6/N5KWnNe2beDxas3/b5xlYB0CS7nMwr9aekZYi/pt16gyf50NR1hmNPXinaZ4ng==
+"@nestjs/platform-fastify@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-fastify/-/platform-fastify-12.6.3.tgz#fd568d0fc1db7a632b21a960bec4c334336d68f2"
+  integrity sha512-CeKhUR/L5yk/bsw66Nfw8sWRRh2ynl+erYzun4Wydl0oOoD9+OUls5noaeMaEiuhgnvK/CMr/GdNXCy0KKSyRw==
   dependencies:
     "@fastify/cors" "11.4.3"
     "@fastify/formbody" "9.0.2"
-    "@fastify/middie" "9.3.7"
+    "@fastify/middie" "9.3.9"
     fast-querystring "1.1.2"
     fastify "5.12.8"
     find-my-way "9.10.2"
@@ -1159,10 +1159,10 @@
     path-to-regexp "8.4.2"
     tslib "2.9.1"
 
-"@nestjs/platform-node@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/platform-node/-/platform-node-12.6.0.tgz#95185a1f99916d30b00e7e1da9c07177442e0feb"
-  integrity sha512-Gjv+TCTtcQdDk21F4ZMEgBpqnkbjiMRMGtQ9zDmW4at/owa6nDz+o6IGZQ4o+AknZpwy+epZS+OFG1JeZluRAA==
+"@nestjs/platform-node@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/platform-node/-/platform-node-12.6.3.tgz#55e434b367f5c5d95b5aacc3c58893fe680ae218"
+  integrity sha512-501JCqmRnh+l5hT4fKrNfvjmZsU8+ZErJ/r1lUZvzEqudEWvZF7d/dtCpQy+qsNgEkFZA6rz1IfhioAN5RZnHw==
   dependencies:
     "@fastify/proxy-addr" "5.1.3"
     content-type "2.1.0"
@@ -1184,10 +1184,10 @@
     tslib "2.9.1"
     type-is "2.1.0"
 
-"@nestjs/testing@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-12.6.0.tgz#a6968e52bc3505044b320ca315dcd16f76990b36"
-  integrity sha512-84whoYLvjORtUb/qD2QIYUsXHRUu654cmrbmzHFVrb38Vbox2wPQiQvu9LDtPdwEFiiMHUb5LIdWSolNvFa9ag==
+"@nestjs/testing@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@nestjs/testing/-/testing-12.6.3.tgz#3d0abdfc6766d1378a8b422db6ed2f38e5b412fa"
+  integrity sha512-nOdXJDZCoR7aH/3tBvuNS4VGPIAAIz5khNeQXHOLO6RBrvEg+wfx9fNyVZDog7UNtgWl1rb/CybyNvkaLpVeeA==
   dependencies:
     tslib "2.9.1"
 
