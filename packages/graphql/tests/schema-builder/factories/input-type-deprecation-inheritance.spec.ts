@@ -6,6 +6,7 @@ import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
   InputType,
+  IntersectionType,
   OmitType,
   PartialType,
   Query,
@@ -34,6 +35,30 @@ class PartialInput extends PartialType(BaseInput) {}
 @InputType()
 class OmitInput extends OmitType(BaseInput, ['name'] as const) {}
 
+@InputType()
+class NullableLegacyInput {
+  @Field({ nullable: true, deprecationReason: 'Use "name" instead' })
+  legacyName?: string;
+
+  @Field({ nullable: true, deprecationReason: 'Use "name" instead' })
+  alias?: string;
+}
+
+@InputType()
+class RequiredLegacyInput {
+  @Field()
+  legacyName!: string;
+
+  @Field({ nullable: true })
+  alias?: string;
+}
+
+@InputType()
+class IntersectionInput extends IntersectionType(
+  NullableLegacyInput,
+  RequiredLegacyInput,
+) {}
+
 @Resolver()
 class DeprecationResolver {
   @Query(() => String)
@@ -42,6 +67,7 @@ class DeprecationResolver {
     @Args('child') child: ChildInput,
     @Args('partial') partial: PartialInput,
     @Args('omit') omit: OmitInput,
+    @Args('intersection') intersection: IntersectionInput,
   ): string {
     return 'ok';
   }
@@ -72,4 +98,13 @@ describe('Input field deprecation on inherited fields', () => {
       );
     },
   );
+
+  it('drops the deprecation of a field the intersection makes required', async () => {
+    const schema = await schemaFactory.create([DeprecationResolver]);
+    const type = schema.getType('IntersectionInput') as GraphQLInputObjectType;
+    const fields = type.getFields();
+
+    expect(fields.legacyName.deprecationReason).toBeUndefined();
+    expect(fields.alias.deprecationReason).toBe('Use "name" instead');
+  });
 });
