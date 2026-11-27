@@ -4253,18 +4253,6 @@ graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.6:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
-graphql-jit@0.8.10:
-  version "0.8.10"
-  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.10.tgz#58d0084f9a79c9ac1c6cc385161dac351f6ad5bc"
-  integrity sha512-vvjth/yqAW+zhPYXhNVntJGTR2j9O0Z+/f+j6Jyr5AxlzOMh7jglW5SLfUGxkstewrUSniwUDvod8jcm3zz8gA==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
-    fast-json-stringify "^7.0.1"
-    generate-function "^2.3.1"
-    lodash.memoize "^4.1.2"
-    lodash.merge "4.6.2"
-    lodash.mergewith "4.6.2"
-
 graphql-jit@0.8.7:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.8.7.tgz#831b1a4c16b1e29cc8ed9d171f33a7da4bce2821"
@@ -4272,6 +4260,18 @@ graphql-jit@0.8.7:
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     fast-json-stringify "^5.16.1"
+    generate-function "^2.3.1"
+    lodash.memoize "^4.1.2"
+    lodash.merge "4.6.2"
+    lodash.mergewith "4.6.2"
+
+graphql-jit@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.10.1.tgz#69f673ea309896e36f2d9b03213874173f1c7ab3"
+  integrity sha512-hhDFKu84HIxTpRJD2yn1OLLa2PEK5AIIF17yzdTaQ1+IWlVvStDFqCPP5Kc3hePjCjpyHQ34sXkj9aH1+TKLyA==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    fast-json-stringify "^7.0.1"
     generate-function "^2.3.1"
     lodash.memoize "^4.1.2"
     lodash.merge "4.6.2"
@@ -5435,18 +5435,17 @@ mercurius-integration-testing@9.0.1:
     cookie "^1.0.0"
     ws "^8.12.1"
 
-mercurius@16.12.2:
-  version "16.12.2"
-  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.12.2.tgz#8cbbcd8fd9adf4fd6db67bfe01755868854ede33"
-  integrity sha512-cmVtfJoOQyH8A1MJFMW8XaObyf910Qm58oyTnppAwB57TJxRRUjn3uMvBouTUByr8PH1kgtPnDn5hnxhBoDyXQ==
+mercurius@16.13.0:
+  version "16.13.0"
+  resolved "https://registry.yarnpkg.com/mercurius/-/mercurius-16.13.0.tgz#0b2ab23d42d15a60e65df0b92561320c3200fc49"
+  integrity sha512-bmCpmmZ4aAlnApBF/G+RMQTmLcADv9g55w4m50mop5L2QkhTBZMeT15c65w//+blrCMVp0L00ToFUHg4CXyNjw==
   dependencies:
     "@fastify/error" "^4.0.0"
     "@fastify/static" "^10.1.0"
     "@fastify/websocket" "^11.0.0"
     fastify-plugin "^6.0.0"
-    graphql-jit "0.8.10"
+    graphql-jit "^0.10.1"
     mqemitter "^7.0.0"
-    readable-stream "^4.0.0"
     safe-stable-stringify "^3.0.0"
     secure-json-parse "^4.1.0"
     single-user-cache "^2.0.0"
