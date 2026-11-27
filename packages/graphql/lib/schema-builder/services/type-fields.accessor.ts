@@ -43,6 +43,7 @@ export class TypeFieldsAccessor {
       fieldsConfig[key] = {
         type: targetField.type,
         description: targetField.description,
+        deprecationReason: targetField.deprecationReason,
         defaultValue: targetField.defaultValue,
         astNode: targetField.astNode,
         extensions: targetField.extensions,
