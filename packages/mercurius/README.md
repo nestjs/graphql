@@ -32,6 +32,8 @@
 $ npm i --save @nestjs/graphql @nestjs/mercurius mercurius graphql
 ```
 
+> **NOTE** `graphql` 17 needs `mercurius` 16.11.0 or later. Federation (`MercuriusFederationDriver` and `MercuriusGatewayDriver`) stays on `graphql` 16 until `@mercuriusjs/federation` and `@mercuriusjs/gateway` support 17.
+
 ## Quick Start
 
 [Overview & Tutorial](https://docs.nestjs.com/graphql/quick-start)
